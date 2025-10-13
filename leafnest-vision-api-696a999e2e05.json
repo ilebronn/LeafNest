@@ -1,0 +1,13 @@
+{
+  "type": "service_account",
+  "project_id": "leafnest-vision-api",
+  "private_key_id": "696a999e2e05605a53c0a1a30fd6760511363a70",
+  "private_key": "-----BEGIN PRIVATE KEY-----\nMIIEvwIBADANBgkqhkiG9w0BAQEFAASCBKkwggSlAgEAAoIBAQCi/e0fcEFeUJzV\n2F/fVFnESXIhIwyhYOqJCaL/wUdpU9EQ4Gq466g/9pr7qCkePgsOSEbCJ+JfIC18\n1LHP1LYRzkZjCi/s4foX1dQu0IlpNS5+MdfUSG4VjCOPDBur/Q44H0W30cFgBhaD\n76XmDMaN5tpuNQ1V0fHsR9dC4Jry1RCAcYEMP5atHaXdRZnej6C3wD7rIjQpK7q2\nN5BOL58vFInxoU5wb20dVZn0RGd14kkQsY1Z6VEclHKgl6Ea6Pn+QCKYIvj6QInr\nA3UrUzq6s6kDRpKgTqtltzdySgX5Hz84Begjp1Z8yit9VPx1NYDeqTHIeZsApibc\nbwOmZZrfAgMBAAECggEABNcqSx3TOydR7EHirjTvMFag2cR7ANhQrstgxVxEMCfj\nYUjUGPQBFg4ChUj1sgzt2OzWX4UkTzOBiYY376M/P8eF+WjMipCD4Ma8NSKC6jAN\nPOv8nzSb3FT1aC9xkbzp4EqbEFeQ31BFXxuA+RRV2Z7KmHpH3QDnc9856j9vkP8s\n6dfYUVWKx7KM1CdoiXizgLwbpq28PUaIzHc3fhLRkqpbJ+3IJ8XnrTkoeeMsn+T4\nPf+7EgzNe5eJ1x6GCnTbdCW2QlWAL55uHFRLxi03lCy1dc3h+gNQoFBHNmoJ+hvb\nRBCZbHRTLlghi4H05GoCncCuCWeWqewSrMJbSYJFrQKBgQDa/zD+5C4xFxP/HEkA\nLXW3ahZZ2gS5z4K7X7UoQAobqO4KCtE+oqtCh4rSgyYJ0sMjCC5MTrMQYKNHkziB\noaxKilP97vKw2/d5UavaXnrbO0eEZkObEzEVtkyCM8eK6EzSfupRcZtJAzr3B+QG\nXuFt738RzQK+Oq5VSIa4ddXRcwKBgQC+iDcpY3kRdAhl/LXZxtNBhFOmv7mkn4HD\n0eJPyfjkYtEy03j9aI7S4El7ysORYsbzqSflbz7I8vIfxbsl0OcznX2unk2Vln1z\nM0/vmirPTPtPhGjXPAcFmgrYI/kVfZ7avxjXVhLjOx6nnA8JNzy/2cBwz31uEywa\nVjpjwE4F5QKBgQC4KTHCp5BQp9+hAOBCzffYLdZt6PFgcCi3+VwWZQQbDoxe1Ynw\n6kqqv+D19mPejuaaZx7H/MaIVzv3zM4P9S014e2P9YkRQWlzFEM4d4tJISibJoRj\nvFfislLUi0aagY9Y1HGn26mCVL0ZUAFpehCIqoZpKcXMwvwnq73fEPimEQKBgQC8\nP/nAevfztqFVowpJ0ZiI8yVza5sQfEjKIWVpUDUJ8lifzzGLrvLuh4wTM5Nm4iGQ\nPWGd3vw5r1Bq9AKkqnLFHKZBEUe2tKneWKRyJ/CEQZtMRZcQkc6eSkTMqT5BbYy2\ntHjmybR/rrnrANYaVOlA5PSugVN8npTEsM2gITD1wQKBgQCS3KOLetmcjhjIJmCT\nbsTNnIuUcpxZJXyagTdCXiqHPBluWf4HuYT2GbJVO9v1i24aadQwROJNGVm7thp+\nF9yQ3DJCXl55E59oKjjaJOAI8S6bqQPwriFI1qQOevyGVqgq6qHLk2Y9zGjdPboA\nH3WFN+oQWdui5gkz8TgnVjHcrQ==\n-----END PRIVATE KEY-----\n",
+  "client_email": "leafnest-vision-api-service@leafnest-vision-api.iam.gserviceaccount.com",
+  "client_id": "117503900439246460185",
+  "auth_uri": "https://accounts.google.com/o/oauth2/auth",
+  "token_uri": "https://oauth2.googleapis.com/token",
+  "auth_provider_x509_cert_url": "https://www.googleapis.com/oauth2/v1/certs",
+  "client_x509_cert_url": "https://www.googleapis.com/robot/v1/metadata/x509/leafnest-vision-api-service%40leafnest-vision-api.iam.gserviceaccount.com",
+  "universe_domain": "googleapis.com"
+}

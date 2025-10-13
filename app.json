@@ -1,0 +1,55 @@
+{
+  "expo": {
+    "name": "",
+    "slug": "LeafNest",
+    "version": "1.0.0",
+    "orientation": "portrait",
+    "icon": "./assets/icon.png",
+    "userInterfaceStyle": "light",
+    "newArchEnabled": true,
+    "scheme": "leafnest",
+
+    "splash": {
+      "image": "./assets/splash-icon.png", 
+      "resizeMode": "cover", 
+      "backgroundColor": "#bff6dc"
+    },
+
+    "ios": {
+      "supportsTablet": true,
+      "splash": {
+        "image": "./assets/splash-icon.png",
+        "resizeMode": "contain",
+        "backgroundColor": "#bff6dc"
+      }
+    },
+
+    "android": {
+      "package": "com.dev.leafnest",
+      "splash": {
+        "image": "./assets/splash-icon.png",
+        "resizeMode": "contain",
+        "backgroundColor": "#bff6dc"
+      },
+      "adaptiveIcon": {
+        "foregroundImage": "./assets/adaptive-icon.png",
+        "backgroundColor": "#bff6dc"
+      },
+      "edgeToEdgeEnabled": true
+    },
+
+    "web": {
+      "favicon": "./assets/favicon.png"
+    },
+
+    "extra": {
+      "eas": {
+        "projectId": "0549a304-0587-4910-bedf-b53f03c2c8c3"
+      }
+    },
+
+    "plugins": [
+      "expo-web-browser"
+    ]
+  }
+}
