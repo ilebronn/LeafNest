@@ -21,6 +21,7 @@ export default function LoginScreen({ navigation }) {
       await signOut(auth);
       await clearAllUserData();
       
+      // ✅ FIXED: Use simple replace now that both screens are always registered
       navigation.replace('MainTabs', {
         screen: 'Home',
         params: { guest: true, displayName: 'Guest' },
@@ -48,7 +49,7 @@ export default function LoginScreen({ navigation }) {
             isSmallScreen && styles.logoContainerSmall
           ]}>
             <Image
-              source={require('../assets/logo.png')}
+              source={require('../assets/logo2.png')}
               style={[
                 styles.logo,
                 isTablet && styles.logoTablet
@@ -168,10 +169,10 @@ const styles = StyleSheet.create({
     marginTop: verticalScale(40),
   },
   logo: {
-    width: moderateScale(120),
-    height: moderateScale(120),
-    marginRight: scale(-20),
-    top: verticalScale(80),
+    width: moderateScale(200),
+    height: moderateScale(200),
+    marginRight: scale(-60),
+    top: verticalScale(50),
   },
   logoTablet: {
     width: moderateScale(180),
@@ -184,7 +185,7 @@ const styles = StyleSheet.create({
     textShadowColor: 'rgba(0, 0, 0, 0.3)',
     textShadowOffset: { width: 1, height: 1 },
     textShadowRadius: 3,
-    top: verticalScale(80),
+    top: verticalScale(50),
   },
   brandNameTablet: {
     fontSize: moderateScale(56),

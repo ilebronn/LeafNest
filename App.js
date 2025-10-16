@@ -1,175 +1,187 @@
-import React, { useEffect, useState } from 'react';
-import { View, ActivityIndicator, StyleSheet } from 'react-native';
+import * as React from 'react';
+import { useEffect, useState } from 'react';
+import { View, ActivityIndicator } from 'react-native';
 import { NavigationContainer } from '@react-navigation/native';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
+import { Ionicons } from '@expo/vector-icons';
+import { useTranslation } from 'react-i18next';
 import { onAuthStateChanged } from 'firebase/auth';
 import { auth } from './firebase';
-import { Ionicons } from '@expo/vector-icons';
+
+// Import i18n configuration
 import './i18n';
 
-// Import your screens
+// Import context
+import { LanguageProvider } from './contexts/LanguageContext';
+
+// Import Custom Splash Screen
+import CustomSplashScreen from './screens/SplashScreen';
+
+// Import Screens
 import LoginScreen from './screens/LoginScreen';
 import SignInScreen from './screens/SignInScreen';
 import SignUpScreen from './screens/SignUpScreen';
+import ForgotPasswordScreen from './screens/ForgotPasswordScreen';
 import HomeScreen from './screens/HomeScreen';
-import ProfileScreen from './screens/ProfileScreen';
-import ScanScreen from './screens/ScanScreen';
-import HistoryScreen from './screens/HistoryScreen';
-import FavoritesScreen from './screens/FavoritesScreen';
-import NotificationScreen from './screens/NotificationScreen';
-import TermsOfUseScreen from './screens/TermsOfUseScreen';
-import PrivacyPolicyScreen from './screens/PrivacyPolicyScreen';
-import CookiesPolicyScreen from './screens/CookiesPolicyScreen';
 import SettingsScreen from './screens/SettingsScreen';
-import HelpScreen from './screens/HelpScreen';
+import HistoryScreen from './screens/HistoryScreen';
+import NotificationScreen from './screens/NotificationScreen';
+import ProfileScreen from './screens/ProfileScreen';
 import AboutScreen from './screens/AboutScreen';
+import PrivacyPolicyScreen from './screens/PrivacyPolicyScreen';
+import FavoritesScreen from './screens/FavoritesScreen';
+import CameraCaptureScreen from './screens/ScanScreen';
+import ScanStatsScreen from './screens/ScanStatsScreen';
+import TermsOfUseScreen from './screens/TermsOfUseScreen';
+import CookiesPolicyScreen from './screens/CookiesPolicyScreen';
 import FAQScreen from './screens/FAQScreen';
 import SendFeedbackScreen from './screens/SendFeedbackScreen';
+import HelpScreen from './screens/HelpScreen';
 import PlanScreen from './screens/PlanScreen';
 import SpeciesLandingPage from './screens/SpeciesLandingPage';
 
 const Stack = createNativeStackNavigator();
 const Tab = createBottomTabNavigator();
 
-// Bottom Tab Navigator
 function MainTabs({ route }) {
-  const isGuest = route?.params?.guest ?? true;
-  const displayName = route?.params?.displayName ?? '';
+  const { guest, displayName } = route?.params || { guest: true, displayName: 'Guest' };
+  const { t } = useTranslation();
 
   return (
     <Tab.Navigator
       screenOptions={({ route }) => ({
         headerShown: false,
-        tabBarActiveTintColor: '#5E936C',
-        tabBarInactiveTintColor: '#999',
         tabBarStyle: {
-          backgroundColor: '#fff',
-          borderTopWidth: 1,
-          borderTopColor: '#eee',
-          paddingBottom: 5,
-          paddingTop: 5,
-          height: 60,
+          backgroundColor: 'white',
+          height: 65,
+          borderTopWidth: 0,
+          borderRadius: 20,
+          paddingHorizontal: 5,
+          paddingBottom: 10,
+          shadowOpacity: 0.1,
+          shadowRadius: 15,
+          shadowOffset: { width: 0, height: -2 },
+          elevation: 5,
         },
-        tabBarIcon: ({ focused, color, size }) => {
-          let iconName;
+        tabBarIcon: ({ focused }) => {
+          const iconSize = 28;
+          let name = 'home-outline';
+          if (route.name === 'Home') name = 'home-outline';
+          if (route.name === 'Favorites') name = 'heart-outline';
+          if (route.name === 'History') name = 'time-outline';
+          if (route.name === 'Settings') name = 'settings-outline';
 
-          if (route.name === 'Home') {
-            iconName = focused ? 'home' : 'home-outline';
-          } else if (route.name === 'History') {
-            iconName = focused ? 'time' : 'time-outline';
-          } else if (route.name === 'Favorites') {
-            iconName = focused ? 'heart' : 'heart-outline';
-          } else if (route.name === 'Plan') {
-            iconName = focused ? 'calendar' : 'calendar-outline';
-          }
-
-          return <Ionicons name={iconName} size={size} color={color} />;
+          return (
+            <Ionicons
+              name={name}
+              size={iconSize}
+              color={focused ? '#5E936C' : '#B0B0B0'}
+              style={focused ? { transform: [{ scale: 1.2 }] } : null}
+            />
+          );
         },
+        tabBarActiveTintColor: '#5E936C',
+        tabBarInactiveTintColor: '#B0B0B0',
+        tabBarLabelStyle: { display: 'none' },
       })}
     >
-      <Tab.Screen 
-        name="Home" 
-        component={HomeScreen}
-        initialParams={{ guest: isGuest, displayName }}
-      />
-      <Tab.Screen 
-        name="History" 
-        component={HistoryScreen}
-        initialParams={{ guest: isGuest }}
-      />
-      <Tab.Screen 
-        name="Favorites" 
-        component={FavoritesScreen}
-        initialParams={{ guest: isGuest }}
-      />
-      <Tab.Screen 
-        name="Plan" 
-        component={PlanScreen}
-        initialParams={{ guest: isGuest }}
-      />
+      <Tab.Screen name="Home" options={{ tabBarLabel: "" }}>
+        {props => (
+          <HomeScreen
+            {...props}
+            route={{ ...props.route, params: { guest, displayName } }}
+          />
+        )}
+      </Tab.Screen>
+      <Tab.Screen name="Favorites" component={FavoritesScreen} options={{ tabBarLabel: "" }} />
+      <Tab.Screen name="History" component={HistoryScreen} options={{ tabBarLabel: "" }} />
+      <Tab.Screen name="Settings" options={{ tabBarLabel: "" }}>
+        {props => <SettingsScreen {...props} route={{ ...props.route, params: { guest } }} />}
+      </Tab.Screen>
     </Tab.Navigator>
   );
 }
 
 export default function App() {
-  const [isLoading, setIsLoading] = useState(true);
+  const [showCustomSplash, setShowCustomSplash] = useState(true);
+  const [initializing, setInitializing] = useState(true);
   const [user, setUser] = useState(null);
 
   useEffect(() => {
-    // ✅ Listen to authentication state changes
     const unsubscribe = onAuthStateChanged(auth, (currentUser) => {
-      if (currentUser) {
-        console.log('✅ User is authenticated:', currentUser.email);
-        setUser(currentUser);
-      } else {
-        console.log('❌ No user authenticated');
-        setUser(null);
-      }
-      setIsLoading(false);
+      setUser(currentUser);
+      setInitializing(false);
     });
 
-    // Cleanup subscription on unmount
     return unsubscribe;
   }, []);
 
-  // Show loading screen while checking auth status
-  if (isLoading) {
+  if (showCustomSplash) {
+    return <CustomSplashScreen onFinish={() => setShowCustomSplash(false)} />;
+  }
+
+  if (initializing) {
     return (
-      <View style={styles.loadingContainer}>
+      <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center', backgroundColor: '#bff6dc' }}>
         <ActivityIndicator size="large" color="#5E936C" />
       </View>
     );
   }
 
   return (
-    <NavigationContainer>
-      <Stack.Navigator 
-        screenOptions={{ headerShown: false }}
-        initialRouteName={user ? 'MainTabs' : 'Login'}
-      >
-        {/* Auth Screens - Only show when user is NOT authenticated */}
-        {!user ? (
-          <>
-            <Stack.Screen name="Login" component={LoginScreen} />
-            <Stack.Screen name="SignIn" component={SignInScreen} />
-            <Stack.Screen name="SignUp" component={SignUpScreen} />
-          </>
-        ) : null}
-
-        {/* Main App Screens */}
-        <Stack.Screen 
-          name="MainTabs" 
-          component={MainTabs}
-          initialParams={{
-            guest: !user,
-            displayName: user?.displayName || user?.email || 'User'
-          }}
-        />
-        
-        {/* Other Screens */}
-        <Stack.Screen name="Profile" component={ProfileScreen} />
-        <Stack.Screen name="ScanScreen" component={ScanScreen} />
-        <Stack.Screen name="NotificationScreen" component={NotificationScreen} />
-        <Stack.Screen name="Settings" component={SettingsScreen} />
-        <Stack.Screen name="Help" component={HelpScreen} />
-        <Stack.Screen name="About" component={AboutScreen} />
-        <Stack.Screen name="FAQ" component={FAQScreen} />
-        <Stack.Screen name="SendFeedback" component={SendFeedbackScreen} />
-        <Stack.Screen name="TermsOfUse" component={TermsOfUseScreen} />
-        <Stack.Screen name="PrivacyPolicy" component={PrivacyPolicyScreen} />
-        <Stack.Screen name="CookiesPolicy" component={CookiesPolicyScreen} />
-        <Stack.Screen name="SpeciesLandingPage" component={SpeciesLandingPage} />
-      </Stack.Navigator>
-    </NavigationContainer>
+    <LanguageProvider>
+      <NavigationContainer>
+        <Stack.Navigator screenOptions={{ headerShown: false }}>
+          {user ? (
+            <React.Fragment>
+              <Stack.Screen 
+                name="MainTabs" 
+                component={MainTabs}
+                initialParams={{
+                  guest: false,
+                  displayName: user.displayName || user.email
+                }}
+              />
+              <Stack.Screen name="Login" component={LoginScreen} />
+            </React.Fragment>
+          ) : (
+            <React.Fragment>
+              <Stack.Screen name="Login" component={LoginScreen} />
+              <Stack.Screen name="MainTabs" component={MainTabs} />
+            </React.Fragment>
+          )}
+          <Stack.Screen name="SignIn" component={SignInScreen} />
+          <Stack.Screen name="SignUp" component={SignUpScreen} />
+          <Stack.Screen name="ForgotPassword" component={ForgotPasswordScreen} />
+          <Stack.Screen name="Profile" component={ProfileScreen} />
+          <Stack.Screen name="NotificationScreen" component={NotificationScreen} />
+          <Stack.Screen
+            name="CameraCaptureScreen"
+            component={CameraCaptureScreen}
+            options={{ presentation: 'modal' }}
+          />
+          <Stack.Screen
+            name="ScanScreen"
+            component={CameraCaptureScreen}
+            options={{ presentation: 'modal' }}
+          />
+          <Stack.Screen 
+            name="ScanStats" 
+            component={ScanStatsScreen}
+            options={{ headerShown: false }}
+          />
+          <Stack.Screen name="PlanScreen" component={PlanScreen} />
+          <Stack.Screen name="SpeciesLandingPage" component={SpeciesLandingPage} />
+          <Stack.Screen name="AboutScreen" component={AboutScreen} />
+          <Stack.Screen name="PrivacyPolicy" component={PrivacyPolicyScreen} />
+          <Stack.Screen name="TermsOfUse" component={TermsOfUseScreen} />
+          <Stack.Screen name="CookiesPolicy" component={CookiesPolicyScreen} />
+          <Stack.Screen name="FAQScreen" component={FAQScreen} />
+          <Stack.Screen name="SendFeedbackScreen" component={SendFeedbackScreen} />
+          <Stack.Screen name="HelpScreen" component={HelpScreen} />
+        </Stack.Navigator>
+      </NavigationContainer>
+    </LanguageProvider>
   );
 }
-
-const styles = StyleSheet.create({
-  loadingContainer: {
-    flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
-    backgroundColor: '#fff',
-  },
-});

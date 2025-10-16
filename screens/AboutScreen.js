@@ -8,7 +8,6 @@ import {
   ScrollView,
   Platform,
   useWindowDimensions,
-  ImageBackground,
 } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import { LinearGradient } from 'expo-linear-gradient';
@@ -26,8 +25,7 @@ const ResponsiveAbout = ({ navigation }) => {
   const insets = useSafeAreaInsets();
   const { width, height } = useWindowDimensions();
 
-  // ---- Phone-first responsive helpers ----
-  const baseW = 375; // iPhone X-ish
+  const baseW = 375;
   const baseH = 812;
 
   const scale = (size) => (width / baseW) * size;
@@ -35,288 +33,323 @@ const ResponsiveAbout = ({ navigation }) => {
   const clamp = (val, min, max) => Math.max(min, Math.min(val, max));
   const clampFS = (size, min = 12, max = 22) => clamp(scale(size), min, max);
 
-  const isSmall = width < 360; // very small phones
-  const hPad = clamp(scale(20), 14, 24);
-  const cardPad = clamp(scale(20), 14, 22);
+  const hPad = clamp(scale(20), 16, 28);
+  const cardPad = clamp(scale(24), 18, 28);
 
   const headerPadTop = insets.top + (Platform.OS === 'android' ? vScale(8) : vScale(4));
-  const headerPadBottom = clamp(vScale(16), 10, 20);
+  const headerPadBottom = clamp(vScale(14), 10, 18);
 
-  // Fonts kept within sane range for phones
-  const titleFS = clampFS(28, 20, 30);
-  const appNameFS = clampFS(34, 22, 36);
-  const bodyFS = clampFS(16, 13, 18);
-  const smallFS = clampFS(14, 12, 16);
-  const sectionTitleFS = clampFS(20, 16, 22);
-  const memberFS = clampFS(16, 14, 18);
-  const mentorFS = clampFS(18, 15, 20);
+  // Font sizes
+  const titleFS = clampFS(26, 18, 28);
+  const appNameFS = clampFS(32, 24, 38);
+  const bodyFS = clampFS(15, 13, 17);
+  const smallFS = clampFS(13, 11, 15);
+  const sectionTitleFS = clampFS(22, 18, 26);
+  const memberFS = clampFS(15, 13, 17);
+  const mentorFS = clampFS(18, 16, 22);
 
-  // Images/icons
-  const logoSize = clamp(scale(80), 64, 96);
-  const partnerLogoSize = clamp(scale(80), 64, 92);
-  const iconSize = clamp(scale(26), 22, 28);
+  // Logo sizes - larger and more prominent
+  const logoSize = clamp(scale(110), 90, 140);
+  const partnerLogoSize = clamp(scale(70), 56, 86);
+  const iconSize = clamp(scale(24), 20, 26);
 
   const backBtnTop = insets.top + clamp(vScale(6), 2, 10);
-  const backBtnPad = clamp(scale(8), 6, 10);
+  const backBtnPad = clamp(scale(10), 8, 12);
 
   const styles = StyleSheet.create({
-    // Canvas
-    backgroundImage: {
+    container: {
       flex: 1,
-      width: '100%',
-      height: '100%',
-    },
-    overlay: {
-      flex: 1,
-      backgroundColor: 'rgba(242, 243, 245, 0.3)', // Semi-transparent overlay to maintain readability
+      backgroundColor: '#F8F9FA',
     },
     safe: { 
       flex: 1,
     }, 
 
-    // ====== HEADER (Pinned) ======
+    // Flat header design
     header: {
       position: 'absolute',
-      top: 0, left: 0, right: 0,
-      paddingTop: headerPadTop,
+      top: 0, 
+      left: 0, 
+      right: 0,
+      paddingTop: 70,
       paddingBottom: headerPadBottom,
       paddingHorizontal: hPad,
       alignItems: 'center',
       justifyContent: 'center',
-      // Enhanced shadow for background visibility
-      shadowColor: '#000',
-      shadowOpacity: 0.2,
-      shadowRadius: 16,
-      shadowOffset: { width: 0, height: 8 },
-      elevation: 0,
       zIndex: 10,
     },
 
-    // Back button: enhanced for background visibility
     backButton: {
       position: 'absolute',
       left: hPad,
       top: backBtnTop,
-      backgroundColor: 'rgba(255,255,255,0.5)',
-      borderRadius: 22,
+      backgroundColor: 'rgba(255,255,255,0.95)',
+      borderRadius: 24,
       padding: backBtnPad,
-      // Enhanced border for better visibility
-      borderWidth: StyleSheet.hairlineWidth,
-      borderColor: 'rgba(255,255,255,0.8)',
-      // Add shadow for depth
-      shadowColor: '#000',
-      shadowOpacity: 0.1,
-      shadowRadius: 8,
-      shadowOffset: { width: 0, height: 4 },
-      elevation: 3,
     },
 
     headerTitle: {
       fontSize: titleFS,
-      fontWeight: '800',
-      letterSpacing: 0.2,
+      fontWeight: '700',
+      letterSpacing: 0.5,
       color: '#fff',
       textAlign: 'center',
-      // Enhanced text shadow for background readability
-      textShadowColor: 'rgba(0,0,0,0.3)',
-      textShadowRadius: 8,
-      textShadowOffset: { width: 0, height: 2 },
+      top: -10,
     },
 
     scroll: {
       paddingHorizontal: hPad,
-      marginTop: clamp(vScale(16), 10, 20),
+      marginTop: clamp(vScale(20), 14, 26),
     },
 
-    // ====== CARDS (Enhanced for background) ======
+    // Flat card design without shadows
     brandCard: {
       width: '100%',
       alignItems: 'center',
-      backgroundColor: 'rgba(255, 255, 255, 0.95)', // Semi-transparent for background bleed
-      borderRadius: 18,
-      padding: cardPad,
-      // Enhanced shadow for better separation from background
-      shadowColor: '#000',
-      shadowOpacity: 0.12,
-      shadowRadius: 16,
-      shadowOffset: { width: 0, height: 8 },
-      elevation: 8,
-      marginBottom: clamp(vScale(16), 10, 18),
-      // Enhanced border for definition
-      borderWidth: 1,
-      borderColor: 'rgba(255,255,255,0.6)',
-      top: 70,
+      backgroundColor: '#fff',
+      borderRadius: 24,
+      padding: clamp(scale(32), 24, 40),
+      marginBottom: clamp(vScale(20), 14, 24),
+      marginTop: clamp(vScale(90), 70, 110),
+      borderWidth: 2,
+      borderColor: '#E5E7EB',
+    },
+
+    logoContainer: {
+      width: logoSize + 24,
+      height: logoSize + 24,
+      borderRadius: (logoSize + 24) / 2,
+      backgroundColor: '#F0F7F3',
+      alignItems: 'center',
+      justifyContent: 'center',
+      marginBottom: clamp(vScale(18), 14, 22),
+      borderWidth: 2,
+      borderColor: '#D1E5D8',
     },
 
     logo: {
       width: logoSize,
       height: logoSize,
-      marginBottom: clamp(vScale(8), 4, 12),
-      top: 20, 
     },
 
     appName: {
       fontSize: appNameFS,
-      fontWeight: '900',
-      color: '#2D5A3F',  // Slightly darker for better contrast
-      marginBottom: clamp(vScale(6), 4, 8),
-      letterSpacing: 0.3,
-      // Add text shadow for definition
-      textShadowColor: 'rgba(255,255,255,0.8)',
-      textShadowRadius: 2,
-      textShadowOffset: { width: 0, height: 1 },
+      fontWeight: '800',
+      color: '#2D5A3F',
+      marginBottom: clamp(vScale(8), 6, 10),
+      letterSpacing: 0.5,
+    },
+
+    tagline: {
+      fontSize: bodyFS,
+      color: '#6B7280',
+      textAlign: 'center',
+      marginBottom: clamp(vScale(4), 2, 6),
     },
 
     description: {
-      fontSize: bodyFS,
-      color: '#4B5563', // Darker for better contrast
+      fontSize: smallFS,
+      color: '#9CA3AF',
       textAlign: 'center',
+      fontStyle: 'italic',
     },
 
+    // Flat section cards
     sectionCard: {
       width: '100%',
-      backgroundColor: 'rgba(255, 255, 255, 0.95)', // Semi-transparent
-      borderRadius: 16,
+      backgroundColor: '#fff',
+      borderRadius: 20,
       padding: cardPad,
-      marginBottom: clamp(vScale(14), 10, 18),
-      shadowColor: '#000',
-      shadowOpacity: 0.1,
-      shadowRadius: 12,
-      shadowOffset: { width: 0, height: 6 },
-      elevation: 6,
-      borderWidth: 1,
-      borderColor: 'rgba(255,255,255,0.6)',
-      top: 70,
+      marginBottom: clamp(vScale(16), 12, 20),
+      borderWidth: 2,
+      borderColor: '#E5E7EB',
+    },
+
+    sectionHeader: {
+      flexDirection: 'row',
+      alignItems: 'center',
+      justifyContent: 'center',
+      marginBottom: clamp(vScale(16), 12, 20),
+    },
+
+    sectionIcon: {
+      width: clamp(scale(36), 30, 42),
+      height: clamp(scale(36), 30, 42),
+      borderRadius: 12,
+      backgroundColor: '#F0F7F3',
+      alignItems: 'center',
+      justifyContent: 'center',
+      marginRight: clamp(scale(10), 8, 12),
+      borderWidth: 2,
+      borderColor: '#D1E5D8',
     },
 
     sectionTitle: {
       fontSize: sectionTitleFS,
-      fontWeight: '800',
-      color: '#2D5A3F',
-      marginBottom: clamp(vScale(10), 8, 12),
-      textAlign: 'center',
-      letterSpacing: 0.2,
-      // Add text shadow for definition
-      textShadowColor: 'rgba(255,255,255,0.8)',
-      textShadowRadius: 2,
-      textShadowOffset: { width: 0, height: 1 },
+      fontWeight: '700',
+      color: '#1F2937',
+      letterSpacing: 0.3,
+    },
+
+    teamGrid: {
+      gap: clamp(vScale(10), 8, 12),
     },
 
     teamMember: {
       fontSize: memberFS,
-      fontWeight: '600',
-      color: '#1F2937', // Darker for better contrast
-      marginBottom: clamp(vScale(6), 4, 8),
-      textAlign: 'center',
+      fontWeight: '500',
+      color: '#374151',
+      paddingVertical: clamp(vScale(12), 10, 14),
+      paddingHorizontal: clamp(scale(16), 12, 18),
+      backgroundColor: '#F9FAFB',
+      borderRadius: 12,
+      borderLeftWidth: 4,
+      borderLeftColor: '#5E936C',
+      borderWidth: 1,
+      borderColor: '#E5E7EB',
+    },
+
+    mentorCard: {
+      backgroundColor: '#F0F7F3',
+      borderRadius: 16,
+      padding: clamp(scale(20), 16, 24),
+      alignItems: 'center',
+      borderWidth: 3,
+      borderColor: '#5E936C',
     },
 
     mentor: {
       fontSize: mentorFS,
       fontWeight: '700',
-      color: '#1F2937',
+      color: '#2D5A3F',
+      textAlign: 'center',
+    },
+
+    mentorRole: {
+      fontSize: smallFS,
+      color: '#6B7280',
+      marginTop: clamp(vScale(4), 2, 6),
       textAlign: 'center',
     },
 
     creditParagraph: {
       fontSize: bodyFS,
-      color: '#374151', // Darker for better contrast
+      color: '#4B5563',
       textAlign: 'center',
-      lineHeight: clamp(scale(22), 20, 26),
-      marginBottom: clamp(vScale(16), 10, 18),
+      lineHeight: clamp(scale(24), 20, 28),
+      marginBottom: clamp(vScale(20), 16, 24),
     },
 
     logoRow: {
       flexDirection: 'row',
-      flexWrap: 'wrap',
       justifyContent: 'center',
       alignItems: 'center',
-      columnGap: clamp(scale(20), 14, 24),
-      rowGap: clamp(vScale(10), 8, 12),
+      gap: clamp(scale(24), 18, 30),
+    },
+
+    partnerLogoContainer: {
+      width: partnerLogoSize + 16,
+      height: partnerLogoSize + 16,
+      borderRadius: 16,
+      backgroundColor: '#F9FAFB',
+      alignItems: 'center',
+      justifyContent: 'center',
+      borderWidth: 2,
+      borderColor: '#E5E7EB',
     },
 
     partnerLogo: {
       width: partnerLogoSize,
       height: partnerLogoSize,
       resizeMode: 'contain',
-      // Enhanced outline for better definition
-      borderWidth: 1,
-      borderColor: 'rgba(0,0,0,0.08)',
-      borderRadius: 12,
-      backgroundColor: 'rgba(255,255,255,0.8)', // Background for logo clarity
     },
 
-    // Links / meta (Enhanced for background)
-    link: {
+    // Flat footer section
+    footerCard: {
+      backgroundColor: '#fff',
+      borderRadius: 20,
+      padding: cardPad,
+      marginBottom: clamp(vScale(20), 16, 28),
+      alignItems: 'center',
+      borderWidth: 2,
+      borderColor: '#E5E7EB',
+    },
+
+    linkButton: {
+      flexDirection: 'row',
+      alignItems: 'center',
+      justifyContent: 'center',
+      backgroundColor: '#F0F7F3',
+      paddingVertical: clamp(vScale(12), 10, 14),
+      paddingHorizontal: clamp(scale(24), 18, 28),
+      borderRadius: 12,
+      marginBottom: clamp(vScale(12), 10, 14),
+      borderWidth: 2,
+      borderColor: '#D1E5D8',
+    },
+
+    linkText: {
       fontSize: bodyFS,
-      color: '#1E40AF', // Darker blue for better contrast
-      textAlign: 'center',
-      textDecorationLine: 'underline',
+      color: '#2D5A3F',
       fontWeight: '600',
-      marginTop: clamp(vScale(16), 10, 18),
-      top: 40,
-      paddingHorizontal: 12,
-      paddingVertical: 6,
-      borderRadius: 8,
-      alignSelf: 'center',
+      marginLeft: clamp(scale(8), 6, 10),
+    },
+
+    divider: {
+      height: 2,
+      backgroundColor: '#E5E7EB',
+      width: '100%',
+      marginVertical: clamp(vScale(12), 10, 14),
     },
 
     version: {
       fontSize: smallFS,
-      color: '#000000ff', // Darker for better contrast
+      color: '#6B7280',
       textAlign: 'center',
-      marginTop: clamp(vScale(8), 6, 10),
-      top: 40,
-      paddingHorizontal: 8,
-      paddingVertical: 4,
-      borderRadius: 6,
-      alignSelf: 'center',
+      marginBottom: clamp(vScale(6), 4, 8),
     },
 
     helpText: {
       fontSize: smallFS,
-      color: '#000000ff', // Darker for better contrast
+      color: '#9CA3AF',
       textAlign: 'center',
-      marginTop: clamp(vScale(6), 4, 8),
-      top: 40,
-      paddingHorizontal: 8,
-      paddingVertical: 4,
-      borderRadius: 6,
-      alignSelf: 'center',
-      marginBottom: clamp(vScale(20), 16, 24), // Extra bottom margin
     },
   });
 
   return (
-    <ImageBackground
-      source={require('../assets/background-about.png')} // Add your background image here
-      style={styles.backgroundImage}
-      resizeMode="cover"
-    >
-      <View style={styles.overlay}>
-        <SafeAreaView style={styles.safe} edges={['top', 'right', 'left', 'bottom']}>
-          {/* Header */}
-          <LinearGradient colors={['#5E936C', '#7FB28A']} style={styles.header}>
-            <TouchableOpacity style={styles.backButton} onPress={() => navigation.goBack()}>
-              <Ionicons name="arrow-back" size={iconSize} color="#fff" />
-            </TouchableOpacity>
-            <Text style={styles.headerTitle}>About</Text>
-          </LinearGradient>
+    <View style={styles.container}>
+      <SafeAreaView style={styles.safe} edges={['top', 'right', 'left', 'bottom']}>
+        <LinearGradient colors={['#5E936C', '#7FB28A']} style={styles.header}>
+          <TouchableOpacity style={styles.backButton} onPress={() => navigation.goBack()}>
+            <Ionicons name="arrow-back" size={iconSize} color="#2D5A3F" />
+          </TouchableOpacity>
+          <Text style={styles.headerTitle}>About</Text>
+        </LinearGradient>
 
-          <ScrollView
-            style={styles.scroll}
-            contentContainerStyle={{ paddingBottom: clamp(vScale(40), 24, 48) }}
-            showsVerticalScrollIndicator={false}
-          >
-            {/* Brand Section */}
-            <View style={styles.brandCard}>
-              <Image source={require('../assets/logo.png')} style={styles.logo} resizeMode="contain" />
-              <Text style={styles.appName}>LeafNest</Text>
-              <Text style={styles.description}>Developed & Designed by the LeafNest Team</Text>
+        <ScrollView
+          style={styles.scroll}
+          contentContainerStyle={{ paddingBottom: clamp(vScale(40), 28, 52) }}
+          showsVerticalScrollIndicator={false}
+        >
+          {/* Hero Brand Card */}
+          <View style={styles.brandCard}>
+            <View style={styles.logoContainer}>
+              <Image source={require('../assets/logo2.png')} style={styles.logo} resizeMode="contain" />
             </View>
+            <Text style={styles.appName}>LeafNest</Text>
+            <Text style={styles.tagline}>Plant & Animal Identification</Text>
+            <Text style={styles.description}>Developed & Designed by the LeafNest Team</Text>
+          </View>
 
-            {/* Team Section */}
-            <View style={styles.sectionCard}>
-              <Text style={styles.sectionTitle}>LeafNest Team</Text>
+          {/* Team Section */}
+          <View style={styles.sectionCard}>
+            <View style={styles.sectionHeader}>
+              <View style={styles.sectionIcon}>
+                <Ionicons name="people" size={clamp(scale(20), 18, 24)} color="#5E936C" />
+              </View>
+              <Text style={styles.sectionTitle}>Development Team</Text>
+            </View>
+            <View style={styles.teamGrid}>
               {[
                 'Lebron James Maranan',
                 'Arcel Joseph Santiago',
@@ -327,35 +360,62 @@ const ResponsiveAbout = ({ navigation }) => {
                 <Text key={idx} style={styles.teamMember}>{member}</Text>
               ))}
             </View>
+          </View>
 
-            {/* Mentor Section */}
-            <View style={styles.sectionCard}>
+          {/* Mentor Section */}
+          <View style={styles.sectionCard}>
+            <View style={styles.sectionHeader}>
+              <View style={styles.sectionIcon}>
+                <Ionicons name="star" size={clamp(scale(20), 18, 24)} color="#5E936C" />
+              </View>
               <Text style={styles.sectionTitle}>Special Thanks</Text>
-              <Text style={styles.mentor}>Mr. Joshua R. Lasac</Text>
             </View>
+            <View style={styles.mentorCard}>
+              <Text style={styles.mentor}>Mr. Joshua R. Lasac</Text>
+              <Text style={styles.mentorRole}>Project Mentor & Adviser</Text>
+            </View>
+          </View>
 
-            {/* Credits Section */}
-            <View style={styles.sectionCard}>
-              <Text style={styles.creditParagraph}>
-                Originally created by the LeafNest team with support from Pinamalayan Maritime
-                Foundation And Technological College INC. (PMFTCI) and the School of Computer Studies.
-              </Text>
-              <View style={styles.logoRow}>
+          {/* Credits Section */}
+          <View style={styles.sectionCard}>
+            <View style={styles.sectionHeader}>
+              <View style={styles.sectionIcon}>
+                <Ionicons name="school" size={clamp(scale(20), 18, 24)} color="#5E936C" />
+              </View>
+              <Text style={styles.sectionTitle}>Institutional Support</Text>
+            </View>
+            <Text style={styles.creditParagraph}>
+              Created with support from Pinamalayan Maritime Foundation And Technological College INC. 
+              (PMFTCI) and the School of Computer Studies.
+            </Text>
+            <View style={styles.logoRow}>
+              <View style={styles.partnerLogoContainer}>
                 <Image source={require('../assets/PMFTCI.png')} style={styles.partnerLogo} />
+              </View>
+              <View style={styles.partnerLogoContainer}>
                 <Image source={require('../assets/IT.png')} style={styles.partnerLogo} />
               </View>
             </View>
+          </View>
 
-            {/* Links + Version */}
-            <TouchableOpacity onPress={() => navigation.navigate('PrivacyPolicy')}>
-              <Text style={styles.link}>Privacy Policy</Text>
+          {/* Footer Info */}
+          <View style={styles.footerCard}>
+            <TouchableOpacity 
+              style={styles.linkButton}
+              onPress={() => navigation.navigate('PrivacyPolicy')}
+            >
+              <Ionicons name="document-text" size={clamp(scale(18), 16, 20)} color="#2D5A3F" />
+              <Text style={styles.linkText}>Privacy Policy</Text>
             </TouchableOpacity>
+            
+            <View style={styles.divider} />
+            
             <Text style={styles.version}>Version 0.0.1 (1)</Text>
             <Text style={styles.helpText}>For help: help.leafnest@gmail.com</Text>
-          </ScrollView>
-        </SafeAreaView>
-      </View>
-    </ImageBackground>
+          </View>
+        </ScrollView>
+      </SafeAreaView>
+    </View>
   );
 };
 

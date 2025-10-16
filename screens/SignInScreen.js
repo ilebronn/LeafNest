@@ -1,9 +1,11 @@
+//signinscreen.js
 import React, { useState } from 'react';
 import { View, Text, TextInput, TouchableOpacity, Alert, StyleSheet, ImageBackground, Dimensions, Platform } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import { useTranslation } from 'react-i18next';
 import { auth, signInWithEmailAndPassword } from '../firebase';
 import { clearAllUserData } from '../utils/userUtils';
+import { CommonActions } from '@react-navigation/native';
 
 const { width, height } = Dimensions.get('window');
 
@@ -27,10 +29,21 @@ export default function SignInScreen({ navigation }) {
       const userCredential = await signInWithEmailAndPassword(auth, email, password);
       const user = userCredential.user;
 
-      navigation.replace('MainTabs', {
-        screen: 'Home',
-        params: { guest: false, displayName: user.displayName },
-      });
+      // ✅ FIXED: Use reset instead of replace
+      navigation.dispatch(
+        CommonActions.reset({
+          index: 0,
+          routes: [
+            {
+              name: 'MainTabs',
+              params: {
+                screen: 'Home',
+                params: { guest: false, displayName: user.displayName },
+              },
+            },
+          ],
+        })
+      );
     } catch (error) {
       Alert.alert(t('common.error'), error.message);
     }
@@ -94,6 +107,19 @@ export default function SignInScreen({ navigation }) {
                 />
               </TouchableOpacity>
             </View>
+
+            {/* Forgot Password Link */}
+            <TouchableOpacity 
+              style={styles.forgotPasswordContainer}
+              onPress={() => navigation.navigate('ForgotPassword')}
+            >
+              <Text style={[
+                styles.forgotPasswordText,
+                isTablet && styles.forgotPasswordTextTablet
+              ]}>
+                Forgot Password?
+              </Text>
+            </TouchableOpacity>
 
             <TouchableOpacity 
               style={[
@@ -187,6 +213,7 @@ const styles = StyleSheet.create({
     shadowOpacity: 0.2,
     shadowRadius: 2,
     elevation: 3,
+    top: verticalScale(30),
   },
   inputTablet: {
     padding: moderateScale(22),
@@ -201,8 +228,26 @@ const styles = StyleSheet.create({
   eyeIcon: {
     position: 'absolute',
     right: scale(10),
-    top: verticalScale(9),
+    top: verticalScale(36),
     padding: moderateScale(10),
+    
+  },
+  forgotPasswordContainer: {
+    alignSelf: 'flex-end',
+    marginRight: scale(20),
+    marginTop: verticalScale(-10),
+    marginBottom: verticalScale(15),
+  },
+  forgotPasswordText: {
+    color: '#000000ff',
+    fontSize: moderateScale(14),
+    fontWeight: '600',
+    textDecorationLine: 'underline',
+    top: verticalScale(30),
+  },
+  forgotPasswordTextTablet: {
+    fontSize: moderateScale(16),
+    
   },
   button: {
     backgroundColor: '#5E936C',
@@ -219,6 +264,7 @@ const styles = StyleSheet.create({
     shadowOpacity: 0.25,
     shadowRadius: 3.84,
     elevation: 5,
+    top: verticalScale(30),
   },
   buttonTablet: {
     paddingVertical: verticalScale(18),
@@ -243,6 +289,7 @@ const styles = StyleSheet.create({
     textShadowColor: 'rgba(255, 255, 255, 0.8)',
     textShadowOffset: { width: 1, height: 1 },
     textShadowRadius: 2,
+    top: verticalScale(30),
   },
   switchTextTablet: {
     fontSize: moderateScale(20),

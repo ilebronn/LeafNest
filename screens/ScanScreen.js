@@ -4,6 +4,9 @@ import { CameraView, useCameraPermissions } from 'expo-camera';
 import { Ionicons } from '@expo/vector-icons';
 import axios from 'axios';
 import { GestureHandlerRootView, PinchGestureHandler } from 'react-native-gesture-handler';
+// ✅ ADD THESE IMPORTS
+import { recordScan } from '../firestoreService/scanStatsService';
+import { auth } from '../firebase';
 
 const GOOGLE_VISION_API_KEY = 'AIzaSyCRdWSqZJJcL1PfXK2gBEZzgmN_RqRahGw';
 
@@ -55,12 +58,11 @@ export default function ScanScreen({ navigation }) {
 
     setIsProcessing(true);
     try {
-      // IMPROVEMENT 1: Higher quality image capture
       const photo = await cameraRef.current.takePictureAsync({
-        quality: 1.0, // Maximum quality
+        quality: 1.0,
         base64: true,
         skipProcessing: false,
-        exif: true, // Include EXIF data
+        exif: true,
       });
       
       await analyzeImage(photo.base64, photo.uri);
@@ -75,7 +77,6 @@ export default function ScanScreen({ navigation }) {
     try {
       console.log('Starting multi-stage identification...');
       
-      // IMPROVEMENT 2: Prioritize iNaturalist visual recognition first
       const iNatResult = await tryVisualRecognition(base64Image);
       
       if (iNatResult && iNatResult.confidence >= 70) {
@@ -84,7 +85,6 @@ export default function ScanScreen({ navigation }) {
         return;
       }
 
-      // IMPROVEMENT 3: Enhanced Google Vision analysis
       console.log('Running enhanced Google Vision analysis...');
       const visionResponse = await axios.post(
         `https://vision.googleapis.com/v1/images:annotate?key=${GOOGLE_VISION_API_KEY}`,
@@ -96,7 +96,7 @@ export default function ScanScreen({ navigation }) {
                 { type: 'LABEL_DETECTION', maxResults: 20 },
                 { type: 'WEB_DETECTION', maxResults: 15 },
                 { type: 'IMAGE_PROPERTIES' },
-                { type: 'OBJECT_LOCALIZATION', maxResults: 10 }, // Added
+                { type: 'OBJECT_LOCALIZATION', maxResults: 10 },
               ],
             },
           ],
@@ -106,7 +106,6 @@ export default function ScanScreen({ navigation }) {
 
       const visionData = visionResponse?.data?.responses?.[0] || {};
       
-      // IMPROVEMENT 4: Better candidate extraction
       const candidates = extractBestCandidates(visionData);
       
       if (candidates.length === 0) {
@@ -117,7 +116,6 @@ export default function ScanScreen({ navigation }) {
 
       console.log('Top candidates:', candidates.slice(0, 5));
 
-      // IMPROVEMENT 5: Smart matching with iNaturalist
       const matchResult = await findBestINaturalistMatch(candidates, iNatResult);
 
       if (!matchResult) {
@@ -138,14 +136,12 @@ export default function ScanScreen({ navigation }) {
     }
   };
 
-  // IMPROVEMENT 6: Enhanced candidate extraction
   const extractBestCandidates = (visionData) => {
     const labels = visionData.labelAnnotations || [];
     const webEntities = visionData.webDetection?.webEntities || [];
     const webLabels = visionData.webDetection?.bestGuessLabels || [];
     const objects = visionData.localizedObjectAnnotations || [];
 
-    // More comprehensive filtering
     const genericTerms = [
       'photo', 'image', 'picture', 'camera', 'photography', 'snapshot',
       'nature', 'wildlife', 'organism', 'outdoor', 'natural', 'environment',
@@ -162,7 +158,6 @@ export default function ScanScreen({ navigation }) {
 
     const candidates = new Map();
 
-    // Process web best guess labels (highest priority)
     webLabels.forEach(item => {
       const text = (item.label || '').trim();
       if (text && text.length > 2 && !genericTerms.includes(text.toLowerCase())) {
@@ -174,7 +169,6 @@ export default function ScanScreen({ navigation }) {
       }
     });
 
-    // Process web entities
     webEntities.forEach(item => {
       const text = (item.description || '').trim();
       const score = (item.score || 0) * 100;
@@ -190,7 +184,6 @@ export default function ScanScreen({ navigation }) {
       }
     });
 
-    // Process object localization
     objects.forEach(item => {
       const text = (item.name || '').trim();
       const score = (item.score || 0) * 100;
@@ -206,7 +199,6 @@ export default function ScanScreen({ navigation }) {
       }
     });
 
-    // Process labels
     labels.forEach(item => {
       const text = (item.description || '').trim();
       const score = (item.score || 0) * 100;
@@ -215,17 +207,14 @@ export default function ScanScreen({ navigation }) {
       if (text && text.length > 2 && !genericTerms.includes(lower)) {
         let adjustedScore = score;
         
-        // Boost biological terms
         if (biologicalKeywords.some(kw => lower.includes(kw))) {
           adjustedScore *= 1.4;
         }
         
-        // Boost scientific names (capitalized genus + species)
         if (/^[A-Z][a-z]+\s+[a-z]+/.test(text)) {
           adjustedScore *= 2.0;
         }
         
-        // Boost multi-word specific terms
         if (text.includes(' ') && !biologicalKeywords.includes(lower)) {
           adjustedScore *= 1.3;
         }
@@ -241,7 +230,6 @@ export default function ScanScreen({ navigation }) {
       }
     });
 
-    // Convert to array and sort by score
     const sortedCandidates = Array.from(candidates.values())
       .sort((a, b) => b.score - a.score)
       .map(c => c.text);
@@ -249,7 +237,6 @@ export default function ScanScreen({ navigation }) {
     return sortedCandidates;
   };
 
-  // IMPROVEMENT 7: Enhanced visual recognition with retry
   const tryVisualRecognition = async (base64Image, retryCount = 0) => {
     try {
       const response = await axios.post(
@@ -265,7 +252,6 @@ export default function ScanScreen({ navigation }) {
       
       const results = response?.data?.results || [];
       
-      // Return top 3 results for consideration
       if (results.length > 0) {
         const topResults = results.slice(0, 3).map(r => ({
           taxonId: r.taxon.id,
@@ -275,22 +261,18 @@ export default function ScanScreen({ navigation }) {
           rank: r.taxon.rank,
         }));
 
-        // If top result has high confidence, return it
         if (topResults[0].confidence >= 70) {
           return topResults[0];
         }
 
-        // If top result is species level and has decent confidence, return it
         if (topResults[0].rank === 'species' && topResults[0].confidence >= 50) {
           return topResults[0];
         }
 
-        // Otherwise return the best one but mark confidence as moderate
         return topResults[0];
       }
     } catch (error) {
       console.warn('Visual recognition attempt failed:', error.message);
-      // Retry once if failed
       if (retryCount === 0) {
         await new Promise(resolve => setTimeout(resolve, 1000));
         return tryVisualRecognition(base64Image, 1);
@@ -299,12 +281,10 @@ export default function ScanScreen({ navigation }) {
     return null;
   };
 
-  // IMPROVEMENT 8: Smarter iNaturalist matching
   const findBestINaturalistMatch = async (possibleNames, iNatFallback) => {
     const matches = [];
     const searchedTerms = new Set();
     
-    // Limit to top 10 candidates to avoid rate limiting
     const candidatesToSearch = possibleNames.slice(0, 10);
 
     for (const name of candidatesToSearch) {
@@ -329,32 +309,27 @@ export default function ScanScreen({ navigation }) {
           const matchedTermLower = result.matched_term?.toLowerCase() || '';
           const isMatchedTermExact = matchedTermLower === normalized;
           
-          let score = 30; // Base score
+          let score = 30;
 
-          // Exact matches are highly valuable
           if (isExactMatch) score += 50;
           else if (isCommonNameMatch) score += 45;
           else if (isMatchedTermExact) score += 40;
           else if (resultNameLower.includes(normalized)) score += 25;
           else if (matchedTermLower.includes(normalized)) score += 20;
 
-          // Rank bonuses (prioritize species)
           if (result.rank === 'species') score += 30;
           else if (result.rank === 'subspecies') score += 25;
           else if (result.rank === 'genus') score += 15;
           else if (result.rank === 'family') score += 5;
 
-          // Photo availability
           if (result.default_photo?.medium_url) score += 15;
 
-          // Observation count (popularity indicator)
           const obsCount = result.observations_count || 0;
           if (obsCount > 10000) score += 20;
           else if (obsCount > 1000) score += 15;
           else if (obsCount > 100) score += 10;
           else if (obsCount > 10) score += 5;
 
-          // Research grade observations
           if (result.atlas_id) score += 10;
 
           matches.push({
@@ -368,7 +343,6 @@ export default function ScanScreen({ navigation }) {
           });
         }
 
-        // Small delay to avoid rate limiting
         await new Promise(resolve => setTimeout(resolve, 200));
         
       } catch (error) {
@@ -377,7 +351,6 @@ export default function ScanScreen({ navigation }) {
       }
     }
     
-    // If no text matches found, use iNat visual recognition result
     if (matches.length === 0 && iNatFallback) {
       return {
         taxonId: iNatFallback.taxonId,
@@ -388,15 +361,12 @@ export default function ScanScreen({ navigation }) {
 
     if (matches.length === 0) return null;
     
-    // Sort by score
     matches.sort((a, b) => b.score - a.score);
     
     const bestMatch = matches[0];
     
-    // Calculate confidence based on score and match quality
     let confidence = Math.min(bestMatch.score, 90);
     
-    // If we have iNat visual recognition, blend the confidence
     if (iNatFallback && iNatFallback.name === bestMatch.name) {
       confidence = Math.min((confidence + iNatFallback.confidence) / 2 + 10, 95);
     }
@@ -410,12 +380,33 @@ export default function ScanScreen({ navigation }) {
     };
   };
 
+  // ✅ UPDATED FUNCTION - Record scan only for authenticated users
   const processSuccessfulMatch = async (matchResult, photoUri) => {
     const [taxonDetails, gbifData, obsCount] = await Promise.all([
       fetchTaxonDetails(matchResult.taxonId),
       fetchGBIF(matchResult.name),
       fetchObservationCount(matchResult.taxonId),
     ]);
+
+    // ✅ Record scan ONLY for authenticated users (not guests)
+    const user = auth.currentUser;
+    if (user && user.email !== 'guest@leafnest.app') {
+      try {
+        await recordScan(user.uid, {
+          speciesName: matchResult.name,
+          plantName: matchResult.commonName || matchResult.name,
+          confidence: matchResult.confidence,
+          taxonId: matchResult.taxonId,
+          scanType: 'camera',
+        });
+        console.log('✅ Scan recorded for user:', user.uid);
+      } catch (error) {
+        console.warn('⚠️ Failed to record scan:', error);
+        // Don't block the user flow if recording fails
+      }
+    } else {
+      console.log('ℹ️ Guest user - scan not recorded');
+    }
 
     setIsProcessing(false);
     navigation.navigate('SpeciesLandingPage', {

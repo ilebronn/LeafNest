@@ -1,78 +1,25 @@
-import React, { useState, useEffect } from "react";
+import React, { useState } from "react";
 import {
-  SafeAreaView,
   View,
   Text,
   StyleSheet,
   TouchableOpacity,
-  Alert,
   Modal,
   Dimensions,
   ScrollView,
+  StatusBar,
 } from "react-native";
-import { Picker } from "@react-native-picker/picker";
 import { Ionicons } from "@expo/vector-icons";
-import { LinearGradient } from "expo-linear-gradient";
 import { useTranslation } from "react-i18next";
-import { auth } from "../firebase";
-import { signOut } from "firebase/auth";
 import { useLanguage } from "../contexts/LanguageContext";
-import UsernameEditModal from "../components/UsernameEditModal";
-import {
-  getCurrentUsername,
-  updateUsernameInFirebase,
-  clearAllUserData,
-} from "../utils/userUtils";
 
 const { width, height } = Dimensions.get('window');
 
-// Responsive sizing functions
-const scale = (size) => (width / 375) * size;
-const verticalScale = (size) => (height / 812) * size;
-const moderateScale = (size, factor = 0.5) => size + (scale(size) - size) * factor;
-
-// Device detection
-const isSmallScreen = width < 375;
-const isTablet = width > 600;
-
 export default function SettingsScreen({ navigation, route }) {
-  const isGuest = route?.params?.guest ?? false;
   const { t } = useTranslation();
-  const { currentLanguage, languages, changeLanguage, getCurrentLanguageName } =
-    useLanguage();
+  const { currentLanguage, languages, changeLanguage, getCurrentLanguageName } = useLanguage();
   const [showLanguagePicker, setShowLanguagePicker] = useState(false);
   const [selectedLanguage, setSelectedLanguage] = useState(currentLanguage);
-  const [username, setUsername] = useState("");
-  const [showUsernameModal, setShowUsernameModal] = useState(false);
-  const [loading, setLoading] = useState(false);
-
-  useEffect(() => {
-    loadUsername();
-  }, []);
-
-  const loadUsername = async () => {
-    if (!isGuest) {
-      const currentUsername = await getCurrentUsername();
-      setUsername(currentUsername || "");
-    }
-  };
-
-  const handleLogout = async () => {
-    try {
-      await clearAllUserData();
-
-      if (isGuest) {
-        navigation.reset({ index: 0, routes: [{ name: "Login" }] });
-        return;
-      }
-
-      await signOut(auth);
-      navigation.reset({ index: 0, routes: [{ name: "Login" }] });
-    } catch (e) {
-      console.error("Logout error:", e);
-      Alert.alert(t("common.error"), e?.message ?? t("settings.logoutError"));
-    }
-  };
 
   const handleLanguageChange = async () => {
     await changeLanguage(selectedLanguage);
@@ -84,255 +31,108 @@ export default function SettingsScreen({ navigation, route }) {
     setShowLanguagePicker(true);
   };
 
-  const handleUsernameUpdate = async (newUsername) => {
-    setLoading(true);
-    try {
-      await updateUsernameInFirebase(newUsername);
-      setUsername(newUsername);
-      setShowUsernameModal(false);
-      Alert.alert(t("common.success"), t("settings.usernameUpdated"));
-    } catch (error) {
-      Alert.alert(
-        t("common.error"),
-        error.message || t("settings.usernameUpdateError")
-      );
-    } finally {
-      setLoading(false);
-    }
-  };
+  const SettingsItem = ({ icon, title, subtitle, onPress, color, showChevron = true }) => (
+    <TouchableOpacity 
+      style={styles.settingsItem} 
+      onPress={onPress}
+      activeOpacity={0.7}
+    >
+      <View style={[styles.iconContainer, { backgroundColor: color }]}>
+        <Ionicons name={icon} size={24} color="#fff" />
+      </View>
+      <View style={styles.itemContent}>
+        <Text style={styles.itemTitle}>{title}</Text>
+        {subtitle && <Text style={styles.itemSubtitle}>{subtitle}</Text>}
+      </View>
+      {showChevron && <Ionicons name="chevron-forward" size={22} color="#999" />}
+    </TouchableOpacity>
+  );
+
+  const SectionHeader = ({ title }) => (
+    <Text style={styles.sectionHeader}>{title}</Text>
+  );
 
   return (
-    <SafeAreaView style={styles.safe}>
-      {/* Modern Gradient Header - Fixed at top */}
-      <LinearGradient
-        colors={["#5E936C", "#3E704C"]}
-        start={{ x: 0, y: 0 }}
-        end={{ x: 1, y: 1 }}
-        style={[
-          styles.topbar,
-          isTablet && styles.topbarTablet
-        ]}
-      >
-        <Text style={[
-          styles.topbarTitle,
-          isTablet && styles.topbarTitleTablet
-        ]}>
-          {t("settings.title")}
-        </Text>
-      </LinearGradient>
+    <View style={styles.container}>
+      <StatusBar barStyle="light-content" backgroundColor="#5E936C" />
+      
+      {/* Header */}
+      <View style={styles.header}>
+        <Text style={styles.headerTitle}>{t("settings.title") || "Settings"}</Text>
+        <View style={{ width: 44 }} />
+      </View>
 
       <ScrollView 
         style={styles.scrollView}
-        contentContainerStyle={[
-          styles.container,
-          isTablet && styles.containerTablet
-        ]}
         showsVerticalScrollIndicator={false}
+        contentContainerStyle={styles.scrollContent}
       >
-        {/* Username */}
-        {!isGuest && (
-          <TouchableOpacity
-            style={[
-              styles.card,
-              isTablet && styles.cardTablet
-            ]}
-            onPress={() => setShowUsernameModal(true)}
-          >
-            <Ionicons name="person-outline" size={moderateScale(22)} color="#5E936C" />
-            <View style={styles.cardText}>
-              <Text style={[
-                styles.label,
-                isTablet && styles.labelTablet
-              ]}>
-                {t("settings.username")}
-              </Text>
-              <Text style={[
-                styles.value,
-                isTablet && styles.valueTablet
-              ]}>
-                {username || t("common.loading")}
-              </Text>
-            </View>
-            <Ionicons name="create-outline" size={moderateScale(20)} color="#999" />
-          </TouchableOpacity>
-        )}
+        {/* General Section */}
+        <SectionHeader title="General" />
+        <View style={styles.section}>
+          <SettingsItem
+            icon="information-circle-outline"
+            title={t("settings.about") || "About"}
+            subtitle={t("settings.appName") || "LeafNest"}
+            onPress={() => navigation.navigate("AboutScreen")}
+            color="#5E936C"
+          />
+          <SettingsItem
+            icon="language-outline"
+            title={t("settings.language") || "Language"}
+            subtitle={getCurrentLanguageName()}
+            onPress={openLanguagePicker}
+            color="#2196F3"
+          />
+        </View>
 
-        {/* About */}
-        <TouchableOpacity
-          style={[
-            styles.card,
-            isTablet && styles.cardTablet
-          ]}
-          onPress={() => navigation.navigate("AboutScreen")}
-        >
-          <Ionicons name="information-circle-outline" size={moderateScale(22)} color="#5E936C" />
-          <View style={styles.cardText}>
-            <Text style={[
-              styles.label,
-              isTablet && styles.labelTablet
-            ]}>
-              {t("settings.about")}
-            </Text>
-            <Text style={[
-              styles.value,
-              isTablet && styles.valueTablet
-            ]}>
-              {t("settings.appName")}
-            </Text>
-          </View>
-          <Ionicons name="chevron-forward" size={moderateScale(20)} color="#999" />
-        </TouchableOpacity>
+        {/* Support Section */}
+        <SectionHeader title="Support" />
+        <View style={styles.section}>
+          <SettingsItem
+            icon="help-circle-outline"
+            title={t("settings.help") || "Help"}
+            onPress={() => navigation.navigate("HelpScreen")}
+            color="#9C27B0"
+          />
+          <SettingsItem
+            icon="chatbubble-ellipses-outline"
+            title={t("settings.sendFeedback") || "Send Feedback"}
+            onPress={() => navigation.navigate("SendFeedbackScreen")}
+            color="#00BCD4"
+          />
+          <SettingsItem
+            icon="help-buoy-outline"
+            title={t("settings.faq") || "FAQ"}
+            onPress={() => navigation.navigate("FAQScreen")}
+            color="#FF5722"
+          />
+        </View>
 
-        {/* Language */}
-        <TouchableOpacity 
-          style={[
-            styles.card,
-            isTablet && styles.cardTablet
-          ]} 
-          onPress={openLanguagePicker}
-        >
-          <Ionicons name="language-outline" size={moderateScale(22)} color="#5E936C" />
-          <View style={styles.cardText}>
-            <Text style={[
-              styles.label,
-              isTablet && styles.labelTablet
-            ]}>
-              {t("settings.language")}
-            </Text>
-            <Text style={[
-              styles.value,
-              isTablet && styles.valueTablet
-            ]}>
-              {getCurrentLanguageName()}
-            </Text>
-          </View>
-          <Ionicons name="chevron-forward" size={moderateScale(20)} color="#999" />
-        </TouchableOpacity>
+        {/* Legal Section */}
+        <SectionHeader title="Legal" />
+        <View style={styles.section}>
+          <SettingsItem
+            icon="document-text-outline"
+            title={t("settings.termsOfUse") || "Terms of Use"}
+            onPress={() => navigation.navigate("TermsOfUse")}
+            color="#607D8B"
+          />
+          <SettingsItem
+            icon="shield-checkmark-outline"
+            title="Privacy Policy"
+            onPress={() => navigation.navigate("CookiesPolicy")}
+            color="#795548"
+          />
+        </View>
 
-        {/* Plan */}
-        <TouchableOpacity
-          style={[
-            styles.card,
-            isTablet && styles.cardTablet
-          ]}
-          onPress={() => navigation.navigate("PlanScreen")}
-        >
-          <Ionicons name="star-outline" size={moderateScale(22)} color="#5E936C" />
-          <View style={styles.cardText}>
-            <Text style={[
-              styles.label,
-              isTablet && styles.labelTablet
-            ]}>
-              {t("settings.yourPlan")}
-            </Text>
-            <Text style={[
-              styles.value,
-              isTablet && styles.valueTablet
-            ]}>
-              {t("settings.leafNestFree")}
-            </Text>
-          </View>
-          <Ionicons name="chevron-forward" size={moderateScale(20)} color="#999" />
-        </TouchableOpacity>
+        {/* App Version */}
+        <View style={styles.versionContainer}>
+          <Text style={styles.versionText}>LeafNest v1.0.0</Text>
+          <Text style={styles.copyrightText}>© 2025 LeafNest. All rights reserved.</Text>
+        </View>
 
-        {/* Help */}
-        <TouchableOpacity
-          style={[
-            styles.card,
-            isTablet && styles.cardTablet
-          ]}
-          onPress={() => navigation.navigate("HelpScreen")}
-        >
-          <Ionicons name="help-circle-outline" size={moderateScale(22)} color="#5E936C" />
-          <View style={styles.cardText}>
-            <Text style={[
-              styles.value,
-              isTablet && styles.valueTablet
-            ]}>
-              {t("settings.help")}
-            </Text>
-          </View>
-          <Ionicons name="chevron-forward" size={moderateScale(20)} color="#999" />
-        </TouchableOpacity>
-
-        {/* Feedback */}
-        <TouchableOpacity
-          style={[
-            styles.card,
-            isTablet && styles.cardTablet
-          ]}
-          onPress={() => navigation.navigate("SendFeedbackScreen")}
-        >
-          <Ionicons name="chatbubble-ellipses-outline" size={moderateScale(22)} color="#5E936C" />
-          <View style={styles.cardText}>
-            <Text style={[
-              styles.value,
-              isTablet && styles.valueTablet
-            ]}>
-              {t("settings.sendFeedback")}
-            </Text>
-          </View>
-          <Ionicons name="chevron-forward" size={moderateScale(20)} color="#999" />
-        </TouchableOpacity>
-
-        {/* FAQ */}
-        <TouchableOpacity
-          style={[
-            styles.card,
-            isTablet && styles.cardTablet
-          ]}
-          onPress={() => navigation.navigate("FAQScreen")}
-        >
-          <Ionicons name="help-buoy-outline" size={moderateScale(22)} color="#5E936C" />
-          <View style={styles.cardText}>
-            <Text style={[
-              styles.value,
-              isTablet && styles.valueTablet
-            ]}>
-              {t("settings.faq")}
-            </Text>
-          </View>
-          <Ionicons name="chevron-forward" size={moderateScale(20)} color="#999" />
-        </TouchableOpacity>
-
-        {/* Terms */}
-        <TouchableOpacity
-          style={[
-            styles.card,
-            isTablet && styles.cardTablet
-          ]}
-          onPress={() => navigation.navigate("TermsOfUse")}
-        >
-          <Ionicons name="document-text-outline" size={moderateScale(22)} color="#5E936C" />
-          <View style={styles.cardText}>
-            <Text style={[
-              styles.value,
-              isTablet && styles.valueTablet
-            ]}>
-              {t("settings.termsOfUse")}
-            </Text>
-          </View>
-          <Ionicons name="chevron-forward" size={moderateScale(20)} color="#999" />
-        </TouchableOpacity>
-
-        {/* Logout */}
-        {!isGuest && (
-          <TouchableOpacity 
-            style={[
-              styles.logoutBtn,
-              isTablet && styles.logoutBtnTablet
-            ]} 
-            onPress={handleLogout}
-          >
-            <Ionicons name="log-out-outline" size={moderateScale(20)} color="#fff" />
-            <Text style={[
-              styles.logoutText,
-              isTablet && styles.logoutTextTablet
-            ]}>
-              {t("settings.logout") || "Log Out"}
-            </Text>
-          </TouchableOpacity>
-        )}
+        <View style={{ height: 40 }} />
       </ScrollView>
 
       {/* Language Picker Modal */}
@@ -343,282 +143,241 @@ export default function SettingsScreen({ navigation, route }) {
         onRequestClose={() => setShowLanguagePicker(false)}
       >
         <View style={styles.modalOverlay}>
-          <View style={[
-            styles.modalContent,
-            isTablet && styles.modalContentTablet
-          ]}>
+          <View style={styles.modalContent}>
             <View style={styles.modalHeader}>
-              <Text style={[
-                styles.modalTitle,
-                isTablet && styles.modalTitleTablet
-              ]}>
-                {t("settings.selectLanguage")}
+              <Text style={styles.modalTitle}>
+                {t("settings.selectLanguage") || "Select Language"}
               </Text>
               <TouchableOpacity
                 onPress={() => setShowLanguagePicker(false)}
                 style={styles.closeButton}
+                activeOpacity={0.7}
               >
-                <Ionicons name="close" size={moderateScale(24)} color="#666" />
+                <Ionicons name="close" size={28} color="#666" />
               </TouchableOpacity>
             </View>
 
-            <Picker
-              selectedValue={selectedLanguage}
-              onValueChange={(itemValue) => setSelectedLanguage(itemValue)}
-              style={[
-                styles.picker,
-                isTablet && styles.pickerTablet
-              ]}
-            >
+            <ScrollView style={styles.languageList}>
               {languages.map((language) => (
-                <Picker.Item
+                <TouchableOpacity
                   key={language.code}
-                  label={`${language.nativeName} (${language.name})`}
-                  value={language.code}
-                />
+                  style={[
+                    styles.languageItem,
+                    selectedLanguage === language.code && styles.languageItemSelected
+                  ]}
+                  onPress={() => setSelectedLanguage(language.code)}
+                  activeOpacity={0.7}
+                >
+                  <View>
+                    <Text style={styles.languageName}>{language.nativeName}</Text>
+                    <Text style={styles.languageCode}>{language.name}</Text>
+                  </View>
+                  {selectedLanguage === language.code && (
+                    <Ionicons name="checkmark-circle" size={24} color="#5E936C" />
+                  )}
+                </TouchableOpacity>
               ))}
-            </Picker>
+            </ScrollView>
 
             <View style={styles.modalButtons}>
               <TouchableOpacity
-                style={[
-                  styles.modalButton, 
-                  styles.cancelButton,
-                  isTablet && styles.modalButtonTablet
-                ]}
+                style={[styles.modalButton, styles.cancelButton]}
                 onPress={() => setShowLanguagePicker(false)}
+                activeOpacity={0.7}
               >
-                <Text style={[
-                  styles.cancelButtonText,
-                  isTablet && styles.buttonTextTablet
-                ]}>
-                  {t("common.cancel")}
+                <Text style={styles.cancelButtonText}>
+                  {t("common.cancel") || "Cancel"}
                 </Text>
               </TouchableOpacity>
               <TouchableOpacity
-                style={[
-                  styles.modalButton, 
-                  styles.saveButton,
-                  isTablet && styles.modalButtonTablet
-                ]}
+                style={[styles.modalButton, styles.saveButton]}
                 onPress={handleLanguageChange}
+                activeOpacity={0.7}
               >
-                <Text style={[
-                  styles.saveButtonText,
-                  isTablet && styles.buttonTextTablet
-                ]}>
-                  {t("common.save")}
+                <Text style={styles.saveButtonText}>
+                  {t("common.save") || "Save"}
                 </Text>
               </TouchableOpacity>
             </View>
           </View>
         </View>
       </Modal>
-
-      {/* Username modal */}
-      <UsernameEditModal
-        visible={showUsernameModal}
-        onClose={() => setShowUsernameModal(false)}
-        onSave={handleUsernameUpdate}
-        loading={loading}
-        initialValue={username}
-      />
-    </SafeAreaView>
+    </View>
   );
 }
 
 const styles = StyleSheet.create({
-  safe: { 
-    flex: 1, 
-    backgroundColor: "#f9f9f9" 
+  container: {
+    flex: 1,
+    backgroundColor: '#f8f9fa',
   },
-topbar: {
-    position: 'absolute',  // Fix to the top
-    top: 0,                // Always at the top
-    left: 0,
-    right: 0,
-    paddingVertical: verticalScale(30),
-    alignItems: 'center',
-    justifyContent: 'center',
-    borderBottomLeftRadius: moderateScale(30),
-    borderBottomRightRadius: moderateScale(30),
-    shadowColor: "#000",
-    shadowOpacity: 0.15,
-    shadowRadius: 6,
-    elevation: 5,
-    zIndex: 10,
-  },
-  topbarTablet: {
-    paddingVertical: verticalScale(40),
-    borderBottomLeftRadius: moderateScale(40),
-    borderBottomRightRadius: moderateScale(40),
-  },
-  topbarTitle: {
-    color: "#fff",
-    fontSize: moderateScale(28),
-    fontWeight: "700",
-    marginTop: verticalScale(10),
-  },
-  topbarTitleTablet: {
-    fontSize: moderateScale(34),
-    marginTop: verticalScale(15),
-  },
-
-
+  header: {
+  backgroundColor: '#5E936C',
+  paddingTop: 50,
+  paddingBottom: 20,
+  paddingHorizontal: 20,
+  flexDirection: 'row',
+  alignItems: 'center',
+  justifyContent: 'space-between', // Important for even spacing
+  borderBottomLeftRadius: 40,
+  borderBottomRightRadius: 40,
+},
+  headerTitle: {
+  fontSize: 30,
+  fontWeight: '700',
+  color: '#fff',
+  textAlign: 'center',
+  flex: 1,
+  right: -20, 
+},
   scrollView: {
     flex: 1,
-    marginTop: verticalScale(90),
   },
-  container: {
-    padding: scale(20),
-    paddingBottom: verticalScale(40),
+  scrollContent: {
+    padding: 20,
   },
-  containerTablet: {
-    paddingHorizontal: scale(60),
-    maxWidth: 800,
-    alignSelf: 'center',
-    width: '100%',
+  sectionHeader: {
+    fontSize: 14,
+    fontWeight: '700',
+    color: '#999',
+    textTransform: 'uppercase',
+    letterSpacing: 0.5,
+    marginTop: 20,
+    marginBottom: 12,
+    marginLeft: 4,
   },
-
-    card: {
-    flexDirection: "row",
-    alignItems: "center",
-    backgroundColor: "#fff",
-    borderRadius: moderateScale(20), // Adjusts the border radius for different screen sizes
-    padding: isTablet ? scale(25) : scale(20), // More padding on tablet-sized devices
-    marginBottom: verticalScale(15),
-    width: isTablet ? '80%' : '100%', // Smaller width on tablet for consistency
-    maxWidth: 400, // Max width to avoid over-expansion on large screens
-    shadowColor: "#000",
-    shadowOpacity: 0.5, // Increased opacity for more visible shadow
-    shadowRadius: 8,
-    elevation: 23,
-    marginHorizontal: isTablet ? '10%' : '1%', // Adjusted horizontal margin for tablet screens
+  section: {
+    backgroundColor: '#fff',
+    borderRadius: 16,
+    overflow: 'hidden',
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.08,
+    shadowRadius: 4,
+    elevation: 3,
   },
-  cardTablet: {
-    padding: scale(24),
-    marginBottom: verticalScale(16),
-    borderRadius: moderateScale(20),
+  settingsItem: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    padding: 16,
+    borderBottomWidth: 1,
+    borderBottomColor: '#f0f0f0',
   },
-  cardText: {
+  iconContainer: {
+    width: 44,
+    height: 44,
+    borderRadius: 22,
+    justifyContent: 'center',
+    alignItems: 'center',
+    marginRight: 15,
+  },
+  itemContent: {
     flex: 1,
-    marginLeft: scale(12),
   },
-  label: { 
-    fontSize: moderateScale(13), 
-    color: "#888" 
+  itemTitle: {
+    fontSize: 16,
+    fontWeight: '600',
+    color: '#333',
+    marginBottom: 2,
   },
-  labelTablet: {
-    fontSize: moderateScale(15),
+  itemSubtitle: {
+    fontSize: 13,
+    color: '#999',
   },
-  value: { 
-    fontSize: moderateScale(16), 
-    fontWeight: "600", 
-    color: "#333" 
+  versionContainer: {
+    alignItems: 'center',
+    paddingVertical: 30,
   },
-  valueTablet: {
-    fontSize: moderateScale(18),
+  versionText: {
+    fontSize: 13,
+    color: '#999',
+    marginBottom: 4,
   },
-
-  logoutBtn: {
-    flexDirection: "row",
-    alignItems: "center",
-    justifyContent: "center",
-    backgroundColor: "#E63946",
-    paddingVertical: verticalScale(14),
-    borderRadius: moderateScale(16),
-    marginTop: verticalScale(20),
+  copyrightText: {
+    fontSize: 12,
+    color: '#bbb',
   },
-  logoutBtnTablet: {
-    paddingVertical: verticalScale(18),
-    borderRadius: moderateScale(20),
-    marginTop: verticalScale(30),
-  },
-  logoutText: {
-    color: "#fff",
-    fontSize: moderateScale(16),
-    fontWeight: "700",
-    marginLeft: scale(6),
-  },
-  logoutTextTablet: {
-    fontSize: moderateScale(18),
-  },
-
   modalOverlay: {
     flex: 1,
-    backgroundColor: "rgba(0,0,0,0.5)",
-    justifyContent: "center",
-    alignItems: "center",
+    backgroundColor: 'rgba(0, 0, 0, 0.5)',
+    justifyContent: 'flex-end',
   },
   modalContent: {
-    backgroundColor: "#fff",
-    borderRadius: moderateScale(20),
-    padding: scale(20),
-    width: "85%",
-    maxHeight: "70%",
-  },
-  modalContentTablet: {
-    width: "70%",
-    maxWidth: 600,
-    padding: scale(30),
-    borderRadius: moderateScale(24),
+    backgroundColor: '#fff',
+    borderTopLeftRadius: 30,
+    borderTopRightRadius: 30,
+    padding: 20,
+    maxHeight: height * 0.7,
   },
   modalHeader: {
-    flexDirection: "row",
-    justifyContent: "space-between",
-    alignItems: "center",
-    marginBottom: verticalScale(20),
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    marginBottom: 20,
+    paddingBottom: 15,
+    borderBottomWidth: 1,
+    borderBottomColor: '#f0f0f0',
   },
-  modalTitle: { 
-    fontSize: moderateScale(18), 
-    fontWeight: "700", 
-    color: "#333" 
+  modalTitle: {
+    fontSize: 20,
+    fontWeight: '700',
+    color: '#333',
   },
-  modalTitleTablet: {
-    fontSize: moderateScale(22),
+  closeButton: {
+    padding: 4,
   },
-  closeButton: { 
-    padding: moderateScale(5) 
+  languageList: {
+    maxHeight: height * 0.4,
   },
-  picker: { 
-    height: verticalScale(200), 
-    marginBottom: verticalScale(20) 
+  languageItem: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    padding: 16,
+    borderRadius: 12,
+    marginBottom: 8,
+    backgroundColor: '#f8f9fa',
   },
-  pickerTablet: {
-    height: verticalScale(250),
+  languageItemSelected: {
+    backgroundColor: '#E8F5E9',
+    borderWidth: 2,
+    borderColor: '#5E936C',
+  },
+  languageName: {
+    fontSize: 16,
+    fontWeight: '600',
+    color: '#333',
+    marginBottom: 2,
+  },
+  languageCode: {
+    fontSize: 13,
+    color: '#999',
   },
   modalButtons: {
-    flexDirection: "row",
-    justifyContent: "space-between",
-    gap: scale(10),
+    flexDirection: 'row',
+    gap: 12,
+    marginTop: 20,
   },
   modalButton: {
     flex: 1,
-    paddingVertical: verticalScale(12),
-    borderRadius: moderateScale(10),
-    alignItems: "center",
+    padding: 16,
+    borderRadius: 12,
+    alignItems: 'center',
   },
-  modalButtonTablet: {
-    paddingVertical: verticalScale(15),
-    borderRadius: moderateScale(12),
+  cancelButton: {
+    backgroundColor: '#f0f0f0',
   },
-  cancelButton: { 
-    backgroundColor: "#f0f0f0" 
+  saveButton: {
+    backgroundColor: '#5E936C',
   },
-  saveButton: { 
-    backgroundColor: "#5E936C" 
+  cancelButtonText: {
+    color: '#666',
+    fontWeight: '600',
+    fontSize: 16,
   },
-  cancelButtonText: { 
-    color: "#666", 
-    fontWeight: "600",
-    fontSize: moderateScale(14),
-  },
-  saveButtonText: { 
-    color: "#fff", 
-    fontWeight: "600",
-    fontSize: moderateScale(14),
-  },
-  buttonTextTablet: {
-    fontSize: moderateScale(16),
+  saveButtonText: {
+    color: '#fff',
+    fontWeight: '600',
+    fontSize: 16,
   },
 });

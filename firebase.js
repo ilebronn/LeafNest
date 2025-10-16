@@ -1,7 +1,8 @@
 // firebase.js
 import { initializeApp, getApps, getApp } from 'firebase/app';
 import { getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword, sendEmailVerification, updateProfile, initializeAuth, getReactNativePersistence } from 'firebase/auth';
-import { getFirestore, collection, doc, setDoc, getDoc, getDocs, addDoc, updateDoc, deleteDoc, query, where, orderBy, serverTimestamp } from 'firebase/firestore'; // ✅ ADD THIS LINE
+import { getFirestore, collection, doc, setDoc, getDoc, getDocs, addDoc, updateDoc, deleteDoc, query, where, orderBy, serverTimestamp } from 'firebase/firestore';
+import { getFunctions, httpsCallable } from 'firebase/functions';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { Platform } from 'react-native';
 
@@ -31,18 +32,22 @@ if (Platform.OS === 'web') {
   auth = globalThis._firebaseAuthInstance;
 }
 
-// ✅ ADD THIS: Initialize Firestore
+// Initialize Firestore
 const db = getFirestore(app);
 
-// ✅ UPDATE THIS: Export everything (added db and Firestore functions)
+// Initialize Cloud Functions with region
+const functions = getFunctions(app, 'us-central1'); // ✅ Added region
+
+// Export everything
 export { 
   auth, 
-  db,  // ✅ ADD THIS
+  db,
+  functions,
+  httpsCallable,
   createUserWithEmailAndPassword, 
   signInWithEmailAndPassword, 
   sendEmailVerification, 
   updateProfile,
-  // ✅ ADD THESE Firestore functions
   collection,
   doc,
   setDoc,

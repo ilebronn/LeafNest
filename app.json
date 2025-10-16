@@ -9,31 +9,18 @@
     "newArchEnabled": true,
     "scheme": "leafnest",
 
-    "splash": {
-      "image": "./assets/splash-icon.png", 
-      "resizeMode": "cover", 
-      "backgroundColor": "#bff6dc"
-    },
-
     "ios": {
       "supportsTablet": true,
-      "splash": {
-        "image": "./assets/splash-icon.png",
-        "resizeMode": "contain",
-        "backgroundColor": "#bff6dc"
+      "infoPlist": {
+        "UILaunchStoryboardName": ""
       }
     },
 
     "android": {
       "package": "com.dev.leafnest",
-      "splash": {
-        "image": "./assets/splash-icon.png",
-        "resizeMode": "contain",
-        "backgroundColor": "#bff6dc"
-      },
       "adaptiveIcon": {
         "foregroundImage": "./assets/adaptive-icon.png",
-        "backgroundColor": "#bff6dc"
+        "backgroundColor": "#ffffff"
       },
       "edgeToEdgeEnabled": true
     },
