@@ -11,9 +11,7 @@ const stripHtmlTags = (htmlString) => {
   if (!htmlString) return '';
   
   let cleaned = htmlString
-    // Remove all HTML tags
     .replace(/<\/?[^>]+(>|$)/g, "")
-    // Remove HTML entities
     .replace(/&nbsp;/g, " ")
     .replace(/&amp;/g, "&")
     .replace(/&lt;/g, "<")
@@ -21,19 +19,166 @@ const stripHtmlTags = (htmlString) => {
     .replace(/&quot;/g, '"')
     .replace(/&#39;/g, "'")
     .replace(/&[a-z]+;/gi, "")
-    // Remove extra whitespace
     .replace(/\s+/g, " ")
-    // Remove any remaining angle brackets
     .replace(/[<>]/g, "")
     .trim();
   
   return cleaned;
 };
 
+// Enhanced description builder
+const buildComprehensiveDescription = (wikiData, wikiCommonData, wikiInfoboxData, fallbackAbout) => {
+  const descriptions = [
+    wikiData?.fullDescription,
+    wikiCommonData?.fullDescription,
+    wikiInfoboxData?.description,
+    fallbackAbout
+  ].filter(d => d && d.length > 100);
+
+  if (descriptions.length === 0) {
+    return stripHtmlTags(fallbackAbout || 'No description available.');
+  }
+
+  descriptions.sort((a, b) => b.length - a.length);
+  let combined = descriptions[0];
+
+  for (let i = 1; i < descriptions.length; i++) {
+    const additionalDesc = descriptions[i];
+    const firstSentences = new Set(
+      combined.split(/[.!?]+/).map(s => s.trim().toLowerCase()).filter(s => s.length > 20)
+    );
+
+    const additionalSentences = additionalDesc.split(/[.!?]+/);
+    const uniqueSentences = additionalSentences.filter(s => {
+      const trimmed = s.trim().toLowerCase();
+      return trimmed.length > 20 && !firstSentences.has(trimmed);
+    });
+
+    if (uniqueSentences.length > 0) {
+      const sentencesToAdd = uniqueSentences.slice(0, 15).map(s => s.trim()).join('. ');
+      combined += ` ${sentencesToAdd}`;
+    }
+  }
+
+  combined = stripHtmlTags(combined);
+  combined = combined.replace(/\[\d+\]/g, '');
+  combined = combined.replace(/\[citation needed\]/gi, '');
+  combined = combined.replace(/\.{3,}/g, '');
+  combined = combined.replace(/\s{2,}/g, ' ');
+  combined = combined.replace(/\n{3,}/g, '\n\n');
+  combined = combined.trim();
+
+  if (combined && !combined.match(/[.!?]$/)) {
+    const lastPunctuation = Math.max(
+      combined.lastIndexOf('.'),
+      combined.lastIndexOf('?'),
+      combined.lastIndexOf('!')
+    );
+    if (lastPunctuation > combined.length - 500) {
+      combined = combined.substring(0, lastPunctuation + 1);
+    } else {
+      combined += '.';
+    }
+  }
+
+  return combined;
+};
+
+const expandDescriptionWithDetails = (description, wikiData, wikiCommonData, eolData) => {
+  let expanded = description;
+
+  if (wikiData?.characteristics) {
+    expanded += ` Physical characteristics include: ${stripHtmlTags(wikiData.characteristics)}`;
+  }
+
+  if (wikiData?.behavior) {
+    expanded += ` Behaviorally, ${stripHtmlTags(wikiData.behavior)}`;
+  }
+
+  if (wikiData?.habitat) {
+    expanded += ` This species inhabits ${stripHtmlTags(wikiData.habitat)}`;
+  }
+
+  if (wikiData?.distribution) {
+    expanded += ` Geographically, ${stripHtmlTags(wikiData.distribution)}`;
+  }
+
+  if (wikiData?.uses) {
+    expanded += ` In terms of human interaction and importance, ${stripHtmlTags(wikiData.uses)}`;
+  }
+
+  if (wikiCommonData && wikiCommonData !== wikiData) {
+    if (wikiCommonData.characteristics) {
+      expanded += ` Additional biological details: ${stripHtmlTags(wikiCommonData.characteristics)}`;
+    }
+    if (wikiCommonData.behavior) {
+      expanded += ` Further behavioral observations: ${stripHtmlTags(wikiCommonData.behavior)}`;
+    }
+  }
+
+  expanded = stripHtmlTags(expanded);
+  expanded = expanded.replace(/\s{2,}/g, ' ').trim();
+
+  return expanded;
+};
+
+// Fallback generator when external APIs fail
+const generateDetailedDescription = (commonName, scientificName, rank, iconicTaxon, taxonomy, about, gbifOccurrence, conservation) => {
+  let description = '';
+
+  if (about && about.length > 50) {
+    description = stripHtmlTags(about) + ' ';
+  } else {
+    description = `${commonName || scientificName} is a ${rank} belonging to the ${iconicTaxon} group. `;
+  }
+
+  if (taxonomy && taxonomy.length > 0) {
+    const taxonomyInfo = taxonomy.map(t => `${t.label}: ${t.value}`).join(', ');
+    description += `Taxonomically, this species is classified as follows: ${taxonomyInfo}. `;
+  }
+
+  if (iconicTaxon) {
+    const taxonDescriptions = {
+      'Plantae': 'As a plant, this species plays an important role in ecosystems by producing oxygen, providing food and shelter for fauna, and contributing to nutrient cycling. Many plant species have been utilized by humans for medicinal, nutritional, and commercial purposes throughout history.',
+      'Animalia': `This is an animal species. Animals are multicellular organisms that play crucial roles in their ecosystems. They may serve as predators, prey, pollinators, or decomposers depending on their ecological niche. ${commonName || scientificName} exhibits behaviors and characteristics adapted to its specific environmental requirements.`,
+      'Fungi': 'As a fungus, this organism plays a critical role in decomposition and nutrient cycling in ecosystems. Fungi form symbiotic relationships with plants and animals, break down organic matter, and contribute to soil health and fertility. Some fungal species are edible and have been used in cuisine and medicine.',
+      'Bacteria': 'This is a bacterial species. Bacteria are single-celled prokaryotic organisms found in virtually every environment on Earth. They play essential roles in nutrient cycling, decomposition, and various other ecological processes. Some bacterial species have significant impacts on human health, agriculture, and industry.',
+      'Archaea': 'This is an archaeal species. Archaea are ancient microorganisms that often thrive in extreme environments such as hot springs, salt lakes, and deep ocean hydrothermal vents. They play important roles in biogeochemical cycles and represent a distinct branch of microbial life.',
+      'Protozoa': 'This is a protozoal organism. Protozoans are single-celled or simple multicellular eukaryotes found in aquatic and moist environments. They play important roles in food webs as both consumers and producers, and some species have significance in human health.',
+      'Chromista': 'This is a member of the Chromista group, which includes diverse organisms such as diatoms and brown algae. These organisms are photosynthetic and play vital roles in aquatic ecosystems, particularly in ocean productivity and oxygen production.',
+      'Incertae sedis': 'This species belongs to a taxonomic group whose exact classification remains uncertain. Such organisms are of particular scientific interest as they help researchers understand evolutionary relationships and may represent unique evolutionary lineages.'
+    };
+
+    if (taxonDescriptions[iconicTaxon]) {
+      description += taxonDescriptions[iconicTaxon] + ' ';
+    }
+  }
+
+  if (gbifOccurrence?.distribution) {
+    description += `${gbifOccurrence.distribution}. `;
+  } else {
+    description += `This species has been documented and studied across various regions globally. `;
+  }
+
+  if (conservation) {
+    description += `Conservation Status: ${conservation}. `;
+  }
+
+  description += `This species occupies specific ecological niches and contributes to the biodiversity of its habitat. Understanding the distribution, behavior, and ecological requirements of this species is crucial for conservation efforts and environmental management. `;
+
+  description += `Like many species, ${commonName || scientificName} is of interest to researchers, naturalists, and conservationists who work to document and preserve Earth's biological diversity. `;
+
+  description += `If you encounter this species in the wild, consider contributing your observations to citizen science platforms to help expand our understanding of its distribution and ecology.`;
+
+  description = stripHtmlTags(description);
+  description = description.replace(/\s{2,}/g, ' ').trim();
+
+  return description;
+};
+
 export default function SpeciesLandingPage({ route, navigation }) {
   const { photoUri, speciesData, iNaturalistData, iNatObsCount, confidence } = route.params || {};
 
-  // Name & basics
   const commonName = iNaturalistData?.preferred_common_name || null;
   const scientificName =
     iNaturalistData?.name ||
@@ -45,7 +190,6 @@ export default function SpeciesLandingPage({ route, navigation }) {
   const iconicTaxon = iNaturalistData?.iconic_taxon_name || '—';
   const taxonId = iNaturalistData?.id || null;
 
-  // Photo: captured photo first, then iNat default photo, then any taxon photo
   const fallbackPhoto =
     iNaturalistData?.default_photo?.medium_url ||
     iNaturalistData?.default_photo?.square_url ||
@@ -54,7 +198,6 @@ export default function SpeciesLandingPage({ route, navigation }) {
 
   const displayImageUri = photoUri || fallbackPhoto || null;
 
-  // GBIF taxonomy rows
   const taxonomy = [
     { label: 'Kingdom', value: speciesData?.kingdom },
     { label: 'Phylum', value: speciesData?.phylum },
@@ -65,7 +208,6 @@ export default function SpeciesLandingPage({ route, navigation }) {
     { label: 'Species', value: speciesData?.species || speciesData?.canonicalName },
   ].filter(x => !!x.value);
 
-  // Conservation + About (if present from iNat show)
   const conservation =
     iNaturalistData?.conservation_status?.status_name ||
     iNaturalistData?.conservation_status?.iucn_status ||
@@ -76,17 +218,14 @@ export default function SpeciesLandingPage({ route, navigation }) {
     iNaturalistData?.wikipedia_summary ||
     null;
 
-  // Clean up HTML tags in the About section
   const cleanAboutText = about ? stripHtmlTags(about) : 'No description available for this species.';
 
-  // State for controlling the TTS and favorite
   const [isSpeaking, setIsSpeaking] = useState(false);
   const [isFavorite, setIsFavorite] = useState(false);
   const [favoriteId, setFavoriteId] = useState(null);
-  
-  // NEW: State for additional data
   const [isLoadingDetails, setIsLoadingDetails] = useState(true);
   const [fullDescription, setFullDescription] = useState('');
+  const [isDescriptionExpanded, setIsDescriptionExpanded] = useState(false);
   const [additionalInfo, setAdditionalInfo] = useState({
     habitat: null,
     distribution: null,
@@ -98,7 +237,9 @@ export default function SpeciesLandingPage({ route, navigation }) {
     alternativeNames: [],
   });
 
-  // Save to history when component mounts
+  // Character limit for description preview
+  const DESCRIPTION_PREVIEW_LENGTH = 500;
+
   useEffect(() => {
     saveToHistory();
     checkIfFavorited();
@@ -108,90 +249,53 @@ export default function SpeciesLandingPage({ route, navigation }) {
   const fetchAdditionalDetails = async () => {
     setIsLoadingDetails(true);
     try {
-      // Fetch Wikipedia data for comprehensive info
-      const wikiData = await fetchWikipediaData(scientificName);
-      
-      // Also try common name if available
-      let wikiDataCommon = null;
-      if (commonName && commonName !== scientificName) {
-        wikiDataCommon = await fetchWikipediaData(commonName);
-      }
-      
-      // Fetch GBIF occurrence data for distribution
       const gbifOccurrence = speciesData?.usageKey 
         ? await fetchGBIFOccurrence(speciesData.usageKey)
         : null;
 
-      // Fetch EOL (Encyclopedia of Life) data
-      const eolData = await fetchEOLData(scientificName);
+      let wikiData = await fetchWikipediaData(scientificName).catch(() => null);
+      let wikiDataCommon = null;
+      
+      if (commonName && commonName !== scientificName) {
+        wikiDataCommon = await fetchWikipediaData(commonName).catch(() => null);
+      }
+      
+      const eolData = await fetchEOLData(scientificName).catch(() => null);
+      const wikiInfoboxData = await fetchWikipediaInfobox(scientificName).catch(() => null);
 
-      // Use the longest/most complete description available, prioritize fullness
       let fullDesc = '';
       
-      // Strategy 1: Use the longest description available
-      const descriptions = [
-        wikiData?.fullDescription,
-        wikiDataCommon?.fullDescription,
-        about
-      ].filter(d => d && d.length > 100);
-      
-      // Sort by length and take the longest
-      descriptions.sort((a, b) => b.length - a.length);
-      fullDesc = descriptions[0] || cleanAboutText;
-      
-      // Strategy 2: If we have multiple good descriptions, intelligently combine them
-      if (descriptions.length > 1 && descriptions[0].length < 2000) {
-        // If the first description is less than 2000 chars, try to add unique content from others
-        const firstDesc = descriptions[0];
-        const secondDesc = descriptions[1];
-        
-        // Extract unique sentences from second description
-        const firstSentences = new Set(firstDesc.split(/[.!?]+/).map(s => s.trim().toLowerCase()));
-        const secondSentences = secondDesc.split(/[.!?]+/);
-        const uniqueSentences = secondSentences.filter(s => 
-          s.trim().length > 20 && !firstSentences.has(s.trim().toLowerCase())
+      if (wikiData?.fullDescription || wikiDataCommon?.fullDescription || wikiInfoboxData?.description) {
+        fullDesc = buildComprehensiveDescription(
+          wikiData,
+          wikiDataCommon,
+          wikiInfoboxData,
+          about
         );
-        
-        if (uniqueSentences.length > 0) {
-          fullDesc = firstDesc + ' ' + uniqueSentences.slice(0, 10).join('. ').trim() + '.';
-        }
-      }
-      
-      // Clean the description thoroughly
-      fullDesc = stripHtmlTags(fullDesc);
-      
-      // Remove reference markers like [1], [2], etc.
-      fullDesc = fullDesc.replace(/\[\d+\]/g, '');
-      fullDesc = fullDesc.replace(/\[citation needed\]/gi, '');
-      
-      // Remove trailing ellipsis and ensure proper ending
-      fullDesc = fullDesc.replace(/\.{3,}/g, '').trim();
-      
-      // Clean up spacing
-      fullDesc = fullDesc.replace(/\s{2,}/g, ' ');
-      fullDesc = fullDesc.replace(/\n{3,}/g, '\n\n');
-      
-      if (fullDesc && !fullDesc.match(/[.!?]$/)) {
-        const lastPunctuation = Math.max(
-          fullDesc.lastIndexOf('.'),
-          fullDesc.lastIndexOf('?'),
-          fullDesc.lastIndexOf('!')
+      } else {
+        fullDesc = generateDetailedDescription(
+          commonName,
+          scientificName,
+          rank,
+          iconicTaxon,
+          taxonomy,
+          about,
+          gbifOccurrence,
+          conservation
         );
-        if (lastPunctuation > fullDesc.length - 500) {
-          fullDesc = fullDesc.substring(0, lastPunctuation + 1);
-        } else {
-          fullDesc += '.';
-        }
       }
-      
+
+      if (fullDesc.length < 1500) {
+        fullDesc = expandDescriptionWithDetails(fullDesc, wikiData, wikiDataCommon, eolData);
+      }
+
       console.log(`Final description length: ${fullDesc.length} characters`);
       setFullDescription(fullDesc);
 
-      // Combine all data sources
       setAdditionalInfo({
         habitat: stripHtmlTags(wikiData?.habitat || wikiDataCommon?.habitat || eolData?.habitat || extractHabitat(fullDesc)),
         distribution: stripHtmlTags(gbifOccurrence?.distribution || wikiData?.distribution || wikiDataCommon?.distribution || extractDistribution(fullDesc)),
-        characteristics: stripHtmlTags(wikiData?.characteristics || wikiDataCommon?.characteristics || extractCharacteristics(fullDesc)),
+        characteristics: stripHtmlTags(wikiData?.characteristics || wikiDataCommon?.characteristics || wikiInfoboxData?.characteristics || extractCharacteristics(fullDesc)),
         behavior: stripHtmlTags(wikiData?.behavior || wikiDataCommon?.behavior || eolData?.behavior || extractBehavior(fullDesc)),
         threats: conservation ? `Conservation Status: ${conservation}` : 'Threat information not available',
         uses: stripHtmlTags(wikiData?.uses || wikiDataCommon?.uses || eolData?.uses || extractUses(fullDesc)),
@@ -208,85 +312,72 @@ export default function SpeciesLandingPage({ route, navigation }) {
 
   const fetchWikipediaData = async (speciesName) => {
     try {
-      // Method 1: Get COMPLETE Wikipedia article (NO sentence limit)
       const fullArticleResponse = await axios.get(
         `https://en.wikipedia.org/w/api.php?action=query&titles=${encodeURIComponent(speciesName)}&prop=extracts&explaintext=true&exsectionformat=plain&format=json&origin=*`,
-        { timeout: 20000 }
+        { 
+          timeout: 25000,
+          headers: {
+            'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36'
+          }
+        }
       );
       
       const pages = fullArticleResponse.data?.query?.pages;
       const pageId = Object.keys(pages)[0];
       let fullExtract = pages[pageId]?.extract || '';
       
-      // Clean the text thoroughly
-      fullExtract = stripHtmlTags(fullExtract);
-      
-      // Remove any "..." or truncation markers
-      fullExtract = fullExtract.replace(/\.{3,}/g, '');
-      
-      // Remove reference markers [1], [2], etc.
-      fullExtract = fullExtract.replace(/\[\d+\]/g, '');
-      fullExtract = fullExtract.replace(/\[citation needed\]/gi, '');
-      
-      // Remove "See also", "References", "External links" sections and everything after
-      fullExtract = fullExtract.replace(/==\s*(See also|References|External links|Further reading|Notes|Citations|Bibliography)[\s\S]*$/gi, '');
-      
-      // Remove section markers like "== Section Name =="
-      fullExtract = fullExtract.replace(/==+\s*.*?\s*==+/g, '');
-      
-      // Clean up multiple spaces and newlines
-      fullExtract = fullExtract.replace(/\n{3,}/g, '\n\n');
-      fullExtract = fullExtract.replace(/\s{2,}/g, ' ');
-      
-      // Ensure text ends with proper punctuation
-      if (fullExtract && !fullExtract.match(/[.!?]$/)) {
-        const lastPeriod = fullExtract.lastIndexOf('.');
-        const lastQuestion = fullExtract.lastIndexOf('?');
-        const lastExclamation = fullExtract.lastIndexOf('!');
-        const lastPunctuation = Math.max(lastPeriod, lastQuestion, lastExclamation);
-        
-        if (lastPunctuation > fullExtract.length - 500) {
-          fullExtract = fullExtract.substring(0, lastPunctuation + 1);
-        } else {
-          fullExtract += '.';
+      if (fullExtract && fullExtract.length > 300) {
+        fullExtract = stripHtmlTags(fullExtract);
+        fullExtract = fullExtract.replace(/\.{3,}/g, '');
+        fullExtract = fullExtract.replace(/\[\d+\]/g, '');
+        fullExtract = fullExtract.replace(/\[citation needed\]/gi, '');
+        fullExtract = fullExtract.replace(/==\s*(See also|References|External links|Further reading|Notes|Citations|Bibliography|Sources)[\s\S]*$/gi, '');
+        fullExtract = fullExtract.replace(/==+\s*.*?\s*==+/g, '');
+        fullExtract = fullExtract.replace(/\n{3,}/g, '\n\n');
+        fullExtract = fullExtract.replace(/\s{2,}/g, ' ');
+
+        if (fullExtract && !fullExtract.match(/[.!?]$/)) {
+          const lastPeriod = fullExtract.lastIndexOf('.');
+          if (lastPeriod > 0) {
+            fullExtract = fullExtract.substring(0, lastPeriod + 1);
+          } else {
+            fullExtract += '.';
+          }
+        }
+
+        if (fullExtract.length > 800) {
+          console.log(`✓ Fetched comprehensive Wikipedia article: ${fullExtract.length} characters`);
+          return {
+            fullDescription: fullExtract.trim(),
+            habitat: extractHabitat(fullExtract),
+            distribution: extractDistribution(fullExtract),
+            characteristics: extractCharacteristics(fullExtract),
+            behavior: extractBehavior(fullExtract),
+            uses: extractUses(fullExtract),
+          };
         }
       }
-      
-      // If we got substantial content (at least 500 characters), use it
-      if (fullExtract && fullExtract.length > 500) {
-        console.log(`Fetched full Wikipedia article: ${fullExtract.length} characters`);
-        return {
-          fullDescription: fullExtract.trim(),
-          habitat: extractHabitat(fullExtract),
-          distribution: extractDistribution(fullExtract),
-          characteristics: extractCharacteristics(fullExtract),
-          behavior: extractBehavior(fullExtract),
-          uses: extractUses(fullExtract),
-        };
-      }
-      
-      // Method 2: Try alternative Wikipedia API with revisions
+
       const revisionResponse = await axios.get(
-        `https://en.wikipedia.org/w/api.php?action=query&titles=${encodeURIComponent(speciesName)}&prop=revisions&rvprop=content&rvslots=main&format=json&origin=*&formatversion=2`,
-        { timeout: 15000 }
+        `https://en.wikipedia.org/w/api.php?action=query&titles=${encodeURIComponent(speciesName)}&prop=revisions&rvprop=content&rvslots=main&format=json&origin=*&formatversion=2&explaintext=true`,
+        { timeout: 20000 }
       );
       
       const revisionContent = revisionResponse.data?.query?.pages?.[0]?.revisions?.[0]?.slots?.main?.content;
-      if (revisionContent) {
-        // Parse wikitext to plain text (basic parsing)
+      if (revisionContent && revisionContent.length > 500) {
         let plainText = revisionContent
-          .replace(/\{\{[^}]+\}\}/g, '') // Remove templates
-          .replace(/\[\[([^|\]]+\|)?([^\]]+)\]\]/g, '$2') // Convert links
-          .replace(/<[^>]+>/g, '') // Remove HTML tags
-          .replace(/'{2,}/g, '') // Remove bold/italic markers
-          .replace(/^[=]+.*[=]+$/gm, '') // Remove headers
-          .replace(/\[\d+\]/g, ''); // Remove references
-        
+          .replace(/\{\{[^}]+\}\}/g, '')
+          .replace(/\[\[([^|\]]+\|)?([^\]]+)\]\]/g, '$2')
+          .replace(/<[^>]+>/g, '')
+          .replace(/'{2,}/g, '')
+          .replace(/^[=]+.*[=]+$/gm, '')
+          .replace(/\[\d+\]/g, '');
+
         plainText = stripHtmlTags(plainText);
-        plainText = plainText.replace(/\.{3,}/g, '').trim();
-        
-        if (plainText.length > 500) {
-          console.log(`Fetched Wikipedia revision: ${plainText.length} characters`);
+        plainText = plainText.replace(/\.{3,}/g, '').replace(/\n{3,}/g, '\n\n').trim();
+
+        if (plainText.length > 800) {
+          console.log(`✓ Fetched Wikipedia revision content: ${plainText.length} characters`);
           return {
             fullDescription: plainText,
             habitat: extractHabitat(plainText),
@@ -297,32 +388,21 @@ export default function SpeciesLandingPage({ route, navigation }) {
           };
         }
       }
-      
-      // Method 3: Fallback to REST API summary (shorter content)
+
       const summaryResponse = await axios.get(
         `https://en.wikipedia.org/api/rest_v1/page/summary/${encodeURIComponent(speciesName)}`,
-        { timeout: 5000 }
+        { timeout: 8000 }
       );
-      
+
       let extract = summaryResponse.data?.extract || '';
       extract = stripHtmlTags(extract);
-      extract = extract.replace(/\.{3,}/g, '');
-      extract = extract.replace(/\[\d+\]/g, '');
-      
+      extract = extract.replace(/\.{3,}/g, '').replace(/\[\d+\]/g, '');
+
       if (extract && !extract.match(/[.!?]$/)) {
-        const lastPunctuation = Math.max(
-          extract.lastIndexOf('.'),
-          extract.lastIndexOf('?'),
-          extract.lastIndexOf('!')
-        );
-        if (lastPunctuation > 0) {
-          extract = extract.substring(0, lastPunctuation + 1);
-        } else {
-          extract += '.';
-        }
+        extract += '.';
       }
-      
-      console.log(`Fetched Wikipedia summary: ${extract.length} characters`);
+
+      console.log(`✓ Fetched Wikipedia summary: ${extract.length} characters`);
       return {
         fullDescription: extract.trim(),
         habitat: extractHabitat(extract),
@@ -333,6 +413,37 @@ export default function SpeciesLandingPage({ route, navigation }) {
       };
     } catch (error) {
       console.warn('Wikipedia fetch failed:', error.message);
+      return null;
+    }
+  };
+
+  const fetchWikipediaInfobox = async (speciesName) => {
+    try {
+      const response = await axios.get(
+        `https://en.wikipedia.org/w/api.php?action=query&titles=${encodeURIComponent(speciesName)}&prop=revisions&rvprop=content&rvslots=main&format=json&origin=*&formatversion=2`,
+        { 
+          timeout: 10000,
+          headers: {
+            'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36'
+          }
+        }
+      );
+
+      const content = response.data?.query?.pages?.[0]?.revisions?.[0]?.slots?.main?.content || '';
+      const infoboxMatch = content.match(/\{\{[^|]*Infobox[^}]*\}\}/s);
+      
+      if (infoboxMatch) {
+        const infoboxText = stripHtmlTags(infoboxMatch[0]).replace(/[{}|=]/g, ' ').trim();
+        return {
+          description: infoboxText,
+          characteristics: extractCharacteristics(infoboxText),
+          taxonomy: infoboxText.substring(0, 300),
+        };
+      }
+
+      return null;
+    } catch (error) {
+      console.warn('Infobox fetch failed:', error.message);
       return null;
     }
   };
@@ -356,23 +467,29 @@ export default function SpeciesLandingPage({ route, navigation }) {
 
   const fetchEOLData = async (speciesName) => {
     try {
-      // Search for the species in EOL
       const searchResponse = await axios.get(
         `https://eol.org/api/search/1.0.json?q=${encodeURIComponent(speciesName)}&page=1`,
-        { timeout: 5000 }
+        { timeout: 8000 }
       );
       
       if (searchResponse.data?.results?.length > 0) {
         const eolId = searchResponse.data.results[0].id;
         
-        // Fetch detailed info
         const detailResponse = await axios.get(
           `https://eol.org/api/pages/1.0/${eolId}.json?details=true`,
-          { timeout: 5000 }
+          { timeout: 8000 }
         );
         
+        const dataObjects = detailResponse.data?.dataObjects || [];
+        const descriptions = dataObjects
+          .filter(obj => obj.dataType === 'http://purl.org/dc/dcmitype/Text')
+          .map(obj => stripHtmlTags(obj.description || obj.richDescription || ''))
+          .filter(d => d && d.length > 100);
+
         return {
-          habitat: detailResponse.data?.dataObjects?.find(obj => obj.dataType === 'http://purl.org/dc/dcmitype/Text')?.description,
+          habitat: descriptions.find(d => d.toLowerCase().includes('habitat')) || descriptions[0],
+          behavior: descriptions.find(d => d.toLowerCase().includes('behav')) || descriptions[1],
+          uses: descriptions.find(d => d.toLowerCase().includes('use')) || descriptions[2],
         };
       }
     } catch (error) {
@@ -381,9 +498,8 @@ export default function SpeciesLandingPage({ route, navigation }) {
     return null;
   };
 
-  // Helper functions to extract info from text - ENHANCED to get more content
   const extractHabitat = (text) => {
-    const habitatKeywords = ['habitat', 'found in', 'lives in', 'native to', 'grows in', 'occurs in', 'inhabits', 'dwelling', 'environment'];
+    const habitatKeywords = ['habitat', 'found in', 'lives in', 'native to', 'grows in', 'occurs in', 'inhabits', 'dwelling', 'environment', 'ecosystem'];
     const sentences = text.split(/[.!?]+/);
     const habitatSentences = [];
     
@@ -391,7 +507,7 @@ export default function SpeciesLandingPage({ route, navigation }) {
       const lowerSentence = sentence.toLowerCase();
       if (habitatKeywords.some(keyword => lowerSentence.includes(keyword))) {
         habitatSentences.push(sentence.trim());
-        if (habitatSentences.length >= 3) break; // Get up to 3 relevant sentences
+        if (habitatSentences.length >= 5) break;
       }
     }
     
@@ -401,7 +517,7 @@ export default function SpeciesLandingPage({ route, navigation }) {
   };
 
   const extractDistribution = (text) => {
-    const distKeywords = ['distributed', 'range', 'endemic', 'native to', 'found throughout', 'widespread', 'region', 'continent', 'country', 'geographical'];
+    const distKeywords = ['distributed', 'range', 'endemic', 'native to', 'found throughout', 'widespread', 'region', 'continent', 'country', 'geographical', 'tropical', 'temperate', 'arctic'];
     const sentences = text.split(/[.!?]+/);
     const distSentences = [];
     
@@ -409,7 +525,7 @@ export default function SpeciesLandingPage({ route, navigation }) {
       const lowerSentence = sentence.toLowerCase();
       if (distKeywords.some(keyword => lowerSentence.includes(keyword))) {
         distSentences.push(sentence.trim());
-        if (distSentences.length >= 3) break;
+        if (distSentences.length >= 5) break;
       }
     }
     
@@ -419,7 +535,7 @@ export default function SpeciesLandingPage({ route, navigation }) {
   };
 
   const extractCharacteristics = (text) => {
-    const charKeywords = ['characterized by', 'features', 'appearance', 'measures', 'size', 'color', 'shaped', 'length', 'weight', 'plumage', 'feathers', 'bill', 'wingspan', 'tail'];
+    const charKeywords = ['characterized by', 'features', 'appearance', 'measures', 'size', 'color', 'shaped', 'length', 'weight', 'plumage', 'feathers', 'bill', 'wingspan', 'tail', 'structure', 'morphology', 'distinct'];
     const sentences = text.split(/[.!?]+/);
     const characteristics = [];
     
@@ -427,7 +543,7 @@ export default function SpeciesLandingPage({ route, navigation }) {
       const lowerSentence = sentence.toLowerCase();
       if (charKeywords.some(keyword => lowerSentence.includes(keyword))) {
         characteristics.push(sentence.trim());
-        if (characteristics.length >= 5) break; // Get up to 5 relevant sentences
+        if (characteristics.length >= 7) break;
       }
     }
     
@@ -437,7 +553,7 @@ export default function SpeciesLandingPage({ route, navigation }) {
   };
 
   const extractBehavior = (text) => {
-    const behaviorKeywords = ['behavior', 'feeds on', 'diet', 'active', 'nocturnal', 'diurnal', 'social', 'breeding', 'nesting', 'foraging', 'hunting', 'migration', 'territorial'];
+    const behaviorKeywords = ['behavior', 'behaves', 'feeds on', 'diet', 'active', 'nocturnal', 'diurnal', 'social', 'breeding', 'nesting', 'foraging', 'hunting', 'migration', 'territorial', 'habits', 'activity'];
     const sentences = text.split(/[.!?]+/);
     const behaviorSentences = [];
     
@@ -445,7 +561,7 @@ export default function SpeciesLandingPage({ route, navigation }) {
       const lowerSentence = sentence.toLowerCase();
       if (behaviorKeywords.some(keyword => lowerSentence.includes(keyword))) {
         behaviorSentences.push(sentence.trim());
-        if (behaviorSentences.length >= 4) break;
+        if (behaviorSentences.length >= 6) break;
       }
     }
     
@@ -455,7 +571,7 @@ export default function SpeciesLandingPage({ route, navigation }) {
   };
 
   const extractUses = (text) => {
-    const useKeywords = ['used for', 'medicinal', 'cultivated', 'economic', 'traditional', 'commercial', 'agriculture', 'farming', 'domesticated', 'value', 'important'];
+    const useKeywords = ['used for', 'medicinal', 'cultivated', 'economic', 'traditional', 'commercial', 'agriculture', 'farming', 'domesticated', 'value', 'important', 'significance', 'benefit', 'application'];
     const sentences = text.split(/[.!?]+/);
     const useSentences = [];
     
@@ -463,7 +579,7 @@ export default function SpeciesLandingPage({ route, navigation }) {
       const lowerSentence = sentence.toLowerCase();
       if (useKeywords.some(keyword => lowerSentence.includes(keyword))) {
         useSentences.push(sentence.trim());
-        if (useSentences.length >= 3) break;
+        if (useSentences.length >= 5) break;
       }
     }
     
@@ -480,7 +596,6 @@ export default function SpeciesLandingPage({ route, navigation }) {
         return;
       }
 
-      // Create history entry
       const historyEntry = {
         plantName: commonName || scientificName,
         name: commonName || scientificName,
@@ -526,7 +641,6 @@ export default function SpeciesLandingPage({ route, navigation }) {
     }
   };
 
-  // Function to handle text-to-speech
   const handleSpeech = () => {
     if (isSpeaking) {
       Speech.stop();
@@ -544,7 +658,6 @@ export default function SpeciesLandingPage({ route, navigation }) {
     setIsSpeaking(!isSpeaking);
   };
 
-  // Function to toggle favorite state
   const toggleFavorite = async () => {
     try {
       const uid = auth.currentUser?.uid;
@@ -554,7 +667,6 @@ export default function SpeciesLandingPage({ route, navigation }) {
       }
 
       if (isFavorite && favoriteId) {
-        // Remove from favorites
         const result = await removeFromFavorites(uid, favoriteId);
         
         if (result.success) {
@@ -565,7 +677,6 @@ export default function SpeciesLandingPage({ route, navigation }) {
           Alert.alert('Error', 'Failed to remove from favorites. Please try again.');
         }
       } else {
-        // Add to favorites
         const favoriteData = {
           plantName: commonName || scientificName,
           name: commonName || scientificName,
@@ -594,10 +705,30 @@ export default function SpeciesLandingPage({ route, navigation }) {
     }
   };
 
-  // Stop TTS when navigating back
   const handleBackPress = () => {
     Speech.stop();
     navigation.goBack();
+  };
+
+  // Function to get preview text
+  const getDescriptionPreview = () => {
+    if (fullDescription.length <= DESCRIPTION_PREVIEW_LENGTH) {
+      return fullDescription;
+    }
+    
+    // Find the last complete sentence within the limit
+    const preview = fullDescription.substring(0, DESCRIPTION_PREVIEW_LENGTH);
+    const lastPeriod = preview.lastIndexOf('.');
+    const lastQuestion = preview.lastIndexOf('?');
+    const lastExclamation = preview.lastIndexOf('!');
+    
+    const lastPunctuation = Math.max(lastPeriod, lastQuestion, lastExclamation);
+    
+    if (lastPunctuation > DESCRIPTION_PREVIEW_LENGTH * 0.7) {
+      return fullDescription.substring(0, lastPunctuation + 1);
+    }
+    
+    return preview + '...';
   };
 
   return (
@@ -646,7 +777,6 @@ export default function SpeciesLandingPage({ route, navigation }) {
               </TouchableOpacity>
             </View>
 
-            {/* Description/About Section - FULL VERSION */}
             <View style={styles.card}>
               <View style={styles.cardHeader}>
                 <Ionicons name="information-circle" size={24} color="#00695c" />
@@ -659,12 +789,31 @@ export default function SpeciesLandingPage({ route, navigation }) {
                 </View>
               ) : (
                 <>
-                  <Text style={styles.fullDescription}>{fullDescription}</Text>
+                  <Text style={styles.fullDescription}>
+                    {isDescriptionExpanded ? fullDescription : getDescriptionPreview()}
+                  </Text>
+                  
+                  {fullDescription.length > DESCRIPTION_PREVIEW_LENGTH && (
+                    <TouchableOpacity 
+                      style={styles.showMoreButton}
+                      onPress={() => setIsDescriptionExpanded(!isDescriptionExpanded)}
+                    >
+                      <Text style={styles.showMoreText}>
+                        {isDescriptionExpanded ? 'Show Less' : 'Show More'}
+                      </Text>
+                      <Ionicons 
+                        name={isDescriptionExpanded ? "chevron-up" : "chevron-down"} 
+                        size={18} 
+                        color="#00695c" 
+                      />
+                    </TouchableOpacity>
+                  )}
+                  
                   {fullDescription.length > 500 && (
                     <View style={styles.descriptionInfo}>
                       <Ionicons name="book" size={16} color="#00695c" />
                       <Text style={styles.descriptionInfoText}>
-                        {Math.ceil(fullDescription.length / 5)} words • {Math.ceil(fullDescription.split('\n\n').length)} sections
+                        {Math.ceil(fullDescription.split(' ').length)} words • {Math.ceil(fullDescription.split(/[.!?]+/).length)} sentences
                       </Text>
                     </View>
                   )}
@@ -672,7 +821,6 @@ export default function SpeciesLandingPage({ route, navigation }) {
               )}
             </View>
 
-            {/* Physical Characteristics */}
             {isLoadingDetails ? (
               <View style={styles.card}>
                 <ActivityIndicator size="large" color="#00695c" />
@@ -690,7 +838,6 @@ export default function SpeciesLandingPage({ route, navigation }) {
                   </View>
                 )}
 
-                {/* Habitat & Distribution */}
                 <View style={styles.card}>
                   <View style={styles.cardHeader}>
                     <Ionicons name="location" size={24} color="#00695c" />
@@ -706,7 +853,6 @@ export default function SpeciesLandingPage({ route, navigation }) {
                   </View>
                 </View>
 
-                {/* Behavior & Ecology */}
                 {additionalInfo.behavior && additionalInfo.behavior !== 'Behavior information not available' && (
                   <View style={styles.card}>
                     <View style={styles.cardHeader}>
@@ -717,7 +863,6 @@ export default function SpeciesLandingPage({ route, navigation }) {
                   </View>
                 )}
 
-                {/* Conservation Status */}
                 {conservation && (
                   <View style={styles.card}>
                     <View style={styles.cardHeader}>
@@ -731,18 +876,15 @@ export default function SpeciesLandingPage({ route, navigation }) {
                   </View>
                 )}
 
-                {/* Uses & Importance */}
                 {additionalInfo.uses && additionalInfo.uses !== 'Usage information not available' && (
                   <View style={styles.card}>
                     <View style={styles.cardHeader}>
-                      <Ionicons name="leaf" size={24} color="#00695c" />
                       <Text style={styles.cardTitle}>Uses & Importance</Text>
                     </View>
                     <Text style={styles.value}>{additionalInfo.uses}</Text>
                   </View>
                 )}
 
-                {/* Alternative Names */}
                 {additionalInfo.alternativeNames.length > 0 && (
                   <View style={styles.card}>
                     <View style={styles.cardHeader}>
@@ -762,7 +904,6 @@ export default function SpeciesLandingPage({ route, navigation }) {
               </>
             )}
 
-            {/* Community Observations */}
             <View style={styles.card}>
               <View style={styles.cardHeader}>
                 <Ionicons name="people" size={24} color="#00695c" />
@@ -776,7 +917,6 @@ export default function SpeciesLandingPage({ route, navigation }) {
               </View>
             </View>
 
-            {/* Full Taxonomy */}
             {taxonomy.length > 0 && (
               <View style={styles.card}>
                 <View style={styles.cardHeader}>
@@ -807,13 +947,13 @@ export default function SpeciesLandingPage({ route, navigation }) {
               </View>
             )}
 
-            {/* Data Sources Footer */}
             <View style={styles.sourcesCard}>
               <Text style={styles.sourcesTitle}>Data Sources</Text>
               <Text style={styles.sourcesText}>
                 • iNaturalist - Community observations{'\n'}
                 • GBIF - Global biodiversity data{'\n'}
                 • Wikipedia - General information{'\n'}
+                • EOL - Encyclopedia of Life{'\n'}
                 • Google Vision AI - Image recognition
               </Text>
             </View>
@@ -1103,6 +1243,25 @@ const styles = StyleSheet.create({
     lineHeight: 26,
     textAlign: 'justify',
     letterSpacing: 0.3,
+  },
+  showMoreButton: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'center',
+    marginTop: 16,
+    paddingVertical: 10,
+    paddingHorizontal: 20,
+    backgroundColor: 'rgba(0, 105, 92, 0.1)',
+    borderRadius: 20,
+    borderWidth: 1,
+    borderColor: 'rgba(0, 105, 92, 0.3)',
+    alignSelf: 'center',
+  },
+  showMoreText: {
+    fontSize: 15,
+    fontWeight: '600',
+    color: '#00695c',
+    marginRight: 6,
   },
   descriptionInfo: {
     flexDirection: 'row',

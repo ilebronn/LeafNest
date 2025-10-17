@@ -1,11 +1,19 @@
-//SignUpScreen.js
 import React, { useState } from 'react';
-import { View, Text, TextInput, TouchableOpacity, Alert, StyleSheet, ImageBackground } from 'react-native';
+import { View, Text, TextInput, TouchableOpacity, Alert, StyleSheet, ImageBackground, Dimensions, Platform, KeyboardAvoidingView, ScrollView, Image } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import { useTranslation } from 'react-i18next';
+import { LinearGradient } from 'expo-linear-gradient';
 import { auth, createUserWithEmailAndPassword, sendEmailVerification, updateProfile } from '../firebase';
-import { createUserProfile } from '../firestoreService'; // ✅ ADD THIS
+import { createUserProfile } from '../firestoreService';
 import { setUsername, clearAllUserData } from '../utils/userUtils';
+import { resetGuestScanCount } from '../utils/guestScanUtils';
+import { CommonActions } from '@react-navigation/native';
+
+const { width, height } = Dimensions.get('window');
+
+const scale = (size) => (width / 375) * size;
+const verticalScale = (size) => (height / 812) * size;
+const moderateScale = (size, factor = 0.5) => size + (scale(size) - size) * factor;
 
 export default function SignUpScreen({ navigation }) {
   const { t } = useTranslation();
@@ -15,7 +23,11 @@ export default function SignUpScreen({ navigation }) {
   const [username, setUsernameState] = useState('');
   const [isPasswordVisible, setIsPasswordVisible] = useState(false);
   const [isConfirmPasswordVisible, setIsConfirmPasswordVisible] = useState(false);
-  const [isLoading, setIsLoading] = useState(false); // ✅ ADD THIS
+  const [isLoading, setIsLoading] = useState(false);
+  const [usernameFocused, setUsernameFocused] = useState(false);
+  const [emailFocused, setEmailFocused] = useState(false);
+  const [passwordFocused, setPasswordFocused] = useState(false);
+  const [confirmPasswordFocused, setConfirmPasswordFocused] = useState(false);
 
   const handleRegister = async () => {
     if (password !== confirmPassword) {
@@ -28,40 +40,39 @@ export default function SignUpScreen({ navigation }) {
       return;
     }
 
-    setIsLoading(true); // ✅ ADD THIS
+    setIsLoading(true);
 
     try {
-      // Clear any existing user data before signing up
       await clearAllUserData();
-
-      // Register the user using Firebase Authentication's modular SDK method
       const userCredential = await createUserWithEmailAndPassword(auth, email, password);
       const user = userCredential.user;
-
-      // Set the user's display name using updateProfile from modular SDK
       await updateProfile(user, { displayName: username });
-
-      // ✅ ADD THIS: Create user profile in Firestore
-      const profileResult = await createUserProfile(user.uid, email, username);
       
+      const profileResult = await createUserProfile(user.uid, email, username);
       if (!profileResult.success) {
         console.warn('Failed to create user profile in Firestore:', profileResult.error);
-        // Continue anyway - auth was successful
       }
 
-      // Send email verification
       await sendEmailVerification(user);
-
+      await resetGuestScanCount();
+      
       Alert.alert(t('signup.signUpSuccessful'), t('signup.verificationEmailSent'));
-
-      // Store username in AsyncStorage
       await setUsername(username);
-
-      // Navigate directly to HomeScreen with username
-      navigation.replace('MainTabs', {
-        screen: 'Home',
-        params: { guest: false, displayName: username },
-      });
+      
+      navigation.dispatch(
+        CommonActions.reset({
+          index: 0,
+          routes: [
+            {
+              name: 'MainTabs',
+              params: {
+                screen: 'Home',
+                params: { guest: false, displayName: username },
+              },
+            },
+          ],
+        })
+      );
     } catch (error) {
       if (error.code === 'auth/email-already-in-use') {
         Alert.alert(t('common.error'), t('signup.emailAlreadyInUse'));
@@ -71,7 +82,7 @@ export default function SignUpScreen({ navigation }) {
         Alert.alert(t('common.error'), error.message);
       }
     } finally {
-      setIsLoading(false); // ✅ ADD THIS
+      setIsLoading(false);
     }
   };
 
@@ -81,72 +92,202 @@ export default function SignUpScreen({ navigation }) {
       style={styles.backgroundImage}
       resizeMode="cover"
     >
-      <View style={styles.overlay}>
-        <View style={styles.container}>
-          <TouchableOpacity style={styles.backButton} onPress={() => navigation.goBack()}>
-            <Ionicons name="arrow-back" size={30} color="white" />
-          </TouchableOpacity>
-
-          <TextInput 
-            style={styles.input} 
-            placeholder={t('signup.username')} 
-            placeholderTextColor="#666"
-            value={username} 
-            onChangeText={setUsernameState}
-            editable={!isLoading} 
-          />
-
-          <TextInput 
-            style={styles.input} 
-            placeholder={t('signup.email')} 
-            placeholderTextColor="#666"
-            value={email} 
-            onChangeText={setEmail}
-            editable={!isLoading}
-          />
-          
-          <View style={styles.passwordContainer}>
-            <TextInput
-              style={styles.input}
-              placeholder={t('signup.password')}
-              placeholderTextColor="#666"
-              value={password}
-              onChangeText={setPassword}
-              secureTextEntry={!isPasswordVisible}
-              editable={!isLoading}
-            />
-            <TouchableOpacity style={styles.eyeIcon} onPress={() => setIsPasswordVisible(!isPasswordVisible)}>
-              <Ionicons name={isPasswordVisible ? 'eye-off' : 'eye'} size={24} color="#5E936C" />
-            </TouchableOpacity>
-          </View>
-
-          <View style={styles.passwordContainer}>
-            <TextInput
-              style={styles.input}
-              placeholder={t('signup.confirmPassword')}
-              placeholderTextColor="#666"
-              value={confirmPassword}
-              onChangeText={setConfirmPassword}
-              secureTextEntry={!isConfirmPasswordVisible}
-              editable={!isLoading}
-            />
-            <TouchableOpacity style={styles.eyeIcon} onPress={() => setIsConfirmPasswordVisible(!isConfirmPasswordVisible)}>
-              <Ionicons name={isConfirmPasswordVisible ? 'eye-off' : 'eye'} size={24} color="#5E936C" />
-            </TouchableOpacity>
-          </View>
-
-          <TouchableOpacity 
-            style={[styles.button, isLoading && styles.buttonDisabled]} 
-            onPress={handleRegister}
-            disabled={isLoading}
+      <LinearGradient
+        colors={['rgba(94, 147, 108, 0.4)', 'rgba(45, 85, 60, 0.7)', 'rgba(20, 40, 30, 0.85)']}
+        style={styles.gradient}
+      >
+        <KeyboardAvoidingView 
+          behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
+          style={styles.keyboardView}
+        >
+          <ScrollView 
+            contentContainerStyle={styles.scrollContent}
+            showsVerticalScrollIndicator={false}
+            bounces={false}
           >
-            <Text style={styles.buttonText}>
-              {isLoading ? 'Creating Account...' : t('signup.register')}
-            </Text>
-          </TouchableOpacity>
+            <TouchableOpacity 
+              style={styles.backButton} 
+              onPress={() => navigation.goBack()}
+            >
+              <View style={styles.backButtonInner}>
+                <Ionicons name="arrow-back" size={moderateScale(24)} color="white" />
+              </View>
+            </TouchableOpacity>
 
-        </View>
-      </View>
+            <View style={styles.headerContainer}>
+              <View style={styles.iconWrapper}>
+                <LinearGradient
+                  colors={['#5E936C', '#3a6d4a']}
+                  style={styles.iconGradient}
+                >
+                  <Image 
+                    source={require('../assets/logo.png')} 
+                    style={styles.logo}
+                    resizeMode="contain"
+                  />
+                </LinearGradient>
+              </View>
+              <Text style={styles.welcomeText}>Create Account</Text>
+              <Text style={styles.subtitleText}>Join us to explore nature</Text>
+            </View>
+
+            <View style={styles.formContainer}>
+              {/* Username */}
+              <View style={[
+                styles.inputWrapper,
+                usernameFocused && styles.inputWrapperFocused
+              ]}>
+                <Ionicons 
+                  name="person-outline" 
+                  size={moderateScale(20)} 
+                  color={usernameFocused ? '#5E936C' : '#8E9196'} 
+                  style={styles.inputIcon}
+                />
+                <TextInput 
+                  style={styles.input}
+                  placeholder={t('signup.username')}
+                  placeholderTextColor="#8E9196"
+                  value={username}
+                  onChangeText={setUsernameState}
+                  onFocus={() => setUsernameFocused(true)}
+                  onBlur={() => setUsernameFocused(false)}
+                  editable={!isLoading}
+                  autoCapitalize="none"
+                />
+              </View>
+
+              {/* Email */}
+              <View style={[
+                styles.inputWrapper,
+                emailFocused && styles.inputWrapperFocused
+              ]}>
+                <Ionicons 
+                  name="mail-outline" 
+                  size={moderateScale(20)} 
+                  color={emailFocused ? '#5E936C' : '#8E9196'} 
+                  style={styles.inputIcon}
+                />
+                <TextInput 
+                  style={styles.input}
+                  placeholder={t('signup.email')}
+                  placeholderTextColor="#8E9196"
+                  value={email}
+                  onChangeText={setEmail}
+                  onFocus={() => setEmailFocused(true)}
+                  onBlur={() => setEmailFocused(false)}
+                  editable={!isLoading}
+                  keyboardType="email-address"
+                  autoCapitalize="none"
+                />
+              </View>
+
+              {/* Password */}
+              <View style={[
+                styles.inputWrapper,
+                passwordFocused && styles.inputWrapperFocused
+              ]}>
+                <Ionicons 
+                  name="lock-closed-outline" 
+                  size={moderateScale(20)} 
+                  color={passwordFocused ? '#5E936C' : '#8E9196'} 
+                  style={styles.inputIcon}
+                />
+                <TextInput
+                  style={[styles.input, styles.passwordInput]}
+                  placeholder={t('signup.password')}
+                  placeholderTextColor="#8E9196"
+                  value={password}
+                  onChangeText={setPassword}
+                  onFocus={() => setPasswordFocused(true)}
+                  onBlur={() => setPasswordFocused(false)}
+                  secureTextEntry={!isPasswordVisible}
+                  editable={!isLoading}
+                />
+                <TouchableOpacity 
+                  style={styles.eyeIcon} 
+                  onPress={() => setIsPasswordVisible(!isPasswordVisible)}
+                >
+                  <Ionicons 
+                    name={isPasswordVisible ? 'eye-off-outline' : 'eye-outline'} 
+                    size={moderateScale(20)} 
+                    color="#8E9196" 
+                  />
+                </TouchableOpacity>
+              </View>
+
+              {/* Confirm Password */}
+              <View style={[
+                styles.inputWrapper,
+                confirmPasswordFocused && styles.inputWrapperFocused
+              ]}>
+                <Ionicons 
+                  name="shield-checkmark-outline" 
+                  size={moderateScale(20)} 
+                  color={confirmPasswordFocused ? '#5E936C' : '#8E9196'} 
+                  style={styles.inputIcon}
+                />
+                <TextInput
+                  style={[styles.input, styles.passwordInput]}
+                  placeholder={t('signup.confirmPassword')}
+                  placeholderTextColor="#8E9196"
+                  value={confirmPassword}
+                  onChangeText={setConfirmPassword}
+                  onFocus={() => setConfirmPasswordFocused(true)}
+                  onBlur={() => setConfirmPasswordFocused(false)}
+                  secureTextEntry={!isConfirmPasswordVisible}
+                  editable={!isLoading}
+                />
+                <TouchableOpacity 
+                  style={styles.eyeIcon} 
+                  onPress={() => setIsConfirmPasswordVisible(!isConfirmPasswordVisible)}
+                >
+                  <Ionicons 
+                    name={isConfirmPasswordVisible ? 'eye-off-outline' : 'eye-outline'} 
+                    size={moderateScale(20)} 
+                    color="#8E9196" 
+                  />
+                </TouchableOpacity>
+              </View>
+
+              <TouchableOpacity 
+                style={styles.signUpButton} 
+                onPress={handleRegister}
+                disabled={isLoading}
+                activeOpacity={0.8}
+              >
+                <LinearGradient
+                  colors={isLoading ? ['#b0b0b0', '#808080'] : ['#5E936C', '#4a7757']}
+                  start={{ x: 0, y: 0 }}
+                  end={{ x: 1, y: 0 }}
+                  style={styles.buttonGradient}
+                >
+                  <Text style={styles.buttonText}>
+                    {isLoading ? 'Processing...' : t('signup.register')}
+                  </Text>
+                  {!isLoading && (
+                    <Ionicons name="arrow-forward" size={moderateScale(20)} color="white" />
+                  )}
+                </LinearGradient>
+              </TouchableOpacity>
+
+              <View style={styles.dividerContainer}>
+                <View style={styles.divider} />
+                <Text style={styles.dividerText}>or</Text>
+                <View style={styles.divider} />
+              </View>
+
+              <TouchableOpacity 
+                style={styles.signInContainer}
+                onPress={() => navigation.navigate('Login')}
+              >
+                <Text style={styles.signInText}>
+                  Already a member? <Text style={styles.signInLink}>Sign In</Text>
+                </Text>
+              </TouchableOpacity>
+            </View>
+          </ScrollView>
+        </KeyboardAvoidingView>
+      </LinearGradient>
     </ImageBackground>
   );
 }
@@ -157,97 +298,164 @@ const styles = StyleSheet.create({
     width: '100%',
     height: '100%',
   },
-  overlay: {
+  gradient: {
     flex: 1,
-    backgroundColor: 'rgba(255, 255, 255, 0.2)',
   },
-  container: {
+  keyboardView: {
     flex: 1,
+  },
+  scrollContent: {
+    flexGrow: 1,
     justifyContent: 'center',
-    alignItems: 'center',
-    padding: 20,
+    paddingHorizontal: scale(24),
+    paddingVertical: verticalScale(40),
   },
   backButton: {
     position: 'absolute',
-    top: 40,
-    left: 10,
-    padding: 10,
-    backgroundColor: 'rgba(0, 0, 0, 0.5)',
-    borderRadius: 25,
+    top: Platform.OS === 'ios' ? verticalScale(50) : verticalScale(40),
+    left: scale(24),
+    zIndex: 10,
   },
-  heading: {
-    fontSize: 24,
-    fontWeight: 'bold',
-    marginBottom: 20,
-    color: '#333',
-    textShadowColor: 'rgba(255, 255, 255, 0.8)',
-    textShadowOffset: { width: 1, height: 1 },
-    textShadowRadius: 3,
-  },
-  input: {
-    width: '100%',
-    padding: 20,
-    marginBottom: 20,
-    borderWidth: 1,
-    borderColor: '#ccc',
-    borderRadius: 25,
-    backgroundColor: 'rgba(255, 255, 255, 0.9)',
-    color: '#333',
-    shadowColor: '#000',
-    shadowOffset: { width: 0, height: 1 },
-    shadowOpacity: 0.2,
-    shadowRadius: 2,
-    elevation: 3,
-    top: 100
-  },
-  passwordContainer: {
-    width: '100%',
-    flexDirection: 'row',
-    alignItems: 'center',
-    position: 'relative',
-  },
-  eyeIcon: {
-    position: 'absolute',
-    right: 25,
-    top: 112,
-    padding: 5,
-  },
-  button: {
-    backgroundColor: '#5E936C',
-    paddingVertical: 15,
-    paddingHorizontal: 30,
-    borderRadius: 25,
-    width: '80%',
+  backButtonInner: {
+    width: moderateScale(44),
+    height: moderateScale(44),
+    borderRadius: moderateScale(22),
+    backgroundColor: 'rgba(0, 0, 0, 0.4)',
     justifyContent: 'center',
     alignItems: 'center',
-    marginTop: 10,
-    shadowColor: '#000',
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.25,
-    shadowRadius: 3.84,
-    elevation: 5,
-    top: 100,
+    borderWidth: 1,
+    borderColor: 'rgba(255, 255, 255, 0.2)',
   },
-  buttonDisabled: {
-    backgroundColor: '#9ca3af',
-    opacity: 0.7,
+  headerContainer: {
+    alignItems: 'center',
+    marginBottom: verticalScale(40),
+    marginTop: verticalScale(20),
+  },
+  iconWrapper: {
+    marginBottom: verticalScale(20),
+  },
+  iconGradient: {
+    width: moderateScale(80),
+    height: moderateScale(80),
+    borderRadius: moderateScale(40),
+    justifyContent: 'center',
+    alignItems: 'center',
+    shadowColor: '#5E936C',
+    shadowOffset: { width: 0, height: 8 },
+    shadowOpacity: 0.3,
+    shadowRadius: 12,
+    elevation: 8,
+  },
+  logo: {
+    width: moderateScale(50),
+    height: moderateScale(50),
+  },
+  welcomeText: {
+    fontSize: moderateScale(32),
+    fontWeight: '700',
+    color: 'white',
+    marginBottom: verticalScale(8),
+    textAlign: 'center',
+    letterSpacing: 0.5,
+  },
+  subtitleText: {
+    fontSize: moderateScale(16),
+    color: 'rgba(255, 255, 255, 0.8)',
+    textAlign: 'center',
+    letterSpacing: 0.3,
+  },
+  formContainer: {
+    width: '100%',
+    maxWidth: 420,
+    alignSelf: 'center',
+  },
+  inputWrapper: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    backgroundColor: 'rgba(255, 255, 255, 0.95)',
+    borderRadius: moderateScale(16),
+    marginBottom: verticalScale(16),
+    paddingHorizontal: scale(16),
+    paddingVertical: verticalScale(4),
+    borderWidth: 2,
+    borderColor: 'transparent',
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 4 },
+    shadowOpacity: 0.1,
+    shadowRadius: 8,
+    elevation: 4,
+  },
+  inputWrapperFocused: {
+    borderColor: '#5E936C',
+    backgroundColor: 'white',
+    shadowOpacity: 0.15,
+    shadowRadius: 12,
+  },
+  inputIcon: {
+    marginRight: scale(12),
+  },
+  input: {
+    flex: 1,
+    fontSize: moderateScale(16),
+    color: '#1a1a1a',
+    paddingVertical: verticalScale(14),
+  },
+  passwordInput: {
+    paddingRight: scale(40),
+  },
+  eyeIcon: {
+    padding: moderateScale(8),
+  },
+  signUpButton: {
+    borderRadius: moderateScale(16),
+    overflow: 'hidden',
+    marginBottom: verticalScale(24),
+    marginTop: verticalScale(8),
+    shadowColor: '#5E936C',
+    shadowOffset: { width: 0, height: 6 },
+    shadowOpacity: 0.3,
+    shadowRadius: 10,
+    elevation: 6,
+  },
+  buttonGradient: {
+    flexDirection: 'row',
+    justifyContent: 'center',
+    alignItems: 'center',
+    paddingVertical: verticalScale(16),
+    gap: scale(8),
   },
   buttonText: {
-    color: '#fff',
-    fontSize: 16,
-    fontWeight: 'bold',
+    color: 'white',
+    fontSize: moderateScale(18),
+    fontWeight: '700',
+    letterSpacing: 0.5,
   },
-  switchText: {
-    color: '#000000ff',
-    fontSize: 20,
+  dividerContainer: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    marginVertical: verticalScale(24),
+  },
+  divider: {
+    flex: 1,
+    height: 1,
+    backgroundColor: 'rgba(255, 255, 255, 0.3)',
+  },
+  dividerText: {
+    color: 'rgba(255, 255, 255, 0.7)',
+    marginHorizontal: scale(16),
+    fontSize: moderateScale(14),
+    fontWeight: '500',
+  },
+  signInContainer: {
+    alignItems: 'center',
+  },
+  signInText: {
+    color: 'rgba(255, 255, 255, 0.8)',
+    fontSize: moderateScale(15),
+  },
+  signInLink: {
+    color: 'white',
+    fontWeight: '700',
     textDecorationLine: 'underline',
-    marginTop: 20,
-    paddingHorizontal: 15,
-    paddingVertical: 8,
-    borderRadius: 15,
-    textShadowColor: 'rgba(255, 255, 255, 0.8)',
-    textShadowOffset: { width: 1, height: 1 },
-    textShadowRadius: 2,
-    top: 100
   },
 });

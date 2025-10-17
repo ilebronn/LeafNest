@@ -1,9 +1,11 @@
 import React from 'react';
-import { View, Text, StyleSheet, TouchableOpacity, Image, ImageBackground, Dimensions } from 'react-native';
+import { View, Text, StyleSheet, TouchableOpacity, Image, ImageBackground, Dimensions, Platform, ScrollView } from 'react-native';
+import { Ionicons } from '@expo/vector-icons';
 import { useTranslation } from 'react-i18next';
 import { auth } from '../firebase';
 import { signOut } from 'firebase/auth';
 import { clearAllUserData } from '../utils/userUtils';
+import { LinearGradient } from 'expo-linear-gradient';
 
 const { width, height } = Dimensions.get('window');
 
@@ -21,7 +23,6 @@ export default function LoginScreen({ navigation }) {
       await signOut(auth);
       await clearAllUserData();
       
-      // ✅ FIXED: Use simple replace now that both screens are always registered
       navigation.replace('MainTabs', {
         screen: 'Home',
         params: { guest: true, displayName: 'Guest' },
@@ -31,113 +32,104 @@ export default function LoginScreen({ navigation }) {
     }
   };
 
-  // Check device size
-  const isSmallScreen = height < 700;
-  const isTablet = width > 600;
-
   return (
     <ImageBackground
       source={require('../assets/background.jpg')}
       style={styles.backgroundImage}
       resizeMode="cover"
     >
-      <View style={styles.overlay}>
-        <View style={styles.container}>
-          {/* Logo and Brand Name */}
-          <View style={[
-            styles.logoContainer,
-            isSmallScreen && styles.logoContainerSmall
-          ]}>
-            <Image
-              source={require('../assets/logo2.png')}
-              style={[
-                styles.logo,
-                isTablet && styles.logoTablet
-              ]}
-              resizeMode="contain"
-            />
-            <Text style={[
-              styles.brandName,
-              isTablet && styles.brandNameTablet
-            ]}>
-              {t('login.title')}
-            </Text>
+      <LinearGradient
+        colors={['rgba(94, 147, 108, 0.4)', 'rgba(45, 85, 60, 0.7)', 'rgba(20, 40, 30, 0.85)']}
+        style={styles.gradient}
+      >
+        <ScrollView 
+          contentContainerStyle={styles.scrollContent}
+          showsVerticalScrollIndicator={false}
+          bounces={false}
+        >
+          {/* Header Container */}
+          <View style={styles.headerContainer}>
+            <View style={styles.iconWrapper}>
+              <LinearGradient
+                colors={['#5E936C', '#3a6d4a']}
+                style={styles.iconGradient}
+              >
+                <Image 
+                  source={require('../assets/logo.png')} 
+                  style={styles.logo}
+                  resizeMode="contain"
+                />
+              </LinearGradient>
+            </View>
+            <Text style={styles.welcomeText}>Welcome to LeafNest</Text>
+            <Text style={styles.subtitleText}>Discover Nature's Beauty</Text>
           </View>
 
-          {/* Spacer to push buttons down */}
+          {/* Spacer */}
           <View style={styles.spacer} />
 
           {/* Buttons Container */}
-          <View style={[
-            styles.buttonContainer,
-            isTablet && styles.buttonContainerTablet
-          ]}>
-            {/* Guest Sign-In Button */}
+          <View style={styles.formContainer}>
+            {/* Sign In with Email Button */}
             <TouchableOpacity 
-              style={[
-                styles.buttonSecondary,
-                isTablet && styles.buttonTablet
-              ]} 
-              onPress={signInAsGuest}
+              style={styles.mainButton}
+              onPress={() => navigation.navigate('SignIn')}
+              activeOpacity={0.8}
             >
-              <Image
-                source={require('../assets/guest-logo.png')}
-                style={styles.buttonLogo}
-                resizeMode="contain"
-              />
-              <Text style={[
-                styles.buttonText,
-                isTablet && styles.buttonTextTablet
-              ]}>
-                {t('login.signInAsGuest')}
-              </Text>
+              <LinearGradient
+                colors={['#5E936C', '#4a7757']}
+                start={{ x: 0, y: 0 }}
+                end={{ x: 1, y: 0 }}
+                style={styles.buttonGradient}
+              >
+                <Ionicons name="mail-outline" size={moderateScale(20)} color="white" />
+                <Text style={styles.mainButtonText}>
+                  Sign In with Email
+                </Text>
+                <Ionicons name="arrow-forward" size={moderateScale(20)} color="white" />
+              </LinearGradient>
             </TouchableOpacity>
 
-            {/* Regular Sign-In Button */}
-            <TouchableOpacity
-              style={[
-                styles.buttonSecondary,
-                isTablet && styles.buttonTablet
-              ]}
-              onPress={() => navigation.navigate('SignIn')}
+            {/* Divider */}
+            <View style={styles.dividerContainer}>
+              <View style={styles.divider} />
+              <Text style={styles.dividerText}>or</Text>
+              <View style={styles.divider} />
+            </View>
+
+            {/* Guest Sign-In Button */}
+            <TouchableOpacity 
+              style={styles.secondaryButton}
+              onPress={signInAsGuest}
+              activeOpacity={0.8}
             >
-              <Image
-                source={require('../assets/email-logo.png')}
-                style={styles.buttonLogo}
-                resizeMode="contain"
-              />
-              <Text style={[
-                styles.buttonText,
-                isTablet && styles.buttonTextTablet
-              ]}>
-                {t('Sign In with Email')}
+              <Ionicons name="glasses-outline" size={moderateScale(20)} color="white" />
+              <Text style={styles.secondaryButtonText}>
+                Continue as Guest
               </Text>
             </TouchableOpacity>
           </View>
 
           {/* Terms and Policies Text */}
-          <View style={[
-            styles.termsContainer,
-            isTablet && styles.termsContainerTablet
-          ]}>
-            <Text style={[
-              styles.termsText,
-              isTablet && styles.termsTextTablet
-            ]}>
-              {t('login.termsText')}{' '}
+          <View style={styles.termsContainer}>
+            <Text style={styles.termsText}>
+              By continuing, you agree to our{' '}
               <TouchableOpacity onPress={() => navigation.navigate('TermsOfUse')}>
-                <Text style={styles.linkText}>{t('login.termsOfUse')}</Text>
-              </TouchableOpacity>,{' '}
+                <Text style={styles.linkText}>Terms of Use</Text>
+              </TouchableOpacity>
+              {'  , '}
               <TouchableOpacity onPress={() => navigation.navigate('PrivacyPolicy')}>
-                <Text style={styles.linkText}>{t('login.privacyPolicy')}</Text>
-              </TouchableOpacity>, and{' '}
+                <Text style={styles.linkText}>Privacy Policy</Text>
+              </TouchableOpacity>
+              {', and '}
               <TouchableOpacity onPress={() => navigation.navigate('CookiesPolicy')}>
-                <Text style={styles.linkText}>{t('login.cookiesPolicy')}</Text>
-              </TouchableOpacity>.
+                <Text style={styles.linkText}>Cookie Policy</Text>
+              </TouchableOpacity>
+              .
             </Text>
           </View>
-        </View>
-      </View>
+        </ScrollView>
+      </LinearGradient>
     </ImageBackground>
   );
 }
@@ -148,123 +140,143 @@ const styles = StyleSheet.create({
     width: '100%',
     height: '100%',
   },
-  overlay: {
+  gradient: {
     flex: 1,
-    backgroundColor: 'rgba(255, 255, 255, 0.1)',
   },
-  container: { 
-    flex: 1,
-    justifyContent: 'flex-start',
-    alignItems: 'center',
-    paddingHorizontal: scale(20),
+  scrollContent: {
+    flexGrow: 1,
+    paddingHorizontal: scale(24),
     paddingVertical: verticalScale(40),
+    justifyContent: 'space-between',
   },
-  logoContainer: {
-    flexDirection: 'row',
+  headerContainer: {
     alignItems: 'center',
-    marginTop: verticalScale(80),
+    marginTop: verticalScale(40),
     marginBottom: verticalScale(20),
   },
-  logoContainerSmall: {
-    marginTop: verticalScale(40),
+  iconWrapper: {
+    marginBottom: verticalScale(20),
+  },
+  iconGradient: {
+    width: moderateScale(100),
+    height: moderateScale(100),
+    borderRadius: moderateScale(50),
+    justifyContent: 'center',
+    alignItems: 'center',
+    shadowColor: '#5E936C',
+    shadowOffset: { width: 0, height: 8 },
+    shadowOpacity: 0.3,
+    shadowRadius: 12,
+    elevation: 8,
   },
   logo: {
-    width: moderateScale(200),
-    height: moderateScale(200),
-    marginRight: scale(-60),
-    top: verticalScale(50),
+    width: moderateScale(60),
+    height: moderateScale(60),
   },
-  logoTablet: {
-    width: moderateScale(180),
-    height: moderateScale(180),
+  welcomeText: {
+    fontSize: moderateScale(36),
+    fontWeight: '700',
+    color: 'white',
+    marginBottom: verticalScale(8),
+    textAlign: 'center',
+    letterSpacing: 0.5,
   },
-  brandName: {
-    fontSize: moderateScale(42),
-    fontWeight: 'bold',
-    color: '#1b8236ff',
-    textShadowColor: 'rgba(0, 0, 0, 0.3)',
-    textShadowOffset: { width: 1, height: 1 },
-    textShadowRadius: 3,
-    top: verticalScale(50),
-  },
-  brandNameTablet: {
-    fontSize: moderateScale(56),
+  subtitleText: {
+    fontSize: moderateScale(16),
+    color: 'rgba(255, 255, 255, 0.8)',
+    textAlign: 'center',
+    letterSpacing: 0.3,
   },
   spacer: {
-    flex: 1,
+    height: verticalScale(40),
   },
-  buttonContainer: {
+  formContainer: {
     width: '100%',
-    maxWidth: 500,
-    justifyContent: 'center',
-    alignItems: 'center',
-    paddingHorizontal: scale(20),
-    marginBottom: verticalScale(10),
+    maxWidth: 420,
+    alignSelf: 'center',
   },
-  buttonContainerTablet: {
-    maxWidth: 600,
+  mainButton: {
+    borderRadius: moderateScale(16),
+    overflow: 'hidden',
+    marginBottom: verticalScale(16),
+    shadowColor: '#5E936C',
+    shadowOffset: { width: 0, height: 6 },
+    shadowOpacity: 0.3,
+    shadowRadius: 10,
+    elevation: 6,
   },
-  buttonSecondary: {
-    backgroundColor: '#1b8236ff',
-    paddingVertical: verticalScale(15),
-    paddingHorizontal: scale(30),
-    borderRadius: moderateScale(25),
-    marginVertical: verticalScale(8),
-    width: '100%',
-    maxWidth: 400,
-    justifyContent: 'center',
-    alignItems: 'center',
+  buttonGradient: {
     flexDirection: 'row',
-    shadowColor: '#000',
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.25,
-    shadowRadius: 3.84,
-    elevation: 5,
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    paddingVertical: verticalScale(16),
+    paddingHorizontal: scale(20),
+    gap: scale(12),
   },
-  buttonTablet: {
-    paddingVertical: verticalScale(18),
-    maxWidth: 500,
-  },
-  buttonText: { 
-    color: '#fff', 
+  mainButtonText: {
+    color: 'white',
     fontSize: moderateScale(16),
-    fontWeight: 'bold',
+    fontWeight: '700',
+    letterSpacing: 0.5,
+    flex: 1,
+    textAlign: 'center',
   },
-  buttonTextTablet: {
-    fontSize: moderateScale(18),
+  dividerContainer: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    marginVertical: verticalScale(24),
   },
-  buttonLogo: { 
-    width: moderateScale(24),
-    height: moderateScale(20),
-    marginRight: scale(10),
+  divider: {
+    flex: 1,
+    height: 1,
+    backgroundColor: 'rgba(255, 255, 255, 0.3)',
+  },
+  dividerText: {
+    color: 'rgba(255, 255, 255, 0.7)',
+    marginHorizontal: scale(16),
+    fontSize: moderateScale(14),
+    fontWeight: '500',
+  },
+  secondaryButton: {
+    flexDirection: 'row',
+    justifyContent: 'center',
+    alignItems: 'center',
+    backgroundColor: 'rgba(255, 255, 255, 0.15)',
+    paddingVertical: verticalScale(16),
+    paddingHorizontal: scale(20),
+    borderRadius: moderateScale(16),
+    borderWidth: 1.5,
+    borderColor: 'rgba(255, 255, 255, 0.3)',
+    gap: scale(12),
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 4 },
+    shadowOpacity: 0.1,
+    shadowRadius: 8,
+    elevation: 4,
+  },
+  secondaryButtonText: {
+    color: 'white',
+    fontSize: moderateScale(16),
+    fontWeight: '600',
+    letterSpacing: 0.5,
   },
   termsContainer: {
-    paddingHorizontal: scale(30),
     alignItems: 'center',
-    marginBottom: verticalScale(30),
-    width: '100%',
-    maxWidth: 500,
-  },
-  termsContainerTablet: {
-    maxWidth: 600,
+    marginTop: verticalScale(30),
+    marginBottom: verticalScale(20),
+    paddingHorizontal: scale(10),
   },
   termsText: {
-    color: '#64748B',
+    color: 'rgba(255, 255, 255, 0.75)',
     fontSize: moderateScale(13),
     textAlign: 'center',
     lineHeight: moderateScale(20),
-    letterSpacing: 0.5,
-    paddingHorizontal: scale(10),
-    paddingVertical: verticalScale(8),
-    borderRadius: moderateScale(15),
-  },
-  termsTextTablet: {
-    fontSize: moderateScale(15),
-    lineHeight: moderateScale(24),
+    letterSpacing: 0.3,
   },
   linkText: {
-    color: '#007BFF',
+    color: 'rgba(255, 255, 255, 0.95)',
     textDecorationLine: 'underline',
+    fontWeight: '600',
     fontSize: moderateScale(13),
   },
 });

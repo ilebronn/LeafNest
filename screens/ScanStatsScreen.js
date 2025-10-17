@@ -307,9 +307,6 @@ export default function ScanStatsScreen({ route, navigation }) {
             <Text style={styles.sectionTitle}>Recent Scans</Text>
             {recentScans.map((scan, index) => (
               <View key={scan.id || index} style={styles.scanItem}>
-                <View style={styles.scanIcon}>
-                  <Ionicons name="leaf" size={24} color="#5E936C" />
-                </View>
                 <View style={styles.scanContent}>
                   <Text style={styles.scanName}>
                     {scan.plantName || scan.speciesName || 'Unknown Species'}
