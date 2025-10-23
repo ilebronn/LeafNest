@@ -27,6 +27,7 @@ import HomeScreen from './screens/HomeScreen';
 import SettingsScreen from './screens/SettingsScreen';
 import HistoryScreen from './screens/HistoryScreen';
 import NotificationScreen from './screens/NotificationScreen';
+import ManageNotificationsScreen from './screens/ManageNotificationsScreen';
 import ProfileScreen from './screens/ProfileScreen';
 import AboutScreen from './screens/AboutScreen';
 import PrivacyPolicyScreen from './screens/PrivacyPolicyScreen';
@@ -156,6 +157,7 @@ export default function App() {
           <Stack.Screen name="ForgotPassword" component={ForgotPasswordScreen} />
           <Stack.Screen name="Profile" component={ProfileScreen} />
           <Stack.Screen name="NotificationScreen" component={NotificationScreen} />
+          <Stack.Screen name="ManageNotifications" component={ManageNotificationsScreen} />
           <Stack.Screen
             name="CameraCaptureScreen"
             component={CameraCaptureScreen}

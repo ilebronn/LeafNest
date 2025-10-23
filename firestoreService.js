@@ -12,7 +12,12 @@ import {
   query, 
   where, 
   orderBy, 
-  serverTimestamp 
+  serverTimestamp,
+  storage,
+  ref,
+  uploadBytes,
+  getDownloadURL,
+  deleteObject
 } from './firebase';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import NetInfo from '@react-native-community/netinfo';
@@ -26,6 +31,59 @@ const isOnline = async () => {
 // Helper to get AsyncStorage keys
 const getHistoryKey = (uid) => uid ? `history_${uid}` : 'history_guest';
 const getFavoritesKey = (uid) => uid ? `favorites_${uid}` : 'favorites_guest';
+
+// ==================== IMAGE UPLOAD FUNCTIONS ====================
+
+// Upload image to Firebase Storage
+export const uploadImageToStorage = async (imageUri, userId, folder = 'scans') => {
+  try {
+    if (!imageUri || !userId) {
+      return { success: false, error: 'Missing image URI or user ID' };
+    }
+
+    // Create unique filename
+    const filename = `${Date.now()}_${Math.random().toString(36).substring(7)}.jpg`;
+    const storageRef = ref(storage, `${folder}/${userId}/${filename}`);
+    
+    // Fetch the image and convert to blob
+    const response = await fetch(imageUri);
+    const blob = await response.blob();
+    
+    // Upload to Firebase Storage
+    await uploadBytes(storageRef, blob);
+    
+    // Get download URL
+    const downloadURL = await getDownloadURL(storageRef);
+    
+    console.log('Image uploaded successfully:', downloadURL);
+    return { 
+      success: true, 
+      url: downloadURL, 
+      path: storageRef.fullPath 
+    };
+  } catch (error) {
+    console.error('Error uploading image:', error);
+    return { success: false, error: error.message };
+  }
+};
+
+// Delete image from Firebase Storage
+export const deleteImageFromStorage = async (imagePath) => {
+  try {
+    if (!imagePath) {
+      return { success: true }; // No image to delete
+    }
+
+    const imageRef = ref(storage, imagePath);
+    await deleteObject(imageRef);
+    
+    console.log('Image deleted successfully');
+    return { success: true };
+  } catch (error) {
+    console.error('Error deleting image:', error);
+    return { success: false, error: error.message };
+  }
+};
 
 // ==================== USER PROFILE ====================
 
@@ -88,12 +146,31 @@ export const updateUserProfile = async (userId, updates) => {
 export const addToHistory = async (userId, historyData) => {
   try {
     const storageKey = getHistoryKey(userId);
+    let uploadedImageUrl = historyData.imageUrl;
+    let imagePath = null;
+
+    // Upload image to Firebase Storage if user is authenticated and online
+    const online = await isOnline();
+    if (online && userId && historyData.imageUri) {
+      const uploadResult = await uploadImageToStorage(historyData.imageUri, userId, 'history');
+      if (uploadResult.success) {
+        uploadedImageUrl = uploadResult.url;
+        imagePath = uploadResult.path;
+        console.log('Image uploaded for history item:', uploadedImageUrl);
+      }
+    }
+
     const itemWithId = {
       ...historyData,
+      imageUrl: uploadedImageUrl,
+      imagePath: imagePath,
       id: `history_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`,
       timestamp: Date.now(),
       synced: false,
     };
+
+    // Remove imageUri from storage (we don't need the local URI anymore)
+    delete itemWithId.imageUri;
 
     // Always save to AsyncStorage first (offline-first)
     const existing = await AsyncStorage.getItem(storageKey);
@@ -102,19 +179,20 @@ export const addToHistory = async (userId, historyData) => {
     await AsyncStorage.setItem(storageKey, JSON.stringify(list));
 
     // Try to sync to Firestore if online
-    const online = await isOnline();
     if (online && userId) {
       try {
         const historyRef = collection(db, 'users', userId, 'history');
         await addDoc(historyRef, {
           ...historyData,
+          imageUrl: uploadedImageUrl,
+          imagePath: imagePath,
           timestamp: serverTimestamp(),
         });
         
         // Mark as synced in AsyncStorage
         itemWithId.synced = true;
         await AsyncStorage.setItem(storageKey, JSON.stringify(list));
-        console.log('History saved to Firestore');
+        console.log('History saved to Firestore with image');
       } catch (firestoreError) {
         console.warn('Firestore save failed, kept in AsyncStorage:', firestoreError);
       }
@@ -174,9 +252,17 @@ export const deleteHistoryItem = async (userId, historyId) => {
   try {
     const storageKey = getHistoryKey(userId);
 
-    // Delete from AsyncStorage
+    // Get the item to find its image path
     const existing = await AsyncStorage.getItem(storageKey);
     const list = existing ? JSON.parse(existing) : [];
+    const itemToDelete = list.find(item => item.id === historyId);
+
+    // Delete image from Storage if it exists
+    if (itemToDelete && itemToDelete.imagePath) {
+      await deleteImageFromStorage(itemToDelete.imagePath);
+    }
+
+    // Delete from AsyncStorage
     const filtered = list.filter(item => item.id !== historyId);
     await AsyncStorage.setItem(storageKey, JSON.stringify(filtered));
 
@@ -201,6 +287,17 @@ export const deleteHistoryItem = async (userId, historyId) => {
 export const clearAllHistory = async (userId) => {
   try {
     const storageKey = getHistoryKey(userId);
+
+    // Get all items to delete their images
+    const existing = await AsyncStorage.getItem(storageKey);
+    const list = existing ? JSON.parse(existing) : [];
+
+    // Delete all images from Storage
+    const deleteImagePromises = list
+      .filter(item => item.imagePath)
+      .map(item => deleteImageFromStorage(item.imagePath));
+    
+    await Promise.all(deleteImagePromises);
 
     // Clear AsyncStorage
     await AsyncStorage.setItem(storageKey, JSON.stringify([]));
@@ -236,12 +333,31 @@ export const clearAllHistory = async (userId) => {
 export const addToFavorites = async (userId, favoriteData) => {
   try {
     const storageKey = getFavoritesKey(userId);
+    let uploadedImageUrl = favoriteData.imageUrl;
+    let imagePath = null;
+
+    // Upload image to Firebase Storage if user is authenticated and online
+    const online = await isOnline();
+    if (online && userId && favoriteData.imageUri) {
+      const uploadResult = await uploadImageToStorage(favoriteData.imageUri, userId, 'favorites');
+      if (uploadResult.success) {
+        uploadedImageUrl = uploadResult.url;
+        imagePath = uploadResult.path;
+        console.log('Image uploaded for favorite item:', uploadedImageUrl);
+      }
+    }
+
     const itemWithId = {
       ...favoriteData,
+      imageUrl: uploadedImageUrl,
+      imagePath: imagePath,
       id: `favorite_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`,
       addedAt: Date.now(),
       synced: false,
     };
+
+    // Remove imageUri from storage
+    delete itemWithId.imageUri;
 
     // Always save to AsyncStorage first
     const existing = await AsyncStorage.getItem(storageKey);
@@ -250,18 +366,19 @@ export const addToFavorites = async (userId, favoriteData) => {
     await AsyncStorage.setItem(storageKey, JSON.stringify(list));
 
     // Try to sync to Firestore if online
-    const online = await isOnline();
     if (online && userId) {
       try {
         const favoritesRef = collection(db, 'users', userId, 'favorites');
         await addDoc(favoritesRef, {
           ...favoriteData,
+          imageUrl: uploadedImageUrl,
+          imagePath: imagePath,
           addedAt: serverTimestamp(),
         });
         
         itemWithId.synced = true;
         await AsyncStorage.setItem(storageKey, JSON.stringify(list));
-        console.log('Favorite saved to Firestore');
+        console.log('Favorite saved to Firestore with image');
       } catch (firestoreError) {
         console.warn('Firestore save failed, kept in AsyncStorage:', firestoreError);
       }
@@ -321,9 +438,17 @@ export const removeFromFavorites = async (userId, favoriteId) => {
   try {
     const storageKey = getFavoritesKey(userId);
 
-    // Remove from AsyncStorage
+    // Get the item to find its image path
     const existing = await AsyncStorage.getItem(storageKey);
     const list = existing ? JSON.parse(existing) : [];
+    const itemToDelete = list.find(item => item.id === favoriteId);
+
+    // Delete image from Storage if it exists
+    if (itemToDelete && itemToDelete.imagePath) {
+      await deleteImageFromStorage(itemToDelete.imagePath);
+    }
+
+    // Remove from AsyncStorage
     const filtered = list.filter(item => item.id !== favoriteId);
     await AsyncStorage.setItem(storageKey, JSON.stringify(filtered));
 

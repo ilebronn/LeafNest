@@ -604,6 +604,7 @@ export default function SpeciesLandingPage({ route, navigation }) {
         rank: rank,
         iconicTaxon: iconicTaxon,
         taxonId: taxonId,
+        imageUri: photoUri, // ← ADD THIS LINE - This is the captured image URI
         imageUrl: displayImageUri,
         conservation: conservation,
         about: cleanAboutText,

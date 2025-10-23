@@ -8,14 +8,12 @@
     "userInterfaceStyle": "light",
     "newArchEnabled": true,
     "scheme": "leafnest",
-
     "ios": {
       "supportsTablet": true,
       "infoPlist": {
         "UILaunchStoryboardName": ""
       }
     },
-
     "android": {
       "package": "com.dev.leafnest",
       "adaptiveIcon": {
@@ -24,19 +22,17 @@
       },
       "edgeToEdgeEnabled": true
     },
-
     "web": {
       "favicon": "./assets/favicon.png"
     },
-
     "extra": {
       "eas": {
         "projectId": "0549a304-0587-4910-bedf-b53f03c2c8c3"
       }
     },
-
     "plugins": [
-      "expo-web-browser"
+      "expo-web-browser",
+      "expo-mail-composer"
     ]
   }
 }

@@ -411,7 +411,7 @@ const ResponsiveAbout = ({ navigation }) => {
             <View style={styles.divider} />
             
             <Text style={styles.version}>Version 0.0.1 (1)</Text>
-            <Text style={styles.helpText}>For help: help.leafnest@gmail.com</Text>
+            <Text style={styles.helpText}>For help: help.leafnest.capstone@gmail.com</Text>
           </View>
         </ScrollView>
       </SafeAreaView>

@@ -57,7 +57,7 @@ const FAQScreen = ({ navigation }) => {
       category: 'Support & Help',
       icon: 'help-circle',
       items: [
-        { question: 'How do I contact support?', answer: 'Reach us through the Settings menu under Help & Support, or email us directly at help.leafnest@gmail.com.' },
+        { question: 'How do I contact support?', answer: 'Reach us through the Settings menu under Help & Support, or email us directly at leafnest.capstone@gmail.com.' },
       ]
     },
   ];

@@ -3,7 +3,8 @@ import { View, Text, TextInput, TouchableOpacity, Alert, StyleSheet, ImageBackgr
 import { Ionicons } from '@expo/vector-icons';
 import { useTranslation } from 'react-i18next';
 import { LinearGradient } from 'expo-linear-gradient';
-import { auth, createUserWithEmailAndPassword, sendEmailVerification, updateProfile } from '../firebase';
+import { createUserWithEmailAndPassword, sendEmailVerification, updateProfile } from 'firebase/auth';
+import { auth } from '../firebase';
 import { createUserProfile } from '../firestoreService';
 import { setUsername, clearAllUserData } from '../utils/userUtils';
 import { resetGuestScanCount } from '../utils/guestScanUtils';

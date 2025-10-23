@@ -60,7 +60,7 @@ const TermsOfUseScreen = ({ navigation }) => {
     {
       icon: 'mail',
       title: 'Contact Us',
-      content: 'If you have any questions, concerns, or feedback about these Terms of Use, please contact us at help.leafnest@gmail.com.'
+      content: 'If you have any questions, concerns, or feedback about these Terms of Use, please contact us at leafnest.capstone@gmail.com.'
     },
   ];
 

@@ -74,7 +74,7 @@ const CookiesPolicyScreen = ({ navigation }) => {
     {
       icon: 'mail',
       title: 'Contact Us',
-      content: 'If you have any questions, concerns, or feedback regarding this Cookies Policy, please don\'t hesitate to contact us at help.leafnest@gmail.com.'
+      content: 'If you have any questions, concerns, or feedback regarding this Cookies Policy, please don\'t hesitate to contact us at leafnest.capstone@gmail.com.'
     },
   ];
 
@@ -118,6 +118,7 @@ const CookiesPolicyScreen = ({ navigation }) => {
       color: 'rgba(255,255,255,0.9)',
       textAlign: 'center',
       marginTop: vScale(6),
+      marginLeft: vScale(20),
     },
     scrollContainer: {
       paddingHorizontal: hPad,

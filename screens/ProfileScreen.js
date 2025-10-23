@@ -372,7 +372,7 @@ export default function ProfileScreen({ route, navigation }) {
                 title="Notifications"
                 subtitle="Manage your notifications"
                 color="#9C27B0"
-                onPress={() => {}}
+                onPress={() => navigation.navigate('ManageNotifications')}
               />
               <MenuItem
                 icon="key-outline"

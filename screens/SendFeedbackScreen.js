@@ -14,7 +14,7 @@ import {
 } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 
-const SUPPORT_EMAIL = 'support@leafnest.com';
+const SUPPORT_EMAIL = 'leafnest.capstone@gmail.com';
 
 const topics = [
   { value: 'bug', label: 'Report a Bug' },

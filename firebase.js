@@ -1,12 +1,34 @@
 // firebase.js
 import { initializeApp, getApps, getApp } from 'firebase/app';
-import { getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword, sendEmailVerification, updateProfile, initializeAuth, getReactNativePersistence } from 'firebase/auth';
-import { getFirestore, collection, doc, setDoc, getDoc, getDocs, addDoc, updateDoc, deleteDoc, query, where, orderBy, serverTimestamp } from 'firebase/firestore';
-import { getFunctions, httpsCallable } from 'firebase/functions';
+import { initializeAuth, getAuth, getReactNativePersistence } from 'firebase/auth';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import { Platform } from 'react-native';
+import { 
+  getFirestore, 
+  collection, 
+  doc, 
+  setDoc, 
+  getDoc, 
+  getDocs, 
+  addDoc, 
+  updateDoc, 
+  deleteDoc, 
+  query, 
+  where, 
+  orderBy, 
+  serverTimestamp 
+} from 'firebase/firestore';
+import { 
+  getStorage, 
+  ref, 
+  uploadBytes, 
+  uploadBytesResumable, 
+  getDownloadURL, 
+  deleteObject 
+} from 'firebase/storage';
+// ADD THIS IMPORT FOR CLOUD FUNCTIONS
+import { getFunctions, httpsCallable, connectFunctionsEmulator } from 'firebase/functions';
 
-// Firebase configuration
+// Your Firebase configuration
 const firebaseConfig = {
   apiKey: "AIzaSyBBfZ1g1YhPLDKghIRgQ4UXbsoGZKjItRE",
   authDomain: "leafnest-98408.firebaseapp.com",
@@ -16,48 +38,142 @@ const firebaseConfig = {
   appId: "1:412130350031:web:eb265fc7b9daf6e74b78ba"
 };
 
-// Initialize Firebase app only if it hasn't been initialized yet
-const app = getApps().length === 0 ? initializeApp(firebaseConfig) : getApp();
-
-// Initialize Firebase Authentication
+// Initialize Firebase only if it hasn't been initialized yet
+let app;
 let auth;
-if (Platform.OS === 'web') {
-  auth = getAuth(app);
+
+if (getApps().length === 0) {
+  // First initialization - set up everything properly
+  app = initializeApp(firebaseConfig);
+  auth = initializeAuth(app, {
+    persistence: getReactNativePersistence(AsyncStorage)
+  });
 } else {
-  if (!globalThis._firebaseAuthInstance) {
-    globalThis._firebaseAuthInstance = initializeAuth(app, {
-      persistence: getReactNativePersistence(AsyncStorage),
-    });
-  }
-  auth = globalThis._firebaseAuthInstance;
+  // Already initialized - get existing instances
+  app = getApp();
+  auth = getAuth(app);
 }
 
-// Initialize Firestore
-const db = getFirestore(app);
+// Initialize Firestore, Storage, and Functions
+export { auth };
+export const db = getFirestore(app);
+export const storage = getStorage(app);
+export const functions = getFunctions(app); // ADD THIS LINE
 
-// Initialize Cloud Functions with region
-const functions = getFunctions(app, 'us-central1'); // ✅ Added region
+// If you're testing locally with Firebase Emulator, uncomment this:
+// connectFunctionsEmulator(functions, "localhost", 5001);
 
-// Export everything
+// Export Firestore functions for easy access
 export { 
-  auth, 
-  db,
-  functions,
-  httpsCallable,
-  createUserWithEmailAndPassword, 
-  signInWithEmailAndPassword, 
-  sendEmailVerification, 
-  updateProfile,
-  collection,
-  doc,
-  setDoc,
-  getDoc,
-  getDocs,
-  addDoc,
-  updateDoc,
-  deleteDoc,
-  query,
-  where,
-  orderBy,
-  serverTimestamp
+  collection, 
+  doc, 
+  setDoc, 
+  getDoc, 
+  getDocs, 
+  addDoc, 
+  updateDoc, 
+  deleteDoc, 
+  query, 
+  where, 
+  orderBy, 
+  serverTimestamp 
 };
+
+// Export Storage functions for image uploads
+export { 
+  ref, 
+  uploadBytes, 
+  uploadBytesResumable, 
+  getDownloadURL, 
+  deleteObject 
+};
+
+// Export Auth functions for authentication
+export { 
+  signInWithEmailAndPassword,
+  createUserWithEmailAndPassword,
+  sendEmailVerification,
+  updateProfile,
+  signOut
+} from 'firebase/auth';
+
+// Export Functions utilities - ADD THIS
+export { httpsCallable } from 'firebase/functions';
+
+// Helper function to upload image to Firebase Storage
+export const uploadImageToStorage = async (uri, userId, folder = 'scans') => {
+  try {
+    // Create a unique filename
+    const filename = `${Date.now()}_${Math.random().toString(36).substring(7)}.jpg`;
+    const storageRef = ref(storage, `${folder}/${userId}/${filename}`);
+    
+    // Convert URI to blob for upload
+    const response = await fetch(uri);
+    const blob = await response.blob();
+    
+    // Upload the image
+    await uploadBytes(storageRef, blob);
+    
+    // Get the download URL
+    const downloadURL = await getDownloadURL(storageRef);
+    
+    return { success: true, url: downloadURL, path: storageRef.fullPath };
+  } catch (error) {
+    console.error('Error uploading image:', error);
+    return { success: false, error: error.message };
+  }
+};
+
+// Helper function to delete image from Firebase Storage
+export const deleteImageFromStorage = async (imagePath) => {
+  try {
+    const imageRef = ref(storage, imagePath);
+    await deleteObject(imageRef);
+    return { success: true };
+  } catch (error) {
+    console.error('Error deleting image:', error);
+    return { success: false, error: error.message };
+  }
+};
+
+// Helper function to upload image with progress tracking
+export const uploadImageWithProgress = (uri, userId, folder = 'scans', onProgress) => {
+  return new Promise(async (resolve, reject) => {
+    try {
+      const filename = `${Date.now()}_${Math.random().toString(36).substring(7)}.jpg`;
+      const storageRef = ref(storage, `${folder}/${userId}/${filename}`);
+      
+      const response = await fetch(uri);
+      const blob = await response.blob();
+      
+      const uploadTask = uploadBytesResumable(storageRef, blob);
+      
+      uploadTask.on(
+        'state_changed',
+        (snapshot) => {
+          const progress = (snapshot.bytesTransferred / snapshot.totalBytes) * 100;
+          if (onProgress) {
+            onProgress(progress);
+          }
+        },
+        (error) => {
+          console.error('Upload error:', error);
+          reject({ success: false, error: error.message });
+        },
+        async () => {
+          const downloadURL = await getDownloadURL(uploadTask.snapshot.ref);
+          resolve({ 
+            success: true, 
+            url: downloadURL, 
+            path: uploadTask.snapshot.ref.fullPath 
+          });
+        }
+      );
+    } catch (error) {
+      console.error('Error preparing upload:', error);
+      reject({ success: false, error: error.message });
+    }
+  });
+};
+
+export default app;
