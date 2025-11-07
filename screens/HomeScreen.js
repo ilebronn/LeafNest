@@ -1,50 +1,49 @@
-import React, { useRef, useState, useEffect } from 'react';
+import React, { useRef, useState, useEffect, useCallback } from 'react';
 import {
   View,
   Text,
   StyleSheet,
   TouchableOpacity,
-  FlatList,
   Image,
-  Dimensions,
   StatusBar,
   Platform,
-  ScrollView,
+  FlatList,
   RefreshControl,
+  ActivityIndicator,
+  Dimensions,
   Animated,
+  Alert,
 } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import { useTranslation } from 'react-i18next';
 import { SafeAreaProvider, SafeAreaView } from 'react-native-safe-area-context';
 import { LinearGradient } from 'expo-linear-gradient';
 import { auth } from '../firebase';
+import { getPublicScans, getTrendingSpecies } from '../firestoreService';
+import { likePost, checkIfLiked, getPostStats } from '../firestoreService/postInteractionsService';
+import CommentsModal from '../components/CommentsModal';
+import { useFocusEffect } from '@react-navigation/native';
 
 const { width, height } = Dimensions.get('window');
 
-// Responsive sizing
-const scale = (size) => (width / 375) * size;
-const verticalScale = (size) => (height / 812) * size;
-const moderateScale = (size, factor = 0.5) => size + (scale(size) - size) * factor;
-
-const isTablet = width > 600;
-const CARD_WIDTH = isTablet ? width * 0.7 : width * 0.85;
-const CARD_SPACING = (width - CARD_WIDTH) / 2;
-
-const PEXELS_PLANTS_KEY = '4eP0VkrCmnv1mjHlLJSv28TzR6zK6rmdux1fmyr4vP1biT2NayxxLinK';
-const PEXELS_ANIMALS_KEY = 'kLcMBCoaSFkMEPgLNZTpxs1s6oEGVcyuVfNVs7pf3poeKAnrtM7JdgcZ';
-
 export default function HomeScreen({ route, navigation }) {
   const displayName = route?.params?.displayName ?? '';
-  const sliderRef = useRef(null);
   const { t } = useTranslation();
-  const scrollY = useRef(new Animated.Value(0)).current;
-
-  const [trendingPlants, setTrendingPlants] = useState([]);
-  const [trendingAnimals, setTrendingAnimals] = useState([]);
-  const [funFact, setFunFact] = useState('');
-  const [refreshing, setRefreshing] = useState(false);
   const [isGuest, setIsGuest] = useState(true);
-  const [currentCardIndex, setCurrentCardIndex] = useState(0);
+  const [publicScans, setPublicScans] = useState([]);
+  const [trendingSpecies, setTrendingSpecies] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [refreshing, setRefreshing] = useState(false);
+  const [expandedPosts, setExpandedPosts] = useState({});
+  const [postStats, setPostStats] = useState({});
+  const [commentsModalVisible, setCommentsModalVisible] = useState(false);
+  const [selectedPostId, setSelectedPostId] = useState(null);
+  const [likeAnimations, setLikeAnimations] = useState({});
+  const fadeAnim = useRef(new Animated.Value(0)).current;
+
+  const currentUser = auth.currentUser;
+  const currentUserId = currentUser?.uid || null;
+  const currentUsername = currentUser?.displayName || currentUser?.email?.split('@')[0] || 'Anonymous';
 
   useEffect(() => {
     const user = auth.currentUser;
@@ -53,319 +52,574 @@ export default function HomeScreen({ route, navigation }) {
     setIsGuest(userIsGuest);
   }, [route?.params?.guest]);
 
-  const fetchTrendingData = async () => {
+  useEffect(() => {
+    Animated.timing(fadeAnim, {
+      toValue: 1,
+      duration: 800,
+      useNativeDriver: true,
+    }).start();
+  }, []);
+
+  const shuffleArray = (array) => {
+    const shuffled = [...array];
+    for (let i = shuffled.length - 1; i > 0; i--) {
+      const j = Math.floor(Math.random() * (i + 1));
+      [shuffled[i], shuffled[j]] = [shuffled[j], shuffled[i]];
+    }
+    return shuffled;
+  };
+
+  const getIconForTaxon = (iconicTaxon) => {
+    if (!iconicTaxon) return 'leaf';
+    
+    const taxon = iconicTaxon.toLowerCase();
+    if (taxon.includes('plant') || taxon === 'plantae') return 'leaf';
+    if (taxon.includes('bird') || taxon === 'aves') return 'radio-outline';
+    if (taxon.includes('mammal') || taxon === 'mammalia') return 'paw';
+    if (taxon.includes('insect') || taxon === 'insecta') return 'bug';
+    if (taxon.includes('fish') || taxon.includes('actinopterygii')) return 'fish';
+    if (taxon.includes('reptil') || taxon === 'reptilia') return 'skull';
+    if (taxon.includes('amphibia') || taxon.includes('frog')) return 'water';
+    if (taxon.includes('fungi') || taxon.includes('mushroom')) return 'umbrella';
+    if (taxon.includes('mollusc') || taxon.includes('shell')) return 'ellipse';
+    if (taxon.includes('arachnid') || taxon.includes('spider')) return 'bug-outline';
+    return 'leaf';
+  };
+
+  const getGradientForTaxon = (iconicTaxon) => {
+    if (!iconicTaxon) return ['#10B981', '#059669'];
+    
+    const taxon = iconicTaxon.toLowerCase();
+    if (taxon.includes('plant') || taxon === 'plantae') return ['#10B981', '#059669'];
+    if (taxon.includes('bird') || taxon === 'aves') return ['#3B82F6', '#2563EB'];
+    if (taxon.includes('mammal') || taxon === 'mammalia') return ['#F59E0B', '#D97706'];
+    if (taxon.includes('insect') || taxon === 'insecta') return ['#8B5CF6', '#7C3AED'];
+    if (taxon.includes('fish') || taxon.includes('actinopterygii')) return ['#06B6D4', '#0891B2'];
+    if (taxon.includes('reptil') || taxon === 'reptilia') return ['#EF4444', '#DC2626'];
+    if (taxon.includes('amphibia') || taxon.includes('frog')) return ['#14B8A6', '#0D9488'];
+    if (taxon.includes('fungi') || taxon.includes('mushroom')) return ['#F97316', '#EA580C'];
+    return ['#10B981', '#059669'];
+  };
+
+  const loadPostStats = async (posts) => {
+    const stats = {};
+    for (const post of posts) {
+      try {
+        const result = await getPostStats(post.id);
+        stats[post.id] = result;
+      } catch (error) {
+        console.error(`Error loading stats for ${post.id}:`, error);
+        stats[post.id] = { likesCount: 0, commentsCount: 0, likes: [] };
+      }
+    }
+    setPostStats(stats);
+  };
+
+  const loadPublicScans = useCallback(async () => {
     try {
-      setRefreshing(true);
-
-      const plantsResponse = await fetch('https://api.pexels.com/v1/search?query=plants&per_page=8', {
-        headers: { 'Authorization': PEXELS_PLANTS_KEY },
-      });
-      const plantsData = await plantsResponse.json();
-      setTrendingPlants(plantsData.photos);
-
-      const animalsResponse = await fetch('https://api.pexels.com/v1/search?query=animals&per_page=8', {
-        headers: { 'Authorization': PEXELS_ANIMALS_KEY },
-      });
-      const animalsData = await animalsResponse.json();
-      setTrendingAnimals(animalsData.photos);
+      const result = await getPublicScans();
+      if (result.success) {
+        const shuffledData = shuffleArray(result.data);
+        setPublicScans(shuffledData);
+        await loadPostStats(shuffledData);
+      }
     } catch (error) {
-      console.error('Error fetching trending data:', error);
+      console.error('Error loading public scans:', error);
+    } finally {
+      setLoading(false);
+    }
+  }, []);
+
+  const loadTrendingSpecies = useCallback(async () => {
+    try {
+      const result = await getTrendingSpecies(10, 7);
+      if (result.success) {
+        setTrendingSpecies(result.data);
+      }
+    } catch (error) {
+      console.error('Error loading trending species:', error);
+    }
+  }, []);
+
+  useFocusEffect(
+    useCallback(() => {
+      loadPublicScans();
+      loadTrendingSpecies();
+    }, [loadPublicScans, loadTrendingSpecies])
+  );
+
+  const onRefresh = useCallback(async () => {
+    setRefreshing(true);
+    try {
+      const [scansResult, trendingResult] = await Promise.all([
+        getPublicScans(),
+        getTrendingSpecies(10, 7)
+      ]);
+      
+      if (scansResult.success) {
+        const shuffledData = shuffleArray(scansResult.data);
+        setPublicScans(shuffledData);
+        await loadPostStats(shuffledData);
+      }
+      
+      if (trendingResult.success) {
+        setTrendingSpecies(trendingResult.data);
+      }
+    } catch (error) {
+      console.error('Error refreshing:', error);
     } finally {
       setRefreshing(false);
     }
-  };
-
-  const generateRandomFact = () => {
-    const allFacts = [
-      'Octopuses have three hearts.',
-      'Bamboo can grow up to 35 inches in a single day!',
-      'Sloths can hold their breath longer than dolphins.',
-      'Sunflowers move to face the sun throughout the day.',
-      'Elephants are the only animals that can\'t jump.',
-      'Some orchids can live up to 100 years!',
-      'Dolphins have names for each other using unique whistles.',
-      'A single tree can provide oxygen for up to four people a day.',
-      'Sharks existed before trees appeared on Earth.',
-      'Dandelions are completely edible, from root to flower.',
-      'Penguins propose to mates with a pebble.',
-      'The Amazon rainforest produces about 20% of the world\'s oxygen.',
-      'Sea otters hold hands while they sleep to stay together.',
-      'Giant sequoias can live for more than 3,000 years.',
-      'Axolotls can regrow entire limbs and parts of their brain.',
-      'Plants communicate using chemical signals through their roots.',
-    ];
-    const randomFact = allFacts[Math.floor(Math.random() * allFacts.length)];
-    setFunFact(randomFact);
-  };
-
-  useEffect(() => {
-    generateRandomFact();
-    fetchTrendingData();
-
-    const now = new Date();
-    const msToNextHour = (60 - now.getMinutes()) * 60 * 1000 - now.getSeconds() * 1000;
-    const toHourTimeout = setTimeout(() => {
-      fetchTrendingData();
-      const interval = setInterval(fetchTrendingData, 60 * 60 * 1000);
-      return () => clearInterval(interval);
-    }, msToNextHour);
-
-    return () => clearTimeout(toHourTimeout);
   }, []);
 
-  const CAROUSEL_ITEMS = [
-    {
-      id: '1',
-      title: t('home.scanPlantsTitle'),
-      subtitle: t('home.scanPlantsSubtitle'),
-      image: require('../assets/plant1.jpg'),
-      gradient: ['#4CAF50', '#2E7D32'],
-      icon: 'leaf',
-    },
-    {
-      id: '2',
-      title: t('home.scanAnimalsTitle'),
-      subtitle: t('home.scanAnimalsSubtitle'),
-      image: require('../assets/animal1.jpg'),
-      gradient: ['#FF6B6B', '#C92A2A'],
-      icon: 'paw',
-    },
-    {
-      id: '3',
-      title: t('home.learnNatureTitle'),
-      subtitle: t('home.learnNatureSubtitle'),
-      image: require('../assets/plant2.jpg'),
-      gradient: ['#4FC3F7', '#0277BD'],
-      icon: 'earth',
-    },
-  ];
+  const handleLikePress = async (postId) => {
+    if (!currentUserId) {
+      Alert.alert('Sign in required', 'Please sign in to like posts');
+      return;
+    }
 
-  const renderCard = ({ item, index }) => (
-    <TouchableOpacity 
-      activeOpacity={0.9}
-      style={styles.card}
-      onPress={() => navigation.navigate('ScanScreen')}
-    >
-      <Image source={item.image} style={styles.cardImage} resizeMode="cover" />
-      <LinearGradient
-        colors={['transparent', 'rgba(0,0,0,0.8)']}
-        style={styles.cardGradient}
-      />
-      <View style={styles.cardContent}>
-        <View style={styles.cardIconWrapper}>
-          <Ionicons name={item.icon} size={32} color="#fff" />
+    try {
+      const result = await likePost(postId, currentUserId);
+      
+      // Update local state immediately for smooth UX
+      setPostStats(prev => ({
+        ...prev,
+        [postId]: {
+          ...prev[postId],
+          likesCount: result.likesCount,
+          likes: result.liked 
+            ? [...(prev[postId]?.likes || []), currentUserId]
+            : (prev[postId]?.likes || []).filter(id => id !== currentUserId)
+        }
+      }));
+    } catch (error) {
+      console.error('Error liking post:', error);
+      Alert.alert('Error', 'Failed to like post');
+    }
+  };
+
+  const handleDoubleTap = async (postId) => {
+    if (!currentUserId) {
+      return; // Silent fail for double tap if not logged in
+    }
+
+    const stats = postStats[postId] || { likes: [] };
+    const isAlreadyLiked = stats.likes.includes(currentUserId);
+
+    // Only like if not already liked
+    if (!isAlreadyLiked) {
+      // Trigger like animation
+      const anim = new Animated.Value(0);
+      setLikeAnimations(prev => ({ ...prev, [postId]: anim }));
+
+      Animated.sequence([
+        Animated.spring(anim, {
+          toValue: 1,
+          friction: 4,
+          useNativeDriver: true,
+        }),
+        Animated.timing(anim, {
+          toValue: 0,
+          duration: 400,
+          delay: 300,
+          useNativeDriver: true,
+        })
+      ]).start(() => {
+        setLikeAnimations(prev => {
+          const newAnims = { ...prev };
+          delete newAnims[postId];
+          return newAnims;
+        });
+      });
+
+      // Perform the like action
+      try {
+        const result = await likePost(postId, currentUserId);
+        
+        setPostStats(prev => ({
+          ...prev,
+          [postId]: {
+            ...prev[postId],
+            likesCount: result.likesCount,
+            likes: result.liked 
+              ? [...(prev[postId]?.likes || []), currentUserId]
+              : (prev[postId]?.likes || []).filter(id => id !== currentUserId)
+          }
+        }));
+      } catch (error) {
+        console.error('Error liking post:', error);
+      }
+    }
+  };
+
+  const handleCommentPress = (postId) => {
+    if (!currentUserId) {
+      Alert.alert('Sign in required', 'Please sign in to comment');
+      return;
+    }
+    
+    setSelectedPostId(postId);
+    setCommentsModalVisible(true);
+  };
+
+  const handleCommentsModalClose = async () => {
+    setCommentsModalVisible(false);
+    setSelectedPostId(null);
+    
+    // Refresh stats after closing comments modal
+    if (selectedPostId) {
+      try {
+        const stats = await getPostStats(selectedPostId);
+        setPostStats(prev => ({
+          ...prev,
+          [selectedPostId]: stats
+        }));
+      } catch (error) {
+        console.error('Error refreshing stats:', error);
+      }
+    }
+  };
+
+  const formatDate = (timestamp) => {
+    const date = new Date(timestamp);
+    const now = new Date();
+    const diffInSeconds = (now - date) / 1000;
+    
+    if (diffInSeconds < 60) return 'Just now';
+    if (diffInSeconds < 3600) return `${Math.floor(diffInSeconds / 60)}m ago`;
+    if (diffInSeconds < 86400) return `${Math.floor(diffInSeconds / 3600)}h ago`;
+    if (diffInSeconds < 604800) return `${Math.floor(diffInSeconds / 86400)}d ago`;
+    return date.toLocaleDateString([], { month: 'short', day: 'numeric' });
+  };
+
+  const togglePostExpansion = (postId) => {
+    setExpandedPosts(prev => ({
+      ...prev,
+      [postId]: !prev[postId]
+    }));
+  };
+
+  const renderTrendingItem = ({ item, index }) => {
+    const gradient = getGradientForTaxon(item.iconicTaxon);
+    
+    return (
+      <TouchableOpacity style={styles.trendingCard} activeOpacity={0.9}>
+        <View style={styles.trendingImageWrapper}>
+          {item.imageUrl ? (
+            <>
+              <Image 
+                source={{ uri: item.imageUrl }} 
+                style={styles.trendingImage}
+                resizeMode="cover"
+              />
+              <LinearGradient
+                colors={['transparent', 'rgba(0,0,0,0.7)']}
+                style={styles.trendingGradient}
+              />
+            </>
+          ) : (
+            <LinearGradient
+              colors={gradient}
+              style={styles.trendingImage}
+              start={{ x: 0, y: 0 }}
+              end={{ x: 1, y: 1 }}
+            >
+              <Ionicons name={getIconForTaxon(item.iconicTaxon)} size={32} color="rgba(255,255,255,0.9)" />
+            </LinearGradient>
+          )}
+          
+          <View style={styles.trendingBadge}>
+            <Ionicons name="flame" size={14} color="#fff" />
+            <Text style={styles.trendingBadgeText}>#{index + 1}</Text>
+          </View>
+          
+          <View style={styles.trendingInfo}>
+            <Text style={styles.trendingName} numberOfLines={2}>
+              {item.commonName || item.name || 'Unknown'}
+            </Text>
+            <View style={styles.trendingStats}>
+              <View style={styles.trendingStat}>
+                <Ionicons name="scan-outline" size={12} color="rgba(255,255,255,0.9)" />
+                <Text style={styles.trendingStatText}>{item.count} scans</Text>
+              </View>
+              {item.iconicTaxon && (
+                <View style={styles.trendingCategory}>
+                  <Text style={styles.trendingCategoryText}>{item.iconicTaxon}</Text>
+                </View>
+              )}
+            </View>
+          </View>
         </View>
-        <Text style={styles.cardTitle}>{item.title}</Text>
-        <Text style={styles.cardSubtitle}>{item.subtitle}</Text>
-        <View style={styles.cardAction}>
-          <Text style={styles.cardActionText}>Explore Now</Text>
-          <Ionicons name="arrow-forward" size={18} color="#fff" />
+      </TouchableOpacity>
+    );
+  };
+
+  const renderFeedItem = ({ item, index }) => {
+    const gradient = getGradientForTaxon(item.iconicTaxon);
+    const isExpanded = expandedPosts[item.id];
+    const shouldShowMore = item.about && item.about.length > 100;
+    
+    const stats = postStats[item.id] || { likesCount: 0, commentsCount: 0, likes: [] };
+    const isLiked = stats.likes.includes(currentUserId);
+    const likeAnim = likeAnimations[item.id];
+
+    const handleImagePress = (() => {
+      let lastTap = null;
+      
+      return () => {
+        const now = Date.now();
+        const DOUBLE_TAP_DELAY = 300;
+
+        if (lastTap && (now - lastTap) < DOUBLE_TAP_DELAY) {
+          // Double tap detected
+          handleDoubleTap(item.id);
+          lastTap = null;
+        } else {
+          // Single tap
+          lastTap = now;
+        }
+      };
+    })();
+    
+    return (
+      <View style={styles.postContainer}>
+        <View style={styles.postHeader}>
+          <View style={styles.postHeaderLeft}>
+            <LinearGradient
+              colors={gradient}
+              style={styles.postAvatar}
+              start={{ x: 0, y: 0 }}
+              end={{ x: 1, y: 1 }}
+            >
+              <View style={styles.postAvatarInner}>
+                <Text style={styles.postAvatarText}>
+                  {(item.userName || 'A')[0].toUpperCase()}
+                </Text>
+              </View>
+            </LinearGradient>
+            <View style={styles.postUserInfo}>
+              <Text style={styles.postUsername}>{item.userName || 'Anonymous'}</Text>
+              {item.iconicTaxon && (
+                <Text style={styles.postLocation}>{item.iconicTaxon}</Text>
+              )}
+            </View>
+          </View>
+          <TouchableOpacity>
+            <Ionicons name="ellipsis-horizontal" size={20} color="#000" />
+          </TouchableOpacity>
+        </View>
+
+        <TouchableOpacity 
+          activeOpacity={1} 
+          onPress={handleImagePress}
+          style={styles.imageContainer}
+        >
+          {item.imageUrl ? (
+            <Image 
+              source={{ uri: item.imageUrl }} 
+              style={styles.postImage}
+              resizeMode="cover"
+            />
+          ) : (
+            <LinearGradient
+              colors={['#F3F4F6', '#E5E7EB']}
+              style={[styles.postImage, styles.postImagePlaceholder]}
+            >
+              <Ionicons name="image-outline" size={64} color="#9CA3AF" />
+            </LinearGradient>
+          )}
+
+          {/* Like Animation Overlay */}
+          {likeAnim && (
+            <Animated.View
+              style={[
+                styles.likeAnimationOverlay,
+                {
+                  opacity: likeAnim,
+                  transform: [
+                    {
+                      scale: likeAnim.interpolate({
+                        inputRange: [0, 1],
+                        outputRange: [0, 1],
+                      }),
+                    },
+                  ],
+                },
+              ]}
+              pointerEvents="none"
+            >
+              <Ionicons name="heart" size={100} color="#fff" style={{ textShadowRadius: 0 }} />
+            </Animated.View>
+          )}
+        </TouchableOpacity>
+
+        <View style={styles.postActions}>
+          <View style={styles.postActionsLeft}>
+            <TouchableOpacity 
+              style={styles.actionButton}
+              onPress={() => handleLikePress(item.id)}
+            >
+              <Ionicons 
+                name={isLiked ? "heart" : "heart-outline"} 
+                size={28} 
+                color={isLiked ? "#FF3B30" : "#000"} 
+              />
+            </TouchableOpacity>
+            <TouchableOpacity 
+              style={styles.actionButton}
+              onPress={() => handleCommentPress(item.id)}
+            >
+              <Ionicons name="chatbubble-outline" size={26} color="#000" />
+            </TouchableOpacity>
+          </View>
+          <TouchableOpacity>
+            <Ionicons name="download-outline" size={26} color="#000" />
+          </TouchableOpacity>
+        </View>
+
+        <View style={styles.postContent}>
+          <Text style={styles.postLikes}>
+            {stats.likesCount > 0 ? `${stats.likesCount} ${stats.likesCount === 1 ? 'like' : 'likes'}` : 'Be the first to like this'}
+          </Text>
+          <View style={styles.postCaption}>
+            <Text style={styles.postUsername}>{item.userName || 'Anonymous'}</Text>
+            <Text style={styles.postCaptionText}>
+              {' '}{item.name || 'Unknown Species'}
+              {item.scientificName && item.scientificName !== item.name && (
+                <Text style={styles.scientificName}> ({item.scientificName})</Text>
+              )}
+            </Text>
+          </View>
+          {item.about && (
+            <View>
+              <Text style={styles.postDescription} numberOfLines={isExpanded ? undefined : 2}>
+                {item.about}
+              </Text>
+              {shouldShowMore && (
+                <TouchableOpacity onPress={() => togglePostExpansion(item.id)}>
+                  <Text style={styles.showMoreText}>
+                    {isExpanded ? 'Show less' : 'Show more'}
+                  </Text>
+                </TouchableOpacity>
+              )}
+            </View>
+          )}
+          {stats.commentsCount > 0 && (
+            <TouchableOpacity onPress={() => handleCommentPress(item.id)}>
+              <Text style={styles.viewCommentsText}>
+                View all {stats.commentsCount} {stats.commentsCount === 1 ? 'comment' : 'comments'}
+              </Text>
+            </TouchableOpacity>
+          )}
+          <Text style={styles.postTime}>{formatDate(item.createdAt)}</Text>
         </View>
       </View>
-    </TouchableOpacity>
-  );
+    );
+  };
 
-  const renderTrendingItem = ({ item }) => (
-    <TouchableOpacity style={styles.trendingCard} activeOpacity={0.8}>
-      <Image source={{ uri: item.src.medium }} style={styles.trendingImage} />
-      <LinearGradient
-        colors={['transparent', 'rgba(0,0,0,0.7)']}
-        style={styles.trendingOverlay}
-      >
-        <Text style={styles.trendingText} numberOfLines={2}>
-          {item.alt || 'Beautiful Nature'}
-        </Text>
-      </LinearGradient>
-    </TouchableOpacity>
+  const renderHeader = () => (
+    <View>
+      {trendingSpecies.length > 0 && (
+        <View style={styles.trendingSection}>
+          <View style={styles.trendingHeader}>
+            <View style={styles.trendingHeaderLeft}>
+              <Ionicons name="flame" size={20} color="#EF4444" />
+              <Text style={styles.trendingTitle}>Trending Species</Text>
+            </View>
+            <Text style={styles.trendingSubtitle}>Most scanned this week</Text>
+          </View>
+          <FlatList
+            horizontal
+            data={trendingSpecies}
+            keyExtractor={(item, index) => `trending-${item.taxonId || item.name}-${index}`}
+            renderItem={renderTrendingItem}
+            showsHorizontalScrollIndicator={false}
+            contentContainerStyle={styles.trendingList}
+            snapToInterval={180}
+            decelerationRate="fast"
+          />
+        </View>
+      )}
+    </View>
   );
-
-  const headerOpacity = scrollY.interpolate({
-    inputRange: [0, 100],
-    outputRange: [1, 0.95],
-    extrapolate: 'clamp',
-  });
 
   return (
     <SafeAreaProvider>
       <View style={styles.container}>
-        <StatusBar barStyle="light-content" backgroundColor="#5E936C" />
+        <StatusBar barStyle="dark-content" backgroundColor="#fff" />
         
-        {/* Animated Header */}
-        <Animated.View style={[styles.header, { opacity: headerOpacity }]}>
-          <LinearGradient
-            colors={['#5E936C', '#4A7A5A']}
-            style={styles.headerGradient}
-            start={{ x: 0, y: 0 }}
-            end={{ x: 1, y: 1 }}
-          >
-            <SafeAreaView edges={['top']}>
-              <View style={styles.headerContent}>
-                <TouchableOpacity
-                  style={styles.headerButton}
-                  onPress={() => navigation.navigate('Profile', { displayName, guest: isGuest })}
-                >
-                  <Ionicons name="person-circle-outline" size={28} color="#fff" />
-                </TouchableOpacity>
-
-                <View style={styles.logoContainer}>
-                  <Image
-                    source={require('../assets/logo.png')}
-                    style={styles.logo}
-                    resizeMode="contain"
-                  />
-                </View>
-
-                <TouchableOpacity
-                  style={styles.headerButton}
-                  onPress={() => navigation.navigate('NotificationScreen')}
-                >
-                  <View style={styles.notificationBadge}>
-                  </View>
-                  <Ionicons name="notifications-outline" size={26} color="#fff" />
-                </TouchableOpacity>
-              </View>
-            </SafeAreaView>
-          </LinearGradient>
-        </Animated.View>
-
-        {/* Main Content */}
-        <Animated.ScrollView
-          style={styles.scrollView}
-          showsVerticalScrollIndicator={false}
-          onScroll={Animated.event(
-            [{ nativeEvent: { contentOffset: { y: scrollY } } }],
-            { useNativeDriver: true }
-          )}
-          scrollEventThrottle={16}
-          refreshControl={
-            <RefreshControl
-              refreshing={refreshing}
-              onRefresh={() => {
-                generateRandomFact();
-                fetchTrendingData();
-              }}
-              colors={['#5E936C']}
-              tintColor="#5E936C"
-            />
-          }
-        >
-          {/* Hero Carousel */}
-          <View style={styles.carouselSection}>
-            <FlatList
-              ref={sliderRef}
-              data={CAROUSEL_ITEMS}
-              keyExtractor={(item) => item.id}
-              renderItem={renderCard}
-              horizontal
-              showsHorizontalScrollIndicator={false}
-              pagingEnabled
-              snapToInterval={CARD_WIDTH + 20}
-              decelerationRate="fast"
-              contentContainerStyle={{ paddingHorizontal: CARD_SPACING }}
-              snapToAlignment="center"
-              onScroll={(e) => {
-                const index = Math.round(e.nativeEvent.contentOffset.x / (CARD_WIDTH + 20));
-                setCurrentCardIndex(index);
-              }}
-            />
-            
-            {/* Pagination Dots */}
-            <View style={styles.paginationDots}>
-              {CAROUSEL_ITEMS.map((_, index) => (
-                <View
-                  key={index}
-                  style={[
-                    styles.dot,
-                    currentCardIndex === index && styles.activeDot,
-                  ]}
-                />
-              ))}
-            </View>
-          </View>
-
-          {/* Fun Fact Card */}
-          <View style={styles.funFactContainer}>
-            <LinearGradient
-              colors={['#5E936C', '#3E704C']}
-              style={styles.funFactCard}
-              start={{ x: 0, y: 0 }}
-              end={{ x: 1, y: 1 }}
+        <SafeAreaView edges={['top']} style={styles.headerContainer}>
+          <View style={styles.header}>
+            <TouchableOpacity 
+              style={styles.headerIcon}
+              onPress={() => navigation.navigate('ScanScreen')}
             >
-              <View style={styles.funFactHeader}>
-                <View style={styles.funFactIconBg}>
-                  <Ionicons name="bulb" size={24} color="#FFD700" />
-                </View>
-                <Text style={styles.funFactTitle}>Did You Know?</Text>
-              </View>
-              
-              <Text style={styles.funFactText}>{funFact}</Text>
-              
-              <TouchableOpacity
-                style={styles.funFactRefresh}
-                onPress={generateRandomFact}
-              >
-                <Ionicons name="refresh" size={20} color="#fff" />
-                <Text style={styles.funFactRefreshText}>New Fact</Text>
-              </TouchableOpacity>
-            </LinearGradient>
-          </View>
-
-          {/* Trending Plants Section */}
-          <View style={styles.section}>
-            <View style={styles.sectionHeader}>
-              <View>
-                <Text style={styles.sectionTitle}>Trending Plants</Text>
-                <Text style={styles.sectionSubtitle}>Popular in nature</Text>
-              </View>
-            </View>
+              <Ionicons name="scan-outline" size={28} color="#fff" />
+            </TouchableOpacity>
             
-            <FlatList
-              data={trendingPlants}
-              keyExtractor={(item) => item.id.toString()}
-              renderItem={renderTrendingItem}
-              horizontal
-              showsHorizontalScrollIndicator={false}
-              contentContainerStyle={styles.trendingList}
+            <Image
+              source={require('../assets/logo.png')}
+              style={styles.logo}
+              resizeMode="contain"
             />
-          </View>
-
-          {/* Trending Animals Section */}
-          <View style={styles.section}>
-            <View style={styles.sectionHeader}>
-              <View>
-                <Text style={styles.sectionTitle}>Trending Animals</Text>
-                <Text style={styles.sectionSubtitle}>Wildlife spotlight</Text>
-              </View>
-            </View>
             
-            <FlatList
-              data={trendingAnimals}
-              keyExtractor={(item) => item.id.toString()}
-              renderItem={renderTrendingItem}
-              horizontal
-              showsHorizontalScrollIndicator={false}
-              contentContainerStyle={styles.trendingList}
-            />
+            <TouchableOpacity 
+              style={styles.headerIcon}
+              onPress={() => navigation.navigate('NotificationScreen')}
+            >
+              <View style={styles.notificationBadge} />
+              <Ionicons name="notifications-outline" size={28} color="#fff" />
+            </TouchableOpacity>
           </View>
+        </SafeAreaView>
 
-          <View style={{ height: 100 }} />
-        </Animated.ScrollView>
+        {loading ? (
+          <View style={styles.loadingContainer}>
+            <ActivityIndicator size="large" color="#5E936C" />
+          </View>
+        ) : publicScans.length === 0 ? (
+          <View style={styles.emptyContainer}>
+            <Ionicons name="telescope-outline" size={80} color="#c7c7c7" />
+            <Text style={styles.emptyTitle}>Welcome to the Community</Text>
+            <Text style={styles.emptyDescription}>
+              Start exploring and sharing your nature discoveries
+            </Text>
+            <TouchableOpacity
+              style={styles.emptyButton}
+              onPress={() => navigation.navigate('ScanScreen')}
+            >
+              <Text style={styles.emptyButtonText}>Scan Your First Species</Text>
+            </TouchableOpacity>
+          </View>
+        ) : (
+          <FlatList
+            data={publicScans}
+            keyExtractor={(item) => item.id}
+            renderItem={renderFeedItem}
+            ListHeaderComponent={renderHeader}
+            refreshControl={
+              <RefreshControl 
+                refreshing={refreshing} 
+                onRefresh={onRefresh}
+                tintColor="#000"
+              />
+            }
+            showsVerticalScrollIndicator={false}
+            contentContainerStyle={styles.feedContent}
+          />
+        )}
 
-        {/* Floating Action Button */}
-        <TouchableOpacity
-          style={styles.fab}
-          onPress={() => navigation.navigate('ScanScreen')}
-          activeOpacity={0.8}
-        >
-          <LinearGradient
-            colors={['#5E936C', '#3E704C']}
-            style={styles.fabGradient}
-            start={{ x: 0, y: 0 }}
-            end={{ x: 1, y: 1 }}
-          >
-            <Ionicons name="scan-outline" size={28} color="#fff" />
-          </LinearGradient>
-        </TouchableOpacity>
+        {/* Comments Modal */}
+        {selectedPostId && (
+          <CommentsModal
+            visible={commentsModalVisible}
+            onClose={handleCommentsModalClose}
+            postId={selectedPostId}
+            currentUserId={currentUserId}
+            currentUsername={currentUsername}
+            currentUserProfileImage={currentUser?.photoURL || null}
+          />
+        )}
       </View>
     </SafeAreaProvider>
   );
@@ -374,273 +628,317 @@ export default function HomeScreen({ route, navigation }) {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#F5F7FA',
+    backgroundColor: '#fff',
+  },
+  headerContainer: {
+    backgroundColor: '#5E936C',
+    borderBottomWidth: 0.5,
+    borderBottomColor: '#e0e0e0',
   },
   header: {
-    position: 'absolute',
-    top: 0,
-    left: 0,
-    right: 0,
-    zIndex: 1000,
-  },
-  headerGradient: {
-    paddingBottom: 20,
-  },
-  headerContent: {
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'space-between',
-    paddingHorizontal: 20,
-    paddingTop: 10,
+    paddingHorizontal: 16,
+    paddingVertical: 20,
   },
-  headerButton: {
-    width: 44,
-    height: 44,
-    borderRadius: 22,
-    backgroundColor: 'rgba(255,255,255,0.15)',
-    alignItems: 'center',
-    justifyContent: 'center',
+  logo: {
+    width: 100,
+    height: 50,
+    position: 'absolute',
+    left: '50%',
+    marginLeft: -40,
+  },
+  headerIcon: {
+    position: 'relative',
+    zIndex: 1,
   },
   notificationBadge: {
     position: 'absolute',
-    top: -2,
-    right: -2,
-    zIndex: 1,
-  },
-  badgeDot: {
-    width: 10,
-    height: 10,
-    borderRadius: 5,
-    backgroundColor: '#FF6B6B',
-    borderWidth: 2,
-    borderColor: '#5E936C',
-  },
-  logoContainer: {
-    flex: 1,
-    alignItems: 'center',
-  },
-  logo: {
-    width: 120,
-    height: 40,
-  },
-  scrollView: {
-    flex: 1,
-    paddingTop: Platform.OS === 'ios' ? 100 : 120,
-  },
-  carouselSection: {
-    marginBottom: 30,
-  },
-  card: {
-    width: CARD_WIDTH,
-    height: CARD_WIDTH * 1.1,
-    borderRadius: 24,
-    overflow: 'hidden',
-    marginHorizontal: 10,
-    backgroundColor: '#fff',
-    elevation: 8,
-    shadowColor: '#000',
-    shadowOpacity: 0.15,
-    shadowRadius: 12,
-    shadowOffset: { width: 0, height: 6 },
-  },
-  cardImage: {
-    width: '100%',
-    height: '100%',
-  },
-  cardGradient: {
-    position: 'absolute',
-    bottom: 0,
-    left: 0,
+    top: 0,
     right: 0,
-    height: '60%',
-  },
-  cardContent: {
-    position: 'absolute',
-    bottom: 0,
-    left: 0,
-    right: 0,
-    padding: 24,
-  },
-  cardIconWrapper: {
-    width: 56,
-    height: 56,
-    borderRadius: 28,
-    backgroundColor: 'rgba(255,255,255,0.2)',
-    alignItems: 'center',
-    justifyContent: 'center',
-    marginBottom: 16,
-  },
-  cardTitle: {
-    fontSize: 26,
-    fontWeight: '800',
-    color: '#fff',
-    marginBottom: 8,
-  },
-  cardSubtitle: {
-    fontSize: 15,
-    color: 'rgba(255,255,255,0.9)',
-    marginBottom: 20,
-    lineHeight: 22,
-  },
-  cardAction: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: 8,
-  },
-  cardActionText: {
-    fontSize: 16,
-    fontWeight: '600',
-    color: '#fff',
-  },
-  paginationDots: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'center',
-    marginTop: 20,
-    gap: 8,
-  },
-  dot: {
     width: 8,
     height: 8,
     borderRadius: 4,
-    backgroundColor: '#D1D5DB',
+    backgroundColor: '#EF4444',
+    borderWidth: 1.5,
+    borderColor: '#fff',
+    zIndex: 1,
   },
-  activeDot: {
-    width: 24,
-    backgroundColor: '#5E936C',
+  trendingSection: {
+    borderBottomWidth: 0.5,
+    borderBottomColor: '#e0e0e0',
+    paddingVertical: 16,
   },
-  funFactContainer: {
-    paddingHorizontal: 20,
-    marginBottom: 30,
-  },
-  funFactCard: {
-    borderRadius: 20,
-    padding: 24,
-    elevation: 4,
-    shadowColor: '#000',
-    shadowOpacity: 0.1,
-    shadowRadius: 8,
-    shadowOffset: { width: 0, height: 4 },
-  },
-  funFactHeader: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    marginBottom: 16,
-    gap: 12,
-  },
-  funFactIconBg: {
-    width: 44,
-    height: 44,
-    borderRadius: 22,
-    backgroundColor: 'rgba(255,255,255,0.15)',
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-  funFactTitle: {
-    fontSize: 20,
-    fontWeight: '700',
-    color: '#fff',
-  },
-  funFactText: {
-    fontSize: 16,
-    color: 'rgba(255,255,255,0.95)',
-    lineHeight: 24,
-    marginBottom: 20,
-  },
-  funFactRefresh: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    alignSelf: 'flex-start',
-    backgroundColor: 'rgba(255,255,255,0.2)',
+  trendingHeader: {
     paddingHorizontal: 16,
-    paddingVertical: 10,
-    borderRadius: 20,
-    gap: 8,
+    marginBottom: 12,
   },
-  funFactRefreshText: {
-    fontSize: 14,
-    fontWeight: '600',
-    color: '#fff',
-  },
-  section: {
-    marginBottom: 30,
-  },
-  sectionHeader: {
+  trendingHeaderLeft: {
     flexDirection: 'row',
     alignItems: 'center',
-    justifyContent: 'space-between',
-    paddingHorizontal: 20,
-    marginBottom: 16,
-  },
-  sectionTitle: {
-    fontSize: 22,
-    fontWeight: '700',
-    color: '#1F2937',
     marginBottom: 4,
   },
-  sectionSubtitle: {
-    fontSize: 14,
-    color: '#6B7280',
+  trendingTitle: {
+    fontSize: 16,
+    fontWeight: '700',
+    color: '#000',
+    marginLeft: 6,
   },
-  seeAll: {
-    fontSize: 14,
-    fontWeight: '600',
-    color: '#5E936C',
+  trendingSubtitle: {
+    fontSize: 12,
+    color: '#666',
+    marginLeft: 26,
   },
   trendingList: {
-    paddingHorizontal: 20,
-    gap: 16,
+    paddingHorizontal: 16,
   },
   trendingCard: {
-    width: 160,
-    height: 200,
-    borderRadius: 16,
+    width: 170,
+    marginRight: 12,
+  },
+  trendingImageWrapper: {
+    width: '100%',
+    height: 220,
+    borderRadius: 12,
     overflow: 'hidden',
-    backgroundColor: '#fff',
-    marginRight: 16,
-    elevation: 3,
-    shadowColor: '#000',
-    shadowOpacity: 0.1,
-    shadowRadius: 6,
-    shadowOffset: { width: 0, height: 2 },
+    backgroundColor: '#f5f5f5',
+    position: 'relative',
   },
   trendingImage: {
     width: '100%',
     height: '100%',
+    justifyContent: 'center',
+    alignItems: 'center',
   },
-  trendingOverlay: {
+  trendingGradient: {
     position: 'absolute',
     bottom: 0,
     left: 0,
     right: 0,
-    height: '50%',
-    justifyContent: 'flex-end',
+    height: 120,
+  },
+  trendingBadge: {
+    position: 'absolute',
+    top: 8,
+    right: 8,
+    flexDirection: 'row',
+    alignItems: 'center',
+    backgroundColor: 'rgba(239, 68, 68, 0.95)',
+    paddingHorizontal: 8,
+    paddingVertical: 4,
+    borderRadius: 12,
+    gap: 3,
+  },
+  trendingBadgeText: {
+    fontSize: 12,
+    fontWeight: '700',
+    color: '#fff',
+  },
+  trendingInfo: {
+    position: 'absolute',
+    bottom: 0,
+    left: 0,
+    right: 0,
     padding: 12,
   },
-  trendingText: {
-    fontSize: 13,
-    fontWeight: '600',
+  trendingName: {
+    fontSize: 15,
+    fontWeight: '700',
     color: '#fff',
+    marginBottom: 6,
     lineHeight: 18,
   },
-  fab: {
-    position: 'absolute',
-    right: 20,
-    bottom: Platform.OS === 'ios' ? 30 : 20,
-    width: 64,
-    height: 64,
-    borderRadius: 32,
-    elevation: 12,
-    shadowColor: '#5E936C',
-    shadowOpacity: 0.4,
-    shadowRadius: 16,
-    shadowOffset: { width: 0, height: 8 },
+  trendingStats: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
   },
-  fabGradient: {
+  trendingStat: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 4,
+  },
+  trendingStatText: {
+    fontSize: 11,
+    fontWeight: '600',
+    color: 'rgba(255,255,255,0.9)',
+  },
+  trendingCategory: {
+    backgroundColor: 'rgba(255,255,255,0.2)',
+    paddingHorizontal: 8,
+    paddingVertical: 3,
+    borderRadius: 10,
+  },
+  trendingCategoryText: {
+    fontSize: 10,
+    fontWeight: '600',
+    color: '#fff',
+  },
+  feedContent: {
+    paddingBottom: 20,
+  },
+  postContainer: {
+    marginBottom: 16,
+  },
+  postHeader: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+    paddingHorizontal: 16,
+    paddingVertical: 10,
+  },
+  postHeaderLeft: {
+    flexDirection: 'row',
+    alignItems: 'center',
+  },
+  postAvatar: {
+    width: 36,
+    height: 36,
+    borderRadius: 18,
+    padding: 2,
+  },
+  postAvatarInner: {
     width: '100%',
     height: '100%',
-    borderRadius: 32,
+    borderRadius: 16,
+    backgroundColor: '#fff',
     alignItems: 'center',
     justifyContent: 'center',
+  },
+  postAvatarText: {
+    fontSize: 16,
+    fontWeight: '700',
+    color: '#5E936C',
+  },
+  postUserInfo: {
+    marginLeft: 10,
+  },
+  postUsername: {
+    fontSize: 14,
+    fontWeight: '600',
+    color: '#000',
+  },
+  postLocation: {
+    fontSize: 12,
+    color: '#666',
+  },
+  postImage: {
+    width: width,
+    height: width,
+    backgroundColor: '#f5f5f5',
+  },
+  imageContainer: {
+    position: 'relative',
+  },
+  likeAnimationOverlay: {
+    position: 'absolute',
+    top: 0,
+    left: 0,
+    right: 0,
+    bottom: 0,
+    justifyContent: 'center',
+    alignItems: 'center',
+    backgroundColor: 'transparent',
+  },
+  postImagePlaceholder: {
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  postActions: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+    paddingHorizontal: 12,
+    paddingVertical: 8,
+  },
+  postActionsLeft: {
+    flexDirection: 'row',
+    alignItems: 'center',
+  },
+  actionButton: {
+    marginRight: 16,
+  },
+  postContent: {
+    paddingHorizontal: 16,
+  },
+  postLikes: {
+    fontSize: 14,
+    fontWeight: '600',
+    color: '#000',
+    marginBottom: 4,
+  },
+  postCaption: {
+    flexDirection: 'row',
+    flexWrap: 'wrap',
+    marginBottom: 4,
+  },
+  postCaptionText: {
+    fontSize: 14,
+    color: '#000',
+    lineHeight: 18,
+  },
+  scientificName: {
+    fontStyle: 'italic',
+    color: '#666',
+    fontSize: 13,
+  },
+  postDescription: {
+    fontSize: 14,
+    color: '#666',
+    lineHeight: 18,
+    marginTop: 2,
+  },
+  viewCommentsText: {
+    fontSize: 14,
+    color: '#999',
+    marginTop: 4,
+  },
+  postTime: {
+    fontSize: 12,
+    color: '#999',
+    marginTop: 4,
+  },
+  showMoreText: {
+    fontSize: 14,
+    color: '#999',
+    marginTop: 4,
+    fontWeight: '500',
+  },
+  loadingContainer: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  emptyContainer: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+    paddingHorizontal: 40,
+  },
+  emptyTitle: {
+    fontSize: 22,
+    fontWeight: '700',
+    color: '#000',
+    marginTop: 20,
+    marginBottom: 8,
+  },
+  emptyDescription: {
+    fontSize: 14,
+    color: '#666',
+    textAlign: 'center',
+    marginBottom: 24,
+    lineHeight: 20,
+  },
+  emptyButton: {
+    backgroundColor: '#0095f6',
+    paddingHorizontal: 32,
+    paddingVertical: 12,
+    borderRadius: 8,
+  },
+  emptyButtonText: {
+    color: '#fff',
+    fontSize: 15,
+    fontWeight: '600',
   },
 });

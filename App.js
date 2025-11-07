@@ -71,7 +71,7 @@ function MainTabs({ route }) {
           if (route.name === 'Home') name = 'home-outline';
           if (route.name === 'Favorites') name = 'heart-outline';
           if (route.name === 'History') name = 'time-outline';
-          if (route.name === 'Settings') name = 'settings-outline';
+          if (route.name === 'Profile') name = 'person-outline';
 
           return (
             <Ionicons
@@ -97,8 +97,13 @@ function MainTabs({ route }) {
       </Tab.Screen>
       <Tab.Screen name="Favorites" component={FavoritesScreen} options={{ tabBarLabel: "" }} />
       <Tab.Screen name="History" component={HistoryScreen} options={{ tabBarLabel: "" }} />
-      <Tab.Screen name="Settings" options={{ tabBarLabel: "" }}>
-        {props => <SettingsScreen {...props} route={{ ...props.route, params: { guest } }} />}
+      <Tab.Screen name="Profile" options={{ tabBarLabel: "" }}>
+        {props => (
+          <ProfileScreen
+            {...props}
+            route={{ ...props.route, params: { guest, displayName } }}
+          />
+        )}
       </Tab.Screen>
     </Tab.Navigator>
   );
@@ -155,7 +160,7 @@ export default function App() {
           <Stack.Screen name="SignIn" component={SignInScreen} />
           <Stack.Screen name="SignUp" component={SignUpScreen} />
           <Stack.Screen name="ForgotPassword" component={ForgotPasswordScreen} />
-          <Stack.Screen name="Profile" component={ProfileScreen} />
+          <Stack.Screen name="Settings" component={SettingsScreen} />
           <Stack.Screen name="NotificationScreen" component={NotificationScreen} />
           <Stack.Screen name="ManageNotifications" component={ManageNotificationsScreen} />
           <Stack.Screen

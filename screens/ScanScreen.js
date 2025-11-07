@@ -607,6 +607,7 @@ export default function ScanScreen({ navigation }) {
     } 
     else if (user) {
       try {
+        // Record scan stats
         await recordScan(user.uid, {
           speciesName: matchResult.name,
           plantName: matchResult.commonName || matchResult.name,
@@ -615,8 +616,37 @@ export default function ScanScreen({ navigation }) {
           scanType: 'camera',
         });
         console.log('✅ Scan recorded for user:', user.uid);
+        
+        // Increment global observation count
+        const { addToHistory, incrementGlobalObservation } = require('../firestoreService');
+        const globalObsResult = await incrementGlobalObservation({
+          taxonId: matchResult.taxonId,
+          name: matchResult.name,
+          scientificName: matchResult.name,
+          commonName: matchResult.commonName,
+        });
+        
+        // Add to history with deduplication - INCLUDE ALL RELEVANT DATA
+        await addToHistory(user.uid, {
+          plantName: matchResult.commonName || matchResult.name,
+          name: matchResult.name,
+          scientificName: matchResult.name,
+          commonName: matchResult.commonName,
+          taxonId: matchResult.taxonId, // CRITICAL for deduplication
+          rank: taxonDetails?.rank,
+          iconicTaxon: taxonDetails?.iconic_taxon_name,
+          imageUri: photoUri, // Local URI for upload
+          imageUrl: taxonDetails?.default_photo?.medium_url,
+          conservation: gbifData?.threatStatus,
+          about: taxonDetails?.wikipedia_summary,
+          iNatObsCount: obsCount,
+          globalObsCount: globalObsResult.success ? globalObsResult.count : 0,
+          type: 'history',
+        });
+        console.log('✅ Added to history with deduplication');
+        
       } catch (error) {
-        console.warn('⚠️ Failed to record scan:', error);
+        console.warn('⚠️ Failed to record scan or add to history:', error);
       }
     }
 

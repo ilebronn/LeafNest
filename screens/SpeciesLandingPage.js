@@ -454,11 +454,6 @@ export default function SpeciesLandingPage({ route, navigation }) {
         `https://api.gbif.org/v1/occurrence/search?taxonKey=${usageKey}&limit=0`,
         { timeout: 5000 }
       );
-      
-      const count = response.data?.count || 0;
-      return {
-        distribution: `Recorded in ${count.toLocaleString()} global observations`,
-      };
     } catch (error) {
       console.warn('GBIF occurrence fetch failed:', error.message);
       return null;
@@ -905,18 +900,7 @@ export default function SpeciesLandingPage({ route, navigation }) {
               </>
             )}
 
-            <View style={styles.card}>
-              <View style={styles.cardHeader}>
-                <Ionicons name="people" size={24} color="#00695c" />
-                <Text style={styles.cardTitle}>Community Data</Text>
-              </View>
-              <View style={styles.statsRow}>
-                <View style={styles.statBox}>
-                  <Text style={styles.statNumber}>{typeof iNatObsCount === 'number' ? iNatObsCount.toLocaleString() : 0}</Text>
-                  <Text style={styles.statLabel}>iNaturalist Observations</Text>
-                </View>
-              </View>
-            </View>
+            
 
             {taxonomy.length > 0 && (
               <View style={styles.card}>
@@ -951,7 +935,6 @@ export default function SpeciesLandingPage({ route, navigation }) {
             <View style={styles.sourcesCard}>
               <Text style={styles.sourcesTitle}>Data Sources</Text>
               <Text style={styles.sourcesText}>
-                • iNaturalist - Community observations{'\n'}
                 • GBIF - Global biodiversity data{'\n'}
                 • Wikipedia - General information{'\n'}
                 • EOL - Encyclopedia of Life{'\n'}

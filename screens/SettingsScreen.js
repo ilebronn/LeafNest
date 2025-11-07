@@ -85,9 +85,17 @@ export default function SettingsScreen({ navigation, route }) {
           >
             <SafeAreaView edges={['top']}>
               <View style={styles.headerContent}>
+                <TouchableOpacity 
+                  style={styles.backButton}
+                  onPress={() => navigation.goBack()}
+                  activeOpacity={0.7}
+                >
+                  <Ionicons name="arrow-back" size={moderateScale(24)} color="#fff" />
+                </TouchableOpacity>
                 <Text style={styles.headerTitle}>
                   {t("settings.title") || "Settings"}
                 </Text>
+                <View style={{ width: moderateScale(44) }} />
               </View>
             </SafeAreaView>
           </LinearGradient>
@@ -273,10 +281,19 @@ const styles = StyleSheet.create({
     paddingBottom: moderateScale(20),
   },
   headerContent: {
+    flexDirection: 'row',
     alignItems: 'center',
-    justifyContent: 'center',
+    justifyContent: 'space-between',
     paddingHorizontal: moderateScale(20),
     paddingTop: moderateScale(10),
+  },
+  backButton: {
+    width: moderateScale(44),
+    height: moderateScale(44),
+    borderRadius: moderateScale(22),
+    backgroundColor: 'rgba(255, 255, 255, 0.2)',
+    justifyContent: 'center',
+    alignItems: 'center',
   },
   headerTitle: {
     fontSize: moderateScale(22),

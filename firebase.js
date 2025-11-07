@@ -15,7 +15,8 @@ import {
   query, 
   where, 
   orderBy, 
-  serverTimestamp 
+  serverTimestamp,
+  limit  // ⬅️ ADD THIS IMPORT
 } from 'firebase/firestore';
 import { 
   getStorage, 
@@ -58,7 +59,7 @@ if (getApps().length === 0) {
 export { auth };
 export const db = getFirestore(app);
 export const storage = getStorage(app);
-export const functions = getFunctions(app); // ADD THIS LINE
+export const functions = getFunctions(app);
 
 // If you're testing locally with Firebase Emulator, uncomment this:
 // connectFunctionsEmulator(functions, "localhost", 5001);
@@ -76,7 +77,8 @@ export {
   query, 
   where, 
   orderBy, 
-  serverTimestamp 
+  serverTimestamp,
+  limit  // ⬅️ NOW THIS EXPORT WORKS
 };
 
 // Export Storage functions for image uploads
@@ -97,7 +99,7 @@ export {
   signOut
 } from 'firebase/auth';
 
-// Export Functions utilities - ADD THIS
+// Export Functions utilities
 export { httpsCallable } from 'firebase/functions';
 
 // Helper function to upload image to Firebase Storage

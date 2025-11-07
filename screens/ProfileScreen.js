@@ -203,16 +203,6 @@ export default function ProfileScreen({ route, navigation }) {
       {/* Custom Header with Gradient Effect */}
       <View style={styles.headerContainer}>
         <View style={styles.headerContent}>
-          <TouchableOpacity 
-            style={styles.backButton}
-            onPress={() => navigation.goBack()}
-            activeOpacity={0.7}
-          >
-            <Ionicons name="arrow-back" size={24} color="#fff" />
-          </TouchableOpacity>
-          
-          <Text style={styles.headerTitle}>Profile</Text>
-          
           {!isGuest ? (
             <TouchableOpacity 
               style={styles.syncButton}
@@ -229,6 +219,16 @@ export default function ProfileScreen({ route, navigation }) {
           ) : (
             <View style={{ width: 44 }} />
           )}
+          
+          <Text style={styles.headerTitle}>Profile</Text>
+          
+          <TouchableOpacity 
+            style={styles.settingsButton}
+            onPress={() => navigation.navigate('Settings', { guest: isGuest })}
+            activeOpacity={0.7}
+          >
+            <Ionicons name="settings-outline" size={24} color="#fff" />
+          </TouchableOpacity>
         </View>
 
         {/* Profile Avatar Section */}
@@ -449,18 +449,18 @@ const styles = StyleSheet.create({
     paddingHorizontal: 20,
     marginBottom: 20,
   },
-  backButton: {
+  headerTitle: {
+    fontSize: 20,
+    fontWeight: '700',
+    color: '#fff',
+  },
+  settingsButton: {
     width: 44,
     height: 44,
     borderRadius: 22,
     backgroundColor: 'rgba(255, 255, 255, 0.2)',
     justifyContent: 'center',
     alignItems: 'center',
-  },
-  headerTitle: {
-    fontSize: 20,
-    fontWeight: '700',
-    color: '#fff',
   },
   syncButton: {
     width: 44,

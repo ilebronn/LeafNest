@@ -2,7 +2,7 @@ import React, { useCallback, useState, useEffect, useRef } from 'react';
 import {
   View, Text, StyleSheet, TouchableOpacity,
   FlatList, Image, RefreshControl, Alert, Dimensions,
-  Animated, PanResponder, Modal, ScrollView, ActivityIndicator
+  Animated, PanResponder, Modal, ScrollView, ActivityIndicator, TextInput, Switch
 } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import { useFocusEffect } from '@react-navigation/native';
@@ -10,7 +10,13 @@ import { auth } from '../firebase';
 import { onAuthStateChanged } from 'firebase/auth';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { LinearGradient } from 'expo-linear-gradient';
-import { getHistory, deleteHistoryItem, clearAllHistory } from '../firestoreService';
+import { 
+  getHistory, 
+  deleteHistoryItem, 
+  clearAllHistory, 
+  getGlobalObservationCounts,
+  toggleHistoryItemVisibility 
+} from '../firestoreService';
 
 const { width } = Dimensions.get('window');
 
@@ -23,6 +29,9 @@ export default function HistoryScreen({ navigation }) {
   const [selectedItems, setSelectedItems] = useState(new Set());
   const [detailsModalVisible, setDetailsModalVisible] = useState(false);
   const [selectedSpecies, setSelectedSpecies] = useState(null);
+  const [searchQuery, setSearchQuery] = useState('');
+  const [filterType, setFilterType] = useState('all');
+  const [globalCounts, setGlobalCounts] = useState({});
 
   const loadHistory = useCallback(async () => {
     if (!uid) {
@@ -47,13 +56,33 @@ export default function HistoryScreen({ navigation }) {
           conservation: it.conservation || null,
           about: it.about || it.description || null,
           iNatObsCount: it.iNatObsCount || 0,
+          globalObsCount: it.globalObsCount || 0,
           type: it.type || 'history',
           createdAt: it.timestamp?.toMillis() || it.createdAt || Date.now(),
           originalData: it.originalData || null,
+          isPublic: it.isPublic || false, // NEW: Public/Private status
         }));
         
         normalized.sort((a, b) => (b.createdAt ?? 0) - (a.createdAt ?? 0));
         setItems(normalized);
+
+        const countsResult = await getGlobalObservationCounts(normalized);
+        if (countsResult.success) {
+          setGlobalCounts(countsResult.counts);
+          
+          const updatedItems = normalized.map(item => {
+            const docId = item.taxonId 
+              ? `taxon_${item.taxonId}` 
+              : (item.scientificName || item.name || '').toLowerCase().replace(/\s+/g, '_');
+            
+            return {
+              ...item,
+              globalObsCount: countsResult.counts[docId] || item.globalObsCount || 0
+            };
+          });
+          
+          setItems(updatedItems);
+        }
       } else {
         console.warn('Failed to load history:', result.error);
         setItems([]);
@@ -84,6 +113,34 @@ export default function HistoryScreen({ navigation }) {
     setRefreshing(false);
   };
 
+  const handleTogglePublic = async (item) => {
+    if (!uid) return;
+
+    try {
+      const newStatus = !item.isPublic;
+      const result = await toggleHistoryItemVisibility(uid, item.id, newStatus);
+      
+      if (result.success) {
+        // Update local state
+        setItems(prevItems => 
+          prevItems.map(i => 
+            i.id === item.id ? { ...i, isPublic: newStatus } : i
+          )
+        );
+        
+        Alert.alert(
+          'Success',
+          `Scan is now ${newStatus ? 'public' : 'private'}`
+        );
+      } else {
+        Alert.alert('Error', 'Failed to update visibility');
+      }
+    } catch (error) {
+      console.error('Error toggling visibility:', error);
+      Alert.alert('Error', 'Failed to update visibility');
+    }
+  };
+
   const toggleSelectionMode = () => {
     setSelectionMode(!selectionMode);
     setSelectedItems(new Set());
@@ -100,10 +157,10 @@ export default function HistoryScreen({ navigation }) {
   };
 
   const selectAll = () => {
-    if (selectedItems.size === items.length) {
+    if (selectedItems.size === filteredItems.length) {
       setSelectedItems(new Set());
     } else {
-      setSelectedItems(new Set(items.map(item => item.id)));
+      setSelectedItems(new Set(filteredItems.map(item => item.id)));
     }
   };
 
@@ -234,6 +291,42 @@ export default function HistoryScreen({ navigation }) {
     }
   };
 
+  const getFilteredItems = () => {
+    let filtered = items;
+
+    if (filterType === 'plants') {
+      filtered = filtered.filter(item => 
+        item.iconicTaxon?.toLowerCase() === 'plantae' || 
+        item.iconicTaxon?.toLowerCase().includes('plant')
+      );
+    } else if (filterType === 'animals') {
+      filtered = filtered.filter(item => 
+        item.iconicTaxon?.toLowerCase() === 'animalia' || 
+        item.iconicTaxon?.toLowerCase() === 'aves' ||
+        item.iconicTaxon?.toLowerCase() === 'mammalia' ||
+        item.iconicTaxon?.toLowerCase() === 'reptilia' ||
+        item.iconicTaxon?.toLowerCase() === 'amphibia' ||
+        item.iconicTaxon?.toLowerCase() === 'actinopterygii' ||
+        item.iconicTaxon?.toLowerCase() === 'insecta' ||
+        item.iconicTaxon?.toLowerCase() === 'arachnida' ||
+        (item.iconicTaxon && !item.iconicTaxon.toLowerCase().includes('plant'))
+      );
+    }
+
+    if (searchQuery.trim()) {
+      const query = searchQuery.toLowerCase();
+      filtered = filtered.filter(item => 
+        item.name?.toLowerCase().includes(query) ||
+        item.commonName?.toLowerCase().includes(query) ||
+        item.scientificName?.toLowerCase().includes(query)
+      );
+    }
+
+    return filtered;
+  };
+
+  const filteredItems = getFilteredItems();
+
   const SpeciesDetailsModal = () => {
     if (!selectedSpecies || !detailsModalVisible) return null;
 
@@ -285,6 +378,26 @@ export default function HistoryScreen({ navigation }) {
                 )}
               </View>
 
+              {/* PUBLIC/PRIVATE TOGGLE */}
+              <View style={styles.publicToggleContainer}>
+                <View style={styles.publicToggleInfo}>
+                  <Ionicons 
+                    name={selectedSpecies.isPublic ? "eye-outline" : "eye-off-outline"} 
+                    size={20} 
+                    color={selectedSpecies.isPublic ? "#059669" : "#6B7280"} 
+                  />
+                  <Text style={styles.publicToggleLabel}>
+                    {selectedSpecies.isPublic ? "Public" : "Private"}
+                  </Text>
+                </View>
+                <Switch
+                  value={selectedSpecies.isPublic}
+                  onValueChange={() => handleTogglePublic(selectedSpecies)}
+                  trackColor={{ false: "#D1D5DB", true: "#86EFAC" }}
+                  thumbColor={selectedSpecies.isPublic ? "#059669" : "#9CA3AF"}
+                />
+              </View>
+
               <Text style={styles.modalTitle}>
                 {selectedSpecies.name || 'Unknown Species'}
               </Text>
@@ -331,17 +444,7 @@ export default function HistoryScreen({ navigation }) {
                     </View>
                   </View>
                 )}
-                
-                <View style={styles.detailRow}>
-                  <Ionicons name="eye-outline" size={20} color="#5E936C" style={styles.detailIcon} />
-                  <View style={styles.detailTextContainer}>
-                    <Text style={styles.detailLabel}>Observations</Text>
-                    <Text style={styles.detailValue}>
-                      {selectedSpecies.iNatObsCount?.toLocaleString() || '0'}
-                    </Text>
-                  </View>
-                </View>
-                
+
                 {selectedSpecies.conservation && (
                   <View style={styles.detailRow}>
                     <Ionicons name="shield-checkmark-outline" size={20} color="#059669" style={styles.detailIcon} />
@@ -349,6 +452,18 @@ export default function HistoryScreen({ navigation }) {
                       <Text style={styles.detailLabel}>Conservation Status</Text>
                       <Text style={[styles.detailValue, styles.conservationText]}>
                         {selectedSpecies.conservation}
+                      </Text>
+                    </View>
+                  </View>
+                )}
+
+                {selectedSpecies.globalObsCount > 0 && (
+                  <View style={styles.detailRow}>
+                    <Ionicons name="globe-outline" size={20} color="#059669" style={styles.detailIcon} />
+                    <View style={styles.detailTextContainer}>
+                      <Text style={styles.detailLabel}>Global App Scans</Text>
+                      <Text style={[styles.detailValue, styles.globalObsDetailText]}>
+                        {selectedSpecies.globalObsCount.toLocaleString()} {selectedSpecies.globalObsCount === 1 ? 'scan' : 'scans'}
                       </Text>
                     </View>
                   </View>
@@ -490,7 +605,15 @@ export default function HistoryScreen({ navigation }) {
             )}
             
             <View style={styles.infoContainer}>
-              <Text numberOfLines={1} style={styles.name}>{item.name}</Text>
+              <View style={styles.nameRow}>
+                <Text numberOfLines={1} style={styles.name}>{item.name}</Text>
+                <Ionicons 
+                  name={item.isPublic ? "eye-outline" : "eye-off-outline"} 
+                  size={16} 
+                  color={item.isPublic ? "#059669" : "#9CA3AF"} 
+                />
+              </View>
+              
               {item.scientificName && item.scientificName !== item.name && (
                 <Text numberOfLines={1} style={styles.scientificName}>{item.scientificName}</Text>
               )}
@@ -500,10 +623,13 @@ export default function HistoryScreen({ navigation }) {
                   <Ionicons name="time-outline" size={14} color="#9ca3af" />
                   <Text style={styles.timestamp}>{formatDate(item.createdAt)}</Text>
                 </View>
-                <View style={styles.obsCount}>
-                  <Ionicons name="eye-outline" size={14} color="#5E936C" />
-                  <Text style={styles.obsText}>{item.iNatObsCount?.toLocaleString() || 0}</Text>
-                </View>
+                
+                {item.globalObsCount > 0 && (
+                  <View style={styles.globalObsCount}>
+                    <Ionicons name="globe-outline" size={14} color="#059669" />
+                    <Text style={styles.globalObsText}>{item.globalObsCount}</Text>
+                  </View>
+                )}
               </View>
             </View>
           </TouchableOpacity>
@@ -607,7 +733,7 @@ export default function HistoryScreen({ navigation }) {
                 </Text>
                 <TouchableOpacity onPress={selectAll} style={styles.headerButton}>
                   <Ionicons 
-                    name={selectedItems.size === items.length ? "checkbox" : "checkbox-outline"} 
+                    name={selectedItems.size === filteredItems.length ? "checkbox" : "checkbox-outline"} 
                     size={24} 
                     color="#fff" 
                   />
@@ -632,13 +758,78 @@ export default function HistoryScreen({ navigation }) {
               <View style={styles.statItem}>
                 <Ionicons name="time" size={16} color="rgba(255,255,255,0.9)" />
                 <Text style={styles.statText}>
-                  {items.length} {items.length === 1 ? 'record' : 'records'}
+                  {filteredItems.length} of {items.length} {items.length === 1 ? 'record' : 'records'}
                 </Text>
               </View>
             </View>
           )}
         </SafeAreaView>
       </LinearGradient>
+
+      {items.length > 0 && !selectionMode && (
+        <View style={styles.searchFilterContainer}>
+          <View style={styles.searchBar}>
+            <Ionicons name="search" size={20} color="#9CA3AF" style={styles.searchIcon} />
+            <TextInput
+              style={styles.searchInput}
+              placeholder="Search by name..."
+              placeholderTextColor="#9CA3AF"
+              value={searchQuery}
+              onChangeText={setSearchQuery}
+              returnKeyType="search"
+            />
+            {searchQuery.length > 0 && (
+              <TouchableOpacity onPress={() => setSearchQuery('')} style={styles.clearButton}>
+                <Ionicons name="close-circle" size={20} color="#9CA3AF" />
+              </TouchableOpacity>
+            )}
+          </View>
+
+          <View style={styles.filterButtons}>
+            <TouchableOpacity
+              style={[styles.filterButton, filterType === 'all' && styles.filterButtonActive]}
+              onPress={() => setFilterType('all')}
+              activeOpacity={0.7}
+            >
+              <Text style={[styles.filterButtonText, filterType === 'all' && styles.filterButtonTextActive]}>
+                All
+              </Text>
+            </TouchableOpacity>
+
+            <TouchableOpacity
+              style={[styles.filterButton, filterType === 'plants' && styles.filterButtonActive]}
+              onPress={() => setFilterType('plants')}
+              activeOpacity={0.7}
+            >
+              <Ionicons 
+                name="leaf" 
+                size={16} 
+                color={filterType === 'plants' ? '#fff' : '#5E936C'} 
+                style={{ marginRight: 4 }}
+              />
+              <Text style={[styles.filterButtonText, filterType === 'plants' && styles.filterButtonTextActive]}>
+                Plants
+              </Text>
+            </TouchableOpacity>
+
+            <TouchableOpacity
+              style={[styles.filterButton, filterType === 'animals' && styles.filterButtonActive]}
+              onPress={() => setFilterType('animals')}
+              activeOpacity={0.7}
+            >
+              <Ionicons 
+                name="paw" 
+                size={16} 
+                color={filterType === 'animals' ? '#fff' : '#5E936C'} 
+                style={{ marginRight: 4 }}
+              />
+              <Text style={[styles.filterButtonText, filterType === 'animals' && styles.filterButtonTextActive]}>
+                Animals
+              </Text>
+            </TouchableOpacity>
+          </View>
+        </View>
+      )}
 
       {items.length === 0 ? (
         <View style={styles.emptyStateContainer}>
@@ -655,9 +846,38 @@ export default function HistoryScreen({ navigation }) {
             Your species scan history will appear here once you start identifying plants and animals.
           </Text>
         </View>
+      ) : filteredItems.length === 0 ? (
+        <View style={styles.emptyStateContainer}>
+          <View style={styles.emptyIconWrapper}>
+            <LinearGradient
+              colors={['#5E936C', '#3E704C']}
+              style={styles.emptyIconGradient}
+            >
+              <Ionicons name="search-outline" size={48} color="#fff" />
+            </LinearGradient>
+          </View>
+          <Text style={styles.emptyTitle}>No Results Found</Text>
+          <Text style={styles.emptyText}>
+            No records match your search or filter criteria. Try adjusting your filters.
+          </Text>
+          <TouchableOpacity 
+            style={styles.signInButton}
+            onPress={() => {
+              setSearchQuery('');
+              setFilterType('all');
+            }}
+          >
+            <LinearGradient
+              colors={['#5E936C', '#3E704C']}
+              style={styles.signInGradient}
+            >
+              <Text style={styles.signInText}>Clear Filters</Text>
+            </LinearGradient>
+          </TouchableOpacity>
+        </View>
       ) : (
         <FlatList
-          data={items}
+          data={filteredItems}
           keyExtractor={(item) => item.id}
           contentContainerStyle={styles.listContent}
           renderItem={renderItem}
@@ -666,8 +886,7 @@ export default function HistoryScreen({ navigation }) {
               refreshing={refreshing} 
               onRefresh={onRefresh} 
               colors={['#5E936C']} 
-              tintColor="#5E936C" 
-            />
+              tintColor="#5E936C"/>
           }
         />
       )}
@@ -770,8 +989,71 @@ const styles = StyleSheet.create({
     fontWeight: '600',
     color: 'rgba(255,255,255,0.9)',
   },
+  searchFilterContainer: {
+    paddingHorizontal: 16,
+    paddingTop: 16,
+    paddingBottom: 8,
+    backgroundColor: '#F5F7FA',
+  },
+  searchBar: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    backgroundColor: '#fff',
+    borderRadius: 12,
+    paddingHorizontal: 12,
+    paddingVertical: 10,
+    marginBottom: 12,
+    elevation: 2,
+    shadowColor: '#000',
+    shadowOpacity: 0.05,
+    shadowRadius: 4,
+    shadowOffset: { width: 0, height: 2 },
+  },
+  searchIcon: {
+    marginRight: 8,
+  },
+  searchInput: {
+    flex: 1,
+    fontSize: 16,
+    color: '#1F2937',
+    paddingVertical: 0,
+  },
+  clearButton: {
+    padding: 4,
+  },
+  filterButtons: {
+    flexDirection: 'row',
+    gap: 8,
+  },
+  filterButton: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    paddingHorizontal: 16,
+    paddingVertical: 8,
+    borderRadius: 20,
+    backgroundColor: '#fff',
+    borderWidth: 1.5,
+    borderColor: '#5E936C',
+    elevation: 1,
+    shadowColor: '#000',
+    shadowOpacity: 0.05,
+    shadowRadius: 2,
+    shadowOffset: { width: 0, height: 1 },
+  },
+  filterButtonActive: {
+    backgroundColor: '#5E936C',
+    borderColor: '#5E936C',
+  },
+  filterButtonText: {
+    fontSize: 14,
+    fontWeight: '600',
+    color: '#5E936C',
+  },
+  filterButtonTextActive: {
+    color: '#fff',
+  },
   listContent: {
-    paddingTop: 20,
+    paddingTop: 12,
     paddingBottom: 100,
   },
   swipeContainer: {
@@ -853,11 +1135,18 @@ const styles = StyleSheet.create({
     flex: 1,
     justifyContent: 'space-between',
   },
+  nameRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+    marginBottom: 4,
+  },
   name: {
     color: '#1F2937',
     fontSize: 16,
     fontWeight: '700',
-    marginBottom: 4,
+    flex: 1,
+    marginRight: 8,
   },
   scientificName: {
     color: '#6B7280',
@@ -880,17 +1169,17 @@ const styles = StyleSheet.create({
     fontSize: 12,
     fontWeight: '500',
   },
-  obsCount: {
+  globalObsCount: {
     flexDirection: 'row',
     alignItems: 'center',
     gap: 4,
-    backgroundColor: '#E8F5E9',
+    backgroundColor: '#EFF6FF',
     paddingHorizontal: 8,
     paddingVertical: 4,
     borderRadius: 8,
   },
-  obsText: {
-    color: '#5E936C',
+  globalObsText: {
+    color: '#059669',
     fontSize: 12,
     fontWeight: '600',
   },
@@ -1072,6 +1361,26 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center',
   },
+  publicToggleContainer: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+    backgroundColor: '#F9FAFB',
+    paddingHorizontal: 16,
+    paddingVertical: 12,
+    borderRadius: 12,
+    marginBottom: 16,
+  },
+  publicToggleInfo: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 8,
+  },
+  publicToggleLabel: {
+    fontSize: 16,
+    fontWeight: '600',
+    color: '#1F2937',
+  },
   modalTitle: {
     fontSize: 26,
     fontWeight: '700',
@@ -1117,6 +1426,10 @@ const styles = StyleSheet.create({
     fontWeight: '500',
   },
   conservationText: {
+    color: '#059669',
+    fontWeight: '700',
+  },
+  globalObsDetailText: {
     color: '#059669',
     fontWeight: '700',
   },

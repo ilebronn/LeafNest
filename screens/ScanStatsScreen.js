@@ -45,10 +45,29 @@ export default function ScanStatsScreen({ route, navigation }) {
         setStats(statsResult.data);
       }
 
-      // Load recent scans
-      const historyResult = await getScanHistory(userId, 10);
+      // Load recent scans with deduplication
+      const historyResult = await getScanHistory(userId, 50); // Get more to deduplicate
       if (historyResult.success) {
-        setRecentScans(historyResult.data);
+        // ✅ Deduplicate by taxonId or species name
+        const uniqueScans = [];
+        const seen = new Set();
+
+        for (const scan of historyResult.data) {
+          // Create unique key based on taxonId or name
+          const key = scan.taxonId 
+            ? `taxon_${scan.taxonId}` 
+            : (scan.plantName || scan.speciesName || '').toLowerCase().trim();
+
+          if (key && !seen.has(key)) {
+            seen.add(key);
+            uniqueScans.push(scan);
+          }
+
+          // Stop when we have 10 unique scans
+          if (uniqueScans.length >= 10) break;
+        }
+
+        setRecentScans(uniqueScans);
       }
 
       // Load chart data
@@ -62,6 +81,31 @@ export default function ScanStatsScreen({ route, navigation }) {
     } finally {
       setIsLoading(false);
     }
+  };
+
+  // ✅ Function to determine the correct icon and color based on scan type
+  const getScanIcon = (scan) => {
+    // Check if it's an animal scan
+    const isAnimal = scan.scanType === 'animal' || 
+                     scan.type === 'animal' ||
+                     scan.category === 'animal' ||
+                     (scan.plantName && scan.plantName.toLowerCase().includes('animal')) ||
+                     (scan.speciesName && scan.speciesName.toLowerCase().includes('animal'));
+
+    if (isAnimal) {
+      return {
+        icon: 'paw',
+        color: '#FF6B6B',
+        backgroundColor: '#FFE5E5'
+      };
+    }
+
+    // Default to plant/leaf icon
+    return {
+      icon: 'scan-outline',
+      color: '#5E936C',
+      backgroundColor: '#E8F5E9'
+    };
   };
 
   const StatCard = ({ icon, label, value, color, subtitle }) => (
@@ -301,29 +345,38 @@ export default function ScanStatsScreen({ route, navigation }) {
           </View>
         )}
 
-        {/* Recent Scans */}
+        {/* Recent Scans - DEDUPLICATED WITH DYNAMIC ICONS */}
         {recentScans.length > 0 && (
           <View style={styles.section}>
             <Text style={styles.sectionTitle}>Recent Scans</Text>
-            {recentScans.map((scan, index) => (
-              <View key={scan.id || index} style={styles.scanItem}>
-                <View style={styles.scanContent}>
-                  <Text style={styles.scanName}>
-                    {scan.plantName || scan.speciesName || 'Unknown Species'}
-                  </Text>
-                  <Text style={styles.scanDate}>
-                    {formatDate(scan.timestamp)}
-                  </Text>
-                </View>
-                {scan.confidence && (
-                  <View style={styles.confidenceBadge}>
-                    <Text style={styles.confidenceText}>
-                      {Math.round(scan.confidence)}%
+            <Text style={styles.sectionSubtitle}>
+              Showing {recentScans.length} unique species
+            </Text>
+            {recentScans.map((scan, index) => {
+              const iconData = getScanIcon(scan);
+              return (
+                <View key={scan.id || index} style={styles.scanItem}>
+                  <View style={[styles.scanIcon, { backgroundColor: iconData.backgroundColor }]}>
+                    <Ionicons name={iconData.icon} size={20} color={iconData.color} />
+                  </View>
+                  <View style={styles.scanContent}>
+                    <Text style={styles.scanName}>
+                      {scan.plantName || scan.speciesName || 'Unknown Species'}
+                    </Text>
+                    <Text style={styles.scanDate}>
+                      Last scanned: {formatDate(scan.timestamp)}
                     </Text>
                   </View>
-                )}
-              </View>
-            ))}
+                  {scan.confidence && (
+                    <View style={styles.confidenceBadge}>
+                      <Text style={styles.confidenceText}>
+                        {Math.round(scan.confidence)}%
+                      </Text>
+                    </View>
+                  )}
+                </View>
+              );
+            })}
           </View>
         )}
 
@@ -453,7 +506,13 @@ const styles = StyleSheet.create({
     fontSize: 20,
     fontWeight: 'bold',
     color: '#333',
+    marginBottom: 5,
+  },
+  sectionSubtitle: {
+    fontSize: 13,
+    color: '#999',
     marginBottom: 15,
+    fontStyle: 'italic',
   },
   statCard: {
     backgroundColor: '#fff',
@@ -579,7 +638,6 @@ const styles = StyleSheet.create({
     width: 40,
     height: 40,
     borderRadius: 20,
-    backgroundColor: '#E8F5E9',
     justifyContent: 'center',
     alignItems: 'center',
     marginRight: 12,
