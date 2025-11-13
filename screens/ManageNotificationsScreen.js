@@ -10,57 +10,102 @@ import {
   Alert,
 } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
-
-// In-memory storage (no AsyncStorage needed)
-let notificationSettings = null;
+import { auth } from '../firebase';
+import { doc, getDoc, setDoc } from 'firebase/firestore';
+import { db } from '../firebase';
 
 export default function ManageNotificationsScreen({ navigation }) {
   const [settings, setSettings] = useState({
+    // Social notifications
     pushNotifications: true,
-    scanReminders: true,
-    weeklyReport: false,
-    newSpecies: true,
+    likes: true,
+    comments: true,
+    downloads: true,
+    
+    // Activity notifications
     achievements: true,
-    tips: false,
+    weeklyReport: true,
+    tips: true,
     systemUpdates: true,
+    
+    // Other
+    scanReminders: true,
+    newSpecies: true,
     email: false,
   });
 
   const [loading, setLoading] = useState(true);
+  const currentUser = auth.currentUser;
 
   useEffect(() => {
-    loadSettings();
-  }, []);
+    if (currentUser) {
+      loadSettings();
+    } else {
+      setLoading(false);
+    }
+  }, [currentUser]);
 
-  const loadSettings = () => {
+  const loadSettings = async () => {
     try {
-      if (notificationSettings) {
-        setSettings(notificationSettings);
+      if (!currentUser) {
+        setLoading(false);
+        return;
+      }
+
+      const settingsRef = doc(db, 'users', currentUser.uid, 'settings', 'notifications');
+      const settingsDoc = await getDoc(settingsRef);
+      
+      if (settingsDoc.exists()) {
+        setSettings(settingsDoc.data());
+        console.log('✅ Notification settings loaded from Firestore');
+      } else {
+        console.log('📍 No settings found, using defaults');
       }
     } catch (error) {
-      console.error('Error loading notification settings:', error);
+      console.error('❌ Error loading notification settings:', error);
     } finally {
       setLoading(false);
     }
   };
 
-  const saveSettings = (newSettings) => {
+  const saveSettings = async (newSettings) => {
     try {
-      notificationSettings = newSettings;
+      if (!currentUser) {
+        Alert.alert('Error', 'Please sign in to save settings');
+        return;
+      }
+
+      const settingsRef = doc(db, 'users', currentUser.uid, 'settings', 'notifications');
+      await setDoc(settingsRef, newSettings, { merge: true });
+      
       setSettings(newSettings);
+      console.log('✅ Notification settings saved to Firestore');
     } catch (error) {
-      console.error('Error saving notification settings:', error);
+      console.error('❌ Error saving notification settings:', error);
       Alert.alert('Error', 'Failed to save settings');
     }
   };
 
   const toggleSetting = (key) => {
     const newSettings = { ...settings, [key]: !settings[key] };
+    
+    // ✅ If turning off pushNotifications, also turn off likes, comments, downloads
+    if (key === 'pushNotifications' && !settings[key] === false) {
+      newSettings.likes = false;
+      newSettings.comments = false;
+      newSettings.downloads = false;
+    }
+    
+    // ✅ If turning on any social notif, ensure pushNotifications is on
+    if ((key === 'likes' || key === 'comments' || key === 'downloads') && !settings[key] === true) {
+      newSettings.pushNotifications = true;
+    }
+    
     saveSettings(newSettings);
   };
 
-  const NotificationToggle = ({ icon, title, description, settingKey, iconColor }) => (
-    <View style={styles.toggleItem}>
+  const NotificationToggle = ({ icon, title, description, settingKey, iconColor, isSubOption = false }) => (
+    <View style={[styles.toggleItem, isSubOption && styles.toggleItemSub]}>
       <View style={[styles.iconContainer, { backgroundColor: iconColor + '20' }]}>
         <Ionicons name={icon} size={24} color={iconColor} />
       </View>
@@ -85,6 +130,57 @@ export default function ManageNotificationsScreen({ navigation }) {
     </View>
   );
 
+  const handleEnableAll = () => {
+    const allEnabled = {
+      pushNotifications: true,
+      likes: true,
+      comments: true,
+      downloads: true,
+      achievements: true,
+      weeklyReport: true,
+      tips: true,
+      systemUpdates: true,
+      scanReminders: true,
+      newSpecies: true,
+      email: true,
+    };
+    saveSettings(allEnabled);
+    Alert.alert('✅ Success', 'All notifications have been enabled');
+  };
+
+  const handleDisableAll = () => {
+    Alert.alert(
+      '⚠️ Disable All Notifications',
+      'Are you sure you want to disable all notifications? You won\'t receive any updates.',
+      [
+        { 
+          text: 'Cancel', 
+          style: 'cancel' 
+        },
+        {
+          text: 'Disable All',
+          style: 'destructive',
+          onPress: () => {
+            const allDisabled = {
+              pushNotifications: false,
+              likes: false,
+              comments: false,
+              downloads: false,
+              achievements: false,
+              weeklyReport: false,
+              tips: false,
+              systemUpdates: false,
+              scanReminders: false,
+              newSpecies: false,
+              email: false,
+            };
+            saveSettings(allDisabled);
+          },
+        },
+      ]
+    );
+  };
+
   return (
     <View style={styles.container}>
       <StatusBar barStyle="light-content" backgroundColor="#5E936C" />
@@ -98,7 +194,7 @@ export default function ManageNotificationsScreen({ navigation }) {
         >
           <Ionicons name="arrow-back" size={24} color="#fff" />
         </TouchableOpacity>
-        <Text style={styles.headerTitle}>Notifications</Text>
+        <Text style={styles.headerTitle}>Manage Notifications</Text>
         <View style={{ width: 44 }} />
       </View>
 
@@ -111,57 +207,104 @@ export default function ManageNotificationsScreen({ navigation }) {
         <View style={styles.infoBanner}>
           <Ionicons name="information-circle" size={24} color="#5E936C" />
           <Text style={styles.infoBannerText}>
-            Manage your notification preferences to stay updated on your species discoveries
+            Control which notifications you receive from LeafNest
           </Text>
         </View>
 
-        {/* App Notifications */}
-        <Section title="App Notifications">
+        {/* Social Interactions */}
+        <Section title="Social Interactions">
           <NotificationToggle
             icon="notifications"
-            title="Push Notifications"
-            description="Enable all push notifications"
+            title="All Social Notifications"
+            description="Master toggle for likes, comments, and downloads"
             settingKey="pushNotifications"
             iconColor="#5E936C"
           />
-          <NotificationToggle
-            icon="time"
-            title="Scan Reminders"
-            description="Daily reminders to scan species"
-            settingKey="scanReminders"
-            iconColor="#2196F3"
-          />
-          <NotificationToggle
-            icon="planet"
-            title="New Species Alerts"
-            description="Get notified when you scan a new species"
-            settingKey="newSpecies"
-            iconColor="#4CAF50"
-          />
+          
+          {settings.pushNotifications && (
+            <>
+              <NotificationToggle
+                icon="heart"
+                title="Likes"
+                description="When someone likes your posts"
+                settingKey="likes"
+                iconColor="#FF3B30"
+                isSubOption={true}
+              />
+              <NotificationToggle
+                icon="chatbubble"
+                title="Comments"
+                description="When someone comments on your posts"
+                settingKey="comments"
+                iconColor="#007AFF"
+                isSubOption={true}
+              />
+              <NotificationToggle
+                icon="download"
+                title="Downloads"
+                description="When someone downloads your species data"
+                settingKey="downloads"
+                iconColor="#5E936C"
+                isSubOption={true}
+              />
+            </>
+          )}
+        </Section>
+
+        {/* Activity & Progress */}
+        <Section title="Activity & Progress">
           <NotificationToggle
             icon="trophy"
             title="Achievements"
-            description="Celebrate your milestones"
+            description="Celebrate your scanning milestones"
             settingKey="achievements"
-            iconColor="#FF9800"
+            iconColor="#FFD700"
           />
-        </Section>
-
-        {/* Updates & Tips */}
-        <Section title="Updates & Tips">
+          
           <NotificationToggle
             icon="bar-chart"
             title="Weekly Report"
-            description="Summary of your scanning activity"
+            description="Get a summary of your scanning activity every week"
             settingKey="weeklyReport"
             iconColor="#FF5722"
           />
+        </Section>
+
+        {/* Learning & Updates */}
+        <Section title="Learning & Updates">
+          <NotificationToggle
+            icon="bulb"
+            title="Tips & Tricks"
+            description="Learn how to identify species and use the app better"
+            settingKey="tips"
+            iconColor="#9C27B0"
+          />
+          
           <NotificationToggle
             icon="construct"
             title="System Updates"
-            description="Important app updates and news"
+            description="Important app updates, new features, and announcements"
             settingKey="systemUpdates"
             iconColor="#607D8B"
+          />
+        </Section>
+
+        {/* Other Notifications */}
+        <Section title="Other Notifications">
+          <NotificationToggle
+            icon="time"
+            title="Scan Reminders"
+            description="Daily reminders to explore nature"
+            settingKey="scanReminders"
+            iconColor="#2196F3"
+          />
+          
+          <NotificationToggle
+            icon="leaf"
+            title="New Species"
+            description="Updates when new species are added to the database"
+            settingKey="newSpecies"
+            iconColor="#4CAF50"
           />
         </Section>
 
@@ -170,7 +313,7 @@ export default function ManageNotificationsScreen({ navigation }) {
           <NotificationToggle
             icon="mail"
             title="Email Notifications"
-            description="Receive notifications via email"
+            description="Receive important updates via email"
             settingKey="email"
             iconColor="#1976D2"
           />
@@ -180,20 +323,7 @@ export default function ManageNotificationsScreen({ navigation }) {
         <View style={styles.actionsSection}>
           <TouchableOpacity
             style={styles.actionButton}
-            onPress={() => {
-              const allEnabled = {
-                pushNotifications: true,
-                scanReminders: true,
-                weeklyReport: true,
-                newSpecies: true,
-                achievements: true,
-                tips: true,
-                systemUpdates: true,
-                email: true,
-              };
-              saveSettings(allEnabled);
-              Alert.alert('Success', 'All notifications enabled');
-            }}
+            onPress={handleEnableAll}
             activeOpacity={0.7}
           >
             <Ionicons name="checkmark-circle" size={20} color="#5E936C" />
@@ -202,32 +332,7 @@ export default function ManageNotificationsScreen({ navigation }) {
 
           <TouchableOpacity
             style={[styles.actionButton, styles.actionButtonSecondary]}
-            onPress={() => {
-              Alert.alert(
-                'Disable All Notifications',
-                'Are you sure you want to disable all notifications?',
-                [
-                  { text: 'Cancel', style: 'cancel' },
-                  {
-                    text: 'Disable',
-                    style: 'destructive',
-                    onPress: () => {
-                      const allDisabled = {
-                        pushNotifications: false,
-                        scanReminders: false,
-                        weeklyReport: false,
-                        newSpecies: false,
-                        achievements: false,
-                        tips: false,
-                        systemUpdates: false,
-                        email: false,
-                      };
-                      saveSettings(allDisabled);
-                    },
-                  },
-                ]
-              );
-            }}
+            onPress={handleDisableAll}
             activeOpacity={0.7}
           >
             <Ionicons name="close-circle" size={20} color="#F44336" />
@@ -235,6 +340,14 @@ export default function ManageNotificationsScreen({ navigation }) {
               Disable All
             </Text>
           </TouchableOpacity>
+        </View>
+
+        {/* Settings Info */}
+        <View style={styles.infoBox}>
+          <Ionicons name="cloud" size={20} color="#666" />
+          <Text style={styles.infoText}>
+            Your notification preferences are synced to the cloud and apply across all devices
+          </Text>
         </View>
 
         <View style={{ height: 40 }} />
@@ -273,7 +386,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   headerTitle: {
-    fontSize: 20,
+    fontSize: 18,
     fontWeight: '700',
     color: '#fff',
   },
@@ -323,6 +436,12 @@ const styles = StyleSheet.create({
     shadowRadius: 3,
     elevation: 2,
   },
+  toggleItemSub: {
+    marginLeft: 20,
+    backgroundColor: '#F8F9FA',
+    borderLeftWidth: 3,
+    borderLeftColor: '#5E936C',
+  },
   iconContainer: {
     width: 48,
     height: 48,
@@ -350,6 +469,7 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     gap: 12,
     marginTop: 8,
+    marginBottom: 20,
   },
   actionButton: {
     flex: 1,
@@ -376,5 +496,19 @@ const styles = StyleSheet.create({
     fontSize: 15,
     fontWeight: '600',
     color: '#5E936C',
+  },
+  infoBox: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    backgroundColor: '#F5F5F5',
+    padding: 12,
+    borderRadius: 12,
+    gap: 10,
+  },
+  infoText: {
+    flex: 1,
+    fontSize: 13,
+    color: '#666',
+    lineHeight: 18,
   },
 });

@@ -41,6 +41,8 @@ import SendFeedbackScreen from './screens/SendFeedbackScreen';
 import HelpScreen from './screens/HelpScreen';
 import PlanScreen from './screens/PlanScreen';
 import SpeciesLandingPage from './screens/SpeciesLandingPage';
+import SpeciesGalleryScreen from './screens/SpeciesGalleryScreen';
+import PostDetailScreen from './screens/PostDetailScreen'; // ✅ NEW IMPORT
 
 const Stack = createNativeStackNavigator();
 const Tab = createBottomTabNavigator();
@@ -163,6 +165,15 @@ export default function App() {
           <Stack.Screen name="Settings" component={SettingsScreen} />
           <Stack.Screen name="NotificationScreen" component={NotificationScreen} />
           <Stack.Screen name="ManageNotifications" component={ManageNotificationsScreen} />
+          {/* ✅ NEW: Post Detail Screen */}
+          <Stack.Screen 
+            name="PostDetailScreen" 
+            component={PostDetailScreen}
+            options={{
+              headerShown: false,
+              presentation: 'card',
+            }}
+          />
           <Stack.Screen
             name="CameraCaptureScreen"
             component={CameraCaptureScreen}
@@ -180,6 +191,14 @@ export default function App() {
           />
           <Stack.Screen name="PlanScreen" component={PlanScreen} />
           <Stack.Screen name="SpeciesLandingPage" component={SpeciesLandingPage} />
+          <Stack.Screen
+            name="SpeciesGalleryScreen"
+            component={SpeciesGalleryScreen}
+            options={{
+              headerShown: false,
+              presentation: 'card',
+            }}
+          />
           <Stack.Screen name="AboutScreen" component={AboutScreen} />
           <Stack.Screen name="PrivacyPolicy" component={PrivacyPolicyScreen} />
           <Stack.Screen name="TermsOfUse" component={TermsOfUseScreen} />

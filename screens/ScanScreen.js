@@ -13,6 +13,7 @@ import {
   getGuestRemainingScans 
 } from '../utils/guestScanUtils';
 
+const PLANTNET_API_KEY = '2b109zcNM9jXCMPmFijjfnTCtu';
 const GOOGLE_VISION_API_KEY = 'AIzaSyCRdWSqZJJcL1PfXK2gBEZzgmN_RqRahGw';
 
 export default function ScanScreen({ navigation }) {
@@ -92,7 +93,7 @@ export default function ScanScreen({ navigation }) {
     setIsProcessing(true);
     try {
       const photo = await cameraRef.current.takePictureAsync({
-        quality: 1.0,
+        quality: 0.7, // Reduced quality to prevent 413 errors
         base64: true,
         skipProcessing: false,
         exif: true,
@@ -108,17 +109,10 @@ export default function ScanScreen({ navigation }) {
 
   const analyzeImage = async (base64Image, photoUri) => {
     try {
-      console.log('🔍 Starting multi-stage identification...');
+      console.log('🔍 Starting species identification...');
       
-      const iNatResult = await tryVisualRecognition(base64Image);
-      
-      if (iNatResult && iNatResult.confidence >= 70) {
-        console.log('✓ High confidence iNat match:', iNatResult);
-        await processSuccessfulMatch(iNatResult, photoUri);
-        return;
-      }
-
-      console.log('🔍 Running enhanced Google Vision analysis...');
+      // Step 1: Use Google Vision to get possible species names
+      console.log('🔍 Analyzing with Google Vision...');
       const visionResponse = await axios.post(
         `https://vision.googleapis.com/v1/images:annotate?key=${GOOGLE_VISION_API_KEY}`,
         {
@@ -128,39 +122,66 @@ export default function ScanScreen({ navigation }) {
               features: [
                 { type: 'LABEL_DETECTION', maxResults: 20 },
                 { type: 'WEB_DETECTION', maxResults: 15 },
-                { type: 'IMAGE_PROPERTIES' },
-                { type: 'OBJECT_LOCALIZATION', maxResults: 10 },
               ],
             },
           ],
         },
-        { timeout: 20000 }
+        { timeout: 15000 }
       );
 
       const visionData = visionResponse?.data?.responses?.[0] || {};
-      
-      const candidates = extractBestCandidates(visionData);
+      const candidates = extractCandidates(visionData);
       
       if (candidates.length === 0) {
-        Alert.alert("No Results", "Could not identify the species. Please try again with:\n• Better lighting\n• Closer focus\n• Clear view of key features");
+        Alert.alert(
+          "Unidentified Species",
+          "Could not identify the species. Our study focuses on plants and animals only.\n\nPlease ensure:\n• Clear view of the subject\n• Good lighting\n• Subject is a plant or animal"
+        );
         setIsProcessing(false);
         return;
       }
 
       console.log('🎯 Top candidates:', candidates.slice(0, 5).join(', '));
 
-      const matchResult = await findBestINaturalistMatch(candidates, iNatResult);
+      // Step 2: Detect category to choose API
+      const category = detectCategoryFromLabels(visionData);
+      console.log('📋 Detected category:', category);
 
-      if (!matchResult) {
+      // Check if it's actually a plant or animal
+      const isValidSubject = isPlantOrAnimal(visionData);
+      if (!isValidSubject) {
         Alert.alert(
-          "No Match Found", 
-          `Detected possible "${candidates[0]}" but couldn't confirm species. Try:\n• Capturing from a different angle\n• Getting closer to the subject\n• Ensuring good lighting`
+          "Unidentified Species",
+          "The image does not appear to be a plant or animal.\n\nOur study focuses on plants and animals only. Please scan:\n• Plants (flowers, trees, herbs, etc.)\n• Animals (birds, insects, mammals, etc.)"
         );
         setIsProcessing(false);
         return;
       }
 
-      await processSuccessfulMatch(matchResult, photoUri);
+      let result = null;
+
+      // Step 3: Try specialized API first, then fallback to iNaturalist search
+      if (category === 'plant') {
+        console.log('🌿 Trying PlantNet API for plant identification...');
+        result = await identifyWithPlantNet(photoUri);
+      }
+      
+      // If PlantNet failed or it's an animal, search iNaturalist by name
+      if (!result) {
+        console.log('🔍 Searching iNaturalist database...');
+        result = await searchINaturalistByNames(candidates);
+      }
+
+      if (!result) {
+        Alert.alert(
+          "Unidentified Species", 
+          "Could not identify this species. Our study focuses on plants and animals only.\n\nTips:\n• Try a different angle\n• Ensure better lighting\n• Get closer to the subject\n• Make sure it's a recognizable plant or animal"
+        );
+        setIsProcessing(false);
+        return;
+      }
+
+      await processSuccessfulMatch(result, photoUri);
       
     } catch (error) {
       console.error('Error analyzing image:', error);
@@ -169,259 +190,183 @@ export default function ScanScreen({ navigation }) {
     }
   };
 
-  // ENHANCED CANDIDATE EXTRACTION
-  const extractBestCandidates = (visionData) => {
+  // Check if image contains plant or animal
+  const isPlantOrAnimal = (visionData) => {
+    const labels = visionData.labelAnnotations || [];
+    
+    const plantAnimalKeywords = [
+      'plant', 'flower', 'tree', 'leaf', 'grass', 'herb', 'shrub', 'vegetation', 'flora', 
+      'botanical', 'animal', 'bird', 'insect', 'fish', 'mammal', 'reptile', 'amphibian', 
+      'wildlife', 'fauna', 'creature', 'pet', 'butterfly', 'beetle', 'spider', 'organism',
+      'species', 'living', 'nature', 'wing', 'feather', 'fur', 'petal', 'stem', 'root'
+    ];
+
+    const irrelevantKeywords = [
+      'person', 'people', 'human', 'man', 'woman', 'child', 'face', 'hand', 'building', 
+      'architecture', 'car', 'vehicle', 'furniture', 'food', 'dish', 'meal', 'object',
+      'tool', 'device', 'machine', 'electronics', 'clothing', 'indoor', 'room'
+    ];
+
+    let relevantScore = 0;
+    let irrelevantScore = 0;
+
+    for (const label of labels) {
+      const desc = label.description.toLowerCase();
+      const score = label.score || 0;
+
+      if (plantAnimalKeywords.some(kw => desc.includes(kw))) {
+        relevantScore += score;
+      }
+      if (irrelevantKeywords.some(kw => desc.includes(kw))) {
+        irrelevantScore += score;
+      }
+    }
+
+    console.log(`🔍 Subject validation - Relevant: ${relevantScore.toFixed(2)}, Irrelevant: ${irrelevantScore.toFixed(2)}`);
+
+    // Must have significant plant/animal content and low irrelevant content
+    return relevantScore > 0.5 && relevantScore > irrelevantScore;
+  };
+
+  // Extract candidates from Google Vision
+  const extractCandidates = (visionData) => {
     const labels = visionData.labelAnnotations || [];
     const webEntities = visionData.webDetection?.webEntities || [];
     const webLabels = visionData.webDetection?.bestGuessLabels || [];
-    const objects = visionData.localizedObjectAnnotations || [];
 
-    // Only filter truly generic/useless terms
     const genericTerms = new Set([
-      'photo', 'image', 'picture', 'camera', 'photography', 'snapshot',
-      'outdoor', 'natural', 'environment', 'view', 'scene', 'landscape',
-      'closeup', 'close-up', 'macro', 'detail', 'background', 'foreground',
-      'blur', 'focus', 'shallow', 'depth', 'subject', 'specimen'
+      'photo', 'image', 'picture', 'camera', 'photography', 
+      'outdoor', 'natural', 'environment', 'view', 'scene',
     ]);
 
-    // Specific identifiable groups (keep these as candidates!)
-    const specificGroups = new Set([
-      'plant', 'animal', 'insect', 'bird', 'tree', 'flower', 'mushroom',
-      'fish', 'reptile', 'mammal', 'butterfly', 'beetle', 'spider',
-      'amphibian', 'arthropod', 'invertebrate', 'vertebrate', 'fungus',
-      'herb', 'shrub', 'moss', 'lichen', 'fern', 'rodent', 'lizard',
-      'snake', 'frog', 'toad', 'turtle', 'crab', 'moth', 'bee', 'wasp',
-      'dragonfly', 'damselfly', 'orchid', 'succulent', 'cactus', 'palm',
-      'vine', 'weed', 'wildflower', 'seedling', 'sapling', 'carnivore',
-      'herbivore', 'predator', 'prey', 'pollinator'
-    ]);
+    const candidates = new Set();
 
-    // Words that indicate specificity (boost these)
-    const specificityIndicators = new Set([
-      'species', 'leaf', 'petal', 'wing', 'feather', 'scale', 'fur',
-      'botanical', 'flowering', 'evergreen', 'deciduous', 'coniferous',
-      'perennial', 'annual', 'aquatic', 'terrestrial', 'arboreal'
-    ]);
-
-    const candidates = new Map();
-
-    // Process web guess labels (highest priority)
+    // Add web guess labels (highest priority)
     webLabels.forEach(item => {
       const text = (item.label || '').trim();
       if (text && text.length > 2 && !genericTerms.has(text.toLowerCase())) {
-        candidates.set(text.toLowerCase(), {
-          text: text,
-          score: 100,
-          source: 'web_guess',
-          confidence: 0.95
-        });
+        candidates.add(text);
       }
     });
 
-    // Process web entities
+    // Add web entities
     webEntities.forEach(item => {
       const text = (item.description || '').trim();
-      const score = (item.score || 0) * 100;
       if (text && text.length > 2 && !genericTerms.has(text.toLowerCase())) {
-        const existing = candidates.get(text.toLowerCase());
-        const finalScore = score + 80;
-        
-        if (!existing || existing.score < finalScore) {
-          candidates.set(text.toLowerCase(), {
-            text: text,
-            score: finalScore,
-            source: 'web_entity',
-            confidence: Math.min((item.score || 0) + 0.3, 1)
-          });
-        }
+        candidates.add(text);
       }
     });
 
-    // Process object localization
-    objects.forEach(item => {
-      const text = (item.name || '').trim();
-      const score = (item.score || 0) * 100;
-      if (text && text.length > 2 && !genericTerms.has(text.toLowerCase())) {
-        const existing = candidates.get(text.toLowerCase());
-        const finalScore = score + 70;
-        
-        if (!existing || existing.score < finalScore) {
-          candidates.set(text.toLowerCase(), {
-            text: text,
-            score: finalScore,
-            source: 'object',
-            confidence: item.score || 0
-          });
-        }
-      }
-    });
-
-    // Process labels with enhanced scoring
+    // Add labels
     labels.forEach(item => {
       const text = (item.description || '').trim();
-      const score = (item.score || 0) * 100;
-      const lower = text.toLowerCase();
-      
-      if (text && text.length > 2 && !genericTerms.has(lower)) {
-        let adjustedScore = score;
-        let confidence = item.score || 0;
-        
-        // MAJOR BOOST for scientific name pattern (Genus species)
-        if (/^[A-Z][a-z]+\s+[a-z]+/.test(text)) {
-          adjustedScore *= 3.5;
-          confidence = Math.min(confidence * 1.4, 1);
-        }
-        // Boost for multi-word specific names (common names like "Monarch Butterfly")
-        else if (text.includes(' ') && text.split(' ').length <= 4) {
-          const words = text.split(' ');
-          const hasCapitalizedWords = words.every(w => /^[A-Z]/.test(w));
-          if (hasCapitalizedWords) {
-            adjustedScore *= 2.0;
-            confidence *= 1.2;
-          } else {
-            adjustedScore *= 1.3;
-          }
-        }
-        
-        // Boost for specific group terms
-        if (specificGroups.has(lower)) {
-          adjustedScore *= 1.4;
-        }
-        
-        // Boost for specificity indicators
-        if (Array.from(specificityIndicators).some(kw => lower.includes(kw))) {
-          adjustedScore *= 1.3;
-          confidence *= 1.1;
-        }
-        
-        // Reduce score for very short generic terms
-        if (text.length < 4 && !specificGroups.has(lower)) {
-          adjustedScore *= 0.6;
-        }
-
-        const existing = candidates.get(lower);
-        if (!existing || existing.score < adjustedScore) {
-          candidates.set(lower, {
-            text: text,
-            score: adjustedScore,
-            source: 'label',
-            confidence: Math.min(confidence, 0.95)
-          });
-        }
+      if (text && text.length > 2 && !genericTerms.has(text.toLowerCase())) {
+        candidates.add(text);
       }
     });
 
-    // Sort by score and confidence
-    const sortedCandidates = Array.from(candidates.values())
-      .sort((a, b) => {
-        const scoreComparison = b.score - a.score;
-        if (Math.abs(scoreComparison) > 10) return scoreComparison;
-        return b.confidence - a.confidence;
-      })
-      .map(c => c.text);
-
-    console.log('📋 Extracted candidates:', 
-      sortedCandidates.slice(0, 10).map((name, idx) => {
-        const cand = candidates.get(name.toLowerCase());
-        return `${idx + 1}. ${name} (${Math.round(cand.score)}, ${(cand.confidence * 100).toFixed(0)}%)`;
-      }).join(' | ')
-    );
-
-    return sortedCandidates;
+    return Array.from(candidates).slice(0, 15);
   };
 
-  // ENHANCED VISUAL RECOGNITION
-  const tryVisualRecognition = async (base64Image, retryCount = 0) => {
-    try {
-      const response = await axios.post(
-        'https://api.inaturalist.org/v1/computervision/score_image',
-        {
-          image: base64Image,
-        },
-        { 
-          timeout: 18000,
-          headers: { 'Content-Type': 'application/json' }
-        }
-      );
-      
-      const results = response?.data?.results || [];
-      
-      if (results.length > 0) {
-        const topResults = results.slice(0, 10).map(r => ({
-          taxonId: r.taxon.id,
-          name: r.taxon.name,
-          commonName: r.taxon.preferred_common_name,
-          confidence: Math.round(r.score * 100),
-          rank: r.taxon.rank,
-          score: r.score,
-        }));
+  // Detect category from labels
+  const detectCategoryFromLabels = (visionData) => {
+    const labels = visionData.labelAnnotations || [];
+    
+    const plantKeywords = ['plant', 'flower', 'tree', 'leaf', 'grass', 'herb', 'shrub', 
+      'vegetation', 'flora', 'botanical', 'foliage', 'petal'];
+    
+    const animalKeywords = ['animal', 'bird', 'insect', 'fish', 'mammal', 'reptile', 
+      'amphibian', 'wildlife', 'fauna'];
 
-        console.log('📷 iNat CV Results:', topResults.slice(0, 5).map(r => 
-          `${r.name}${r.commonName ? ` (${r.commonName})` : ''} - ${r.confidence}% [${r.rank}]`
-        ).join(' | '));
+    let plantScore = 0;
+    let animalScore = 0;
 
-        // HIGH CONFIDENCE SPECIES - Use immediately
-        if (topResults[0].confidence >= 70 && topResults[0].rank === 'species') {
-          console.log('✓ High confidence species match from iNat CV');
-          return topResults[0];
-        }
+    for (const label of labels) {
+      const desc = label.description.toLowerCase();
+      const score = label.score || 0;
 
-        // GOOD CONFIDENCE SPECIES - Use with caution
-        if (topResults[0].rank === 'species' && topResults[0].confidence >= 50) {
-          console.log('✓ Good confidence species match from iNat CV');
-          return topResults[0];
-        }
-
-        // LOOK FOR SPECIES IN TOP 10 (even if first result is higher taxon)
-        const speciesResult = topResults.find(r => 
-          r.rank === 'species' && r.confidence >= 40
-        );
-        if (speciesResult) {
-          console.log(`✓ Found species in top results: ${speciesResult.name} (${speciesResult.confidence}%)`);
-          return speciesResult;
-        }
-
-        // SUBSPECIES/VARIETY as fallback
-        const subspeciesResult = topResults.find(r => 
-          (r.rank === 'subspecies' || r.rank === 'variety') && r.confidence >= 45
-        );
-        if (subspeciesResult) {
-          console.log(`✓ Found subspecies/variety: ${subspeciesResult.name} (${subspeciesResult.confidence}%)`);
-          return subspeciesResult;
-        }
-
-        // Return top result even if genus (will be used as fallback)
-        console.log(`⚠ Using top result as fallback: ${topResults[0].name} [${topResults[0].rank}] (${topResults[0].confidence}%)`);
-        return topResults[0];
+      if (plantKeywords.some(kw => desc.includes(kw))) {
+        plantScore += score;
       }
-    } catch (error) {
-      console.warn('⚠ Visual recognition attempt failed:', error.message);
-      if (retryCount === 0) {
-        console.log('🔄 Retrying visual recognition...');
-        await new Promise(resolve => setTimeout(resolve, 1500));
-        return tryVisualRecognition(base64Image, 1);
+      if (animalKeywords.some(kw => desc.includes(kw))) {
+        animalScore += score;
       }
     }
-    return null;
+
+    return plantScore > animalScore ? 'plant' : 'animal';
   };
 
-  // ENHANCED iNATURALIST MATCHING
-  const findBestINaturalistMatch = async (possibleNames, iNatFallback) => {
+  // PlantNet API identification - uses image file URI instead of base64
+  const identifyWithPlantNet = async (photoUri) => {
+    try {
+      console.log('📤 Uploading to PlantNet...');
+      
+      // Create proper FormData for React Native with file URI
+      const formData = new FormData();
+      
+      // Use the actual file URI from the captured photo
+      formData.append('images', {
+        uri: photoUri,
+        type: 'image/jpeg',
+        name: 'plant.jpg',
+      });
+
+      const response = await axios.post(
+        `https://my-api.plantnet.org/v2/identify/all?api-key=${PLANTNET_API_KEY}`,
+        formData,
+        {
+          headers: {
+            'Content-Type': 'multipart/form-data',
+          },
+          timeout: 30000,
+        }
+      );
+
+      const results = response?.data?.results || [];
+      
+      if (results.length === 0) {
+        console.warn('PlantNet returned no results');
+        return null;
+      }
+
+      const topResult = results[0];
+      const confidence = Math.round(topResult.score * 100);
+
+      console.log(`✓ PlantNet match: ${topResult.species.scientificNameWithoutAuthor} (${confidence}%)`);
+
+      // Get additional details from iNaturalist for consistency
+      const taxonDetails = await searchINaturalistByName(topResult.species.scientificNameWithoutAuthor);
+
+      return {
+        taxonId: taxonDetails?.id || null,
+        name: topResult.species.scientificNameWithoutAuthor,
+        commonName: topResult.species.commonNames?.[0] || taxonDetails?.preferred_common_name || null,
+        confidence: confidence,
+        source: 'plantnet',
+      };
+    } catch (error) {
+      const errorMsg = error.response?.data?.message || error.message;
+      console.error('PlantNet identification failed:', error.response?.status, errorMsg);
+      
+      // If it's a "Species not found" error, the image might not be a plant
+      if (error.response?.status === 404 && errorMsg.includes('Species not found')) {
+        console.warn('⚠️ PlantNet could not identify - may not be a plant or image quality issue');
+      }
+      
+      // Fallback to iNaturalist search
+      console.log('🔄 Falling back to iNaturalist search...');
+      return null;
+    }
+  };
+
+  // Search iNaturalist by multiple candidate names
+  const searchINaturalistByNames = async (candidateNames) => {
     const matches = [];
-    const searchedTerms = new Set();
     
-    // Prioritize first 20 candidates for better coverage
-    const candidatesToSearch = possibleNames.slice(0, 20);
-
-    for (const name of candidatesToSearch) {
-      const normalized = name.toLowerCase().trim();
-      if (searchedTerms.has(normalized)) continue;
-      searchedTerms.add(normalized);
-
+    for (const name of candidateNames.slice(0, 10)) {
       try {
-        // Fetch more results per query for better matching
         const response = await axios.get(
-          `https://api.inaturalist.org/v1/taxa/autocomplete?q=${encodeURIComponent(name)}&per_page=15`,
+          `https://api.inaturalist.org/v1/taxa/autocomplete?q=${encodeURIComponent(name)}&per_page=5`,
           { timeout: 8000 }
         );
         
@@ -432,57 +377,28 @@ export default function ScanScreen({ navigation }) {
 
           const resultNameLower = result.name.toLowerCase();
           const commonNameLower = result.preferred_common_name?.toLowerCase() || '';
-          const isExactMatch = resultNameLower === normalized;
-          const isCommonNameMatch = commonNameLower === normalized;
-          const matchedTermLower = result.matched_term?.toLowerCase() || '';
-          const isMatchedTermExact = matchedTermLower === normalized;
+          const nameLower = name.toLowerCase();
           
-          // Check for partial matches
-          const scientificNameContains = resultNameLower.includes(normalized) && normalized.length > 4;
-          const commonNameContains = commonNameLower.includes(normalized) && normalized.length > 4;
-          const searchTermContains = normalized.includes(resultNameLower.split(' ')[0]) && resultNameLower.split(' ')[0].length > 3;
-          
-          let score = 20;
+          let score = 10;
 
-          // EXACT MATCHES get highest priority
-          if (isExactMatch) score += 80;
-          else if (isCommonNameMatch) score += 75;
-          else if (isMatchedTermExact) score += 70;
-          else if (scientificNameContains) score += 45;
-          else if (commonNameContains) score += 40;
-          else if (searchTermContains) score += 30;
-          else score += 10; // Base score for any match
+          // Exact matches get highest priority
+          if (resultNameLower === nameLower) score += 80;
+          else if (commonNameLower === nameLower) score += 70;
+          else if (resultNameLower.includes(nameLower)) score += 40;
+          else if (commonNameLower.includes(nameLower)) score += 30;
 
-          // CRITICAL: Strong preference for species and subspecies
+          // Prefer species level
           if (result.rank === 'species') score += 50;
-          else if (result.rank === 'subspecies' || result.rank === 'variety') score += 40;
+          else if (result.rank === 'subspecies') score += 40;
           else if (result.rank === 'genus') score += 10;
-          else if (result.rank === 'family') score -= 10;
-          else if (result.rank === 'order' || result.rank === 'class') score -= 20;
 
-          // Photo availability (indicates well-documented species)
-          if (result.default_photo?.medium_url) score += 25;
-
-          // Observation count scoring (indicates common/well-known species)
+          // Boost by observation count
           const obsCount = result.observations_count || 0;
-          if (obsCount > 100000) score += 35;
-          else if (obsCount > 50000) score += 30;
-          else if (obsCount > 10000) score += 25;
-          else if (obsCount > 5000) score += 20;
-          else if (obsCount > 1000) score += 15;
-          else if (obsCount > 500) score += 12;
+          if (obsCount > 10000) score += 30;
+          else if (obsCount > 1000) score += 20;
           else if (obsCount > 100) score += 10;
-          else if (obsCount > 10) score += 5;
-          else if (obsCount < 5) score -= 5; // Penalize very rare species
 
-          // Atlas data indicates well-documented species
-          if (result.atlas_id) score += 15;
-
-          // Iconic taxon reliability boost
-          if (result.iconic_taxon_name && result.iconic_taxon_name !== 'Unknown') score += 8;
-
-          // Boost for active taxa (recently observed)
-          if (result.is_active !== false) score += 5;
+          if (result.default_photo?.medium_url) score += 15;
 
           matches.push({
             taxonId: result.id,
@@ -491,94 +407,59 @@ export default function ScanScreen({ navigation }) {
             score: score,
             rank: result.rank,
             obsCount: obsCount,
-            searchTerm: name,
-            matchQuality: isExactMatch ? 'exact' : isCommonNameMatch ? 'common' : scientificNameContains || commonNameContains ? 'partial' : 'weak',
           });
         }
 
-        await new Promise(resolve => setTimeout(resolve, 250));
+        await new Promise(resolve => setTimeout(resolve, 300));
         
       } catch (error) {
-        console.warn(`Failed to match "${name}":`, error.message);
+        console.warn(`Failed to search "${name}":`, error.message);
         continue;
       }
     }
     
-    if (matches.length === 0 && iNatFallback) {
-      console.warn('No iNat matches found, using iNat fallback:', iNatFallback.name);
-      return {
-        taxonId: iNatFallback.taxonId,
-        name: iNatFallback.name,
-        confidence: iNatFallback.confidence,
-      };
-    }
-
     if (matches.length === 0) {
-      console.error('No matches found after searching candidates');
+      console.error('No matches found in iNaturalist');
       return null;
     }
     
-    // PRIORITIZE species-level matches
-    const speciesMatches = matches.filter(m => 
-      m.rank === 'species' || m.rank === 'subspecies' || m.rank === 'variety'
-    );
+    // Sort by score
+    matches.sort((a, b) => b.score - a.score);
     
-    // Only use non-species if we have NO species matches
-    const bestMatches = speciesMatches.length > 0 ? speciesMatches : matches;
+    const bestMatch = matches[0];
+    const confidence = Math.min(bestMatch.score * 0.85, 95);
     
-    bestMatches.sort((a, b) => {
-      // Primary sort by score
-      if (b.score !== a.score) return b.score - a.score;
-      
-      // Secondary sort by match quality
-      const qualityOrder = { exact: 4, common: 3, partial: 2, weak: 1 };
-      const qualityDiff = (qualityOrder[b.matchQuality] || 0) - (qualityOrder[a.matchQuality] || 0);
-      if (qualityDiff !== 0) return qualityDiff;
-      
-      // Tertiary sort by observation count
-      return b.obsCount - a.obsCount;
-    });
-    
-    const bestMatch = bestMatches[0];
-    
-    let confidence = Math.min(bestMatch.score * 0.9, 95);
-    
-    // Boost confidence if iNat CV also identified the same species
-    if (iNatFallback && iNatFallback.name === bestMatch.name) {
-      confidence = Math.min((confidence + iNatFallback.confidence) / 2 + 20, 98);
-    }
-    
-    // Adjust confidence based on match quality
-    if (bestMatch.matchQuality === 'exact' || bestMatch.matchQuality === 'common') {
-      confidence = Math.min(confidence * 1.1, 97);
-    } else if (bestMatch.matchQuality === 'weak' && confidence > 70) {
-      confidence *= 0.75;
-    } else if (bestMatch.matchQuality === 'partial' && confidence > 75) {
-      confidence *= 0.85;
-    }
-    
-    // Reduce confidence for higher-level taxa
-    if (bestMatch.rank === 'genus') {
-      confidence *= 0.8;
-    } else if (bestMatch.rank === 'family' || bestMatch.rank === 'order') {
-      confidence *= 0.65;
-    }
-
-    console.log(`✓ Best match: ${bestMatch.name} (${bestMatch.commonName || 'no common name'}) | Rank: ${bestMatch.rank} | Obs: ${bestMatch.obsCount.toLocaleString()} | Quality: ${bestMatch.matchQuality} | Score: ${bestMatch.score} | Confidence: ${Math.round(confidence)}%`);
+    console.log(`✓ Best match: ${bestMatch.name} (${bestMatch.commonName || 'no common name'}) | Rank: ${bestMatch.rank} | Confidence: ${Math.round(confidence)}%`);
     
     return {
       taxonId: bestMatch.taxonId,
       name: bestMatch.name,
       commonName: bestMatch.commonName,
       confidence: Math.round(confidence),
+      source: 'inaturalist_search',
     };
+  };
+
+  // Search iNaturalist by scientific name (helper function)
+  const searchINaturalistByName = async (scientificName) => {
+    try {
+      const response = await axios.get(
+        `https://api.inaturalist.org/v1/taxa/autocomplete?q=${encodeURIComponent(scientificName)}&per_page=1`,
+        { timeout: 8000 }
+      );
+      
+      return response?.data?.results?.[0] || null;
+    } catch (error) {
+      console.warn('iNaturalist name search failed:', error.message);
+      return null;
+    }
   };
 
   const processSuccessfulMatch = async (matchResult, photoUri) => {
     const [taxonDetails, gbifData, obsCount] = await Promise.all([
-      fetchTaxonDetails(matchResult.taxonId),
+      matchResult.taxonId ? fetchTaxonDetails(matchResult.taxonId) : Promise.resolve(null),
       fetchGBIF(matchResult.name),
-      fetchObservationCount(matchResult.taxonId),
+      matchResult.taxonId ? fetchObservationCount(matchResult.taxonId) : Promise.resolve(0),
     ]);
 
     const user = auth.currentUser;
@@ -626,16 +507,37 @@ export default function ScanScreen({ navigation }) {
           commonName: matchResult.commonName,
         });
         
-        // Add to history with deduplication - INCLUDE ALL RELEVANT DATA
+        // Add this before calling addToHistory
+        const debugAuth = async () => {
+          const user = auth.currentUser;
+          console.log('========== AUTH DEBUG ==========');
+          console.log('User exists?', !!user);
+          console.log('User UID:', user?.uid);
+          console.log('User email:', user?.email);
+
+          if (user) {
+            try {
+              const token = await user.getIdToken(true); // Force refresh
+              console.log('Auth token (first 50 chars):', token.substring(0, 50));
+            } catch (e) {
+              console.error('Failed to get token:', e);
+            }
+          }
+          console.log('================================');
+        };
+
+        await debugAuth();
+
+        // Add to history with deduplication
         await addToHistory(user.uid, {
           plantName: matchResult.commonName || matchResult.name,
           name: matchResult.name,
           scientificName: matchResult.name,
           commonName: matchResult.commonName,
-          taxonId: matchResult.taxonId, // CRITICAL for deduplication
+          taxonId: matchResult.taxonId,
           rank: taxonDetails?.rank,
           iconicTaxon: taxonDetails?.iconic_taxon_name,
-          imageUri: photoUri, // Local URI for upload
+          imageUri: photoUri,
           imageUrl: taxonDetails?.default_photo?.medium_url,
           conservation: gbifData?.threatStatus,
           about: taxonDetails?.wikipedia_summary,

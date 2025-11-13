@@ -1,3 +1,4 @@
+// postInteractionsService.js - UPDATED WITH OFFLINE SUPPORT
 import { 
   collection, 
   doc, 
@@ -15,18 +16,113 @@ import {
   addDoc
 } from 'firebase/firestore';
 import { db, auth } from '../firebase';
+import { createLikeNotification, createCommentNotification } from './notificationService';
+import AsyncStorage from '@react-native-async-storage/async-storage';
+import { isOnline } from '../utils/networkUtils';
+
+// Offline storage keys
+const OFFLINE_KEYS = {
+  LIKES: (uid) => `offline_likes_${uid}`,
+  COMMENTS: (uid) => `offline_comments_${uid}`,
+};
+
+// ==================== OFFLINE QUEUE ====================
+
+const saveToOfflineQueue = async (uid, type, data) => {
+  try {
+    const key = type === 'like' ? OFFLINE_KEYS.LIKES(uid) : OFFLINE_KEYS.COMMENTS(uid);
+    const existing = await AsyncStorage.getItem(key);
+    const queue = existing ? JSON.parse(existing) : [];
+    queue.push({ ...data, timestamp: Date.now() });
+    await AsyncStorage.setItem(key, JSON.stringify(queue));
+    console.log(`💾 Saved ${type} to offline queue`);
+  } catch (error) {
+    console.error('Error saving to offline queue:', error);
+  }
+};
+
+const getOfflineQueue = async (uid, type) => {
+  try {
+    const key = type === 'like' ? OFFLINE_KEYS.LIKES(uid) : OFFLINE_KEYS.COMMENTS(uid);
+    const data = await AsyncStorage.getItem(key);
+    return data ? JSON.parse(data) : [];
+  } catch (error) {
+    console.error('Error getting offline queue:', error);
+    return [];
+  }
+};
+
+const clearOfflineQueue = async (uid, type) => {
+  try {
+    const key = type === 'like' ? OFFLINE_KEYS.LIKES(uid) : OFFLINE_KEYS.COMMENTS(uid);
+    await AsyncStorage.removeItem(key);
+    console.log(`✅ Cleared ${type} offline queue`);
+  } catch (error) {
+    console.error('Error clearing offline queue:', error);
+  }
+};
+
+// ==================== SYNC OFFLINE DATA ====================
+
+export const syncOfflineData = async (userId) => {
+  if (!userId || !(await isOnline())) {
+    console.log('⚠️ Cannot sync: offline or no user');
+    return { success: false };
+  }
+
+  try {
+    const likes = await getOfflineQueue(userId, 'like');
+    const comments = await getOfflineQueue(userId, 'comment');
+
+    // Sync likes
+    for (const like of likes) {
+      try {
+        await likePost(like.postId, userId);
+      } catch (err) {
+        console.warn('Failed to sync like:', err);
+      }
+    }
+
+    // Sync comments
+    for (const comment of comments) {
+      try {
+        await addComment(
+          comment.postId,
+          userId,
+          comment.username,
+          comment.text,
+          comment.userProfileImage
+        );
+      } catch (err) {
+        console.warn('Failed to sync comment:', err);
+      }
+    }
+
+    await clearOfflineQueue(userId, 'like');
+    await clearOfflineQueue(userId, 'comment');
+
+    console.log('✅ Offline data synced successfully');
+    return { success: true };
+  } catch (error) {
+    console.error('Error syncing offline data:', error);
+    return { success: false, error: error.message };
+  }
+};
 
 // ==================== POSTS/PUBLIC SCANS LIKES ====================
 
-/**
- * Toggle like on a public scan/post
- * Works with the publicScans collection
- */
 export const likePost = async (postId, userId) => {
   try {
-    // Check if user is authenticated
     if (!auth.currentUser) {
       throw new Error('You must be logged in to like posts');
+    }
+
+    const online = await isOnline();
+
+    if (!online) {
+      console.log('📱 Offline: queueing like for later');
+      await saveToOfflineQueue(userId, 'like', { postId, userId });
+      return { liked: true, likesCount: 0, offline: true };
     }
 
     const postRef = doc(db, 'publicScans', postId);
@@ -38,21 +134,23 @@ export const likePost = async (postId, userId) => {
 
     const postData = postDoc.data();
     const likes = postData.likes || [];
+    const postOwnerId = postData.userId;
 
-    // Check if user already liked
     if (likes.includes(userId)) {
-      // Unlike
       await updateDoc(postRef, {
         likes: arrayRemove(userId),
         likesCount: increment(-1)
       });
       return { liked: false, likesCount: Math.max(0, (postData.likesCount || 1) - 1) };
     } else {
-      // Like
       await updateDoc(postRef, {
         likes: arrayUnion(userId),
         likesCount: increment(1)
       });
+
+      const likerUsername = auth.currentUser?.displayName || auth.currentUser?.email?.split('@')[0] || 'Someone';
+      await createLikeNotification(postId, postOwnerId, userId, likerUsername, postData);
+
       return { liked: true, likesCount: (postData.likesCount || 0) + 1 };
     }
   } catch (error) {
@@ -61,9 +159,6 @@ export const likePost = async (postId, userId) => {
   }
 };
 
-/**
- * Check if user liked a post
- */
 export const checkIfLiked = async (postId, userId) => {
   try {
     const postRef = doc(db, 'publicScans', postId);
@@ -81,9 +176,6 @@ export const checkIfLiked = async (postId, userId) => {
   }
 };
 
-/**
- * Get post stats (likes and comments count)
- */
 export const getPostStats = async (postId) => {
   try {
     const postRef = doc(db, 'publicScans', postId);
@@ -107,20 +199,39 @@ export const getPostStats = async (postId) => {
 
 // ==================== COMMENTS ====================
 
-/**
- * Add a comment to a post
- * ✅ FIXED: Now checks authentication and uses addDoc for auto ID generation
- */
 export const addComment = async (postId, userId, username, commentText, userProfileImage = null) => {
   try {
-    // ✅ CRITICAL: Check if user is authenticated
     if (!auth.currentUser) {
       throw new Error('You must be logged in to comment');
     }
 
-    // ✅ Verify the userId matches the authenticated user
     if (auth.currentUser.uid !== userId) {
       throw new Error('User ID mismatch');
+    }
+
+    const online = await isOnline();
+
+    if (!online) {
+      console.log('📱 Offline: queueing comment for later');
+      await saveToOfflineQueue(userId, 'comment', {
+        postId,
+        userId,
+        username,
+        text: commentText,
+        userProfileImage
+      });
+      return { 
+        success: true, 
+        offline: true,
+        comment: {
+          id: `offline_${Date.now()}`,
+          userId,
+          username,
+          text: commentText,
+          userProfileImage,
+          createdAt: new Date()
+        }
+      };
     }
 
     console.log('Adding comment:', {
@@ -131,39 +242,48 @@ export const addComment = async (postId, userId, username, commentText, userProf
       text: commentText
     });
 
-    // ✅ Create comment data matching Firebase rules requirements
+    const postRef = doc(db, 'publicScans', postId);
+    const postDoc = await getDoc(postRef);
+    
+    if (!postDoc.exists()) {
+      throw new Error('Post not found');
+    }
+
+    const postData = postDoc.data();
+    const postOwnerId = postData.userId;
+
     const commentData = {
-      userId: userId,  // ✅ Must match auth.currentUser.uid
+      userId: userId,
       username: username || 'Anonymous',
       text: commentText,
       userProfileImage: userProfileImage || null,
-      timestamp: serverTimestamp(),  // ✅ Required field
-      likes: {},  // ✅ Use object instead of array for better performance
+      timestamp: serverTimestamp(),
+      likes: {},
       likesCount: 0,
       postId: postId
     };
 
-    // ✅ Use addDoc to let Firebase generate the ID
     const commentsRef = collection(db, 'publicScans', postId, 'comments');
     const docRef = await addDoc(commentsRef, commentData);
 
     console.log('Comment added successfully:', docRef.id);
 
-    // Update post's comment count (skip if fails - comment still added)
     try {
-      const postRef = doc(db, 'publicScans', postId);
-      const postDoc = await getDoc(postRef);
-      
-      if (postDoc.exists() && postDoc.data().userId === auth.currentUser.uid) {
-        // Only update if user owns the post
-        await updateDoc(postRef, {
-          commentsCount: increment(1)
-        });
-      }
+      await updateDoc(postRef, {
+        commentsCount: increment(1)
+      });
     } catch (updateError) {
       console.warn('Could not update comment count:', updateError);
-      // Don't throw - comment was still added successfully
     }
+
+    await createCommentNotification(
+      postId,
+      postOwnerId,
+      userId,
+      username,
+      commentText,
+      postData
+    );
 
     return { 
       success: true, 
@@ -171,27 +291,19 @@ export const addComment = async (postId, userId, username, commentText, userProf
       comment: {
         id: docRef.id,
         ...commentData,
-        createdAt: new Date() // For immediate display
+        createdAt: new Date()
       }
     };
   } catch (error) {
     console.error('Error adding comment:', error);
-    console.error('Error code:', error.code);
-    console.error('Error message:', error.message);
     throw error;
   }
 };
 
-/**
- * Get comments for a post
- */
 export const getComments = async (postId, limitCount = 50) => {
   try {
     const commentsRef = collection(db, 'publicScans', postId, 'comments');
-    const q = query(
-      commentsRef,
-      orderBy('timestamp', 'desc')  // ✅ Changed from 'createdAt' to 'timestamp'
-    );
+    const q = query(commentsRef, orderBy('timestamp', 'desc'));
 
     const querySnapshot = await getDocs(q);
     const comments = [];
@@ -201,14 +313,13 @@ export const getComments = async (postId, limitCount = 50) => {
       comments.push({
         id: doc.id,
         ...data,
-        createdAt: data.timestamp || data.createdAt  // Support both field names
+        createdAt: data.timestamp || data.createdAt
       });
     });
 
     return comments;
   } catch (error) {
     console.error('Error getting comments:', error);
-    // If ordering fails, try without ordering
     try {
       const commentsRef = collection(db, 'publicScans', postId, 'comments');
       const querySnapshot = await getDocs(commentsRef);
@@ -231,12 +342,8 @@ export const getComments = async (postId, limitCount = 50) => {
   }
 };
 
-/**
- * Delete a comment
- */
 export const deleteComment = async (postId, commentId, userId) => {
   try {
-    // ✅ Check authentication
     if (!auth.currentUser) {
       throw new Error('You must be logged in to delete comments');
     }
@@ -248,14 +355,12 @@ export const deleteComment = async (postId, commentId, userId) => {
       throw new Error('Comment not found');
     }
 
-    // Check if user owns the comment
     if (commentDoc.data().userId !== userId) {
       throw new Error('Unauthorized to delete this comment');
     }
 
     await deleteDoc(commentRef);
 
-    // Update post's comment count
     const postRef = doc(db, 'publicScans', postId);
     const postDoc = await getDoc(postRef);
     
@@ -272,12 +377,8 @@ export const deleteComment = async (postId, commentId, userId) => {
   }
 };
 
-/**
- * Like a comment
- */
 export const likeComment = async (postId, commentId, userId) => {
   try {
-    // ✅ Check authentication
     if (!auth.currentUser) {
       throw new Error('You must be logged in to like comments');
     }
@@ -292,11 +393,9 @@ export const likeComment = async (postId, commentId, userId) => {
     const commentData = commentDoc.data();
     const likes = commentData.likes || {};
 
-    // ✅ Check if using object or array format
     const isLiked = Array.isArray(likes) ? likes.includes(userId) : likes[userId];
 
     if (isLiked) {
-      // Unlike - support both formats
       if (Array.isArray(likes)) {
         await updateDoc(commentRef, {
           likes: arrayRemove(userId),
@@ -312,7 +411,6 @@ export const likeComment = async (postId, commentId, userId) => {
       }
       return { liked: false };
     } else {
-      // Like - support both formats
       if (Array.isArray(likes)) {
         await updateDoc(commentRef, {
           likes: arrayUnion(userId),
@@ -332,7 +430,6 @@ export const likeComment = async (postId, commentId, userId) => {
   }
 };
 
-// Export all functions
 export default {
   likePost,
   checkIfLiked,
@@ -340,5 +437,6 @@ export default {
   getComments,
   deleteComment,
   likeComment,
-  getPostStats
+  getPostStats,
+  syncOfflineData
 };

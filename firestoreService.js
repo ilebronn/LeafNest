@@ -1,4 +1,4 @@
-// firestoreService.js - COMPLETE FILE WITH ALL FUNCTIONS
+// firestoreService.js - COMPLETE FILE WITH ALL FUNCTIONS (FIXED)
 import { 
   db, 
   collection, 
@@ -40,32 +40,140 @@ const getFavoritesKey = (uid) => uid ? `favorites_${uid}` : 'favorites_guest';
 export const uploadImageToStorage = async (imageUri, userId, folder = 'scans') => {
   try {
     if (!imageUri || !userId) {
+      console.error('❌ Missing image URI or user ID');
       return { success: false, error: 'Missing image URI or user ID' };
     }
 
+    // ✅ CRITICAL: Verify user is authenticated
+    const currentUser = auth.currentUser;
+    if (!currentUser) {
+      console.error('❌ User not authenticated');
+      return { success: false, error: 'User not authenticated' };
+    }
+
+    if (currentUser.uid !== userId) {
+      console.error('❌ User ID mismatch');
+      console.error('Current UID:', currentUser.uid);
+      console.error('Requested UID:', userId);
+      return { success: false, error: 'User ID mismatch' };
+    }
+
+    console.log('✅ User authenticated:', userId);
+    console.log('📸 Image URI:', imageUri);
+
     // Create unique filename
     const filename = `${Date.now()}_${Math.random().toString(36).substring(7)}.jpg`;
-    const storageRef = ref(storage, `${folder}/${userId}/${filename}`);
+    const storagePath = `${folder}/${userId}/${filename}`;
+    const storageRef = ref(storage, storagePath);
+
+    console.log('📁 Upload path:', storagePath);
+
+    // ✅ FIX: Handle different URI formats (file://, content://, https://)
+    let blob;
+
+    try {
+      // For React Native, handle file:// URIs
+      if (imageUri.startsWith('file://')) {
+        console.log('📦 Processing file:// URI');
+        const response = await fetch(imageUri);
+        blob = await response.blob();
+      }
+      // For Android content:// URIs
+      else if (imageUri.startsWith('content://')) {
+        console.log('📦 Processing content:// URI');
+        const response = await fetch(imageUri);
+        blob = await response.blob();
+      }
+      // For data URIs or base64
+      else if (imageUri.startsWith('data:')) {
+        console.log('📦 Processing data URI');
+        const response = await fetch(imageUri);
+        blob = await response.blob();
+      }
+      // For HTTP/HTTPS URLs
+      else if (imageUri.startsWith('http://') || imageUri.startsWith('https://')) {
+        console.log('📦 Processing HTTP URI');
+        const response = await fetch(imageUri);
+        blob = await response.blob();
+      }
+      // Default: try direct fetch
+      else {
+        console.log('📦 Processing unknown URI format, trying direct fetch');
+        const response = await fetch(imageUri);
+        blob = await response.blob();
+      }
+
+      if (!blob || blob.size === 0) {
+        console.error('❌ Blob is empty');
+        return { success: false, error: 'Failed to create blob from image' };
+      }
+
+      console.log('✅ Blob created successfully');
+      console.log('📦 Blob size:', blob.size, 'bytes');
+      console.log('📦 Blob type:', blob.type);
+
+    } catch (fetchError) {
+      console.error('❌ Failed to fetch image:', fetchError);
+      console.error('❌ Image URI was:', imageUri);
+      return { success: false, error: `Failed to fetch image: ${fetchError.message}` };
+    }
+
+    // Upload to Firebase Storage with metadata
+    const metadata = {
+      contentType: blob.type || 'image/jpeg',
+      customMetadata: {
+        uploadedBy: userId,
+        uploadedAt: new Date().toISOString(),
+      }
+    };
+
+    console.log('⏳ Uploading to Firebase Storage...');
     
-    // Fetch the image and convert to blob
-    const response = await fetch(imageUri);
-    const blob = await response.blob();
-    
-    // Upload to Firebase Storage
-    await uploadBytes(storageRef, blob);
-    
+    // ✅ IMPORTANT: Add a timeout to catch hanging uploads
+    const uploadPromise = uploadBytes(storageRef, blob, metadata);
+    const timeoutPromise = new Promise((_, reject) => 
+      setTimeout(() => reject(new Error('Upload timeout after 30 seconds')), 30000)
+    );
+
+    await Promise.race([uploadPromise, timeoutPromise]);
+    console.log('✅ Upload successful');
+
     // Get download URL
     const downloadURL = await getDownloadURL(storageRef);
-    
-    console.log('Image uploaded successfully:', downloadURL);
-    return { 
-      success: true, 
-      url: downloadURL, 
-      path: storageRef.fullPath 
+    console.log('✅ Download URL obtained:', downloadURL);
+
+    return {
+      success: true,
+      url: downloadURL,
+      path: storageRef.fullPath
     };
   } catch (error) {
-    console.error('Error uploading image:', error);
-    return { success: false, error: error.message };
+    console.error('❌ Error uploading image:', error);
+    console.error('❌ Error code:', error.code);
+    console.error('❌ Error message:', error.message);
+
+    // Provide more specific error messages
+    if (error.code === 'storage/unauthorized') {
+      console.error('⚠️ PERMISSION DENIED: Check Firebase Storage Rules');
+      console.error('⚠️ Current user:', auth.currentUser?.uid);
+      console.error('⚠️ Upload path should be:', `${folder}/${userId}/...`);
+      console.error('⚠️ Verify Storage Rules allow write for this path');
+      
+      return { 
+        success: false, 
+        error: 'Permission denied. Please check if you are logged in and try again.' 
+      };
+    }
+
+    if (error.code === 'storage/canceled') {
+      return { success: false, error: 'Upload was canceled' };
+    }
+
+    if (error.code === 'storage/unknown') {
+      return { success: false, error: 'Unknown error occurred during upload' };
+    }
+
+    return { success: false, error: error.message || 'Failed to upload image' };
   }
 };
 
@@ -79,10 +187,17 @@ export const deleteImageFromStorage = async (imagePath) => {
     const imageRef = ref(storage, imagePath);
     await deleteObject(imageRef);
     
-    console.log('Image deleted successfully');
+    console.log('✅ Image deleted successfully');
     return { success: true };
   } catch (error) {
-    console.error('Error deleting image:', error);
+    console.error('❌ Error deleting image:', error);
+    
+    // Don't fail if image doesn't exist
+    if (error.code === 'storage/object-not-found') {
+      console.log('Image already deleted or does not exist');
+      return { success: true };
+    }
+    
     return { success: false, error: error.message };
   }
 };
@@ -99,14 +214,14 @@ export const createUserProfile = async (userId, email, displayName = '') => {
         displayName: displayName,
         createdAt: serverTimestamp(),
       });
-      console.log('User profile created in Firestore');
+      console.log('✅ User profile created in Firestore');
     } else {
-      console.log('Offline: User profile will sync when online');
+      console.log('⚠️ Offline: User profile will sync when online');
     }
     
     return { success: true };
   } catch (error) {
-    console.error('Error creating user profile:', error);
+    console.error('❌ Error creating user profile:', error);
     return { success: false, error: error.message };
   }
 };
@@ -124,7 +239,7 @@ export const getUserProfile = async (userId) => {
     
     return { success: false, error: 'User profile not found' };
   } catch (error) {
-    console.error('Error getting user profile:', error);
+    console.error('❌ Error getting user profile:', error);
     return { success: false, error: error.message };
   }
 };
@@ -138,16 +253,13 @@ export const updateUserProfile = async (userId, updates) => {
     }
     return { success: true };
   } catch (error) {
-    console.error('Error updating user profile:', error);
+    console.error('❌ Error updating user profile:', error);
     return { success: false, error: error.message };
   }
 };
 
 // ==================== PUBLIC FEED FUNCTIONS ====================
 
-/**
- * Toggle the public/private status of a history item
- */
 export const toggleHistoryItemVisibility = async (userId, historyId, isPublic) => {
   try {
     const online = await isOnline();
@@ -192,6 +304,7 @@ export const toggleHistoryItemVisibility = async (userId, historyId, isPublic) =
           globalObsCount: historyData.globalObsCount || 0,
           createdAt: historyData.timestamp || serverTimestamp(),
           publishedAt: serverTimestamp(),
+          
         });
         
         console.log('✅ Added to public feed');
@@ -203,7 +316,7 @@ export const toggleHistoryItemVisibility = async (userId, historyId, isPublic) =
         await deleteDoc(publicScanRef);
         console.log('✅ Removed from public feed');
       } catch (error) {
-        console.warn('Public scan doc may not exist:', error);
+        console.warn('⚠️ Public scan doc may not exist:', error);
       }
     }
 
@@ -220,14 +333,11 @@ export const toggleHistoryItemVisibility = async (userId, historyId, isPublic) =
 
     return { success: true, isPublic };
   } catch (error) {
-    console.error('Error toggling visibility:', error);
+    console.error('❌ Error toggling visibility:', error);
     return { success: false, error: error.message };
   }
 };
 
-/**
- * Get all public scans from all users (for the home feed)
- */
 export const getPublicScans = async (limitCount = 50) => {
   try {
     const online = await isOnline();
@@ -258,14 +368,11 @@ export const getPublicScans = async (limitCount = 50) => {
     console.log(`✅ Loaded ${publicScans.length} public scans`);
     return { success: true, data: publicScans };
   } catch (error) {
-    console.error('Error getting public scans:', error);
+    console.error('❌ Error getting public scans:', error);
     return { success: false, data: [], error: error.message };
   }
 };
 
-/**
- * Get public scans from a specific user
- */
 export const getUserPublicScans = async (userId, limitCount = 20) => {
   try {
     const online = await isOnline();
@@ -296,15 +403,70 @@ export const getUserPublicScans = async (userId, limitCount = 20) => {
 
     return { success: true, data: userPublicScans };
   } catch (error) {
-    console.error('Error getting user public scans:', error);
+    console.error('❌ Error getting user public scans:', error);
     return { success: false, data: [], error: error.message };
   }
 };
 
 // ==================== HISTORY (UPDATED WITH PUBLIC/PRIVATE) ====================
 
+// ✅ NEW: Update history item timestamp without re-uploading image
+export const updateHistoryTimestamp = async (userId, historyId) => {
+  try {
+    const storageKey = getHistoryKey(userId);
+    const existing = await AsyncStorage.getItem(storageKey);
+    
+    if (!existing) {
+      return { success: false, error: 'No history found' };
+    }
+    
+    const list = JSON.parse(existing);
+    const itemIndex = list.findIndex(item => item.id === historyId);
+    
+    if (itemIndex === -1) {
+      return { success: false, error: 'Item not found' };
+    }
+    
+    // Move item to top with updated timestamp
+    const item = list[itemIndex];
+    list.splice(itemIndex, 1);
+    
+    const updatedItem = {
+      ...item,
+      timestamp: Date.now(),
+      lastViewed: Date.now(),
+    };
+    
+    list.unshift(updatedItem);
+    await AsyncStorage.setItem(storageKey, JSON.stringify(list));
+    
+    console.log('✅ History timestamp updated (no image re-upload)');
+    
+    // Update in Firestore if online
+    const online = await isOnline();
+    if (online && userId && item.synced) {
+      try {
+        await updateDoc(doc(db, 'users', userId, 'history', historyId), {
+          timestamp: serverTimestamp(),
+          lastViewed: serverTimestamp(),
+        });
+        console.log('✅ Timestamp synced to Firestore');
+      } catch (error) {
+        console.warn('⚠️ Firestore timestamp update failed:', error);
+      }
+    }
+    
+    return { success: true, item: updatedItem };
+  } catch (error) {
+    console.error('❌ Error updating timestamp:', error);
+    return { success: false, error: error.message };
+  }
+};
+
 export const addToHistory = async (userId, historyData) => {
   try {
+    console.log('📝 Adding to history for user:', userId);
+    
     const storageKey = getHistoryKey(userId);
     let uploadedImageUrl = historyData.imageUrl;
     let imagePath = null;
@@ -313,13 +475,11 @@ export const addToHistory = async (userId, historyData) => {
     const existing = await AsyncStorage.getItem(storageKey);
     const list = existing ? JSON.parse(existing) : [];
 
-    // Check if this species already exists in history (by name or taxonId)
+    // Check if this species already exists in history
     const existingIndex = list.findIndex(item => {
-      // Match by taxonId (most accurate)
       if (historyData.taxonId && item.taxonId) {
         return item.taxonId === historyData.taxonId;
       }
-      // Fallback: Match by name (scientificName or plantName)
       const itemName = (item.plantName || item.name || item.scientificName || '').toLowerCase().trim();
       const dataName = (historyData.plantName || historyData.name || historyData.scientificName || '').toLowerCase().trim();
       return itemName === dataName && itemName !== '';
@@ -328,34 +488,51 @@ export const addToHistory = async (userId, historyData) => {
     let oldFirestoreId = null;
     let wasPublic = false;
 
-    // If found, remove the old entry (we'll add updated one to top)
+    // ✅ If item exists, just move it to top - DON'T re-upload or modify image
     if (existingIndex !== -1) {
       const existingItem = list[existingIndex];
       oldFirestoreId = existingItem.synced ? existingItem.id : null;
       wasPublic = existingItem.isPublic || false;
       
-      // Delete old image if it exists and we're uploading a new one
-      if (existingItem.imagePath && historyData.imageUri) {
-        await deleteImageFromStorage(existingItem.imagePath);
-      } else if (!historyData.imageUri) {
-        // Keep the old image if no new image provided
-        uploadedImageUrl = existingItem.imageUrl;
-        imagePath = existingItem.imagePath;
+      // ✅ ALWAYS preserve existing image data
+      uploadedImageUrl = existingItem.imageUrl;
+      imagePath = existingItem.imagePath;
+      
+      // Only upload NEW image if explicitly provided AND different from existing
+      if (historyData.imageUri && historyData.imageUri !== existingItem.imageUrl) {
+        console.log('📸 New image provided, uploading...');
+        const online = await isOnline();
+        if (online && userId) {
+          const uploadResult = await uploadImageToStorage(historyData.imageUri, userId, 'history');
+          if (uploadResult.success) {
+            uploadedImageUrl = uploadResult.url;
+            imagePath = uploadResult.path;
+            console.log('✅ New image uploaded successfully');
+          } else {
+            console.warn('⚠️ New image upload failed, keeping old image');
+          }
+        }
+      } else {
+        console.log('🔄 Reusing existing image (no new upload)');
       }
       
-      // Remove the old entry
       list.splice(existingIndex, 1);
-      console.log('✅ Moved existing history item to top:', historyData.plantName || historyData.name);
-    }
-
-    // Upload new image to Firebase Storage if user is authenticated and online
-    const online = await isOnline();
-    if (online && userId && historyData.imageUri) {
-      const uploadResult = await uploadImageToStorage(historyData.imageUri, userId, 'history');
-      if (uploadResult.success) {
-        uploadedImageUrl = uploadResult.url;
-        imagePath = uploadResult.path;
-        console.log('Image uploaded for history item:', uploadedImageUrl);
+      console.log('✅ Moved existing history item to top (image preserved)');
+    } else {
+      // ✅ NEW item - upload image if provided
+      const online = await isOnline();
+      if (online && userId && historyData.imageUri) {
+        console.log('📤 Uploading image for NEW history item...');
+        const uploadResult = await uploadImageToStorage(historyData.imageUri, userId, 'history');
+        
+        if (uploadResult.success) {
+          uploadedImageUrl = uploadResult.url;
+          imagePath = uploadResult.path;
+          console.log('✅ Image uploaded successfully');
+        } else {
+          console.error('❌ Image upload failed:', uploadResult.error);
+          // Continue anyway - save without image
+        }
       }
     }
 
@@ -366,36 +543,31 @@ export const addToHistory = async (userId, historyData) => {
       id: `history_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`,
       timestamp: Date.now(),
       synced: false,
-      isPublic: false, // Default to private for new scans
+      isPublic: wasPublic, // Preserve public status
     };
 
-    // Remove imageUri from storage (we don't need the local URI anymore)
     delete itemWithId.imageUri;
 
-    // Add to the beginning of the array (most recent first)
     list.unshift(itemWithId);
     await AsyncStorage.setItem(storageKey, JSON.stringify(list));
+    console.log('✅ Saved to AsyncStorage');
 
     // Try to sync to Firestore if online
+    const online = await isOnline();
     if (online && userId) {
       try {
-        // If item existed in Firestore, delete the old one first
+        // Delete old Firestore entry if exists
         if (oldFirestoreId) {
           try {
             await deleteDoc(doc(db, 'users', userId, 'history', oldFirestoreId));
-            console.log('Deleted old Firestore history entry');
+            console.log('✅ Deleted old Firestore entry');
             
-            // If it was public, also remove from publicScans
             if (wasPublic) {
-              try {
-                await deleteDoc(doc(db, 'publicScans', oldFirestoreId));
-                console.log('Deleted old public scan entry');
-              } catch (pubError) {
-                console.warn('Failed to delete old public scan:', pubError);
-              }
+              await deleteDoc(doc(db, 'publicScans', oldFirestoreId));
+              console.log('✅ Deleted old public scan');
             }
           } catch (deleteError) {
-            console.warn('Failed to delete old Firestore entry:', deleteError);
+            console.warn('⚠️ Failed to delete old entry:', deleteError);
           }
         }
 
@@ -406,23 +578,22 @@ export const addToHistory = async (userId, historyData) => {
           imageUrl: uploadedImageUrl,
           imagePath: imagePath,
           timestamp: serverTimestamp(),
-          isPublic: false, // Default to private
+          isPublic: wasPublic, // Preserve public status
         });
         
-        // Update the item with Firestore doc ID and mark as synced
         itemWithId.id = docRef.id;
         itemWithId.synced = true;
-        list[0] = itemWithId; // Update the first item
+        list[0] = itemWithId;
         await AsyncStorage.setItem(storageKey, JSON.stringify(list));
-        console.log('History saved to Firestore with image');
+        console.log('✅ Synced to Firestore');
       } catch (firestoreError) {
-        console.warn('Firestore save failed, kept in AsyncStorage:', firestoreError);
+        console.warn('⚠️ Firestore save failed:', firestoreError);
       }
     }
 
     return { success: true, id: itemWithId.id };
   } catch (error) {
-    console.error('Error adding to history:', error);
+    console.error('❌ Error adding to history:', error);
     return { success: false, error: error.message };
   }
 };
@@ -432,7 +603,6 @@ export const getHistory = async (userId) => {
     const storageKey = getHistoryKey(userId);
     const online = await isOnline();
 
-    // Try to get from Firestore if online
     if (online && userId) {
       try {
         const historyRef = collection(db, 'users', userId, 'history');
@@ -448,24 +618,22 @@ export const getHistory = async (userId) => {
           });
         });
 
-        // Save to AsyncStorage for offline access
         await AsyncStorage.setItem(storageKey, JSON.stringify(firestoreItems));
-        console.log('History loaded from Firestore');
+        console.log('✅ History loaded from Firestore');
         
         return { success: true, data: firestoreItems };
       } catch (firestoreError) {
-        console.warn('Firestore fetch failed, using local data:', firestoreError);
+        console.warn('⚠️ Firestore fetch failed, using local data:', firestoreError);
       }
     }
 
-    // Fallback to AsyncStorage (offline mode)
     const local = await AsyncStorage.getItem(storageKey);
     const localItems = local ? JSON.parse(local) : [];
-    console.log('History loaded from AsyncStorage (offline)');
+    console.log('✅ History loaded from AsyncStorage');
     
     return { success: true, data: localItems };
   } catch (error) {
-    console.error('Error getting history:', error);
+    console.error('❌ Error getting history:', error);
     return { success: false, error: error.message };
   }
 };
@@ -474,45 +642,39 @@ export const deleteHistoryItem = async (userId, historyId) => {
   try {
     const storageKey = getHistoryKey(userId);
 
-    // Get the item to find its image path and public status
     const existing = await AsyncStorage.getItem(storageKey);
     const list = existing ? JSON.parse(existing) : [];
     const itemToDelete = list.find(item => item.id === historyId);
 
-    // Delete image from Storage if it exists
     if (itemToDelete && itemToDelete.imagePath) {
       await deleteImageFromStorage(itemToDelete.imagePath);
     }
 
-    // If item was public, remove from publicScans collection
     const online = await isOnline();
     if (online && itemToDelete && itemToDelete.isPublic) {
       try {
-        const publicScanRef = doc(db, 'publicScans', historyId);
-        await deleteDoc(publicScanRef);
-        console.log('Public scan deleted from feed');
+        await deleteDoc(doc(db, 'publicScans', historyId));
+        console.log('✅ Public scan deleted');
       } catch (error) {
-        console.warn('Failed to delete public scan:', error);
+        console.warn('⚠️ Failed to delete public scan:', error);
       }
     }
 
-    // Delete from AsyncStorage
     const filtered = list.filter(item => item.id !== historyId);
     await AsyncStorage.setItem(storageKey, JSON.stringify(filtered));
 
-    // Try to delete from Firestore if online
     if (online && userId) {
       try {
         await deleteDoc(doc(db, 'users', userId, 'history', historyId));
-        console.log('History item deleted from Firestore');
+        console.log('✅ Deleted from Firestore');
       } catch (firestoreError) {
-        console.warn('Firestore delete failed:', firestoreError);
+        console.warn('⚠️ Firestore delete failed:', firestoreError);
       }
     }
 
     return { success: true };
   } catch (error) {
-    console.error('Error deleting history item:', error);
+    console.error('❌ Error deleting history item:', error);
     return { success: false, error: error.message };
   }
 };
@@ -521,59 +683,203 @@ export const clearAllHistory = async (userId) => {
   try {
     const storageKey = getHistoryKey(userId);
 
-    // Get all items to delete their images and public entries
     const existing = await AsyncStorage.getItem(storageKey);
     const list = existing ? JSON.parse(existing) : [];
 
-    // Delete all images from Storage
     const deleteImagePromises = list
       .filter(item => item.imagePath)
       .map(item => deleteImageFromStorage(item.imagePath));
     
     await Promise.all(deleteImagePromises);
 
-    // Delete all public scans
     const online = await isOnline();
     if (online) {
       const deletePublicPromises = list
         .filter(item => item.isPublic)
-        .map(item => {
-          try {
-            return deleteDoc(doc(db, 'publicScans', item.id));
-          } catch (error) {
-            console.warn(`Failed to delete public scan ${item.id}:`, error);
-            return Promise.resolve();
-          }
-        });
+        .map(item => deleteDoc(doc(db, 'publicScans', item.id)).catch(console.warn));
       
       await Promise.all(deletePublicPromises);
-      console.log('All public scans removed from feed');
     }
 
-    // Clear AsyncStorage
     await AsyncStorage.setItem(storageKey, JSON.stringify([]));
 
-    // Try to clear Firestore if online
     if (online && userId) {
       try {
         const historyRef = collection(db, 'users', userId, 'history');
         const querySnapshot = await getDocs(historyRef);
         
-        const deletePromises = [];
-        querySnapshot.forEach((doc) => {
-          deletePromises.push(deleteDoc(doc.ref));
-        });
-        
+        const deletePromises = querySnapshot.docs.map(doc => deleteDoc(doc.ref));
         await Promise.all(deletePromises);
-        console.log('All history cleared from Firestore');
+        
+        console.log('✅ All history cleared');
       } catch (firestoreError) {
-        console.warn('Firestore clear failed:', firestoreError);
+        console.warn('⚠️ Firestore clear failed:', firestoreError);
       }
     }
 
     return { success: true };
   } catch (error) {
-    console.error('Error clearing history:', error);
+    console.error('❌ Error clearing history:', error);
+    return { success: false, error: error.message };
+  }
+};
+
+/**
+ * Save history with duplicate checking
+ * If the species already exists, update it instead of creating a new entry
+ */
+export const saveHistoryWithDuplicateCheck = async (uid, historyData) => {
+  try {
+    if (!uid) {
+      return { success: false, error: 'User not authenticated' };
+    }
+
+    const historyRef = collection(db, 'users', uid, 'history');
+
+    // Create identifier for duplicate checking
+    const identifier = historyData.taxonId
+      ? `taxon_${historyData.taxonId}`
+      : (historyData.scientificName || historyData.name || '').toLowerCase().trim();
+
+    if (!identifier) {
+      return { success: false, error: 'Invalid species data' };
+    }
+
+    // Check for existing entry
+    let existingDoc = null;
+
+    // Try to find by taxonId first
+    if (historyData.taxonId) {
+      const q = query(historyRef, where('taxonId', '==', historyData.taxonId));
+      const querySnapshot = await getDocs(q);
+      if (!querySnapshot.empty) {
+        existingDoc = querySnapshot.docs[0];
+      }
+    }
+
+    // If not found by taxonId, try scientificName
+    if (!existingDoc && historyData.scientificName) {
+      const q = query(historyRef, where('scientificName', '==', historyData.scientificName));
+      const querySnapshot = await getDocs(q);
+      if (!querySnapshot.empty) {
+        existingDoc = querySnapshot.docs[0];
+      }
+    }
+
+    if (existingDoc) {
+      // Update existing entry
+      const docRef = doc(db, 'users', uid, 'history', existingDoc.id);
+      const existingData = existingDoc.data();
+
+      await updateDoc(docRef, {
+        ...historyData,
+        timestamp: serverTimestamp(),
+        scanCount: (existingData.scanCount || 1) + 1,
+        lastScanned: serverTimestamp(),
+        // Keep the original creation date
+        createdAt: existingData.createdAt || existingData.timestamp,
+      });
+
+      return {
+        success: true,
+        message: 'History updated',
+        docId: existingDoc.id,
+        isUpdate: true
+      };
+    } else {
+      // Create new entry
+      const newDocRef = doc(historyRef);
+      await setDoc(newDocRef, {
+        ...historyData,
+        timestamp: serverTimestamp(),
+        createdAt: serverTimestamp(),
+        scanCount: 1,
+        lastScanned: serverTimestamp(),
+      });
+
+      return {
+        success: true,
+        message: 'History saved',
+        docId: newDocRef.id,
+        isUpdate: false
+      };
+    }
+  } catch (error) {
+    console.error('Error saving history:', error);
+    return { success: false, error: error.message };
+  }
+};
+
+/**
+ * Clean up duplicate entries in history
+ * Keeps only the most recent scan of each species
+ */
+export const cleanupDuplicateHistory = async (uid) => {
+  try {
+    if (!uid) {
+      return { success: false, error: 'User not authenticated' };
+    }
+
+    const historyRef = collection(db, 'users', uid, 'history');
+    const querySnapshot = await getDocs(historyRef);
+
+    if (querySnapshot.empty) {
+      return { success: true, message: 'No history to clean up', duplicatesRemoved: 0 };
+    }
+
+    // Group by species identifier
+    const speciesMap = new Map();
+
+    querySnapshot.docs.forEach(doc => {
+      const data = doc.data();
+      const identifier = data.taxonId
+        ? `taxon_${data.taxonId}`
+        : (data.scientificName || data.name || '').toLowerCase().trim();
+
+      if (!identifier) return;
+
+      if (!speciesMap.has(identifier)) {
+        speciesMap.set(identifier, []);
+      }
+
+      speciesMap.get(identifier).push({
+        id: doc.id,
+        data: data,
+        timestamp: data.timestamp?.toMillis() || data.createdAt || 0
+      });
+    });
+
+    // Find duplicates and keep only the most recent
+    const docsToDelete = [];
+    let duplicatesCount = 0;
+
+    speciesMap.forEach((docs) => {
+      if (docs.length > 1) {
+        // Sort by timestamp (most recent first)
+        docs.sort((a, b) => b.timestamp - a.timestamp);
+
+        // Keep the first (most recent) and mark others for deletion
+        for (let i = 1; i < docs.length; i++) {
+          docsToDelete.push(docs[i].id);
+          duplicatesCount++;
+        }
+      }
+    });
+
+    // Delete duplicate documents
+    const deletePromises = docsToDelete.map(docId =>
+      deleteDoc(doc(db, 'users', uid, 'history', docId))
+    );
+
+    await Promise.all(deletePromises);
+
+    return {
+      success: true,
+      message: `Cleaned up ${duplicatesCount} duplicate ${duplicatesCount === 1 ? 'entry' : 'entries'}`,
+      duplicatesRemoved: duplicatesCount
+    };
+  } catch (error) {
+    console.error('Error cleaning up duplicates:', error);
     return { success: false, error: error.message };
   }
 };
@@ -586,14 +892,13 @@ export const addToFavorites = async (userId, favoriteData) => {
     let uploadedImageUrl = favoriteData.imageUrl;
     let imagePath = null;
 
-    // Upload image to Firebase Storage if user is authenticated and online
     const online = await isOnline();
     if (online && userId && favoriteData.imageUri) {
       const uploadResult = await uploadImageToStorage(favoriteData.imageUri, userId, 'favorites');
       if (uploadResult.success) {
         uploadedImageUrl = uploadResult.url;
         imagePath = uploadResult.path;
-        console.log('Image uploaded for favorite item:', uploadedImageUrl);
+        console.log('✅ Image uploaded for favorite');
       }
     }
 
@@ -606,16 +911,13 @@ export const addToFavorites = async (userId, favoriteData) => {
       synced: false,
     };
 
-    // Remove imageUri from storage
     delete itemWithId.imageUri;
 
-    // Always save to AsyncStorage first
     const existing = await AsyncStorage.getItem(storageKey);
     const list = existing ? JSON.parse(existing) : [];
     list.unshift(itemWithId);
     await AsyncStorage.setItem(storageKey, JSON.stringify(list));
 
-    // Try to sync to Firestore if online
     if (online && userId) {
       try {
         const favoritesRef = collection(db, 'users', userId, 'favorites');
@@ -628,15 +930,15 @@ export const addToFavorites = async (userId, favoriteData) => {
         
         itemWithId.synced = true;
         await AsyncStorage.setItem(storageKey, JSON.stringify(list));
-        console.log('Favorite saved to Firestore with image');
+        console.log('✅ Favorite synced to Firestore');
       } catch (firestoreError) {
-        console.warn('Firestore save failed, kept in AsyncStorage:', firestoreError);
+        console.warn('⚠️ Firestore save failed:', firestoreError);
       }
     }
 
     return { success: true, id: itemWithId.id };
   } catch (error) {
-    console.error('Error adding to favorites:', error);
+    console.error('❌ Error adding to favorites:', error);
     return { success: false, error: error.message };
   }
 };
@@ -646,7 +948,6 @@ export const getFavorites = async (userId) => {
     const storageKey = getFavoritesKey(userId);
     const online = await isOnline();
 
-    // Try to get from Firestore if online
     if (online && userId) {
       try {
         const favoritesRef = collection(db, 'users', userId, 'favorites');
@@ -662,24 +963,22 @@ export const getFavorites = async (userId) => {
           });
         });
 
-        // Save to AsyncStorage for offline access
         await AsyncStorage.setItem(storageKey, JSON.stringify(firestoreItems));
-        console.log('Favorites loaded from Firestore');
+        console.log('✅ Favorites loaded from Firestore');
         
         return { success: true, data: firestoreItems };
       } catch (firestoreError) {
-        console.warn('Firestore fetch failed, using local data:', firestoreError);
+        console.warn('⚠️ Firestore fetch failed:', firestoreError);
       }
     }
 
-    // Fallback to AsyncStorage (offline mode)
     const local = await AsyncStorage.getItem(storageKey);
     const localItems = local ? JSON.parse(local) : [];
-    console.log('Favorites loaded from AsyncStorage (offline)');
+    console.log('✅ Favorites loaded from AsyncStorage');
     
     return { success: true, data: localItems };
   } catch (error) {
-    console.error('Error getting favorites:', error);
+    console.error('❌ Error getting favorites:', error);
     return { success: false, error: error.message };
   }
 };
@@ -688,34 +987,30 @@ export const removeFromFavorites = async (userId, favoriteId) => {
   try {
     const storageKey = getFavoritesKey(userId);
 
-    // Get the item to find its image path
     const existing = await AsyncStorage.getItem(storageKey);
     const list = existing ? JSON.parse(existing) : [];
     const itemToDelete = list.find(item => item.id === favoriteId);
 
-    // Delete image from Storage if it exists
     if (itemToDelete && itemToDelete.imagePath) {
       await deleteImageFromStorage(itemToDelete.imagePath);
     }
 
-    // Remove from AsyncStorage
     const filtered = list.filter(item => item.id !== favoriteId);
     await AsyncStorage.setItem(storageKey, JSON.stringify(filtered));
 
-    // Try to remove from Firestore if online
     const online = await isOnline();
     if (online && userId) {
       try {
         await deleteDoc(doc(db, 'users', userId, 'favorites', favoriteId));
-        console.log('Favorite removed from Firestore');
+        console.log('✅ Removed from Firestore');
       } catch (firestoreError) {
-        console.warn('Firestore delete failed:', firestoreError);
+        console.warn('⚠️ Firestore delete failed:', firestoreError);
       }
     }
 
     return { success: true };
   } catch (error) {
-    console.error('Error removing from favorites:', error);
+    console.error('❌ Error removing from favorites:', error);
     return { success: false, error: error.message };
   }
 };
@@ -730,7 +1025,7 @@ export const isInFavorites = async (userId, plantName) => {
     
     return { success: true, isFavorite: !!found, id: found?.id };
   } catch (error) {
-    console.error('Error checking favorites:', error);
+    console.error('❌ Error checking favorites:', error);
     return { success: false, error: error.message };
   }
 };
@@ -747,12 +1042,12 @@ export const addSubscription = async (userId, subscriptionData) => {
         ...subscriptionData,
         updatedAt: serverTimestamp(),
       });
-      console.log('Subscription added/updated');
+      console.log('✅ Subscription added');
     }
     
     return { success: true };
   } catch (error) {
-    console.error('Error adding subscription:', error);
+    console.error('❌ Error adding subscription:', error);
     return { success: false, error: error.message };
   }
 };
@@ -770,7 +1065,7 @@ export const getSubscription = async (userId) => {
     
     return { success: false, error: 'No subscription found' };
   } catch (error) {
-    console.error('Error getting subscription:', error);
+    console.error('❌ Error getting subscription:', error);
     return { success: false, error: error.message };
   }
 };
@@ -785,12 +1080,12 @@ export const cancelSubscription = async (userId) => {
         status: 'cancelled',
         cancelledAt: serverTimestamp(),
       });
-      console.log('Subscription cancelled');
+      console.log('✅ Subscription cancelled');
     }
     
     return { success: true };
   } catch (error) {
-    console.error('Error cancelling subscription:', error);
+    console.error('❌ Error cancelling subscription:', error);
     return { success: false, error: error.message };
   }
 };
@@ -802,11 +1097,10 @@ export const incrementGlobalObservation = async (speciesData) => {
     const online = await isOnline();
     
     if (!online) {
-      console.log('Offline: Global observation will sync when online');
+      console.log('⚠️ Offline: Will sync when online');
       return { success: false, error: 'offline' };
     }
 
-    // Use taxonId as document ID for accuracy, fallback to normalized name
     const docId = speciesData.taxonId 
       ? `taxon_${speciesData.taxonId}` 
       : (speciesData.scientificName || speciesData.name || '').toLowerCase().replace(/\s+/g, '_');
@@ -819,16 +1113,14 @@ export const incrementGlobalObservation = async (speciesData) => {
     const observationDoc = await getDoc(observationRef);
 
     if (observationDoc.exists()) {
-      // Increment existing count
       const currentCount = observationDoc.data().count || 0;
       await updateDoc(observationRef, {
         count: currentCount + 1,
         lastScanned: serverTimestamp(),
       });
-      console.log(`✅ Global observation incremented: ${currentCount + 1}`);
+      console.log(`✅ Global observation: ${currentCount + 1}`);
       return { success: true, count: currentCount + 1 };
     } else {
-      // Create new observation record
       await setDoc(observationRef, {
         speciesName: speciesData.name || speciesData.scientificName,
         scientificName: speciesData.scientificName,
@@ -842,7 +1134,7 @@ export const incrementGlobalObservation = async (speciesData) => {
       return { success: true, count: 1 };
     }
   } catch (error) {
-    console.error('Error incrementing global observation:', error);
+    console.error('❌ Error incrementing observation:', error);
     return { success: false, error: error.message };
   }
 };
@@ -857,7 +1149,6 @@ export const getGlobalObservationCounts = async (speciesArray) => {
 
     const counts = {};
     
-    // Fetch counts for each species
     for (const species of speciesArray) {
       if (!species.taxonId && !species.scientificName && !species.name) continue;
       
@@ -877,20 +1168,19 @@ export const getGlobalObservationCounts = async (speciesArray) => {
           counts[docId] = 0;
         }
       } catch (error) {
-        console.warn(`Failed to fetch count for ${docId}:`, error);
+        console.warn(`⚠️ Failed to fetch count for ${docId}:`, error);
         counts[docId] = 0;
       }
     }
 
     return { success: true, counts };
   } catch (error) {
-    console.error('Error getting global observation counts:', error);
+    console.error('❌ Error getting observation counts:', error);
     return { success: false, counts: {} };
   }
 };
 
-
-// ==================== TRENDING SPECIES (IMPROVED) ====================
+// ==================== TRENDING SPECIES ====================
 
 export const getTrendingSpecies = async (limitCount = 10, daysBack = 7) => {
   try {
@@ -900,11 +1190,8 @@ export const getTrendingSpecies = async (limitCount = 10, daysBack = 7) => {
       return { success: false, data: [], error: 'offline' };
     }
 
-    // Calculate timestamp for X days ago (in milliseconds)
     const daysAgoTimestamp = Date.now() - (daysBack * 24 * 60 * 60 * 1000);
-    const daysAgoDate = new Date(daysAgoTimestamp);
 
-    // Get all observations from globalObservations collection
     const globalObsRef = collection(db, 'globalObservations');
     const q = query(globalObsRef, orderBy('lastScanned', 'desc'));
     
@@ -915,12 +1202,9 @@ export const getTrendingSpecies = async (limitCount = 10, daysBack = 7) => {
     for (const docSnap of querySnapshot.docs) {
       const data = docSnap.data();
       
-      // Get the timestamp (convert Firestore timestamp to milliseconds)
       const lastScanned = data.lastScanned?.toMillis?.() || data.lastScanned || 0;
       
-      // Only include species scanned in the last X days
       if (lastScanned >= daysAgoTimestamp) {
-        // Fetch additional details from iNaturalist if we have a taxonId
         let imageUrl = null;
         let iconicTaxon = null;
         let rank = null;
@@ -928,7 +1212,6 @@ export const getTrendingSpecies = async (limitCount = 10, daysBack = 7) => {
         
         if (data.taxonId) {
           try {
-            // Fetch from publicScans first (faster, already has the data)
             const publicScansRef = collection(db, 'publicScans');
             const publicQuery = query(
               publicScansRef,
@@ -945,13 +1228,35 @@ export const getTrendingSpecies = async (limitCount = 10, daysBack = 7) => {
               about = publicData.about;
             }
           } catch (error) {
-            console.warn('Failed to fetch additional details:', error);
+            console.warn('⚠️ Failed to fetch details:', error);
+          }
+        }
+        
+        if (!imageUrl && !iconicTaxon && data.scientificName) {
+          try {
+            const publicScansRef = collection(db, 'publicScans');
+            const nameQuery = query(
+              publicScansRef,
+              where('scientificName', '==', data.scientificName),
+              limit(1)
+            );
+            const nameSnapshot = await getDocs(nameQuery);
+            
+            if (!nameSnapshot.empty) {
+              const publicData = nameSnapshot.docs[0].data();
+              imageUrl = publicData.imageUrl;
+              iconicTaxon = publicData.iconicTaxon;
+              rank = publicData.rank;
+              about = publicData.about;
+            }
+          } catch (error) {
+            console.warn('⚠️ Failed to fetch by name:', error);
           }
         }
         
         trendingSpecies.push({
           taxonId: data.taxonId,
-          name: data.speciesName || data.scientificName,
+          name: data.speciesName || data.scientificName || data.commonName,
           scientificName: data.scientificName,
           commonName: data.commonName,
           count: data.count || 0,
@@ -966,7 +1271,6 @@ export const getTrendingSpecies = async (limitCount = 10, daysBack = 7) => {
       }
     }
     
-    // Sort by scan count (descending), then by most recent
     trendingSpecies.sort((a, b) => {
       if (b.count !== a.count) {
         return b.count - a.count;
@@ -974,29 +1278,24 @@ export const getTrendingSpecies = async (limitCount = 10, daysBack = 7) => {
       return b.lastScanned - a.lastScanned;
     });
     
-    // Return top X species
     const topTrending = trendingSpecies.slice(0, limitCount);
     
-    console.log(`✅ Loaded ${topTrending.length} trending species (based on all scans)`);
+    console.log(`✅ Loaded ${topTrending.length} trending species`);
     return { success: true, data: topTrending };
   } catch (error) {
-    console.error('Error getting trending species:', error);
+    console.error('❌ Error getting trending species:', error);
     return { success: false, data: [], error: error.message };
   }
 };
 
-/**
- * Get trending species by specific category (Plants, Animals, etc.)
- */
 export const getTrendingByCategory = async (iconicTaxon, limitCount = 10, daysBack = 7) => {
   try {
-    const result = await getTrendingSpecies(100, daysBack); // Get more results to filter
+    const result = await getTrendingSpecies(100, daysBack);
     
     if (!result.success) {
       return result;
     }
 
-    // Filter by iconicTaxon category
     const filtered = result.data
       .filter(species => {
         if (!species.iconicTaxon) return false;
@@ -1006,14 +1305,11 @@ export const getTrendingByCategory = async (iconicTaxon, limitCount = 10, daysBa
 
     return { success: true, data: filtered };
   } catch (error) {
-    console.error('Error getting trending by category:', error);
+    console.error('❌ Error getting trending by category:', error);
     return { success: false, data: [], error: error.message };
   }
 };
 
-/**
- * Get trending statistics for the app
- */
 export const getTrendingStats = async () => {
   try {
     const online = await isOnline();
@@ -1054,7 +1350,88 @@ export const getTrendingStats = async () => {
       },
     };
   } catch (error) {
-    console.error('Error getting trending stats:', error);
+    console.error('❌ Error getting trending stats:', error);
     return { success: false, error: error.message };
   }
 };
+
+export async function getSpeciesScans(taxonId, speciesName) {
+  try {
+    console.log('🔍 Fetching species scans for:', { taxonId, speciesName });
+
+    const publicScansRef = collection(db, 'publicScans');
+    let scansQuery;
+
+    if (taxonId) {
+      console.log('📊 Querying by taxonId:', taxonId);
+      scansQuery = query(
+        publicScansRef,
+        where('taxonId', '==', taxonId),
+        orderBy('publishedAt', 'desc')
+      );
+    } else if (speciesName) {
+      console.log('📊 Querying by name:', speciesName);
+      scansQuery = query(
+        publicScansRef,
+        where('name', '==', speciesName),
+        orderBy('publishedAt', 'desc')
+      );
+    } else {
+      console.error('❌ No taxonId or species name provided');
+      return {
+        success: false,
+        data: [],
+        error: 'No taxonId or species name provided',
+      };
+    }
+
+    console.log('⏳ Executing Firestore query...');
+    const snapshot = await getDocs(scansQuery);
+    console.log(`✅ Found ${snapshot.size} scans`);
+
+    const scans = [];
+
+    snapshot.forEach((doc) => {
+      const data = doc.data();
+
+      scans.push({
+        id: doc.id,
+        userId: data.userId,
+        userName: data.userName || 'Anonymous',
+        name: data.name || data.plantName || data.commonName || 'Unknown',
+        scientificName: data.scientificName || null,
+        commonName: data.commonName || null,
+        imageUrl: data.imageUrl || null,
+        iconicTaxon: data.iconicTaxon || null,
+        taxonId: data.taxonId || null,
+        isPublic: true,
+        createdAt: data.publishedAt || data.createdAt || data.timestamp?.toMillis() || Date.now(),
+        about: data.about || null,
+      });
+    });
+
+    console.log('✅ Successfully processed scans');
+    return {
+      success: true,
+      data: scans,
+    };
+  } catch (error) {
+    console.error('❌ Error fetching species scans:', error);
+    console.error('Error code:', error.code);
+    console.error('Error message:', error.message);
+
+    if (error.message?.includes('index')) {
+      console.error('⚠️ Firestore Index Required!');
+    }
+
+    if (error.code === 'permission-denied') {
+      console.error('⚠️ Permission Denied! Check Firestore rules.');
+    }
+
+    return {
+      success: false,
+      data: [],
+      error: error.message,
+    };
+  }
+}

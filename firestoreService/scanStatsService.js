@@ -1,4 +1,4 @@
-// scanStatsService.js
+// scanStatsService.js - WITH ACHIEVEMENT INTEGRATION
 import { 
   db, 
   collection, 
@@ -14,6 +14,7 @@ import {
 } from '../firebase';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import NetInfo from '@react-native-community/netinfo';
+import { checkAndAwardAchievements } from './notificationService'; // ✅ NEW IMPORT
 
 // Helper to check network status
 const isOnline = async () => {
@@ -52,7 +53,7 @@ export const recordScan = async (userId, scanData) => {
     await AsyncStorage.setItem(storageKey, JSON.stringify(list));
 
     // Update local stats cache
-    await updateLocalStats(userId);
+    const updatedStats = await updateLocalStats(userId);
 
     // Try to sync to Firestore if online
     const online = await isOnline();
@@ -71,6 +72,17 @@ export const recordScan = async (userId, scanData) => {
         scanRecord.synced = true;
         await AsyncStorage.setItem(storageKey, JSON.stringify(list));
         console.log('✅ Scan recorded to Firestore');
+
+        // ✅✅ CHECK FOR ACHIEVEMENTS AFTER SUCCESSFUL SCAN ✅✅
+        try {
+          const achievementResult = await checkAndAwardAchievements(userId, updatedStats);
+          if (achievementResult.success && achievementResult.newlyUnlocked?.length > 0) {
+            console.log(`🏆 Unlocked ${achievementResult.newlyUnlocked.length} new achievement(s)!`);
+          }
+        } catch (achievementError) {
+          console.warn('⚠️ Achievement check failed (non-critical):', achievementError);
+          // Don't fail the scan if achievement check fails
+        }
       } catch (firestoreError) {
         console.warn('⚠️ Firestore save failed, kept in AsyncStorage:', firestoreError);
       }
@@ -106,7 +118,7 @@ const updateLocalStats = async (userId) => {
       weekScans: scans.filter(s => s.timestamp > oneWeekAgo).length,
       monthScans: scans.filter(s => s.timestamp > oneMonthAgo).length,
       lastScanDate: scans.length > 0 ? scans[0].timestamp : null,
-      uniqueSpecies: [...new Set(scans.map(s => s.speciesName || s.plantName))].length,
+      uniqueSpecies: [...new Set(scans.map(s => s.speciesName || s.plantName).filter(Boolean))].length,
       lastUpdated: now,
     };
     
@@ -145,7 +157,7 @@ const updateFirestoreStats = async (userId) => {
       weekScans: scans.filter(s => s.timestamp > oneWeekAgo).length,
       monthScans: scans.filter(s => s.timestamp > oneMonthAgo).length,
       lastScanDate: scans.length > 0 ? Math.max(...scans.map(s => s.timestamp)) : null,
-      uniqueSpecies: [...new Set(scans.map(s => s.speciesName || s.plantName))].filter(Boolean).length,
+      uniqueSpecies: [...new Set(scans.map(s => s.speciesName || s.plantName).filter(Boolean))].length,
       lastUpdated: serverTimestamp(),
     };
     
@@ -352,6 +364,14 @@ export const syncPendingScans = async (userId) => {
     
     await AsyncStorage.setItem(storageKey, JSON.stringify(scans));
     await updateFirestoreStats(userId);
+    
+    // ✅ CHECK ACHIEVEMENTS AFTER SYNCING
+    try {
+      const { data: stats } = await getScanStats(userId);
+      await checkAndAwardAchievements(userId, stats);
+    } catch (achievementError) {
+      console.warn('⚠️ Achievement check failed during sync:', achievementError);
+    }
     
     console.log(`✅ Synced ${syncedCount} scans to Firestore`);
     return { success: true, synced: syncedCount };

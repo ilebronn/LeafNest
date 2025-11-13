@@ -1,3 +1,4 @@
+// HomeScreen.js - ENHANCED WITH REAL-TIME NOTIFICATION UPDATES
 import React, { useRef, useState, useEffect, useCallback } from 'react';
 import {
   View,
@@ -23,6 +24,7 @@ import { getPublicScans, getTrendingSpecies } from '../firestoreService';
 import { likePost, checkIfLiked, getPostStats } from '../firestoreService/postInteractionsService';
 import CommentsModal from '../components/CommentsModal';
 import { useFocusEffect } from '@react-navigation/native';
+import { createDownloadNotification, getUnreadNotificationCount } from '../firestoreService/notificationService';
 
 const { width, height } = Dimensions.get('window');
 
@@ -39,6 +41,8 @@ export default function HomeScreen({ route, navigation }) {
   const [commentsModalVisible, setCommentsModalVisible] = useState(false);
   const [selectedPostId, setSelectedPostId] = useState(null);
   const [likeAnimations, setLikeAnimations] = useState({});
+  const [downloadingPosts, setDownloadingPosts] = useState({});
+  const [unreadNotifCount, setUnreadNotifCount] = useState(0);
   const fadeAnim = useRef(new Animated.Value(0)).current;
 
   const currentUser = auth.currentUser;
@@ -51,6 +55,48 @@ export default function HomeScreen({ route, navigation }) {
     const userIsGuest = !user || guestParam === true;
     setIsGuest(userIsGuest);
   }, [route?.params?.guest]);
+
+  // ✅ LOAD NOTIFICATION COUNT ON MOUNT
+  const loadUnreadCount = async () => {
+    if (!currentUserId) {
+      setUnreadNotifCount(0);
+      return;
+    }
+
+    try {
+      const result = await getUnreadNotificationCount(currentUserId);
+      if (result.success) {
+        setUnreadNotifCount(result.count);
+        console.log('🔔 Unread notifications:', result.count);
+      }
+    } catch (error) {
+      console.error('Error loading unread count:', error);
+    }
+  };
+
+  // ✅ REFRESH NOTIFICATION COUNT WHEN SCREEN IS FOCUSED
+  useFocusEffect(
+    useCallback(() => {
+      if (currentUserId) {
+        loadUnreadCount();
+      }
+    }, [currentUserId])
+  );
+
+  // ✅ AUTO-REFRESH NOTIFICATION COUNT EVERY 30 SECONDS (OPTIONAL)
+  useEffect(() => {
+    if (!currentUserId) return;
+
+    // Initial load
+    loadUnreadCount();
+
+    // Set up interval for auto-refresh
+    const intervalId = setInterval(() => {
+      loadUnreadCount();
+    }, 30000); // 30 seconds
+
+    return () => clearInterval(intervalId);
+  }, [currentUserId]);
 
   useEffect(() => {
     Animated.timing(fadeAnim, {
@@ -70,7 +116,7 @@ export default function HomeScreen({ route, navigation }) {
   };
 
   const getIconForTaxon = (iconicTaxon) => {
-    if (!iconicTaxon) return 'leaf';
+    if (!iconicTaxon) return 'eye-off-outline';
     
     const taxon = iconicTaxon.toLowerCase();
     if (taxon.includes('plant') || taxon === 'plantae') return 'leaf';
@@ -153,7 +199,8 @@ export default function HomeScreen({ route, navigation }) {
     try {
       const [scansResult, trendingResult] = await Promise.all([
         getPublicScans(),
-        getTrendingSpecies(10, 7)
+        getTrendingSpecies(10, 7),
+        currentUserId ? loadUnreadCount() : Promise.resolve() // ✅ REFRESH NOTIFICATIONS TOO
       ]);
       
       if (scansResult.success) {
@@ -170,7 +217,99 @@ export default function HomeScreen({ route, navigation }) {
     } finally {
       setRefreshing(false);
     }
-  }, []);
+  }, [currentUserId]);
+
+  const handleDownloadPDF = async (item) => {
+    if (!currentUser || !currentUser.email) {
+      Alert.alert(
+        'Authentication Required',
+        'Please log in to download the PDF.',
+        [{ text: 'OK' }]
+      );
+      return;
+    }
+
+    setDownloadingPosts(prev => ({ ...prev, [item.id]: true }));
+
+    try {
+      console.log('📄 Generating PDF report for:', item.name || item.scientificName);
+
+      const pdfData = {
+        email: currentUser.email,
+        speciesData: {
+          commonName: item.commonName || item.name || 'N/A',
+          scientificName: item.scientificName || item.name || 'N/A',
+          rank: item.rank || 'Unknown',
+          iconicTaxon: item.iconicTaxon || 'Unknown',
+          taxonomy: item.taxonomy || [],
+          fullDescription: item.about || item.description || 'No description available.',
+          habitat: item.habitat || 'Information not available.',
+          distribution: item.distribution || 'Information not available.',
+          characteristics: item.characteristics || 'Information not available.',
+          behavior: item.behavior || 'Information not available.',
+          conservation: item.conservation || 'Not Evaluated',
+          uses: item.uses || 'Information not available.',
+          imageUrl: item.imageUrl || null,
+        },
+      };
+
+      console.log('📤 Sending PDF request to Cloud Function...');
+
+      const axios = require('axios');
+      const response = await axios.post(
+        'https://us-central1-leafnest-98408.cloudfunctions.net/generatePdfAndEmail',
+        pdfData,
+        {
+          headers: {
+            'Content-Type': 'application/json',
+          },
+        }
+      );
+
+      if (response.status === 200) {
+        console.log('✅ PDF generated and sent successfully');
+
+        try {
+          const downloaderUsername = currentUser.displayName || currentUser.email?.split('@')[0] || 'Someone';
+          await createDownloadNotification(
+            item.id,
+            item.userId,
+            currentUserId,
+            downloaderUsername,
+            item
+          );
+          console.log('✅ Download notification created');
+        } catch (notifError) {
+          console.warn('⚠️ Failed to create download notification:', notifError);
+        }
+
+        Alert.alert(
+          'Success',
+          'The PDF has been generated and sent to your email!',
+          [{ text: 'OK' }]
+        );
+      } else {
+        throw new Error('Failed to generate PDF');
+      }
+
+    } catch (error) {
+      console.error('=== PDF GENERATION ERROR ===');
+      console.error('Error:', error);
+      console.error('Error response:', error.response?.data);
+
+      Alert.alert(
+        'Error',
+        'Failed to generate PDF. Please try again.',
+        [{ text: 'OK' }]
+      );
+    } finally {
+      setDownloadingPosts(prev => {
+        const newState = { ...prev };
+        delete newState[item.id];
+        return newState;
+      });
+    }
+  };
 
   const handleLikePress = async (postId) => {
     if (!currentUserId) {
@@ -181,7 +320,6 @@ export default function HomeScreen({ route, navigation }) {
     try {
       const result = await likePost(postId, currentUserId);
       
-      // Update local state immediately for smooth UX
       setPostStats(prev => ({
         ...prev,
         [postId]: {
@@ -200,15 +338,13 @@ export default function HomeScreen({ route, navigation }) {
 
   const handleDoubleTap = async (postId) => {
     if (!currentUserId) {
-      return; // Silent fail for double tap if not logged in
+      return;
     }
 
     const stats = postStats[postId] || { likes: [] };
     const isAlreadyLiked = stats.likes.includes(currentUserId);
 
-    // Only like if not already liked
     if (!isAlreadyLiked) {
-      // Trigger like animation
       const anim = new Animated.Value(0);
       setLikeAnimations(prev => ({ ...prev, [postId]: anim }));
 
@@ -232,7 +368,6 @@ export default function HomeScreen({ route, navigation }) {
         });
       });
 
-      // Perform the like action
       try {
         const result = await likePost(postId, currentUserId);
         
@@ -266,7 +401,6 @@ export default function HomeScreen({ route, navigation }) {
     setCommentsModalVisible(false);
     setSelectedPostId(null);
     
-    // Refresh stats after closing comments modal
     if (selectedPostId) {
       try {
         const stats = await getPostStats(selectedPostId);
@@ -301,14 +435,30 @@ export default function HomeScreen({ route, navigation }) {
 
   const renderTrendingItem = ({ item, index }) => {
     const gradient = getGradientForTaxon(item.iconicTaxon);
-    
+
+    const handleTrendingPress = () => {
+      navigation.navigate('SpeciesGalleryScreen', {
+        species: {
+          name: item.commonName || item.name,
+          scientificName: item.scientificName || null,
+          taxonId: item.taxonId,
+          iconicTaxon: item.iconicTaxon,
+          count: item.count,
+        },
+      });
+    };
+
     return (
-      <TouchableOpacity style={styles.trendingCard} activeOpacity={0.9}>
+      <TouchableOpacity
+        style={styles.trendingCard}
+        activeOpacity={0.9}
+        onPress={handleTrendingPress}
+      >
         <View style={styles.trendingImageWrapper}>
           {item.imageUrl ? (
             <>
-              <Image 
-                source={{ uri: item.imageUrl }} 
+              <Image
+                source={{ uri: item.imageUrl }}
                 style={styles.trendingImage}
                 resizeMode="cover"
               />
@@ -327,15 +477,15 @@ export default function HomeScreen({ route, navigation }) {
               <Ionicons name={getIconForTaxon(item.iconicTaxon)} size={32} color="rgba(255,255,255,0.9)" />
             </LinearGradient>
           )}
-          
+
           <View style={styles.trendingBadge}>
             <Ionicons name="flame" size={14} color="#fff" />
             <Text style={styles.trendingBadgeText}>#{index + 1}</Text>
           </View>
-          
+
           <View style={styles.trendingInfo}>
             <Text style={styles.trendingName} numberOfLines={2}>
-              {item.commonName || item.name || 'Unknown'}
+              {item.plantName || item.name || item.commonName || item.scientificName || 'Unknown'}
             </Text>
             <View style={styles.trendingStats}>
               <View style={styles.trendingStat}>
@@ -362,6 +512,7 @@ export default function HomeScreen({ route, navigation }) {
     const stats = postStats[item.id] || { likesCount: 0, commentsCount: 0, likes: [] };
     const isLiked = stats.likes.includes(currentUserId);
     const likeAnim = likeAnimations[item.id];
+    const isDownloading = downloadingPosts[item.id];
 
     const handleImagePress = (() => {
       let lastTap = null;
@@ -371,11 +522,9 @@ export default function HomeScreen({ route, navigation }) {
         const DOUBLE_TAP_DELAY = 300;
 
         if (lastTap && (now - lastTap) < DOUBLE_TAP_DELAY) {
-          // Double tap detected
           handleDoubleTap(item.id);
           lastTap = null;
         } else {
-          // Single tap
           lastTap = now;
         }
       };
@@ -404,9 +553,6 @@ export default function HomeScreen({ route, navigation }) {
               )}
             </View>
           </View>
-          <TouchableOpacity>
-            <Ionicons name="ellipsis-horizontal" size={20} color="#000" />
-          </TouchableOpacity>
         </View>
 
         <TouchableOpacity 
@@ -429,7 +575,6 @@ export default function HomeScreen({ route, navigation }) {
             </LinearGradient>
           )}
 
-          {/* Like Animation Overlay */}
           {likeAnim && (
             <Animated.View
               style={[
@@ -448,7 +593,7 @@ export default function HomeScreen({ route, navigation }) {
               ]}
               pointerEvents="none"
             >
-              <Ionicons name="heart" size={100} color="#fff" style={{ textShadowRadius: 0 }} />
+              <Ionicons name="heart" size={100} color="#ff0000ff" style={{ textShadowRadius: 0 }} />
             </Animated.View>
           )}
         </TouchableOpacity>
@@ -472,8 +617,15 @@ export default function HomeScreen({ route, navigation }) {
               <Ionicons name="chatbubble-outline" size={26} color="#000" />
             </TouchableOpacity>
           </View>
-          <TouchableOpacity>
-            <Ionicons name="download-outline" size={26} color="#000" />
+          <TouchableOpacity
+            onPress={() => handleDownloadPDF(item)}
+            disabled={isDownloading}
+          >
+            {isDownloading ? (
+              <ActivityIndicator size="small" color="#5E936C" />
+            ) : (
+              <Ionicons name="download-outline" size={26} color="#000" />
+            )}
           </TouchableOpacity>
         </View>
 
@@ -563,11 +715,34 @@ export default function HomeScreen({ route, navigation }) {
               resizeMode="contain"
             />
             
-            <TouchableOpacity 
+            <TouchableOpacity
               style={styles.headerIcon}
               onPress={() => navigation.navigate('NotificationScreen')}
             >
-              <View style={styles.notificationBadge} />
+              {/* ✅ ANIMATED NOTIFICATION BADGE */}
+              {unreadNotifCount > 0 && (
+                <Animated.View 
+                  style={[
+                    styles.notificationBadge,
+                    {
+                      transform: [
+                        {
+                          scale: fadeAnim.interpolate({
+                            inputRange: [0, 1],
+                            outputRange: [0.8, 1],
+                          }),
+                        },
+                      ],
+                    },
+                  ]}
+                >
+                  {unreadNotifCount > 99 ? (
+                    <Text style={styles.notificationBadgeText}>99+</Text>
+                  ) : (
+                    <Text style={styles.notificationBadgeText}>{unreadNotifCount}</Text>
+                  )}
+                </Animated.View>
+              )}
               <Ionicons name="notifications-outline" size={28} color="#fff" />
             </TouchableOpacity>
           </View>
@@ -609,7 +784,6 @@ export default function HomeScreen({ route, navigation }) {
           />
         )}
 
-        {/* Comments Modal */}
         {selectedPostId && (
           <CommentsModal
             visible={commentsModalVisible}
@@ -655,15 +829,24 @@ const styles = StyleSheet.create({
   },
   notificationBadge: {
     position: 'absolute',
-    top: 0,
-    right: 0,
-    width: 8,
-    height: 8,
-    borderRadius: 4,
+    top: -4,
+    right: -4,
+    minWidth: 18,
+    height: 18,
+    borderRadius: 9,
     backgroundColor: '#EF4444',
-    borderWidth: 1.5,
-    borderColor: '#fff',
-    zIndex: 1,
+    borderWidth: 2,
+    borderColor: '#5E936C',
+    zIndex: 2,
+    justifyContent: 'center',
+    alignItems: 'center',
+    paddingHorizontal: 4,
+  },
+  notificationBadgeText: {
+    fontSize: 10,
+    fontWeight: '700',
+    color: '#fff',
+    textAlign: 'center',
   },
   trendingSection: {
     borderBottomWidth: 0.5,

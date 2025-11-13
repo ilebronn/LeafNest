@@ -302,17 +302,6 @@ const FAQScreen = ({ navigation }) => {
             })}
           </View>
         ))}
-
-        <View style={styles.helpCard}>
-          <Text style={styles.helpTitle}>Still need help?</Text>
-          <Text style={styles.helpText}>
-            Can't find what you're looking for? Our support team is here to help!
-          </Text>
-          <TouchableOpacity style={styles.contactButton}>
-            <Ionicons name="mail" size={clamp(scale(18), 16, 20)} color="#fff" />
-            <Text style={styles.contactButtonText}>Contact Support</Text>
-          </TouchableOpacity>
-        </View>
       </ScrollView>
     </SafeAreaView>
   );

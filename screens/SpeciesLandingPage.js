@@ -5,6 +5,12 @@ import * as Speech from 'expo-speech';
 import { auth } from '../firebase';
 import { addToHistory, addToFavorites, removeFromFavorites, isInFavorites } from '../firestoreService';
 import axios from 'axios';
+import { MaterialCommunityIcons } from '@expo/vector-icons';
+
+// SpeciesLandingPage.js (Near the top, after imports)
+
+// ⚠️ REPLACE 'YOUR-PROJECT-ID' with your actual project ID from .firebaserc
+const PDF_BACKEND_URL = 'https://us-central1-leafnest-98408.cloudfunctions.net/generatePdfAndEmail';
 
 // Helper function to strip HTML tags and clean text thoroughly
 const stripHtmlTags = (htmlString) => {
@@ -236,6 +242,12 @@ export default function SpeciesLandingPage({ route, navigation }) {
     similarSpecies: [],
     alternativeNames: [],
   });
+
+  const [isLoading, setIsLoading] = useState(false);
+  const [wikiData, setWikiData] = useState(null);
+  const [wikiCommonData, setWikiCommonData] = useState(null);
+  const [wikiInfoboxData, setWikiInfoboxData] = useState(null);
+  const [isGeneratingPDF, setIsGeneratingPDF] = useState(false);
 
   // Character limit for description preview
   const DESCRIPTION_PREVIEW_LENGTH = 500;
@@ -706,6 +718,52 @@ export default function SpeciesLandingPage({ route, navigation }) {
     navigation.goBack();
   };
 
+  const handleDownloadPDF = async () => {
+    if (!auth.currentUser) {
+      Alert.alert('Authentication Required', 'Please log in to download the PDF.');
+      return;
+    }
+
+    setIsGeneratingPDF(true);
+    try {
+      const pdfData = {
+        email: auth.currentUser.email,
+        speciesData: {
+          commonName: commonName || 'N/A',
+          scientificName: scientificName || 'N/A',
+          rank: rank || 'N/A',
+          iconicTaxon: iconicTaxon || 'N/A',
+          taxonomy: taxonomy || [],
+          fullDescription: fullDescription || 'No description available.',
+          habitat: additionalInfo.habitat || 'N/A',
+          distribution: additionalInfo.distribution || 'N/A',
+          characteristics: additionalInfo.characteristics || 'N/A',
+          behavior: additionalInfo.behavior || 'N/A',
+          conservation: conservation || 'N/A',
+          uses: additionalInfo.uses || 'N/A',
+          imageUrl: displayImageUri || null,
+        },
+      };
+
+      const response = await axios.post(PDF_BACKEND_URL, pdfData, {
+        headers: {
+          'Content-Type': 'application/json',
+        },
+      });
+
+      if (response.status === 200) {
+        Alert.alert('Success', 'The PDF has been generated and sent to your email!');
+      } else {
+        throw new Error('Failed to generate PDF');
+      }
+    } catch (error) {
+      console.error('PDF generation error:', error);
+      Alert.alert('Error', 'Failed to generate PDF. Please try again.');
+    } finally {
+      setIsGeneratingPDF(false);
+    }
+  };
+
   // Function to get preview text
   const getDescriptionPreview = () => {
     if (fullDescription.length <= DESCRIPTION_PREVIEW_LENGTH) {
@@ -944,13 +1002,28 @@ export default function SpeciesLandingPage({ route, navigation }) {
 
             <View style={{ height: 80 }} />
           </ScrollView>
-
+            <TouchableOpacity
+        style={styles.downloadButton}
+        onPress={handleDownloadPDF}
+        disabled={isGeneratingPDF}
+      >
+        {isGeneratingPDF ? (
+          <ActivityIndicator size="small" color="#fff" />
+        ) : (
+          <MaterialCommunityIcons
+            name="download"
+            size={28}
+            color="#fff"
+          />
+        )}
+        </TouchableOpacity>
           <TouchableOpacity
             style={styles.speechButton}
             onPress={handleSpeech}
           >
             <Ionicons name={isSpeaking ? "pause" : "volume-high"} size={30} color="#fff" />
           </TouchableOpacity>
+          
         </View>
       </View>
     </ImageBackground>
@@ -1284,4 +1357,20 @@ const styles = StyleSheet.create({
     right: 15,
     padding: 8,
   },
+  downloadButton: {
+  position: 'absolute',
+  bottom: 935,
+  right: 20, // Position it to the left of the speech button
+  backgroundColor: 'rgba(17, 118, 34, 0.93)',
+  padding: 10,
+  borderRadius: 50,
+  alignItems: 'center',
+  justifyContent: 'center',
+  zIndex: 10,
+  shadowColor: '#000',
+  shadowOpacity: 0.3,
+  shadowRadius: 8,
+  shadowOffset: { width: 0, height: 4 },
+  elevation: 6,
+},
 });

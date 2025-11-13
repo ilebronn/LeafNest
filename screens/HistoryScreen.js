@@ -15,7 +15,7 @@ import {
   deleteHistoryItem, 
   clearAllHistory, 
   getGlobalObservationCounts,
-  toggleHistoryItemVisibility 
+  toggleHistoryItemVisibility,
 } from '../firestoreService';
 
 const { width } = Dimensions.get('window');
@@ -60,17 +60,36 @@ export default function HistoryScreen({ navigation }) {
           type: it.type || 'history',
           createdAt: it.timestamp?.toMillis() || it.createdAt || Date.now(),
           originalData: it.originalData || null,
-          isPublic: it.isPublic || false, // NEW: Public/Private status
+          isPublic: it.isPublic === true ? true : false,
+          scanCount: it.scanCount || 1,
         }));
         
+        // Remove duplicates by keeping only the most recent scan of each species
+        const uniqueItems = [];
+        const seenSpecies = new Set();
+        
+        // Sort by most recent first
         normalized.sort((a, b) => (b.createdAt ?? 0) - (a.createdAt ?? 0));
-        setItems(normalized);
+        
+        // Filter out duplicates based on taxonId or scientificName
+        for (const item of normalized) {
+          const identifier = item.taxonId 
+            ? `taxon_${item.taxonId}` 
+            : (item.scientificName || item.name || '').toLowerCase().trim();
+          
+          if (!seenSpecies.has(identifier) && identifier) {
+            seenSpecies.add(identifier);
+            uniqueItems.push(item);
+          }
+        }
+        
+        setItems(uniqueItems);
 
-        const countsResult = await getGlobalObservationCounts(normalized);
+        const countsResult = await getGlobalObservationCounts(uniqueItems);
         if (countsResult.success) {
           setGlobalCounts(countsResult.counts);
           
-          const updatedItems = normalized.map(item => {
+          const updatedItems = uniqueItems.map(item => {
             const docId = item.taxonId 
               ? `taxon_${item.taxonId}` 
               : (item.scientificName || item.name || '').toLowerCase().replace(/\s+/g, '_');
@@ -121,13 +140,17 @@ export default function HistoryScreen({ navigation }) {
       const result = await toggleHistoryItemVisibility(uid, item.id, newStatus);
       
       if (result.success) {
-        // Update local state
+        // Update local state in items list
         setItems(prevItems => 
           prevItems.map(i => 
             i.id === item.id ? { ...i, isPublic: newStatus } : i
           )
         );
         
+        // Close the modal
+        closeModal();
+        
+        // Show success message
         Alert.alert(
           'Success',
           `Scan is now ${newStatus ? 'public' : 'private'}`
@@ -457,6 +480,18 @@ export default function HistoryScreen({ navigation }) {
                   </View>
                 )}
 
+                {selectedSpecies.scanCount > 1 && (
+                  <View style={styles.detailRow}>
+                    <Ionicons name="analytics-outline" size={20} color="#5E936C" style={styles.detailIcon} />
+                    <View style={styles.detailTextContainer}>
+                      <Text style={styles.detailLabel}>Times Scanned</Text>
+                      <Text style={styles.detailValue}>
+                        {selectedSpecies.scanCount} {selectedSpecies.scanCount === 1 ? 'time' : 'times'}
+                      </Text>
+                    </View>
+                  </View>
+                )}
+
                 {selectedSpecies.globalObsCount > 0 && (
                   <View style={styles.detailRow}>
                     <Ionicons name="globe-outline" size={20} color="#059669" style={styles.detailIcon} />
@@ -492,7 +527,56 @@ export default function HistoryScreen({ navigation }) {
                   </Text>
                 </View>
               )}
-              
+
+              {/* VIEW FULL DETAILS BUTTON */}
+              <TouchableOpacity
+                style={styles.viewDetailsButton}
+                onPress={() => {
+                  closeModal();
+                  navigation.navigate('SpeciesLandingPage', {
+                    photoUri: selectedSpecies.imageUri || selectedSpecies.imageUrl,
+                    speciesData: selectedSpecies.originalData || {
+                      scientificName: selectedSpecies.scientificName,
+                      canonicalName: selectedSpecies.scientificName,
+                      rank: selectedSpecies.rank,
+                      kingdom: selectedSpecies.taxonomy?.find(t => t.label === 'Kingdom')?.value,
+                      phylum: selectedSpecies.taxonomy?.find(t => t.label === 'Phylum')?.value,
+                      class: selectedSpecies.taxonomy?.find(t => t.label === 'Class')?.value,
+                      order: selectedSpecies.taxonomy?.find(t => t.label === 'Order')?.value,
+                      family: selectedSpecies.taxonomy?.find(t => t.label === 'Family')?.value,
+                      genus: selectedSpecies.taxonomy?.find(t => t.label === 'Genus')?.value,
+                      species: selectedSpecies.scientificName,
+                    },
+                    iNaturalistData: {
+                      id: selectedSpecies.taxonId,
+                      name: selectedSpecies.scientificName,
+                      preferred_common_name: selectedSpecies.commonName,
+                      rank: selectedSpecies.rank,
+                      iconic_taxon_name: selectedSpecies.iconicTaxon,
+                      conservation_status: selectedSpecies.conservation ? {
+                        status_name: selectedSpecies.conservation
+                      } : null,
+                      wikipedia_summary: selectedSpecies.about,
+                      default_photo: selectedSpecies.imageUrl ? {
+                        medium_url: selectedSpecies.imageUrl
+                      } : null,
+                    },
+                    iNatObsCount: selectedSpecies.iNatObsCount || 0,
+                    confidence: selectedSpecies.confidence || null,
+                  });
+                }}
+                activeOpacity={0.8}
+              >
+                <LinearGradient
+                  colors={['#5E936C', '#3E704C']}
+                  style={styles.viewDetailsGradient}
+                >
+                  <Ionicons name="information-circle" size={22} color="#fff" />
+                  <Text style={styles.viewDetailsText}>View Full Details</Text>
+                  <Ionicons name="arrow-forward" size={20} color="#fff" />
+                </LinearGradient>
+              </TouchableOpacity>
+
               <View style={{ height: 40 }} />
             </ScrollView>
           </View>
@@ -741,7 +825,6 @@ export default function HistoryScreen({ navigation }) {
               </>
             ) : (
               <>
-                <View style={{ width: 40 }} />
                 <Text style={styles.headerTitle}>History</Text>
                 {items.length > 0 && (
                   <TouchableOpacity onPress={toggleSelectionMode} style={styles.headerButton}>
@@ -1450,5 +1533,28 @@ const styles = StyleSheet.create({
     lineHeight: 24,
     color: '#374151',
     textAlign: 'left',
+  },
+  viewDetailsButton: {
+    backgroundColor: 'transparent',
+    borderRadius: 16,
+    overflow: 'hidden',
+    elevation: 4,
+    shadowColor: '#5E936C',
+    shadowOpacity: 0.3,
+    shadowRadius: 8,
+    shadowOffset: { width: 0, height: 4 },
+  },
+  viewDetailsGradient: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'center',
+    paddingHorizontal: 24,
+    paddingVertical: 16,
+    gap: 8,
+  },
+  viewDetailsText: {
+    fontSize: 16,
+    fontWeight: '700',
+    color: '#fff',
   },
 });
