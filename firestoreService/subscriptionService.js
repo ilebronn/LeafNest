@@ -1,4 +1,4 @@
-// services/subscriptionService.js - COMPLETE SUBSCRIPTION MANAGEMENT
+// services/subscriptionService.js - FIXED TO READ FROM CORRECT LOCATION
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { 
   db, 
@@ -21,8 +21,7 @@ const USAGE_KEY = (uid) => `usage_${uid}`;
 
 /**
  * Get user's current subscription status
- * @param {string} userId 
- * @returns {Object} { tier: 'free'|'premium', expiryDate: timestamp|null, isActive: boolean }
+ * ✅ FIXED: Now checks the subscription subcollection properly
  */
 export const getUserSubscription = async (userId) => {
   try {
@@ -36,26 +35,57 @@ export const getUserSubscription = async (userId) => {
       };
     }
 
-    // Try Firestore first
+    // ✅ FIX: Get all documents from the subscription subcollection
     try {
-      const subDoc = await getDoc(doc(db, 'users', userId, 'subscription', 'current'));
+      const subscriptionRef = collection(db, 'users', userId, 'subscription');
+      const subscriptionSnapshot = await getDocs(subscriptionRef);
       
-      if (subDoc.exists()) {
+      if (!subscriptionSnapshot.empty) {
+        // Get the first subscription document (should only be one)
+        const subDoc = subscriptionSnapshot.docs[0];
         const data = subDoc.data();
+        
+        console.log('📄 Found subscription data:', data);
+        
         const now = Date.now();
-        const expiryDate = data.expiryDate?.toMillis() || null;
-        const isActive = expiryDate && expiryDate > now;
-        const daysRemaining = isActive 
+        
+        // ✅ Handle both Firestore Timestamp and Date objects
+        let expiryDate;
+        if (data.endDate?.toMillis) {
+          expiryDate = data.endDate.toMillis();
+        } else if (data.endDate?.getTime) {
+          expiryDate = data.endDate.getTime();
+        } else if (typeof data.endDate === 'number') {
+          expiryDate = data.endDate;
+        } else if (typeof data.endDate === 'string') {
+          expiryDate = new Date(data.endDate).getTime();
+        } else {
+          expiryDate = null;
+        }
+        
+        const isActive = data.status === 'active' && 
+                        data.isPremium === true && 
+                        expiryDate && 
+                        expiryDate > now;
+        
+        const daysRemaining = isActive && expiryDate
           ? Math.ceil((expiryDate - now) / (1000 * 60 * 60 * 24))
           : 0;
+
+        console.log('✅ Subscription status:', {
+          isPremium: data.isPremium,
+          status: data.status,
+          isActive,
+          daysRemaining,
+          expiryDate: expiryDate ? new Date(expiryDate).toISOString() : null
+        });
 
         // Cache in AsyncStorage
         await AsyncStorage.setItem(SUBSCRIPTION_KEY(userId), JSON.stringify({
           tier: isActive ? 'premium' : 'free',
           expiryDate: expiryDate,
           isActive: isActive,
-          paymentMethod: data.paymentMethod || null,
-          transactionId: data.transactionId || null,
+          premiumType: data.premiumType || null,
           daysRemaining: daysRemaining,
         }));
 
@@ -64,13 +94,12 @@ export const getUserSubscription = async (userId) => {
           tier: isActive ? 'premium' : 'free',
           expiryDate: expiryDate,
           isActive: isActive,
-          paymentMethod: data.paymentMethod,
-          transactionId: data.transactionId,
+          premiumType: data.premiumType,
           daysRemaining: daysRemaining,
         };
       }
     } catch (firestoreError) {
-      console.warn('Firestore fetch failed, using cache:', firestoreError);
+      console.warn('⚠️ Firestore fetch failed, using cache:', firestoreError);
     }
 
     // Fallback to AsyncStorage
@@ -101,7 +130,7 @@ export const getUserSubscription = async (userId) => {
       daysRemaining: 0,
     };
   } catch (error) {
-    console.error('Error getting subscription:', error);
+    console.error('❌ Error getting subscription:', error);
     return { 
       success: false, 
       tier: 'free', 
@@ -115,9 +144,6 @@ export const getUserSubscription = async (userId) => {
 
 /**
  * Activate premium subscription (after successful payment)
- * @param {string} userId 
- * @param {Object} subscriptionData - { paymentMethod, transactionId, amount }
- * @returns {Object}
  */
 export const activatePremiumSubscription = async (userId, subscriptionData) => {
   try {
@@ -129,24 +155,19 @@ export const activatePremiumSubscription = async (userId, subscriptionData) => {
     const expiryDate = now + (30 * 24 * 60 * 60 * 1000); // 30 days from now
 
     const subData = {
-      tier: 'premium',
-      expiryDate: new Date(expiryDate),
+      isPremium: true,
+      premiumType: subscriptionData.premiumType || 'monthly',
       startDate: new Date(now),
-      paymentMethod: subscriptionData.paymentMethod || 'gcash',
-      transactionId: subscriptionData.transactionId,
-      amount: subscriptionData.amount || 0,
+      endDate: new Date(expiryDate),
       status: 'active',
-      autoRenew: false,
       createdAt: serverTimestamp(),
       lastUpdated: serverTimestamp(),
     };
 
-    // Save to Firestore
+    // ✅ Save to subscription subcollection
     try {
-      await setDoc(
-        doc(db, 'users', userId, 'subscription', 'current'),
-        subData
-      );
+      const subscriptionRef = collection(db, 'users', userId, 'subscription');
+      await setDoc(doc(subscriptionRef, 'premium_sub'), subData);
       console.log('✅ Premium subscription activated in Firestore');
     } catch (firestoreError) {
       console.warn('⚠️ Firestore save failed:', firestoreError);
@@ -157,8 +178,7 @@ export const activatePremiumSubscription = async (userId, subscriptionData) => {
       tier: 'premium',
       expiryDate: expiryDate,
       isActive: true,
-      paymentMethod: subData.paymentMethod,
-      transactionId: subData.transactionId,
+      premiumType: subData.premiumType,
       daysRemaining: 30,
     }));
 
@@ -180,8 +200,6 @@ export const activatePremiumSubscription = async (userId, subscriptionData) => {
 
 /**
  * Check if subscription is expired and update status
- * @param {string} userId 
- * @returns {Object}
  */
 export const checkAndUpdateSubscription = async (userId) => {
   try {
@@ -201,11 +219,17 @@ export const checkAndUpdateSubscription = async (userId) => {
       
       // Update Firestore
       try {
-        await updateDoc(doc(db, 'users', userId, 'subscription', 'current'), {
-          status: 'expired',
-          tier: 'free',
-          lastUpdated: serverTimestamp(),
-        });
+        const subscriptionRef = collection(db, 'users', userId, 'subscription');
+        const snapshot = await getDocs(subscriptionRef);
+        
+        if (!snapshot.empty) {
+          const subDoc = snapshot.docs[0];
+          await updateDoc(subDoc.ref, {
+            status: 'expired',
+            isPremium: false,
+            lastUpdated: serverTimestamp(),
+          });
+        }
       } catch (error) {
         console.warn('⚠️ Failed to update Firestore:', error);
       }
@@ -242,8 +266,6 @@ export const checkAndUpdateSubscription = async (userId) => {
 
 /**
  * Cancel premium subscription (will expire at end of period)
- * @param {string} userId 
- * @returns {Object}
  */
 export const cancelSubscription = async (userId) => {
   try {
@@ -251,13 +273,18 @@ export const cancelSubscription = async (userId) => {
 
     // Update Firestore
     try {
-      await updateDoc(doc(db, 'users', userId, 'subscription', 'current'), {
-        status: 'cancelled',
-        autoRenew: false,
-        cancelledAt: serverTimestamp(),
-        lastUpdated: serverTimestamp(),
-      });
-      console.log('✅ Subscription cancelled in Firestore');
+      const subscriptionRef = collection(db, 'users', userId, 'subscription');
+      const snapshot = await getDocs(subscriptionRef);
+      
+      if (!snapshot.empty) {
+        const subDoc = snapshot.docs[0];
+        await updateDoc(subDoc.ref, {
+          status: 'cancelled',
+          cancelledAt: serverTimestamp(),
+          lastUpdated: serverTimestamp(),
+        });
+        console.log('✅ Subscription cancelled in Firestore');
+      }
     } catch (error) {
       console.warn('⚠️ Failed to update Firestore:', error);
     }
@@ -271,11 +298,6 @@ export const cancelSubscription = async (userId) => {
 
 // ==================== USAGE LIMITS ====================
 
-/**
- * Get user's current usage limits
- * @param {string} userId 
- * @returns {Object}
- */
 export const getUsageLimits = async (userId) => {
   try {
     if (!userId) {
@@ -309,9 +331,7 @@ export const getUsageLimits = async (userId) => {
       const data = JSON.parse(cached);
       const twelveHoursAgo = now - (12 * 60 * 60 * 1000);
       
-      // Check if 12 hours have passed since last reset
       if (data.lastResetTime < twelveHoursAgo) {
-        // Reset limits
         const resetData = {
           scansRemaining: 5,
           downloadsRemaining: 5,
@@ -319,7 +339,6 @@ export const getUsageLimits = async (userId) => {
         };
         
         await AsyncStorage.setItem(USAGE_KEY(userId), JSON.stringify(resetData));
-        console.log('🔄 Usage limits reset (12 hours passed)');
         
         return {
           success: true,
@@ -329,7 +348,6 @@ export const getUsageLimits = async (userId) => {
         };
       }
       
-      // Calculate hours until reset
       const timeUntilReset = (12 * 60 * 60 * 1000) - (now - data.lastResetTime);
       const hoursUntilReset = Math.ceil(timeUntilReset / (60 * 60 * 1000));
       
@@ -343,7 +361,6 @@ export const getUsageLimits = async (userId) => {
       };
     }
 
-    // Initialize usage limits
     const initialData = {
       scansRemaining: 5,
       downloadsRemaining: 5,
@@ -364,11 +381,6 @@ export const getUsageLimits = async (userId) => {
   }
 };
 
-/**
- * Decrement scan count (call before scanning)
- * @param {string} userId 
- * @returns {Object}
- */
 export const decrementScanCount = async (userId) => {
   try {
     if (!userId) return { success: false, error: 'User ID required' };
@@ -395,8 +407,6 @@ export const decrementScanCount = async (userId) => {
       lastResetTime: usage.lastResetTime,
     }));
 
-    console.log(`✅ Scan count: ${newCount}/5 remaining`);
-
     return {
       success: true,
       scansRemaining: newCount,
@@ -408,11 +418,6 @@ export const decrementScanCount = async (userId) => {
   }
 };
 
-/**
- * Decrement download count (call before downloading)
- * @param {string} userId 
- * @returns {Object}
- */
 export const decrementDownloadCount = async (userId) => {
   try {
     if (!userId) return { success: false, error: 'User ID required' };
@@ -439,8 +444,6 @@ export const decrementDownloadCount = async (userId) => {
       lastResetTime: usage.lastResetTime,
     }));
 
-    console.log(`✅ Download count: ${newCount}/5 remaining`);
-
     return {
       success: true,
       downloadsRemaining: newCount,
@@ -452,11 +455,6 @@ export const decrementDownloadCount = async (userId) => {
   }
 };
 
-/**
- * Reset usage limits (called when activating premium)
- * @param {string} userId 
- * @returns {Object}
- */
 export const resetUsageLimits = async (userId) => {
   try {
     if (!userId) return { success: false, error: 'User ID required' };
@@ -467,7 +465,6 @@ export const resetUsageLimits = async (userId) => {
       lastResetTime: Date.now(),
     }));
 
-    console.log('🔄 Usage limits reset');
     return { success: true };
   } catch (error) {
     console.error('❌ Error resetting usage limits:', error);
@@ -475,12 +472,6 @@ export const resetUsageLimits = async (userId) => {
   }
 };
 
-// ==================== UTILITY FUNCTIONS ====================
-
-/**
- * Get subscription statistics (for admin/analytics)
- * @returns {Object}
- */
 export const getSubscriptionStats = async () => {
   try {
     const usersRef = collection(db, 'users');
@@ -493,12 +484,24 @@ export const getSubscriptionStats = async () => {
     for (const userDoc of usersSnapshot.docs) {
       totalUsers++;
       
-      const subDoc = await getDoc(doc(db, 'users', userDoc.id, 'subscription', 'current'));
+      const subscriptionRef = collection(db, 'users', userDoc.id, 'subscription');
+      const subSnapshot = await getDocs(subscriptionRef);
       
-      if (subDoc.exists()) {
-        const data = subDoc.data();
-        const expiryDate = data.expiryDate?.toMillis() || null;
-        const isActive = expiryDate && expiryDate > Date.now();
+      if (!subSnapshot.empty) {
+        const data = subSnapshot.docs[0].data();
+        const now = Date.now();
+        
+        let expiryDate;
+        if (data.endDate?.toMillis) {
+          expiryDate = data.endDate.toMillis();
+        } else if (data.endDate instanceof Date) {
+          expiryDate = data.endDate.getTime();
+        }
+        
+        const isActive = data.status === 'active' && 
+                        data.isPremium === true && 
+                        expiryDate && 
+                        expiryDate > now;
         
         if (isActive) {
           premiumUsers++;

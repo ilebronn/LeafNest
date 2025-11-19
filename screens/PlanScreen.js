@@ -1,4 +1,4 @@
-// screens/PlanScreen.js - FIXED DEFAULT PLAN SELECTION
+// screens/PlanScreen.js - WITH BOTH PAYMONGO AND MANUAL PAYMENT
 import React, { useState, useEffect } from "react";
 import {
   View,
@@ -12,39 +12,47 @@ import {
   Dimensions,
   Alert,
   ActivityIndicator,
-  Linking,
 } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
 import { LinearGradient } from "expo-linear-gradient";
 import { useTranslation } from "react-i18next";
 import { auth } from "../firebase";
 import { getUserSubscription } from "../firestoreService/subscriptionService";
-import { 
-  createGCashPayment, 
-  verifyPaymentStatus,
-  processSuccessfulPayment 
-} from "../firestoreService/payMongoService";
+import { checkPaymentStatus } from "../firestoreService/manualPaymentService";
 
 const { width, height } = Dimensions.get("window");
 
 export default function PlanScreen({ navigation }) {
   const { t } = useTranslation();
-  const [selectedPlan, setSelectedPlan] = useState("free"); // Default to free
+  const [selectedPlan, setSelectedPlan] = useState("free");
   const [currentSubscription, setCurrentSubscription] = useState(null);
+  const [paymentStatus, setPaymentStatus] = useState(null);
   const [loading, setLoading] = useState(true);
-  const [processing, setProcessing] = useState(false);
-  const [verifying, setVerifying] = useState(false);
 
   const currentUser = auth.currentUser;
 
   useEffect(() => {
-    loadSubscriptionStatus();
+    loadData();
   }, []);
+
+  useEffect(() => {
+    const unsubscribe = navigation.addListener('focus', () => {
+      loadData();
+    });
+    return unsubscribe;
+  }, [navigation]);
+
+  const loadData = async () => {
+    await Promise.all([
+      loadSubscriptionStatus(),
+      loadPaymentStatus(),
+    ]);
+    setLoading(false);
+  };
 
   const loadSubscriptionStatus = async () => {
     if (!currentUser) {
-      setLoading(false);
-      setSelectedPlan('free'); // Set to free if no user
+      setSelectedPlan('free');
       return;
     }
 
@@ -52,20 +60,30 @@ export default function PlanScreen({ navigation }) {
       const result = await getUserSubscription(currentUser.uid);
       if (result.success) {
         setCurrentSubscription(result);
-        // Set selected plan based on subscription
         if (result.isActive && result.tier === 'premium') {
           setSelectedPlan('premium');
         } else {
           setSelectedPlan('free');
         }
       } else {
-        setSelectedPlan('free'); // Default to free if no subscription
+        setSelectedPlan('free');
       }
     } catch (error) {
       console.error('Error loading subscription:', error);
-      setSelectedPlan('free'); // Default to free on error
-    } finally {
-      setLoading(false);
+      setSelectedPlan('free');
+    }
+  };
+
+  const loadPaymentStatus = async () => {
+    if (!currentUser) return;
+
+    try {
+      const result = await checkPaymentStatus(currentUser.uid);
+      if (result.success) {
+        setPaymentStatus(result);
+      }
+    } catch (error) {
+      console.error('Error loading payment status:', error);
     }
   };
 
@@ -86,22 +104,20 @@ export default function PlanScreen({ navigation }) {
     }
 
     if (plan === "free") {
-      // User selected free plan
       const isPremium = currentSubscription?.isActive && currentSubscription?.tier === 'premium';
       
       if (isPremium) {
         Alert.alert(
           "Switch to Free Plan?",
-          "You're currently on the Premium plan. Your premium features will remain active until your subscription expires.",
+          "Your Premium features will remain active until your subscription expires.",
           [
             { text: "Cancel", style: "cancel" },
             { 
               text: "OK", 
               onPress: () => {
-                // Just acknowledge, keep premium until it expires
                 Alert.alert(
                   "Premium Active",
-                  `Your Premium features will remain active until ${new Date(currentSubscription.expiryDate).toLocaleDateString()}. After that, you'll automatically switch to the Free plan.`,
+                  `Your Premium features will remain active until ${new Date(currentSubscription.expiryDate).toLocaleDateString()}.`,
                   [{ text: "Got it" }]
                 );
               }
@@ -128,195 +144,41 @@ export default function PlanScreen({ navigation }) {
       return;
     }
 
-    // Start GCash payment flow
-    initiateGCashPayment();
-  };
-
-  const initiateGCashPayment = async () => {
-    Alert.alert(
-      "Confirm Purchase",
-      "Subscribe to Premium for ₱99/month?\n\n✅ Unlimited scans\n✅ Unlimited downloads\n✅ Offline access",
-      [
-        { text: "Cancel", style: "cancel" },
-        { 
-          text: "Pay with GCash", 
-          onPress: async () => {
-            await processGCashPayment();
-          }
-        },
-      ],
-      { cancelable: false }
-    );
-  };
-
-  const processGCashPayment = async () => {
-    setProcessing(true);
-
-    try {
-      console.log('🚀 Creating GCash payment...');
-
-      // Step 1: Create payment source
-      const paymentResult = await createGCashPayment(
-        currentUser.uid,
-        currentUser.email,
-        currentUser.displayName || currentUser.email?.split('@')[0]
-      );
-
-      if (!paymentResult.success) {
-        throw new Error(paymentResult.error || 'Failed to create payment');
-      }
-
-      console.log('✅ Payment created:', paymentResult.sourceId);
-
-      // Step 2: Open GCash checkout URL
-      const checkoutUrl = paymentResult.checkoutUrl || paymentResult.paymentUrl;
-      
-      if (!checkoutUrl) {
-        throw new Error('No checkout URL received');
-      }
-
-      const supported = await Linking.canOpenURL(checkoutUrl);
-      
-      if (!supported) {
-        throw new Error('Cannot open GCash payment page');
-      }
-
-      // Step 3: Open the checkout URL (this will open GCash app or browser)
-      await Linking.openURL(checkoutUrl);
-      
-      setProcessing(false);
-
-      // Step 4: Start polling for payment status
+    // Check if there's a pending payment
+    if (paymentStatus?.status === 'pending') {
       Alert.alert(
-        "Complete Payment in GCash",
-        "Please complete the payment in the GCash app.\n\nWe'll automatically verify your payment once it's completed.",
+        "Payment Pending",
+        "You have a payment submission under review. Please wait for verification.",
         [
-          {
-            text: "I've Completed Payment",
-            onPress: () => startPaymentVerification(paymentResult.sourceId || paymentResult.transactionId),
-          },
-          {
-            text: "Cancel",
-            style: "cancel",
-          },
-        ],
-        { cancelable: false }
-      );
-
-    } catch (error) {
-      setProcessing(false);
-      console.error('❌ Payment error:', error);
-      
-      Alert.alert(
-        "Payment Failed",
-        error.message || "Failed to process payment. Please try again.",
-        [{ text: "OK" }]
-      );
-    }
-  };
-
-  const startPaymentVerification = async (sourceId) => {
-    setVerifying(true);
-
-    try {
-      console.log('🔍 Starting payment verification for:', sourceId);
-
-      // Poll every 3 seconds for up to 2 minutes
-      let attempts = 0;
-      const maxAttempts = 40;
-
-      const pollPaymentStatus = async () => {
-        if (attempts >= maxAttempts) {
-          setVerifying(false);
-          Alert.alert(
-            "Verification Timeout",
-            "Payment verification is taking longer than expected. Please check back in a few minutes or contact support if you were charged.",
-            [{ text: "OK" }]
-          );
-          return;
-        }
-
-        attempts++;
-        console.log(`Checking payment status... (${attempts}/${maxAttempts})`);
-
-        try {
-          const statusResult = await verifyPaymentStatus(sourceId);
-
-          console.log('Payment status:', statusResult.status);
-
-          if (statusResult.status === 'paid' || statusResult.status === 'chargeable') {
-            // ✅ Payment successful!
-            setVerifying(false);
-            await handlePaymentSuccess(sourceId);
-          } else if (statusResult.status === 'pending') {
-            // Still pending, check again
-            setTimeout(pollPaymentStatus, 3000);
-          } else if (statusResult.status === 'expired' || statusResult.status === 'cancelled') {
-            // ❌ Payment failed
-            setVerifying(false);
-            Alert.alert(
-              "Payment Not Completed",
-              "Your payment was not completed. Please try again.",
-              [{ text: "OK" }]
-            );
-          } else {
-            // Unknown status, keep polling
-            setTimeout(pollPaymentStatus, 3000);
+          { text: "OK" },
+          { 
+            text: "View Status", 
+            onPress: () => navigation.navigate('ManualPayment')
           }
-        } catch (error) {
-          console.error('Verification error:', error);
-          // Continue polling even on error
-          setTimeout(pollPaymentStatus, 3000);
-        }
-      };
-
-      // Start polling
-      pollPaymentStatus();
-
-    } catch (error) {
-      setVerifying(false);
-      console.error('❌ Verification error:', error);
-      
-      Alert.alert(
-        "Verification Failed",
-        "Could not verify payment. Please contact support if you were charged.",
-        [{ text: "OK" }]
+        ]
       );
+      return;
     }
+
+    // Show payment method options
+    showPaymentMethodOptions();
   };
 
-  const handlePaymentSuccess = async (sourceId) => {
-    try {
-      console.log('✅ Processing successful payment...');
-
-      // Process the payment and activate subscription
-      const result = await processSuccessfulPayment(currentUser.uid, sourceId);
-
-      if (result.success) {
-        Alert.alert(
-          "🎉 Welcome to Premium!",
-          "Your payment was successful! You now have unlimited scans and downloads for 30 days.",
-          [
-            { 
-              text: "Great!", 
-              onPress: () => {
-                loadSubscriptionStatus();
-                navigation.goBack();
-              }
-            }
-          ]
-        );
-      } else {
-        throw new Error(result.error || 'Failed to activate subscription');
-      }
-    } catch (error) {
-      console.error('❌ Error processing payment:', error);
-      Alert.alert(
-        "Activation Failed",
-        "Payment was successful but subscription activation failed. Please contact support.",
-        [{ text: "OK" }]
-      );
-    }
+  const showPaymentMethodOptions = () => {
+    Alert.alert(
+      "Choose Payment Method",
+      "Select how you'd like to pay for Premium:",
+      [
+        {
+          text: "GCash QR Code",
+          onPress: () => navigation.navigate('ManualPayment')
+        },
+        {
+          text: "Cancel",
+          style: "cancel"
+        }
+      ]
+    );
   };
 
   const handleBackPress = () => {
@@ -362,7 +224,6 @@ export default function PlanScreen({ navigation }) {
     },
   ];
 
-  // Determine current plan status
   const isPremium = currentSubscription?.isActive && currentSubscription?.tier === 'premium';
   const isFree = !isPremium;
 
@@ -400,7 +261,7 @@ export default function PlanScreen({ navigation }) {
           contentContainerStyle={styles.scrollContent}
           showsVerticalScrollIndicator={false}
         >
-          {/* Current Status Banner - Premium */}
+          {/* Premium Status Banner */}
           {isPremium && (
             <View style={styles.statusBanner}>
               <Ionicons name="checkmark-circle" size={24} color="#10B981" />
@@ -413,27 +274,31 @@ export default function PlanScreen({ navigation }) {
             </View>
           )}
 
-          {/* Current Status Banner - Free */}
-          {isFree && !verifying && (
+          {/* Pending Payment Banner */}
+          {paymentStatus?.status === 'pending' && (
+            <TouchableOpacity 
+              style={[styles.statusBanner, { backgroundColor: 'rgba(255, 152, 0, 0.15)', borderColor: 'rgba(255, 152, 0, 0.3)' }]}
+              onPress={() => navigation.navigate('ManualPayment')}
+            >
+              <Ionicons name="time" size={24} color="#FF9800" />
+              <View style={{ flex: 1, marginLeft: 12 }}>
+                <Text style={styles.statusTitle}>Payment Under Review ⏳</Text>
+                <Text style={styles.statusSubtitle}>
+                  We're verifying your payment. Tap to view status.
+                </Text>
+              </View>
+              <Ionicons name="chevron-forward" size={20} color="#FF9800" />
+            </TouchableOpacity>
+          )}
+
+          {/* Free Plan Banner */}
+          {isFree && paymentStatus?.status !== 'pending' && (
             <View style={[styles.statusBanner, { backgroundColor: 'rgba(147, 197, 253, 0.15)', borderColor: 'rgba(147, 197, 253, 0.3)' }]}>
               <Ionicons name="information-circle" size={24} color="#93C5FD" />
               <View style={{ flex: 1, marginLeft: 12 }}>
                 <Text style={styles.statusTitle}>Free Plan Active</Text>
                 <Text style={styles.statusSubtitle}>
                   5 scans & downloads every 12 hours
-                </Text>
-              </View>
-            </View>
-          )}
-
-          {/* Verifying Banner */}
-          {verifying && (
-            <View style={[styles.statusBanner, { backgroundColor: 'rgba(59, 130, 246, 0.15)', borderColor: 'rgba(59, 130, 246, 0.3)' }]}>
-              <ActivityIndicator size="small" color="#3B82F6" />
-              <View style={{ flex: 1, marginLeft: 12 }}>
-                <Text style={styles.statusTitle}>Verifying Payment...</Text>
-                <Text style={styles.statusSubtitle}>
-                  Please wait while we confirm your payment
                 </Text>
               </View>
             </View>
@@ -452,7 +317,7 @@ export default function PlanScreen({ navigation }) {
 
           {/* Plans Container */}
           <View style={styles.plansContainer}>
-            {plans.map((plan, index) => (
+            {plans.map((plan) => (
               <TouchableOpacity
                 key={plan.id}
                 activeOpacity={0.9}
@@ -522,11 +387,7 @@ export default function PlanScreen({ navigation }) {
                           ]}
                         >
                           <Ionicons
-                            name={
-                              feature.included
-                                ? "checkmark"
-                                : "close"
-                            }
+                            name={feature.included ? "checkmark" : "close"}
                             size={16}
                             color={
                               plan.id === "premium"
@@ -556,9 +417,8 @@ export default function PlanScreen({ navigation }) {
 
           {/* CTA Button */}
           <TouchableOpacity
-            style={[styles.ctaButton, (processing || verifying) && styles.ctaButtonDisabled]}
+            style={styles.ctaButton}
             onPress={() => handleSubscribe(selectedPlan)}
-            disabled={processing || verifying}
           >
             <LinearGradient
               colors={selectedPlan === "free" ? ["#93C5FD", "#60A5FA"] : ["#FFD700", "#FFA500"]}
@@ -566,19 +426,13 @@ export default function PlanScreen({ navigation }) {
               start={{ x: 0, y: 0 }}
               end={{ x: 1, y: 0 }}
             >
-              {(processing || verifying) ? (
-                <ActivityIndicator size="small" color="#fff" />
-              ) : (
-                <>
-                  <Text style={styles.ctaText}>
-                    {selectedPlan === "free"
-                      ? "Continue with Free"
-                      : "Pay with GCash"}
-                  </Text>
-                  {selectedPlan === "premium" && (
-                    <Ionicons name="arrow-forward" size={20} color="#fff" />
-                  )}
-                </>
+              <Text style={styles.ctaText}>
+                {selectedPlan === "free"
+                  ? "Continue with Free"
+                  : "Pay with GCash QR"}
+              </Text>
+              {selectedPlan === "premium" && (
+                <Ionicons name="arrow-forward" size={20} color="#fff" />
               )}
             </LinearGradient>
           </TouchableOpacity>
@@ -589,7 +443,7 @@ export default function PlanScreen({ navigation }) {
             <Text style={styles.footerText}>
               {selectedPlan === "free" 
                 ? "No payment required • Upgrade anytime"
-                : "Secure GCash payment • Cancel anytime"}
+                : "Scan QR & upload proof • Verified within 24hrs"}
             </Text>
           </View>
         </ScrollView>
@@ -598,6 +452,7 @@ export default function PlanScreen({ navigation }) {
   );
 }
 
+// Keep all your existing styles - they're perfect!
 const styles = StyleSheet.create({
   container: {
     flex: 1,
@@ -839,9 +694,6 @@ const styles = StyleSheet.create({
     shadowRadius: 15,
     shadowOffset: { width: 0, height: 8 },
     elevation: 8,
-  },
-  ctaButtonDisabled: {
-    opacity: 0.6,
   },
   ctaGradient: {
     flexDirection: "row",

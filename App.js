@@ -40,6 +40,7 @@ import FAQScreen from './screens/FAQScreen';
 import SendFeedbackScreen from './screens/SendFeedbackScreen';
 import HelpScreen from './screens/HelpScreen';
 import PlanScreen from './screens/PlanScreen';
+import ManualPaymentScreen from './screens/ManualPaymentScreen';
 import SpeciesLandingPage from './screens/SpeciesLandingPage';
 import SpeciesGalleryScreen from './screens/SpeciesGalleryScreen';
 import PostDetailScreen from './screens/PostDetailScreen'; // ✅ NEW IMPORT
@@ -190,6 +191,11 @@ export default function App() {
             options={{ headerShown: false }}
           />
           <Stack.Screen name="PlanScreen" component={PlanScreen} />
+          <Stack.Screen 
+  name="ManualPayment" 
+  component={ManualPaymentScreen}
+  options={{ headerShown: false }}
+/>
           <Stack.Screen name="SpeciesLandingPage" component={SpeciesLandingPage} />
           <Stack.Screen
             name="SpeciesGalleryScreen"
