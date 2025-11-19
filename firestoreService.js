@@ -40,81 +40,81 @@ const getFavoritesKey = (uid) => uid ? `favorites_${uid}` : 'favorites_guest';
 export const uploadImageToStorage = async (imageUri, userId, folder = 'scans') => {
   try {
     if (!imageUri || !userId) {
-      console.error('❌ Missing image URI or user ID');
+      console.error('âŒ Missing image URI or user ID');
       return { success: false, error: 'Missing image URI or user ID' };
     }
 
-    // ✅ CRITICAL: Verify user is authenticated
+    // âœ… CRITICAL: Verify user is authenticated
     const currentUser = auth.currentUser;
     if (!currentUser) {
-      console.error('❌ User not authenticated');
+      console.error('âŒ User not authenticated');
       return { success: false, error: 'User not authenticated' };
     }
 
     if (currentUser.uid !== userId) {
-      console.error('❌ User ID mismatch');
+      console.error('âŒ User ID mismatch');
       console.error('Current UID:', currentUser.uid);
       console.error('Requested UID:', userId);
       return { success: false, error: 'User ID mismatch' };
     }
 
-    console.log('✅ User authenticated:', userId);
-    console.log('📸 Image URI:', imageUri);
+    console.log('User authenticated:', userId);
+    console.log('¸ Image URI:', imageUri);
 
     // Create unique filename
     const filename = `${Date.now()}_${Math.random().toString(36).substring(7)}.jpg`;
     const storagePath = `${folder}/${userId}/${filename}`;
     const storageRef = ref(storage, storagePath);
 
-    console.log('📁 Upload path:', storagePath);
+    console.log(' Upload path:', storagePath);
 
-    // ✅ FIX: Handle different URI formats (file://, content://, https://)
+    // âœ… FIX: Handle different URI formats (file://, content://, https://)
     let blob;
 
     try {
       // For React Native, handle file:// URIs
       if (imageUri.startsWith('file://')) {
-        console.log('📦 Processing file:// URI');
+        console.log(' Processing file:// URI');
         const response = await fetch(imageUri);
         blob = await response.blob();
       }
       // For Android content:// URIs
       else if (imageUri.startsWith('content://')) {
-        console.log('📦 Processing content:// URI');
+        console.log(' Processing content:// URI');
         const response = await fetch(imageUri);
         blob = await response.blob();
       }
       // For data URIs or base64
       else if (imageUri.startsWith('data:')) {
-        console.log('📦 Processing data URI');
+        console.log(' Processing data URI');
         const response = await fetch(imageUri);
         blob = await response.blob();
       }
       // For HTTP/HTTPS URLs
       else if (imageUri.startsWith('http://') || imageUri.startsWith('https://')) {
-        console.log('📦 Processing HTTP URI');
+        console.log(' Processing HTTP URI');
         const response = await fetch(imageUri);
         blob = await response.blob();
       }
       // Default: try direct fetch
       else {
-        console.log('📦 Processing unknown URI format, trying direct fetch');
+        console.log(' Processing unknown URI format, trying direct fetch');
         const response = await fetch(imageUri);
         blob = await response.blob();
       }
 
       if (!blob || blob.size === 0) {
-        console.error('❌ Blob is empty');
+        console.error('âŒ Blob is empty');
         return { success: false, error: 'Failed to create blob from image' };
       }
 
-      console.log('✅ Blob created successfully');
-      console.log('📦 Blob size:', blob.size, 'bytes');
-      console.log('📦 Blob type:', blob.type);
+      console.log(' Blob created successfully');
+      console.log(' Blob size:', blob.size, 'bytes');
+      console.log(' Blob type:', blob.type);
 
     } catch (fetchError) {
-      console.error('❌ Failed to fetch image:', fetchError);
-      console.error('❌ Image URI was:', imageUri);
+      console.error('âŒ Failed to fetch image:', fetchError);
+      console.error('âŒ Image URI was:', imageUri);
       return { success: false, error: `Failed to fetch image: ${fetchError.message}` };
     }
 
@@ -127,20 +127,20 @@ export const uploadImageToStorage = async (imageUri, userId, folder = 'scans') =
       }
     };
 
-    console.log('⏳ Uploading to Firebase Storage...');
+    console.log('â³ Uploading to Firebase Storage...');
     
-    // ✅ IMPORTANT: Add a timeout to catch hanging uploads
+    // âœ… IMPORTANT: Add a timeout to catch hanging uploads
     const uploadPromise = uploadBytes(storageRef, blob, metadata);
     const timeoutPromise = new Promise((_, reject) => 
       setTimeout(() => reject(new Error('Upload timeout after 30 seconds')), 30000)
     );
 
     await Promise.race([uploadPromise, timeoutPromise]);
-    console.log('✅ Upload successful');
+    console.log(' Upload successful');
 
     // Get download URL
     const downloadURL = await getDownloadURL(storageRef);
-    console.log('✅ Download URL obtained:', downloadURL);
+    console.log(' Download URL obtained:', downloadURL);
 
     return {
       success: true,
@@ -148,16 +148,16 @@ export const uploadImageToStorage = async (imageUri, userId, folder = 'scans') =
       path: storageRef.fullPath
     };
   } catch (error) {
-    console.error('❌ Error uploading image:', error);
-    console.error('❌ Error code:', error.code);
-    console.error('❌ Error message:', error.message);
+    console.error('âŒ Error uploading image:', error);
+    console.error('âŒ Error code:', error.code);
+    console.error('âŒ Error message:', error.message);
 
     // Provide more specific error messages
     if (error.code === 'storage/unauthorized') {
-      console.error('⚠️ PERMISSION DENIED: Check Firebase Storage Rules');
-      console.error('⚠️ Current user:', auth.currentUser?.uid);
-      console.error('⚠️ Upload path should be:', `${folder}/${userId}/...`);
-      console.error('⚠️ Verify Storage Rules allow write for this path');
+      console.error('âš ï¸ PERMISSION DENIED: Check Firebase Storage Rules');
+      console.error('âš ï¸ Current user:', auth.currentUser?.uid);
+      console.error('âš ï¸ Upload path should be:', `${folder}/${userId}/...`);
+      console.error('âš ï¸ Verify Storage Rules allow write for this path');
       
       return { 
         success: false, 
@@ -187,10 +187,10 @@ export const deleteImageFromStorage = async (imagePath) => {
     const imageRef = ref(storage, imagePath);
     await deleteObject(imageRef);
     
-    console.log('✅ Image deleted successfully');
+    console.log(' Image deleted successfully');
     return { success: true };
   } catch (error) {
-    console.error('❌ Error deleting image:', error);
+    console.error('âŒ Error deleting image:', error);
     
     // Don't fail if image doesn't exist
     if (error.code === 'storage/object-not-found') {
@@ -214,14 +214,14 @@ export const createUserProfile = async (userId, email, displayName = '') => {
         displayName: displayName,
         createdAt: serverTimestamp(),
       });
-      console.log('✅ User profile created in Firestore');
+      console.log(' User profile created in Firestore');
     } else {
-      console.log('⚠️ Offline: User profile will sync when online');
+      console.log('âš ï¸ Offline: User profile will sync when online');
     }
     
     return { success: true };
   } catch (error) {
-    console.error('❌ Error creating user profile:', error);
+    console.error('âŒ Error creating user profile:', error);
     return { success: false, error: error.message };
   }
 };
@@ -239,7 +239,7 @@ export const getUserProfile = async (userId) => {
     
     return { success: false, error: 'User profile not found' };
   } catch (error) {
-    console.error('❌ Error getting user profile:', error);
+    console.error('âŒ Error getting user profile:', error);
     return { success: false, error: error.message };
   }
 };
@@ -253,7 +253,7 @@ export const updateUserProfile = async (userId, updates) => {
     }
     return { success: true };
   } catch (error) {
-    console.error('❌ Error updating user profile:', error);
+    console.error('âŒ Error updating user profile:', error);
     return { success: false, error: error.message };
   }
 };
@@ -307,16 +307,16 @@ export const toggleHistoryItemVisibility = async (userId, historyId, isPublic) =
           
         });
         
-        console.log('✅ Added to public feed');
+        console.log(' Added to public feed');
       }
     } else {
       // If setting to private, remove from publicScans collection
       try {
         const publicScanRef = doc(db, 'publicScans', historyId);
         await deleteDoc(publicScanRef);
-        console.log('✅ Removed from public feed');
+        console.log(' Removed from public feed');
       } catch (error) {
-        console.warn('⚠️ Public scan doc may not exist:', error);
+        console.warn('âš ï¸ Public scan doc may not exist:', error);
       }
     }
 
@@ -333,7 +333,7 @@ export const toggleHistoryItemVisibility = async (userId, historyId, isPublic) =
 
     return { success: true, isPublic };
   } catch (error) {
-    console.error('❌ Error toggling visibility:', error);
+    console.error('âŒ Error toggling visibility:', error);
     return { success: false, error: error.message };
   }
 };
@@ -365,10 +365,10 @@ export const getPublicScans = async (limitCount = 50) => {
       });
     });
 
-    console.log(`✅ Loaded ${publicScans.length} public scans`);
+    console.log(` Loaded ${publicScans.length} public scans`);
     return { success: true, data: publicScans };
   } catch (error) {
-    console.error('❌ Error getting public scans:', error);
+    console.error('âŒ Error getting public scans:', error);
     return { success: false, data: [], error: error.message };
   }
 };
@@ -403,14 +403,14 @@ export const getUserPublicScans = async (userId, limitCount = 20) => {
 
     return { success: true, data: userPublicScans };
   } catch (error) {
-    console.error('❌ Error getting user public scans:', error);
+    console.error('âŒ Error getting user public scans:', error);
     return { success: false, data: [], error: error.message };
   }
 };
 
 // ==================== HISTORY (UPDATED WITH PUBLIC/PRIVATE) ====================
 
-// ✅ NEW: Update history item timestamp without re-uploading image
+// âœ… NEW: Update history item timestamp without re-uploading image
 export const updateHistoryTimestamp = async (userId, historyId) => {
   try {
     const storageKey = getHistoryKey(userId);
@@ -440,7 +440,7 @@ export const updateHistoryTimestamp = async (userId, historyId) => {
     list.unshift(updatedItem);
     await AsyncStorage.setItem(storageKey, JSON.stringify(list));
     
-    console.log('✅ History timestamp updated (no image re-upload)');
+    console.log(' History timestamp updated (no image re-upload)');
     
     // Update in Firestore if online
     const online = await isOnline();
@@ -450,22 +450,22 @@ export const updateHistoryTimestamp = async (userId, historyId) => {
           timestamp: serverTimestamp(),
           lastViewed: serverTimestamp(),
         });
-        console.log('✅ Timestamp synced to Firestore');
+        console.log(' Timestamp synced to Firestore');
       } catch (error) {
-        console.warn('⚠️ Firestore timestamp update failed:', error);
+        console.warn('âš ï¸ Firestore timestamp update failed:', error);
       }
     }
     
     return { success: true, item: updatedItem };
   } catch (error) {
-    console.error('❌ Error updating timestamp:', error);
+    console.error('âŒ Error updating timestamp:', error);
     return { success: false, error: error.message };
   }
 };
 
 export const addToHistory = async (userId, historyData) => {
   try {
-    console.log('📝 Adding to history for user:', userId);
+    console.log(' Adding to history for user:', userId);
     
     const storageKey = getHistoryKey(userId);
     let uploadedImageUrl = historyData.imageUrl;
@@ -488,49 +488,49 @@ export const addToHistory = async (userId, historyData) => {
     let oldFirestoreId = null;
     let wasPublic = false;
 
-    // ✅ If item exists, just move it to top - DON'T re-upload or modify image
+    // âœ… If item exists, just move it to top - DON'T re-upload or modify image
     if (existingIndex !== -1) {
       const existingItem = list[existingIndex];
       oldFirestoreId = existingItem.synced ? existingItem.id : null;
       wasPublic = existingItem.isPublic || false;
       
-      // ✅ ALWAYS preserve existing image data
+      // âœ… ALWAYS preserve existing image data
       uploadedImageUrl = existingItem.imageUrl;
       imagePath = existingItem.imagePath;
       
       // Only upload NEW image if explicitly provided AND different from existing
       if (historyData.imageUri && historyData.imageUri !== existingItem.imageUrl) {
-        console.log('📸 New image provided, uploading...');
+        console.log(' New image provided, uploading...');
         const online = await isOnline();
         if (online && userId) {
           const uploadResult = await uploadImageToStorage(historyData.imageUri, userId, 'history');
           if (uploadResult.success) {
             uploadedImageUrl = uploadResult.url;
             imagePath = uploadResult.path;
-            console.log('✅ New image uploaded successfully');
+            console.log(' New image uploaded successfully');
           } else {
-            console.warn('⚠️ New image upload failed, keeping old image');
+            console.warn('âš ï¸ New image upload failed, keeping old image');
           }
         }
       } else {
-        console.log('🔄 Reusing existing image (no new upload)');
+        console.log(' Reusing existing image (no new upload)');
       }
       
       list.splice(existingIndex, 1);
-      console.log('✅ Moved existing history item to top (image preserved)');
+      console.log(' Moved existing history item to top (image preserved)');
     } else {
-      // ✅ NEW item - upload image if provided
+      // âœ… NEW item - upload image if provided
       const online = await isOnline();
       if (online && userId && historyData.imageUri) {
-        console.log('📤 Uploading image for NEW history item...');
+        console.log('0 Uploading image for NEW history item...');
         const uploadResult = await uploadImageToStorage(historyData.imageUri, userId, 'history');
         
         if (uploadResult.success) {
           uploadedImageUrl = uploadResult.url;
           imagePath = uploadResult.path;
-          console.log('✅ Image uploaded successfully');
+          console.log(' Image uploaded successfully');
         } else {
-          console.error('❌ Image upload failed:', uploadResult.error);
+          console.error('âŒ Image upload failed:', uploadResult.error);
           // Continue anyway - save without image
         }
       }
@@ -550,7 +550,7 @@ export const addToHistory = async (userId, historyData) => {
 
     list.unshift(itemWithId);
     await AsyncStorage.setItem(storageKey, JSON.stringify(list));
-    console.log('✅ Saved to AsyncStorage');
+    console.log(' Saved to AsyncStorage');
 
     // Try to sync to Firestore if online
     const online = await isOnline();
@@ -560,14 +560,14 @@ export const addToHistory = async (userId, historyData) => {
         if (oldFirestoreId) {
           try {
             await deleteDoc(doc(db, 'users', userId, 'history', oldFirestoreId));
-            console.log('✅ Deleted old Firestore entry');
+            console.log(' Deleted old Firestore entry');
             
             if (wasPublic) {
               await deleteDoc(doc(db, 'publicScans', oldFirestoreId));
-              console.log('✅ Deleted old public scan');
+              console.log(' Deleted old public scan');
             }
           } catch (deleteError) {
-            console.warn('⚠️ Failed to delete old entry:', deleteError);
+            console.warn('âš ï¸ Failed to delete old entry:', deleteError);
           }
         }
 
@@ -585,15 +585,15 @@ export const addToHistory = async (userId, historyData) => {
         itemWithId.synced = true;
         list[0] = itemWithId;
         await AsyncStorage.setItem(storageKey, JSON.stringify(list));
-        console.log('✅ Synced to Firestore');
+        console.log(' Synced to Firestore');
       } catch (firestoreError) {
-        console.warn('⚠️ Firestore save failed:', firestoreError);
+        console.warn('âš ï¸ Firestore save failed:', firestoreError);
       }
     }
 
     return { success: true, id: itemWithId.id };
   } catch (error) {
-    console.error('❌ Error adding to history:', error);
+    console.error('âŒ Error adding to history:', error);
     return { success: false, error: error.message };
   }
 };
@@ -619,21 +619,21 @@ export const getHistory = async (userId) => {
         });
 
         await AsyncStorage.setItem(storageKey, JSON.stringify(firestoreItems));
-        console.log('✅ History loaded from Firestore');
+        console.log(' History loaded from Firestore');
         
         return { success: true, data: firestoreItems };
       } catch (firestoreError) {
-        console.warn('⚠️ Firestore fetch failed, using local data:', firestoreError);
+        console.warn('âš ï¸ Firestore fetch failed, using local data:', firestoreError);
       }
     }
 
     const local = await AsyncStorage.getItem(storageKey);
     const localItems = local ? JSON.parse(local) : [];
-    console.log('✅ History loaded from AsyncStorage');
+    console.log(' History loaded from AsyncStorage');
     
     return { success: true, data: localItems };
   } catch (error) {
-    console.error('❌ Error getting history:', error);
+    console.error('âŒ Error getting history:', error);
     return { success: false, error: error.message };
   }
 };
@@ -654,9 +654,9 @@ export const deleteHistoryItem = async (userId, historyId) => {
     if (online && itemToDelete && itemToDelete.isPublic) {
       try {
         await deleteDoc(doc(db, 'publicScans', historyId));
-        console.log('✅ Public scan deleted');
+        console.log(' Public scan deleted');
       } catch (error) {
-        console.warn('⚠️ Failed to delete public scan:', error);
+        console.warn('âš ï¸ Failed to delete public scan:', error);
       }
     }
 
@@ -666,15 +666,15 @@ export const deleteHistoryItem = async (userId, historyId) => {
     if (online && userId) {
       try {
         await deleteDoc(doc(db, 'users', userId, 'history', historyId));
-        console.log('✅ Deleted from Firestore');
+        console.log(' Deleted from Firestore');
       } catch (firestoreError) {
-        console.warn('⚠️ Firestore delete failed:', firestoreError);
+        console.warn('âš ï¸ Firestore delete failed:', firestoreError);
       }
     }
 
     return { success: true };
   } catch (error) {
-    console.error('❌ Error deleting history item:', error);
+    console.error('âŒ Error deleting history item:', error);
     return { success: false, error: error.message };
   }
 };
@@ -711,15 +711,15 @@ export const clearAllHistory = async (userId) => {
         const deletePromises = querySnapshot.docs.map(doc => deleteDoc(doc.ref));
         await Promise.all(deletePromises);
         
-        console.log('✅ All history cleared');
+        console.log(' All history cleared');
       } catch (firestoreError) {
-        console.warn('⚠️ Firestore clear failed:', firestoreError);
+        console.warn('âš ï¸ Firestore clear failed:', firestoreError);
       }
     }
 
     return { success: true };
   } catch (error) {
-    console.error('❌ Error clearing history:', error);
+    console.error('âŒ Error clearing history:', error);
     return { success: false, error: error.message };
   }
 };
@@ -898,7 +898,7 @@ export const addToFavorites = async (userId, favoriteData) => {
       if (uploadResult.success) {
         uploadedImageUrl = uploadResult.url;
         imagePath = uploadResult.path;
-        console.log('✅ Image uploaded for favorite');
+        console.log(' Image uploaded for favorite');
       }
     }
 
@@ -930,15 +930,15 @@ export const addToFavorites = async (userId, favoriteData) => {
         
         itemWithId.synced = true;
         await AsyncStorage.setItem(storageKey, JSON.stringify(list));
-        console.log('✅ Favorite synced to Firestore');
+        console.log(' Favorite synced to Firestore');
       } catch (firestoreError) {
-        console.warn('⚠️ Firestore save failed:', firestoreError);
+        console.warn('âš ï¸ Firestore save failed:', firestoreError);
       }
     }
 
     return { success: true, id: itemWithId.id };
   } catch (error) {
-    console.error('❌ Error adding to favorites:', error);
+    console.error('âŒ Error adding to favorites:', error);
     return { success: false, error: error.message };
   }
 };
@@ -964,21 +964,21 @@ export const getFavorites = async (userId) => {
         });
 
         await AsyncStorage.setItem(storageKey, JSON.stringify(firestoreItems));
-        console.log('✅ Favorites loaded from Firestore');
+        console.log(' Favorites loaded from Firestore');
         
         return { success: true, data: firestoreItems };
       } catch (firestoreError) {
-        console.warn('⚠️ Firestore fetch failed:', firestoreError);
+        console.warn('âš ï¸ Firestore fetch failed:', firestoreError);
       }
     }
 
     const local = await AsyncStorage.getItem(storageKey);
     const localItems = local ? JSON.parse(local) : [];
-    console.log('✅ Favorites loaded from AsyncStorage');
+    console.log(' Favorites loaded from AsyncStorage');
     
     return { success: true, data: localItems };
   } catch (error) {
-    console.error('❌ Error getting favorites:', error);
+    console.error('âŒ Error getting favorites:', error);
     return { success: false, error: error.message };
   }
 };
@@ -1002,15 +1002,15 @@ export const removeFromFavorites = async (userId, favoriteId) => {
     if (online && userId) {
       try {
         await deleteDoc(doc(db, 'users', userId, 'favorites', favoriteId));
-        console.log('✅ Removed from Firestore');
+        console.log(' Removed from Firestore');
       } catch (firestoreError) {
-        console.warn('⚠️ Firestore delete failed:', firestoreError);
+        console.warn('âš ï¸ Firestore delete failed:', firestoreError);
       }
     }
 
     return { success: true };
   } catch (error) {
-    console.error('❌ Error removing from favorites:', error);
+    console.error('âŒ Error removing from favorites:', error);
     return { success: false, error: error.message };
   }
 };
@@ -1025,7 +1025,7 @@ export const isInFavorites = async (userId, plantName) => {
     
     return { success: true, isFavorite: !!found, id: found?.id };
   } catch (error) {
-    console.error('❌ Error checking favorites:', error);
+    console.error('âŒ Error checking favorites:', error);
     return { success: false, error: error.message };
   }
 };
@@ -1042,12 +1042,12 @@ export const addSubscription = async (userId, subscriptionData) => {
         ...subscriptionData,
         updatedAt: serverTimestamp(),
       });
-      console.log('✅ Subscription added');
+      console.log(' Subscription added');
     }
     
     return { success: true };
   } catch (error) {
-    console.error('❌ Error adding subscription:', error);
+    console.error('âŒ Error adding subscription:', error);
     return { success: false, error: error.message };
   }
 };
@@ -1065,7 +1065,7 @@ export const getSubscription = async (userId) => {
     
     return { success: false, error: 'No subscription found' };
   } catch (error) {
-    console.error('❌ Error getting subscription:', error);
+    console.error('âŒ Error getting subscription:', error);
     return { success: false, error: error.message };
   }
 };
@@ -1080,12 +1080,12 @@ export const cancelSubscription = async (userId) => {
         status: 'cancelled',
         cancelledAt: serverTimestamp(),
       });
-      console.log('✅ Subscription cancelled');
+      console.log(' Subscription cancelled');
     }
     
     return { success: true };
   } catch (error) {
-    console.error('❌ Error cancelling subscription:', error);
+    console.error('âŒ Error cancelling subscription:', error);
     return { success: false, error: error.message };
   }
 };
@@ -1097,7 +1097,7 @@ export const incrementGlobalObservation = async (speciesData) => {
     const online = await isOnline();
     
     if (!online) {
-      console.log('⚠️ Offline: Will sync when online');
+      console.log('âš ï¸ Offline: Will sync when online');
       return { success: false, error: 'offline' };
     }
 
@@ -1118,7 +1118,7 @@ export const incrementGlobalObservation = async (speciesData) => {
         count: currentCount + 1,
         lastScanned: serverTimestamp(),
       });
-      console.log(`✅ Global observation: ${currentCount + 1}`);
+      console.log(` Global observation: ${currentCount + 1}`);
       return { success: true, count: currentCount + 1 };
     } else {
       await setDoc(observationRef, {
@@ -1130,11 +1130,11 @@ export const incrementGlobalObservation = async (speciesData) => {
         firstScanned: serverTimestamp(),
         lastScanned: serverTimestamp(),
       });
-      console.log('✅ Global observation created: 1');
+      console.log(' Global observation created: 1');
       return { success: true, count: 1 };
     }
   } catch (error) {
-    console.error('❌ Error incrementing observation:', error);
+    console.error('âŒ Error incrementing observation:', error);
     return { success: false, error: error.message };
   }
 };
@@ -1168,14 +1168,14 @@ export const getGlobalObservationCounts = async (speciesArray) => {
           counts[docId] = 0;
         }
       } catch (error) {
-        console.warn(`⚠️ Failed to fetch count for ${docId}:`, error);
+        console.warn(`âš ï¸ Failed to fetch count for ${docId}:`, error);
         counts[docId] = 0;
       }
     }
 
     return { success: true, counts };
   } catch (error) {
-    console.error('❌ Error getting observation counts:', error);
+    console.error('âŒ Error getting observation counts:', error);
     return { success: false, counts: {} };
   }
 };
@@ -1228,7 +1228,7 @@ export const getTrendingSpecies = async (limitCount = 10, daysBack = 7) => {
               about = publicData.about;
             }
           } catch (error) {
-            console.warn('⚠️ Failed to fetch details:', error);
+            console.warn('âš ï¸ Failed to fetch details:', error);
           }
         }
         
@@ -1250,7 +1250,7 @@ export const getTrendingSpecies = async (limitCount = 10, daysBack = 7) => {
               about = publicData.about;
             }
           } catch (error) {
-            console.warn('⚠️ Failed to fetch by name:', error);
+            console.warn('âš ï¸ Failed to fetch by name:', error);
           }
         }
         
@@ -1280,10 +1280,10 @@ export const getTrendingSpecies = async (limitCount = 10, daysBack = 7) => {
     
     const topTrending = trendingSpecies.slice(0, limitCount);
     
-    console.log(`✅ Loaded ${topTrending.length} trending species`);
+    console.log(` Loaded ${topTrending.length} trending species`);
     return { success: true, data: topTrending };
   } catch (error) {
-    console.error('❌ Error getting trending species:', error);
+    console.error('âŒ Error getting trending species:', error);
     return { success: false, data: [], error: error.message };
   }
 };
@@ -1305,7 +1305,7 @@ export const getTrendingByCategory = async (iconicTaxon, limitCount = 10, daysBa
 
     return { success: true, data: filtered };
   } catch (error) {
-    console.error('❌ Error getting trending by category:', error);
+    console.error('âŒ Error getting trending by category:', error);
     return { success: false, data: [], error: error.message };
   }
 };
@@ -1350,34 +1350,34 @@ export const getTrendingStats = async () => {
       },
     };
   } catch (error) {
-    console.error('❌ Error getting trending stats:', error);
+    console.error('âŒ Error getting trending stats:', error);
     return { success: false, error: error.message };
   }
 };
 
 export async function getSpeciesScans(taxonId, speciesName) {
   try {
-    console.log('🔍 Fetching species scans for:', { taxonId, speciesName });
+    console.log(' Fetching species scans for:', { taxonId, speciesName });
 
     const publicScansRef = collection(db, 'publicScans');
     let scansQuery;
 
     if (taxonId) {
-      console.log('📊 Querying by taxonId:', taxonId);
+      console.log(' Querying by taxonId:', taxonId);
       scansQuery = query(
         publicScansRef,
         where('taxonId', '==', taxonId),
         orderBy('publishedAt', 'desc')
       );
     } else if (speciesName) {
-      console.log('📊 Querying by name:', speciesName);
+      console.log(' Querying by name:', speciesName);
       scansQuery = query(
         publicScansRef,
         where('name', '==', speciesName),
         orderBy('publishedAt', 'desc')
       );
     } else {
-      console.error('❌ No taxonId or species name provided');
+      console.error('âŒ No taxonId or species name provided');
       return {
         success: false,
         data: [],
@@ -1385,9 +1385,9 @@ export async function getSpeciesScans(taxonId, speciesName) {
       };
     }
 
-    console.log('⏳ Executing Firestore query...');
+    console.log('â³ Executing Firestore query...');
     const snapshot = await getDocs(scansQuery);
-    console.log(`✅ Found ${snapshot.size} scans`);
+    console.log(` Found ${snapshot.size} scans`);
 
     const scans = [];
 
@@ -1410,22 +1410,22 @@ export async function getSpeciesScans(taxonId, speciesName) {
       });
     });
 
-    console.log('✅ Successfully processed scans');
+    console.log(' Successfully processed scans');
     return {
       success: true,
       data: scans,
     };
   } catch (error) {
-    console.error('❌ Error fetching species scans:', error);
+    console.error('âŒ Error fetching species scans:', error);
     console.error('Error code:', error.code);
     console.error('Error message:', error.message);
 
     if (error.message?.includes('index')) {
-      console.error('⚠️ Firestore Index Required!');
+      console.error('âš ï¸ Firestore Index Required!');
     }
 
     if (error.code === 'permission-denied') {
-      console.error('⚠️ Permission Denied! Check Firestore rules.');
+      console.error('âš ï¸ Permission Denied! Check Firestore rules.');
     }
 
     return {

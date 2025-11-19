@@ -57,7 +57,7 @@ export default function SignUpScreen({ navigation }) {
       await sendEmailVerification(user);
       await resetGuestScanCount();
       
-      Alert.alert(t('signup.signUpSuccessful'), t('signup.verificationEmailSent'));
+
       await setUsername(username);
       
       navigation.dispatch(
@@ -128,8 +128,8 @@ export default function SignUpScreen({ navigation }) {
                   />
                 </LinearGradient>
               </View>
-              <Text style={styles.welcomeText}>Create Account</Text>
-              <Text style={styles.subtitleText}>Join us to explore nature</Text>
+              <Text style={styles.welcomeText}>{t('signup.title')}</Text>
+              <Text style={styles.subtitleText}>{t('signup.subtitle')}</Text>
             </View>
 
             <View style={styles.formContainer}>
@@ -263,7 +263,7 @@ export default function SignUpScreen({ navigation }) {
                   style={styles.buttonGradient}
                 >
                   <Text style={styles.buttonText}>
-                    {isLoading ? 'Processing...' : t('signup.register')}
+                    {isLoading ? t('signup.processing') : t('signup.register')}
                   </Text>
                   {!isLoading && (
                     <Ionicons name="arrow-forward" size={moderateScale(20)} color="white" />
@@ -273,7 +273,7 @@ export default function SignUpScreen({ navigation }) {
 
               <View style={styles.dividerContainer}>
                 <View style={styles.divider} />
-                <Text style={styles.dividerText}>or</Text>
+                <Text style={styles.dividerText}>{t('signup.dividerOr')}</Text>
                 <View style={styles.divider} />
               </View>
 
@@ -282,7 +282,8 @@ export default function SignUpScreen({ navigation }) {
                 onPress={() => navigation.navigate('Login')}
               >
                 <Text style={styles.signInText}>
-                  Already a member? <Text style={styles.signInLink}>Sign In</Text>
+                  {t('signup.alreadyMember')}{' '}
+                  <Text style={styles.signInLink}>{t('signup.signInLink')}</Text>
                 </Text>
               </TouchableOpacity>
             </View>

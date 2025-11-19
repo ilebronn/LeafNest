@@ -12,6 +12,7 @@ import {
 import { Ionicons } from '@expo/vector-icons';
 import { LinearGradient } from 'expo-linear-gradient';
 import { SafeAreaProvider, SafeAreaView, useSafeAreaInsets } from 'react-native-safe-area-context';
+import { useTranslation } from 'react-i18next';
 
 const AboutScreen = ({ navigation }) => {
   return (
@@ -22,6 +23,7 @@ const AboutScreen = ({ navigation }) => {
 };
 
 const ResponsiveAbout = ({ navigation }) => {
+  const { t } = useTranslation();
   const insets = useSafeAreaInsets();
   const { width, height } = useWindowDimensions();
 
@@ -323,7 +325,7 @@ const ResponsiveAbout = ({ navigation }) => {
           <TouchableOpacity style={styles.backButton} onPress={() => navigation.goBack()}>
             <Ionicons name="arrow-back" size={iconSize} color="#2D5A3F" />
           </TouchableOpacity>
-          <Text style={styles.headerTitle}>About</Text>
+          <Text style={styles.headerTitle}>{t('about.title')}</Text>
         </LinearGradient>
 
         <ScrollView
@@ -337,8 +339,8 @@ const ResponsiveAbout = ({ navigation }) => {
               <Image source={require('../assets/logo2.png')} style={styles.logo} resizeMode="contain" />
             </View>
             <Text style={styles.appName}>LeafNest</Text>
-            <Text style={styles.tagline}>Plant & Animal Identification</Text>
-            <Text style={styles.description}>Developed & Designed by the LeafNest Team</Text>
+            <Text style={styles.tagline}>{t('about.tagline')}</Text>
+            <Text style={styles.description}>{t('about.developedBy')}</Text>
           </View>
 
           {/* Team Section */}
@@ -347,7 +349,7 @@ const ResponsiveAbout = ({ navigation }) => {
               <View style={styles.sectionIcon}>
                 <Ionicons name="people" size={clamp(scale(20), 18, 24)} color="#5E936C" />
               </View>
-              <Text style={styles.sectionTitle}>Development Team</Text>
+              <Text style={styles.sectionTitle}>{t('about.teamTitle')}</Text>
             </View>
             <View style={styles.teamGrid}>
               {[
@@ -368,11 +370,11 @@ const ResponsiveAbout = ({ navigation }) => {
               <View style={styles.sectionIcon}>
                 <Ionicons name="star" size={clamp(scale(20), 18, 24)} color="#5E936C" />
               </View>
-              <Text style={styles.sectionTitle}>Special Thanks</Text>
+              <Text style={styles.sectionTitle}>{t('about.specialThanks')}</Text>
             </View>
             <View style={styles.mentorCard}>
-              <Text style={styles.mentor}>Mr. Joshua R. Lasac</Text>
-              <Text style={styles.mentorRole}>Project Mentor & Adviser</Text>
+              <Text style={styles.mentor}>{t('about.mentor')}</Text>
+              <Text style={styles.mentorRole}>{t('about.mentorRole')}</Text>
             </View>
           </View>
 
@@ -382,11 +384,10 @@ const ResponsiveAbout = ({ navigation }) => {
               <View style={styles.sectionIcon}>
                 <Ionicons name="school" size={clamp(scale(20), 18, 24)} color="#5E936C" />
               </View>
-              <Text style={styles.sectionTitle}>Institutional Support</Text>
+              <Text style={styles.sectionTitle}>{t('about.institutionalSupport')}</Text>
             </View>
             <Text style={styles.creditParagraph}>
-              Created with support from Pinamalayan Maritime Foundation And Technological College INC. 
-              (PMFTCI) and the School of Computer Studies.
+              {t('about.credits')}
             </Text>
             <View style={styles.logoRow}>
               <View style={styles.partnerLogoContainer}>
@@ -405,13 +406,13 @@ const ResponsiveAbout = ({ navigation }) => {
               onPress={() => navigation.navigate('PrivacyPolicy')}
             >
               <Ionicons name="document-text" size={clamp(scale(18), 16, 20)} color="#2D5A3F" />
-              <Text style={styles.linkText}>Privacy Policy</Text>
+              <Text style={styles.linkText}>{t('about.privacyPolicy')}</Text>
             </TouchableOpacity>
             
             <View style={styles.divider} />
             
-            <Text style={styles.version}>Version 0.0.1 (1)</Text>
-            <Text style={styles.helpText}>For help: help.leafnest.capstone@gmail.com</Text>
+            <Text style={styles.version}>{t('about.version')}</Text>
+            <Text style={styles.helpText}>{t('about.help')}</Text>
           </View>
         </ScrollView>
       </SafeAreaView>

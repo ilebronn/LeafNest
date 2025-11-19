@@ -1,3 +1,4 @@
+﻿// screens/ProfileScreen.js - WITH PREMIUM STATUS DISPLAY
 import React, { useEffect, useState } from 'react';
 import { 
   View, 
@@ -18,6 +19,7 @@ import { auth } from '../firebase';
 import { clearAllUserData } from '../utils/userUtils';
 import { useTranslation } from 'react-i18next';
 import { getScanStats, syncPendingScans } from '../firestoreService/scanStatsService';
+import { getUserSubscription } from '../firestoreService/subscriptionService';
 
 const { width } = Dimensions.get('window');
 
@@ -29,6 +31,10 @@ export default function ProfileScreen({ route, navigation }) {
   const [isGuest, setIsGuest] = useState(true);
   const [isEditing, setIsEditing] = useState(false);
   const [newUsername, setNewUsername] = useState('');
+  
+  // Subscription state
+  const [subscription, setSubscription] = useState(null);
+  const [loadingSubscription, setLoadingSubscription] = useState(false);
   
   // Stats state
   const [stats, setStats] = useState({
@@ -61,11 +67,12 @@ export default function ProfileScreen({ route, navigation }) {
     const loadUserData = async () => {
       if (isUserGuest) {
         await clearAllUserData();
-        setUsername(t('common.guest') + ' User');
+        setUsername(t('profile.guestUser'));
         setEmail('guest@leafnest.app');
         setProfilePicture('');
         setNewUsername('');
         setStats({ totalScans: 0, weekScans: 0, uniqueSpecies: 0 });
+        setSubscription(null);
       } else if (user) {
         setUsername(user.displayName || t('common.welcome'));
         setEmail(user.email || t('common.loading'));
@@ -73,11 +80,41 @@ export default function ProfileScreen({ route, navigation }) {
         setNewUsername(user.displayName || t('common.welcome'));
         
         await loadStats(user.uid);
+        await loadSubscription(user.uid);
       }
     };
     
     loadUserData();
   }, [route?.params?.guest, t]);
+
+  // Add this useEffect to reload subscription when screen comes into focus
+  useEffect(() => {
+    const unsubscribe = navigation.addListener('focus', async () => {
+      const user = auth.currentUser;
+      if (user && !isGuest) {
+        await loadSubscription(user.uid);
+      }
+    });
+
+    return unsubscribe;
+  }, [navigation, isGuest]);
+
+  const loadSubscription = async (userId) => {
+    setLoadingSubscription(true);
+    try {
+      const result = await getUserSubscription(userId);
+      if (result.success) {
+        setSubscription(result);
+      } else {
+        setSubscription(null);
+      }
+    } catch (error) {
+      console.error('Error loading subscription:', error);
+      setSubscription(null);
+    } finally {
+      setLoadingSubscription(false);
+    }
+  };
 
   const loadStats = async (userId) => {
     setIsLoadingStats(true);
@@ -101,7 +138,10 @@ export default function ProfileScreen({ route, navigation }) {
     try {
       const result = await syncPendingScans(user.uid);
       if (result.success) {
-        Alert.alert('Success', `Synced ${result.synced} pending scans`);
+        Alert.alert(
+          t('common.success'),
+          t('profile.alerts.syncSuccess', { count: result.synced })
+        );
         await loadStats(user.uid);
       }
     } catch (error) {
@@ -121,18 +161,26 @@ export default function ProfileScreen({ route, navigation }) {
     </View>
   );
 
-  const MenuItem = ({ icon, title, subtitle, onPress, color, showBadge }) => (
+  const MenuItem = ({ icon, title, subtitle, onPress, color, showBadge, showPremiumBadge }) => (
     <TouchableOpacity style={styles.menuItem} onPress={onPress} activeOpacity={0.7}>
       <View style={[styles.menuIconContainer, { backgroundColor: color }]}>
         <Ionicons name={icon} size={24} color="#fff" />
       </View>
       <View style={styles.menuContent}>
-        <Text style={styles.menuTitle}>{title}</Text>
+        <View style={styles.menuTitleRow}>
+          <Text style={styles.menuTitle}>{title}</Text>
+          {showPremiumBadge && (
+            <View style={styles.premiumBadge}>
+              <Ionicons name="star" size={12} color="#FFD700" />
+              <Text style={styles.premiumBadgeText}>Premium</Text>
+            </View>
+          )}
+        </View>
         {subtitle && <Text style={styles.menuSubtitle}>{subtitle}</Text>}
       </View>
       {showBadge && (
         <View style={styles.badge}>
-          <Text style={styles.badgeText}>New</Text>
+          <Text style={styles.badgeText}>{t('profile.badgeNew')}</Text>
         </View>
       )}
       <Ionicons name="chevron-forward" size={22} color="#999" />
@@ -144,8 +192,8 @@ export default function ProfileScreen({ route, navigation }) {
 
     if (newUsername !== username && newUsername.trim() !== '') {
       try {
-        const auth = getAuth();
-        const user = auth.currentUser;
+        const authInstance = getAuth();
+        const user = authInstance.currentUser;
 
         if (!user) {
           console.error('No authenticated user found');
@@ -158,43 +206,42 @@ export default function ProfileScreen({ route, navigation }) {
 
         setUsername(newUsername);
         setIsEditing(false);
-        Alert.alert('Success', 'Username updated successfully!');
+        Alert.alert(t('common.success'), t('profile.alerts.usernameUpdated'));
       } catch (error) {
         console.error('Error updating username: ', error);
-        Alert.alert('Error', 'Failed to update username');
+        Alert.alert(t('common.error'), t('profile.alerts.usernameUpdateError'));
       }
     }
   };
 
   const handleSignOut = async () => {
     Alert.alert(
-      'Sign Out',
-      'Are you sure you want to sign out?',
+      t('profile.alerts.signOutTitle'),
+      t('profile.alerts.signOutMessage'),
       [
-        { text: 'Cancel', style: 'cancel' },
+        { text: t('common.cancel'), style: 'cancel' },
         {
-          text: 'Sign Out',
+          text: t('profile.alerts.signOutConfirm'),
           style: 'destructive',
           onPress: async () => {
             try {
-              console.log('Signing out user...');
               await signOut(auth);
               await clearAllUserData();
-              console.log('✅ User signed out successfully');
-              
               navigation.reset({
                 index: 0,
                 routes: [{ name: 'Login' }],
               });
             } catch (error) {
-              console.error('❌ Sign out error:', error);
-              Alert.alert('Error', 'Failed to sign out. Please try again.');
+              console.error('Sign out error:', error);
+              Alert.alert(t('common.error'), t('profile.alerts.signOutError'));
             }
-          }
-        }
+          },
+        },
       ]
     );
   };
+
+  const isPremium = subscription?.isActive && subscription?.tier === 'premium';
 
   return (
     <View style={styles.container}>
@@ -220,7 +267,7 @@ export default function ProfileScreen({ route, navigation }) {
             <View style={{ width: 44 }} />
           )}
           
-          <Text style={styles.headerTitle}>Profile</Text>
+          <Text style={styles.headerTitle}>{t('profile.title')}</Text>
           
           <TouchableOpacity 
             style={styles.settingsButton}
@@ -243,6 +290,12 @@ export default function ProfileScreen({ route, navigation }) {
                 </Text>
               </View>
             )}
+            {/* Premium Crown Badge on Avatar */}
+            {isPremium && (
+              <View style={styles.premiumCrown}>
+                <Ionicons name="star" size={20} color="#FFD700" />
+              </View>
+            )}
           </View>
           <View style={styles.userInfo}>
             {isEditing ? (
@@ -252,7 +305,7 @@ export default function ProfileScreen({ route, navigation }) {
                   value={newUsername}
                   onChangeText={setNewUsername}
                   autoFocus
-                  placeholder="Enter username"
+                  placeholder={t('profile.editPlaceholder')}
                   placeholderTextColor="#ccc"
                 />
                 <View style={styles.editActions}>
@@ -263,13 +316,13 @@ export default function ProfileScreen({ route, navigation }) {
                       setNewUsername(username);
                     }}
                   >
-                    <Text style={styles.cancelButtonText}>Cancel</Text>
+                    <Text style={styles.cancelButtonText}>{t('common.cancel')}</Text>
                   </TouchableOpacity>
                   <TouchableOpacity 
                     style={styles.saveButton} 
                     onPress={saveUsername}
                   >
-                    <Text style={styles.saveButtonText}>Save</Text>
+                    <Text style={styles.saveButtonText}>{t('common.save')}</Text>
                   </TouchableOpacity>
                 </View>
               </View>
@@ -288,6 +341,15 @@ export default function ProfileScreen({ route, navigation }) {
                   )}
                 </View>
                 <Text style={styles.email}>{email}</Text>
+                {/* Premium Status Label */}
+                {isPremium && (
+                  <View style={styles.premiumStatusBadge}>
+                    <Ionicons name="star" size={14} color="#FFD700" />
+                    <Text style={styles.premiumStatusText}>
+                      LeafNest Premium • {subscription.daysRemaining} days left
+                    </Text>
+                  </View>
+                )}
               </>
             )}
           </View>
@@ -302,12 +364,12 @@ export default function ProfileScreen({ route, navigation }) {
         {/* Statistics Section */}
         <View style={styles.section}>
           <View style={styles.sectionHeader}>
-            <Text style={styles.sectionTitle}>Scan Statistics</Text>
+            <Text style={styles.sectionTitle}>{t('profile.statsTitle')}</Text>
             {!isGuest && (
               <TouchableOpacity 
                 onPress={() => navigation.navigate('ScanStats', { userId: auth.currentUser?.uid })}
               >
-                <Text style={styles.viewAllText}>View All</Text>
+                <Text style={styles.viewAllText}>{t('profile.viewAll')}</Text>
               </TouchableOpacity>
             )}
           </View>
@@ -317,9 +379,9 @@ export default function ProfileScreen({ route, navigation }) {
               <View style={styles.guestIconContainer}>
                 <Ionicons name="bar-chart-outline" size={48} color="#5E936C" />
               </View>
-              <Text style={styles.guestPromptTitle}>Track Your Progress</Text>
+              <Text style={styles.guestPromptTitle}>{t('profile.guestPromptTitle')}</Text>
               <Text style={styles.guestPromptText}>
-                Sign in to track scans, discover species, and unlock achievements
+                {t('profile.guestPromptText')}
               </Text>
             </View>
           ) : (
@@ -332,19 +394,19 @@ export default function ProfileScreen({ route, navigation }) {
                 <View style={styles.statsGrid}>
                   <StatCard
                     icon="scan"
-                    title="Total Scans"
+                    title={t('profile.stats.total')}
                     value={stats.totalScans || 0}
                     color="#4CAF50"
                   />
                   <StatCard
                     icon="calendar"
-                    title="This Week"
+                    title={t('profile.stats.week')}
                     value={stats.weekScans || 0}
                     color="#2196F3"
                   />
                   <StatCard
                     icon="planet"
-                    title="Species"
+                    title={t('profile.stats.species')}
                     value={stats.uniqueSpecies || 0}
                     color="#FF9800"
                   />
@@ -356,35 +418,42 @@ export default function ProfileScreen({ route, navigation }) {
 
         {/* Account Settings */}
         <View style={styles.section}>
-          <Text style={styles.sectionTitle}>Account Settings</Text>
+          <Text style={styles.sectionTitle}>{t('profile.sections.account')}</Text>
           
           {!isGuest ? (
             <>
               <MenuItem
                 icon="star-outline"
-                title="Your Plan"
-                subtitle="LeafNest Free"
+                title={t('profile.menu.planTitle')}
+                subtitle={
+                  loadingSubscription 
+                    ? "Loading..." 
+                    : isPremium 
+                      ? `Expires ${new Date(subscription.expiryDate).toLocaleDateString()}`
+                      : t('profile.menu.planSubtitle')
+                }
                 color="#FF9800"
                 onPress={() => navigation.navigate("PlanScreen")}
+                showPremiumBadge={isPremium}
               />
               <MenuItem
                 icon="notifications-outline"
-                title="Notifications"
-                subtitle="Manage your notifications"
+                title={t('profile.menu.notificationsTitle')}
+                subtitle={t('profile.menu.notificationsSubtitle')}
                 color="#9C27B0"
                 onPress={() => navigation.navigate('ManageNotifications')}
               />
               <MenuItem
                 icon="key-outline"
-                title="Forgot Password"
-                subtitle="Reset your password"
+                title={t('profile.menu.passwordTitle')}
+                subtitle={t('profile.menu.passwordSubtitle')}
                 color="#FF9800"
                 onPress={() => navigation.navigate('ForgotPassword')}
               />
               <MenuItem
                 icon="log-out-outline"
-                title="Sign Out"
-                subtitle="Sign out from your account"
+                title={t('profile.menu.signOutTitle')}
+                subtitle={t('profile.menu.signOutSubtitle')}
                 color="#F44336"
                 onPress={handleSignOut}
               />
@@ -393,8 +462,8 @@ export default function ProfileScreen({ route, navigation }) {
             <>
               <MenuItem
                 icon="log-in-outline"
-                title="Sign In"
-                subtitle="Access all features"
+                title={t('profile.menu.signInTitle')}
+                subtitle={t('profile.menu.signInSubtitle')}
                 color="#4CAF50"
                 onPress={() => navigation.reset({
                   index: 0,
@@ -403,8 +472,8 @@ export default function ProfileScreen({ route, navigation }) {
               />
               <MenuItem
                 icon="person-add-outline"
-                title="Create Account"
-                subtitle="Join LeafNest today"
+                title={t('profile.menu.createAccountTitle')}
+                subtitle={t('profile.menu.createAccountSubtitle')}
                 color="#2196F3"
                 onPress={() => navigation.navigate('SignUp')}
                 showBadge
@@ -500,6 +569,22 @@ const styles = StyleSheet.create({
     fontWeight: 'bold',
     color: '#5E936C',
   },
+  premiumCrown: {
+    position: 'absolute',
+    top: -5,
+    right: -5,
+    width: 36,
+    height: 36,
+    borderRadius: 18,
+    backgroundColor: '#fff',
+    justifyContent: 'center',
+    alignItems: 'center',
+    shadowColor: '#FFD700',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.5,
+    shadowRadius: 4,
+    elevation: 5,
+  },
   userInfo: {
     alignItems: 'center',
     width: '100%',
@@ -526,6 +611,23 @@ const styles = StyleSheet.create({
     fontSize: 14,
     color: 'rgba(255, 255, 255, 0.85)',
     marginTop: 4,
+  },
+  premiumStatusBadge: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    backgroundColor: 'rgba(255, 215, 0, 0.2)',
+    paddingHorizontal: 16,
+    paddingVertical: 8,
+    borderRadius: 20,
+    marginTop: 12,
+    gap: 6,
+    borderWidth: 1,
+    borderColor: 'rgba(255, 215, 0, 0.3)',
+  },
+  premiumStatusText: {
+    fontSize: 13,
+    fontWeight: '600',
+    color: '#FFD700',
   },
   editContainer: {
     width: '100%',
@@ -707,11 +809,32 @@ const styles = StyleSheet.create({
   menuContent: {
     flex: 1,
   },
+  menuTitleRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 8,
+    marginBottom: 2,
+  },
   menuTitle: {
     fontSize: 16,
     fontWeight: '600',
     color: '#333',
-    marginBottom: 2,
+  },
+  premiumBadge: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    backgroundColor: '#FFF9E6',
+    paddingHorizontal: 8,
+    paddingVertical: 3,
+    borderRadius: 12,
+    gap: 4,
+    borderWidth: 1,
+    borderColor: '#FFD700',
+  },
+  premiumBadgeText: {
+    fontSize: 11,
+    fontWeight: '700',
+    color: '#FF9800',
   },
   menuSubtitle: {
     fontSize: 13,

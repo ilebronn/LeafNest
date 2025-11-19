@@ -3,9 +3,11 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 import { ScrollView, View, Text, StyleSheet, TouchableOpacity, LayoutAnimation, Platform, useWindowDimensions } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import { LinearGradient } from 'expo-linear-gradient';
+import { useTranslation } from 'react-i18next';
 
 const FAQScreen = ({ navigation }) => {
   const [expandedIndex, setExpandedIndex] = useState(null);
+  const { t } = useTranslation();
   const { width, height } = useWindowDimensions();
 
   const baseW = 375;
@@ -27,40 +29,12 @@ const FAQScreen = ({ navigation }) => {
   const iconSize = clamp(scale(24), 20, 26);
   const backIconSize = clamp(scale(26), 22, 28);
 
-  const faqs = [
-    { 
-      category: 'Getting Started',
-      icon: 'rocket',
-      items: [
-        { question: 'What is LeafNest?', answer: 'LeafNest is a plant identification and information app that uses AI technology to help you identify plants and animals to provide knowledge about natures or species.' },
-        { question: 'How do I get started?', answer: 'Simply open the app, tap the scan icon, and point it at any plant and animals. The AI will identify it and provide detailed information about that species.' },
-      ]
-    },
-    { 
-      category: 'Using the Scanner',
-      icon: 'camera',
-      items: [
-        { question: 'How do I scan a species?', answer: 'Tap the scan icon on the home screen, point your camera at the species, and capture a clear photo. The app will automatically identify it.' },
-        { question: 'What makes a good scan?', answer: 'Ensure good lighting, focus on the species distinctive features (animals or plants), and keep the camera steady for best results.' },
-        { question: 'Can I scan from my photo gallery?', answer: 'Yes! You can upload existing photos from your gallery by selecting the gallery option in the scanner screen.' },
-      ]
-    },
-    { 
-      category: 'Accuracy & Features',
-      icon: 'checkmark-circle',
-      items: [
-        { question: 'How accurate is the identification?', answer: 'LeafNest uses advanced machine learning with an AI. Accuracy varies by lighting and image quality, but typically exceeds 90%.' },
-        { question: 'Can I save my favorite plants?', answer: 'Yes! Tap the heart icon on any identified plant to add it to your favorites for quick access later.' },
-      ]
-    },
-    { 
-      category: 'Support & Help',
-      icon: 'help-circle',
-      items: [
-        { question: 'How do I contact support?', answer: 'Reach us through the Settings menu under Help & Support, or email us directly at leafnest.capstone@gmail.com.' },
-      ]
-    },
-  ];
+  const categoryIcons = ['rocket', 'camera', 'checkmark-circle', 'help-circle'];
+  const faqs =
+    (t('faq.categories', { returnObjects: true }) || []).map((category, index) => ({
+      icon: categoryIcons[index] || 'information-circle',
+      ...category,
+    }));
 
   const handleToggle = (categoryIndex, itemIndex) => {
     if (Platform.OS === 'ios' || Platform.OS === 'android') {
@@ -253,8 +227,8 @@ const FAQScreen = ({ navigation }) => {
           <Ionicons name="arrow-back" size={backIconSize} color="#2D5A3F" />
         </TouchableOpacity>
         <View style={styles.headerContent}>
-          <Text style={styles.title}>Help & FAQ</Text>
-          <Text style={styles.subtitle}>Find answers to common questions</Text>
+          <Text style={styles.title}>{t('faq.title')}</Text>
+          <Text style={styles.subtitle}>{t('faq.subtitle')}</Text>
         </View>
       </LinearGradient>
 
@@ -268,7 +242,7 @@ const FAQScreen = ({ navigation }) => {
               <View style={styles.categoryIconContainer}>
                 <Ionicons name={category.icon} size={clamp(scale(20), 18, 24)} color="#5E936C" />
               </View>
-              <Text style={styles.categoryTitle}>{category.category}</Text>
+              <Text style={styles.categoryTitle}>{category.title}</Text>
             </View>
 
             {category.items.map((faq, itemIndex) => {

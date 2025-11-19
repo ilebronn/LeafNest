@@ -2,21 +2,28 @@
 import { initializeApp, getApps, getApp } from 'firebase/app';
 import { initializeAuth, getAuth, getReactNativePersistence } from 'firebase/auth';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import { 
-  getFirestore, 
-  collection, 
-  doc, 
-  setDoc, 
-  getDoc, 
-  getDocs, 
-  addDoc, 
-  updateDoc, 
-  deleteDoc, 
-  query, 
-  where, 
-  orderBy, 
+import {
+  getFirestore,
+  initializeFirestore,
+  persistentLocalCache,
+  persistentMultipleTabManager,
+  CACHE_SIZE_UNLIMITED,
+  enableIndexedDbPersistence,
+  connectFirestoreEmulator,
+  collection,
+  doc,
+  setDoc,
+  getDoc,
+  getDocs,
+  addDoc,
+  updateDoc,
+  deleteDoc,
+  query,
+  where,
+  orderBy,
   serverTimestamp,
-  limit  // ⬅️ ADD THIS IMPORT
+  limit,
+  onSnapshot  // ⬅️ ADD THIS IMPORT
 } from 'firebase/firestore';
 import { 
   getStorage, 
@@ -65,20 +72,21 @@ export const functions = getFunctions(app);
 // connectFunctionsEmulator(functions, "localhost", 5001);
 
 // Export Firestore functions for easy access
-export { 
-  collection, 
-  doc, 
-  setDoc, 
-  getDoc, 
-  getDocs, 
-  addDoc, 
-  updateDoc, 
-  deleteDoc, 
-  query, 
-  where, 
-  orderBy, 
+export {
+  collection,
+  doc,
+  setDoc,
+  getDoc,
+  getDocs,
+  addDoc,
+  updateDoc,
+  deleteDoc,
+  query,
+  where,
+  orderBy,
   serverTimestamp,
-  limit  // ⬅️ NOW THIS EXPORT WORKS
+  limit,
+  onSnapshot  // ⬅️ NOW THIS EXPORT WORKS
 };
 
 // Export Storage functions for image uploads

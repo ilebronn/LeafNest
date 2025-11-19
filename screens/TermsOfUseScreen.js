@@ -2,8 +2,10 @@ import React from 'react';
 import { View, Text, StyleSheet, SafeAreaView, TouchableOpacity, ScrollView, Platform, useWindowDimensions } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import { LinearGradient } from 'expo-linear-gradient';
+import { useTranslation } from 'react-i18next';
 
 const TermsOfUseScreen = ({ navigation }) => {
+  const { t } = useTranslation();
   const { width, height } = useWindowDimensions();
 
   const baseW = 375;
@@ -26,43 +28,20 @@ const TermsOfUseScreen = ({ navigation }) => {
 
   const isTablet = width > 600;
 
-  const sections = [
-    {
-      icon: 'document-text',
-      title: 'Acceptance of Terms',
-      content: 'By accessing or using the LeafNest app, you agree to be bound by these Terms of Use. If you do not agree to these terms, you should not use the app.'
-    },
-    {
-      icon: 'person',
-      title: 'User Responsibilities',
-      content: 'You agree to use the app only for lawful purposes and in a manner that does not infringe on the rights of others. You are responsible for maintaining the confidentiality of your account information.'
-    },
-    {
-      icon: 'shield-checkmark',
-      title: 'Intellectual Property',
-      content: 'All content, trademarks, logos, and intellectual property within the app are owned by LeafNest or licensed to us. Unauthorized use of our intellectual property is strictly prohibited.'
-    },
-    {
-      icon: 'lock-closed',
-      title: 'Privacy and Data Collection',
-      content: 'We collect and process personal information as described in our Privacy Policy. By using our app, you consent to our data collection, storage, and processing practices.'
-    },
-    {
-      icon: 'warning',
-      title: 'Limitation of Liability',
-      content: 'LeafNest is not liable for any damages, losses, or injuries arising from the use of the app or its services. You use the app at your own risk and discretion.'
-    },
-    {
-      icon: 'refresh',
-      title: 'Changes to Terms',
-      content: 'We reserve the right to update these Terms of Use at any time. Any changes will be posted on this page with an updated effective date. Continued use constitutes acceptance of changes.'
-    },
-    {
-      icon: 'mail',
-      title: 'Contact Us',
-      content: 'If you have any questions, concerns, or feedback about these Terms of Use, please contact us at leafnest.capstone@gmail.com.'
-    },
+  const sectionIcons = [
+    'document-text',
+    'person',
+    'shield-checkmark',
+    'lock-closed',
+    'warning',
+    'refresh',
+    'mail',
   ];
+  const sections =
+    (t('legal.terms.sections', { returnObjects: true }) || []).map((section, index) => ({
+      icon: sectionIcons[index] || 'information-circle',
+      ...section,
+    }));
 
   const styles = StyleSheet.create({
     container: {
@@ -232,8 +211,8 @@ const TermsOfUseScreen = ({ navigation }) => {
           <Ionicons name="arrow-back" size={backIconSize} color="#2D5A3F" />
         </TouchableOpacity>
         <View style={styles.headerContent}>
-          <Text style={styles.title}>Terms of Use</Text>
-          <Text style={styles.subtitle}>Please read carefully before using</Text>
+          <Text style={styles.title}>{t('legal.terms.title')}</Text>
+          <Text style={styles.subtitle}>{t('legal.terms.subtitle')}</Text>
         </View>
       </LinearGradient>
 
@@ -245,10 +224,10 @@ const TermsOfUseScreen = ({ navigation }) => {
         <View style={styles.introCard}>
           <View style={styles.effectiveDate}>
             <Ionicons name="calendar" size={clamp(scale(18), 16, 20)} color="#5E936C" />
-            <Text style={styles.dateText}>Effective Date: July 1, 2025</Text>
+            <Text style={styles.dateText}>{t('legal.terms.effectiveDate')}</Text>
           </View>
           <Text style={styles.introText}>
-            These Terms of Use govern the use of the LeafNest app and services. By using our app, you agree to these terms and conditions.
+            {t('legal.terms.intro')}
           </Text>
         </View>
 
@@ -267,13 +246,13 @@ const TermsOfUseScreen = ({ navigation }) => {
 
         {/* Footer Card */}
         <View style={styles.footerCard}>
-          <Text style={styles.footerTitle}>Thank You</Text>
+          <Text style={styles.footerTitle}>{t('legal.terms.footerTitle')}</Text>
           <Text style={styles.footerText}>
-            Thank you for taking the time to review our Terms of Use. Your trust and compliance help us create a better experience for everyone.
+            {t('legal.terms.footerText')}
           </Text>
           <View style={styles.divider} />
-          <Text style={styles.copyright}>© 2025 LeafNest. All rights reserved.</Text>
-          <Text style={styles.lastUpdated}>Last updated: July 1, 2025</Text>
+          <Text style={styles.copyright}>{t('legal.terms.copyright')}</Text>
+          <Text style={styles.lastUpdated}>{t('legal.terms.lastUpdated')}</Text>
         </View>
       </ScrollView>
     </SafeAreaView>
@@ -281,3 +260,4 @@ const TermsOfUseScreen = ({ navigation }) => {
 };
 
 export default TermsOfUseScreen;
+

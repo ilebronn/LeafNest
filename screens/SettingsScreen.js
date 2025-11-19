@@ -112,7 +112,7 @@ export default function SettingsScreen({ navigation, route }) {
           scrollEventThrottle={16}
         >
           {/* General Section */}
-          <SectionHeader title="General" />
+          <SectionHeader title={t('settings.generalSection')} />
           <View style={styles.section}>
             <SettingsItem
               icon="information-circle-outline"
@@ -132,7 +132,7 @@ export default function SettingsScreen({ navigation, route }) {
           </View>
 
           {/* Support Section */}
-          <SectionHeader title="Support" />
+          <SectionHeader title={t('settings.supportSection')} />
           <View style={styles.section}>
             <SettingsItem
               icon="help-circle-outline"
@@ -157,7 +157,7 @@ export default function SettingsScreen({ navigation, route }) {
           </View>
 
           {/* Legal Section */}
-          <SectionHeader title="Legal" />
+          <SectionHeader title={t('settings.legalSection')} />
           <View style={styles.section}>
             <SettingsItem
               icon="document-text-outline"

@@ -2,8 +2,10 @@ import React from 'react';
 import { View, Text, StyleSheet, SafeAreaView, TouchableOpacity, ScrollView, Platform, useWindowDimensions } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import { LinearGradient } from 'expo-linear-gradient';
+import { useTranslation } from 'react-i18next';
 
 const PrivacyPolicyScreen = ({ navigation }) => {
+  const { t } = useTranslation();
   const { width, height } = useWindowDimensions();
 
   const baseW = 375;
@@ -26,43 +28,20 @@ const PrivacyPolicyScreen = ({ navigation }) => {
 
   const isTablet = width > 600;
 
-  const sections = [
-    {
-      icon: 'document-text',
-      title: 'Information We Collect',
-      content: 'We collect information you provide directly to us, such as when you create an account, upload photos, or contact us for support. This may include your name, email address, and any other information you choose to provide.'
-    },
-    {
-      icon: 'eye',
-      title: 'How We Use Your Information',
-      content: 'We use the information we collect to provide, maintain, and improve our services, to communicate with you, and to develop new features. We do not sell your personal information to third parties.'
-    },
-    {
-      icon: 'lock-closed',
-      title: 'Data Security',
-      content: 'We implement appropriate technical and organizational measures to protect your personal information against unauthorized access, alteration, disclosure, or destruction.'
-    },
-    {
-      icon: 'shield-checkmark',
-      title: 'Your Rights',
-      content: 'You have the right to access, update, or delete your personal information. You can do this through your account settings or by contacting us directly.'
-    },
-    {
-      icon: 'share-social',
-      title: 'Third-Party Services',
-      content: 'Our app may contain links to third-party websites and services. We are not responsible for their privacy practices. We encourage you to review their privacy policies.'
-    },
-    {
-      icon: 'refresh',
-      title: 'Changes to Privacy Policy',
-      content: 'We reserve the right to update this Privacy Policy at any time. Changes will be posted on this page with an updated effective date. Your continued use constitutes acceptance of changes.'
-    },
-    {
-      icon: 'mail',
-      title: 'Contact Us',
-      content: 'If you have any questions about this Privacy Policy or our privacy practices, please contact us at privacy@leafnest.com.'
-    },
+  const sectionIcons = [
+    'document-text',
+    'eye',
+    'lock-closed',
+    'shield-checkmark',
+    'share-social',
+    'refresh',
+    'mail',
   ];
+  const sections =
+    (t('legal.privacy.sections', { returnObjects: true }) || []).map((section, index) => ({
+      icon: sectionIcons[index] || 'information-circle',
+      ...section,
+    }));
 
   const styles = StyleSheet.create({
     container: {
@@ -232,8 +211,8 @@ const PrivacyPolicyScreen = ({ navigation }) => {
           <Ionicons name="arrow-back" size={backIconSize} color="#2D5A3F" />
         </TouchableOpacity>
         <View style={styles.headerContent}>
-          <Text style={styles.title}>Privacy Policy</Text>
-          <Text style={styles.subtitle}>Your privacy matters to us</Text>
+          <Text style={styles.title}>{t('legal.privacy.title')}</Text>
+          <Text style={styles.subtitle}>{t('legal.privacy.subtitle')}</Text>
         </View>
       </LinearGradient>
 
@@ -245,10 +224,10 @@ const PrivacyPolicyScreen = ({ navigation }) => {
         <View style={styles.introCard}>
           <View style={styles.effectiveDate}>
             <Ionicons name="calendar" size={clamp(scale(18), 16, 20)} color="#5E936C" />
-            <Text style={styles.dateText}>Effective Date: July 1, 2025</Text>
+            <Text style={styles.dateText}>{t('legal.privacy.effectiveDate')}</Text>
           </View>
           <Text style={styles.introText}>
-            At LeafNest, we are committed to protecting your privacy and ensuring the security of your personal information.
+            {t('legal.privacy.intro')}
           </Text>
         </View>
 
@@ -267,13 +246,13 @@ const PrivacyPolicyScreen = ({ navigation }) => {
 
         {/* Footer Card */}
         <View style={styles.footerCard}>
-          <Text style={styles.footerTitle}>We Care About You</Text>
+          <Text style={styles.footerTitle}>{t('legal.privacy.footerTitle')}</Text>
           <Text style={styles.footerText}>
-            Your trust is important to us. We are committed to transparent data practices and your right to privacy.
+            {t('legal.privacy.footerText')}
           </Text>
           <View style={styles.divider} />
-          <Text style={styles.copyright}>© 2025 LeafNest. All rights reserved.</Text>
-          <Text style={styles.lastUpdated}>Last updated: July 1, 2025</Text>
+          <Text style={styles.copyright}>{t('legal.privacy.copyright')}</Text>
+          <Text style={styles.lastUpdated}>{t('legal.privacy.lastUpdated')}</Text>
         </View>
       </ScrollView>
     </SafeAreaView>
@@ -281,3 +260,4 @@ const PrivacyPolicyScreen = ({ navigation }) => {
 };
 
 export default PrivacyPolicyScreen;
+

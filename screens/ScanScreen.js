@@ -6,12 +6,14 @@ import axios from 'axios';
 import { GestureHandlerRootView, PinchGestureHandler } from 'react-native-gesture-handler';
 import { recordScan } from '../firestoreService/scanStatsService';
 import { auth } from '../firebase';
-import { 
-  isGuestUser, 
-  hasGuestReachedLimit, 
+import {
+  isGuestUser,
+  hasGuestReachedLimit,
   incrementGuestScanCount,
-  getGuestRemainingScans 
+  getGuestRemainingScans
 } from '../utils/guestScanUtils';
+import { getUserSubscription, decrementScanCount, getUsageLimits } from '../firestoreService/subscriptionService';
+import PremiumGate from '../components/PremiumGate';
 
 const PLANTNET_API_KEY = '2b109zcNM9jXCMPmFijjfnTCtu';
 const GOOGLE_VISION_API_KEY = 'AIzaSyCRdWSqZJJcL1PfXK2gBEZzgmN_RqRahGw';
@@ -23,6 +25,8 @@ export default function ScanScreen({ navigation }) {
   const [flashMode, setFlashMode] = useState('off');
   const [zoom, setZoom] = useState(0);
   const [autofocus, setAutofocus] = useState('on');
+  const [showPremiumGate, setShowPremiumGate] = useState(false);
+  const [usageLimits, setUsageLimits] = useState(null);
   const cameraRef = useRef(null);
 
   const onCameraReady = () => setIsCameraReady(true);
@@ -65,29 +69,43 @@ export default function ScanScreen({ navigation }) {
     }
   };
 
+  const checkScanLimit = async () => {
+    const user = auth.currentUser;
+    if (!user) return true; // Allow guest scan
+
+    try {
+      const limits = await getUsageLimits(user.uid);
+      setUsageLimits(limits);
+
+      // Premium users have unlimited
+      if (limits.unlimited) {
+        return true;
+      }
+
+      // Check if free user has scans remaining
+      if (limits.scansRemaining <= 0) {
+        setShowPremiumGate(true);
+        return false;
+      }
+
+      // Decrement scan count
+      await decrementScanCount(user.uid);
+      return true;
+    } catch (error) {
+      console.error('Error checking scan limit:', error);
+      return true; // Allow on error
+    }
+  };
+
   const handleCapture = async () => {
     if (!isCameraReady || !cameraRef.current || isProcessing) {
       return;
     }
 
-    const user = auth.currentUser;
-    if (isGuestUser(user)) {
-      const reachedLimit = await hasGuestReachedLimit();
-      if (reachedLimit) {
-        Alert.alert(
-          "Oops! You've Reached Your Free Scan Limit",
-          "You've used your 1 free scan as a guest. Sign up for more scans!",
-          [
-            { text: "Cancel", style: "cancel" },
-            { 
-              text: "Sign Up", 
-              onPress: () => navigation.navigate('SignUp'),
-              style: "default"
-            }
-          ]
-        );
-        return;
-      }
+    // ✅ CHECK SCAN LIMIT
+    const canScan = await checkScanLimit();
+    if (!canScan) {
+      return; // Premium gate will be shown
     }
 
     setIsProcessing(true);
@@ -98,7 +116,7 @@ export default function ScanScreen({ navigation }) {
         skipProcessing: false,
         exif: true,
       });
-      
+
       await analyzeImage(photo.base64, photo.uri);
     } catch (error) {
       console.error('Error capturing photo:', error);
@@ -703,6 +721,19 @@ export default function ScanScreen({ navigation }) {
               </View>
             </View>
           )}
+
+          <PremiumGate
+            visible={showPremiumGate}
+            onClose={() => setShowPremiumGate(false)}
+            onUpgrade={() => {
+              setShowPremiumGate(false);
+              navigation.navigate('PlanScreen');
+            }}
+            limitType="scan"
+            hoursUntilReset={usageLimits?.hoursUntilReset || 0}
+            scansRemaining={usageLimits?.scansRemaining || 0}
+            downloadsRemaining={usageLimits?.downloadsRemaining || 0}
+          />
 
           <View style={styles.buttonContainer}>
             <TouchableOpacity

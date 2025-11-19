@@ -3,8 +3,10 @@ import { View, Text, StyleSheet, TouchableOpacity, ScrollView, Platform, useWind
 import { Ionicons } from '@expo/vector-icons';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { LinearGradient } from 'expo-linear-gradient';
+import { useTranslation } from 'react-i18next';
 
 const CookiesPolicyScreen = ({ navigation }) => {
+  const { t } = useTranslation();
   const { width, height } = useWindowDimensions();
 
   const baseW = 375;
@@ -27,56 +29,20 @@ const CookiesPolicyScreen = ({ navigation }) => {
 
   const isTablet = width > 600;
 
-  const sections = [
-    {
-      icon: 'help-circle',
-      title: 'What Are Cookies?',
-      content: 'Cookies are small text files stored on your device when you visit websites or use apps. They help us understand how you interact with our service and allow us to provide you with a better, more personalized experience.'
-    },
-    {
-      icon: 'settings',
-      title: 'How We Use Cookies',
-      content: 'We use cookies for several essential purposes:',
-      list: [
-        'To personalize content and advertisements',
-        'To analyze traffic patterns and improve user experience',
-        'To enable certain features and functionality of our app',
-        'To remember your preferences and settings',
-        'To provide secure access to your account'
-      ]
-    },
-    {
-      icon: 'albums',
-      title: 'Types of Cookies We Use',
-      content: 'We use different types of cookies to enhance your experience:',
-      list: [
-        'Essential Cookies: Required for basic app functionality',
-        'Performance Cookies: Help us understand how you use the app',
-        'Functional Cookies: Remember your preferences and choices',
-        'Analytics Cookies: Provide insights into app usage patterns'
-      ]
-    },
-    {
-      icon: 'options',
-      title: 'Managing Cookies',
-      content: 'You can control and manage cookies through your device settings. However, please note that disabling certain cookies may affect your experience and limit the functionality of the app.'
-    },
-    {
-      icon: 'time',
-      title: 'Cookie Duration',
-      content: 'Some cookies are temporary (session cookies) and are deleted when you close the app. Others remain on your device for a set period to remember your preferences across sessions.'
-    },
-    {
-      icon: 'refresh',
-      title: 'Changes to This Policy',
-      content: 'We may update this Cookies Policy from time to time to reflect changes in technology or legal requirements. Any changes will be posted on this page with an updated revision date.'
-    },
-    {
-      icon: 'mail',
-      title: 'Contact Us',
-      content: 'If you have any questions, concerns, or feedback regarding this Cookies Policy, please don\'t hesitate to contact us at leafnest.capstone@gmail.com.'
-    },
+  const sectionIcons = [
+    'help-circle',
+    'settings',
+    'albums',
+    'options',
+    'time',
+    'refresh',
+    'mail',
   ];
+  const sections =
+    (t('legal.cookies.sections', { returnObjects: true }) || []).map((section, index) => ({
+      icon: sectionIcons[index] || 'information-circle',
+      ...section,
+    }));
 
   const styles = StyleSheet.create({
     container: {
@@ -270,8 +236,8 @@ const CookiesPolicyScreen = ({ navigation }) => {
           <Ionicons name="arrow-back" size={backIconSize} color="#2D5A3F" />
         </TouchableOpacity>
         <View style={styles.headerContent}>
-          <Text style={styles.title}>Cookies Policy</Text>
-          <Text style={styles.subtitle}>How we use cookies to enhance your experience</Text>
+          <Text style={styles.title}>{t('legal.cookies.title')}</Text>
+          <Text style={styles.subtitle}>{t('legal.cookies.subtitle')}</Text>
         </View>
       </LinearGradient>
 
@@ -283,10 +249,10 @@ const CookiesPolicyScreen = ({ navigation }) => {
         <View style={styles.introCard}>
           <View style={styles.effectiveDate}>
             <Ionicons name="calendar" size={clamp(scale(18), 16, 20)} color="#5E936C" />
-            <Text style={styles.dateText}>Effective Date: July 1, 2025</Text>
+            <Text style={styles.dateText}>{t('legal.cookies.effectiveDate')}</Text>
           </View>
           <Text style={styles.introText}>
-            This Cookies Policy explains how we use cookies to enhance your experience when you visit our app and use its features. By using this app, you consent to the use of cookies as described in this policy.
+            {t('legal.cookies.intro')}
           </Text>
         </View>
 
@@ -315,13 +281,13 @@ const CookiesPolicyScreen = ({ navigation }) => {
 
         {/* Footer Card */}
         <View style={styles.footerCard}>
-          <Text style={styles.footerTitle}>Your Privacy Matters</Text>
+          <Text style={styles.footerTitle}>{t('legal.cookies.footerTitle')}</Text>
           <Text style={styles.footerText}>
-            We are committed to transparency about how we use cookies. Your continued use of our app indicates your acceptance of this policy.
+            {t('legal.cookies.footerText')}
           </Text>
           <View style={styles.divider} />
-          <Text style={styles.copyright}>© 2025 LeafNest. All rights reserved.</Text>
-          <Text style={styles.lastUpdated}>Last updated: July 1, 2025</Text>
+          <Text style={styles.copyright}>{t('legal.cookies.copyright')}</Text>
+          <Text style={styles.lastUpdated}>{t('legal.cookies.lastUpdated')}</Text>
         </View>
       </ScrollView>
     </SafeAreaView>

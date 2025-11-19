@@ -10,10 +10,15 @@ import {
   Alert,
 } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
+import { useTranslation } from 'react-i18next';
 
-const SUPPORT_EMAIL = 'support@leafnest.com';
+const SUPPORT_EMAIL = 'leafnest.dev@gmail.com';
 
 const HelpScreen = ({ navigation }) => {
+  const { t } = useTranslation();
+  const quickStart = t('help.quickStart.bullets', { returnObjects: true }) || [];
+  const bestResults = t('help.bestResults.bullets', { returnObjects: true }) || [];
+  const troubleshooting = t('help.troubleshooting.bullets', { returnObjects: true }) || [];
   const openSupportEmail = async () => {
     const subject = encodeURIComponent('[LeafNest] Help');
     const body = encodeURIComponent(
@@ -22,7 +27,10 @@ const HelpScreen = ({ navigation }) => {
     const url = `mailto:${SUPPORT_EMAIL}?subject=${subject}&body=${body}`;
     const canOpen = await Linking.canOpenURL(url);
     if (!canOpen) {
-      Alert.alert('Cannot open email app', `Please email us at ${SUPPORT_EMAIL}.`);
+      Alert.alert(
+        t('help.alerts.noEmailTitle'),
+        t('help.alerts.noEmailBody', { email: SUPPORT_EMAIL })
+      );
       return;
     }
     Linking.openURL(url);
@@ -36,69 +44,49 @@ const HelpScreen = ({ navigation }) => {
       </TouchableOpacity>
 
       <ScrollView contentContainerStyle={styles.contentContainer}>
-        <Text style={styles.title}>Help & Support</Text>
-        <Text style={styles.subtitle}>
-          Tips for scanning plants & animals with AI — and where to get more help.
-        </Text>
+        <Text style={styles.title}>{t('help.title')}</Text>
+        <Text style={styles.subtitle}>{t('help.subtitle')}</Text>
 
         {/* Quick Start */}
         <View style={styles.card}>
-          <Text style={styles.cardTitle}>Quick Start</Text>
-          <View style={styles.bulletRow}>
-            <Ionicons name="checkmark-circle" size={18} color="#5E936C" />
-            <Text style={styles.bulletText}>Tap <Text style={styles.bold}>Scan</Text> from the home screen.</Text>
-          </View>
-          <View style={styles.bulletRow}>
-            <Ionicons name="checkmark-circle" size={18} color="#5E936C" />
-            <Text style={styles.bulletText}>Center the plant or animal in the frame.</Text>
-          </View>
-          <View style={styles.bulletRow}>
-            <Ionicons name="checkmark-circle" size={18} color="#5E936C" />
-            <Text style={styles.bulletText}>Hold steady, then capture a clear photo.</Text>
-          </View>
+          <Text style={styles.cardTitle}>{t('help.quickStart.title')}</Text>
+          {quickStart.map((text, index) => (
+            <View key={`quick-${index}`} style={styles.bulletRow}>
+              <Ionicons name="checkmark-circle" size={18} color="#5E936C" />
+              <Text style={styles.bulletText}>{text}</Text>
+            </View>
+          ))}
 
           <TouchableOpacity
             style={styles.primaryBtn}
             onPress={() => navigation.navigate('ScanScreen')}
           >
             <Ionicons name="camera" size={18} color="#fff" />
-            <Text style={styles.primaryBtnText}>Open Scanner</Text>
+            <Text style={styles.primaryBtnText}>{t('help.quickStart.cta')}</Text>
           </TouchableOpacity>
           {/* If your route is CameraCaptureScreen instead, change the navigate name above. */}
         </View>
 
         {/* How to get better results */}
         <View style={styles.card}>
-          <Text style={styles.cardTitle}>How to get better results</Text>
-          <View style={styles.bulletRow}>
-            <Ionicons name="sunny" size={18} color="#5E936C" />
-            <Text style={styles.bulletText}>Use good lighting; avoid heavy backlight.</Text>
-          </View>
-          <View style={styles.bulletRow}>
-            <Ionicons name="crop" size={18} color="#5E936C" />
-            <Text style={styles.bulletText}>Fill the frame with the subject (leaf, flower, animal).</Text>
-          </View>
-          <View style={styles.bulletRow}>
-            <Ionicons name="aperture" size={18} color="#5E936C" />
-            <Text style={styles.bulletText}>Try multiple angles (leaf close-up, bark/flower, side profile for animals).</Text>
-          </View>
+          <Text style={styles.cardTitle}>{t('help.bestResults.title')}</Text>
+          {bestResults.map((text, index) => (
+            <View key={`best-${index}`} style={styles.bulletRow}>
+              <Ionicons name="sunny" size={18} color="#5E936C" />
+              <Text style={styles.bulletText}>{text}</Text>
+            </View>
+          ))}
         </View>
 
         {/* Troubleshooting */}
         <View style={styles.card}>
-          <Text style={styles.cardTitle}>Troubleshooting</Text>
-          <View style={styles.bulletRow}>
-            <Ionicons name="warning" size={18} color="#B45309" />
-            <Text style={styles.bulletText}>“Always shows the same daily item” — pull to refresh on the page, or reopen the app after midnight (Philippine time).</Text>
-          </View>
-          <View style={styles.bulletRow}>
-            <Ionicons name="warning" size={18} color="#B45309" />
-            <Text style={styles.bulletText}>“No internet” — check your connection; image recognition needs network.</Text>
-          </View>
-          <View style={styles.bulletRow}>
-            <Ionicons name="warning" size={18} color="#B45309" />
-            <Text style={styles.bulletText}>“Low accuracy” — take a clearer, closer photo with better lighting.</Text>
-          </View>
+          <Text style={styles.cardTitle}>{t('help.troubleshooting.title')}</Text>
+          {troubleshooting.map((text, index) => (
+            <View key={`trouble-${index}`} style={styles.bulletRow}>
+              <Ionicons name="warning" size={18} color="#B45309" />
+              <Text style={styles.bulletText}>{text}</Text>
+            </View>
+          ))}
         </View>
 
         {/* Links / actions */}
@@ -107,7 +95,7 @@ const HelpScreen = ({ navigation }) => {
             style={styles.linkRow}
             onPress={() => navigation.navigate('FAQScreen')}
           >
-            <Text style={styles.linkText}>FAQ</Text>
+            <Text style={styles.linkText}>{t('help.links.faq')}</Text>
             <Ionicons name="chevron-forward" size={20} color="#666" />
           </TouchableOpacity>
 
@@ -115,27 +103,27 @@ const HelpScreen = ({ navigation }) => {
             style={styles.linkRow}
             onPress={() => navigation.navigate('SendFeedbackScreen')}
           >
-            <Text style={styles.linkText}>Send Feedback</Text>
+            <Text style={styles.linkText}>{t('help.links.feedback')}</Text>
             <Ionicons name="chevron-forward" size={20} color="#666" />
           </TouchableOpacity>
 
           <TouchableOpacity style={styles.linkRow} onPress={() => navigation.navigate('AboutScreen')}>
-            <Text style={styles.linkText}>About LeafNest</Text>
+            <Text style={styles.linkText}>{t('help.links.about')}</Text>
             <Ionicons name="chevron-forward" size={20} color="#666" />
           </TouchableOpacity>
 
           <TouchableOpacity style={styles.linkRow} onPress={() => navigation.navigate('PrivacyPolicy')}>
-            <Text style={styles.linkText}>Privacy Policy</Text>
+            <Text style={styles.linkText}>{t('help.links.privacy')}</Text>
             <Ionicons name="chevron-forward" size={20} color="#666" />
           </TouchableOpacity>
 
           <TouchableOpacity style={styles.linkRow} onPress={() => navigation.navigate('TermsOfUse')}>
-            <Text style={styles.linkText}>Terms of Use</Text>
+            <Text style={styles.linkText}>{t('help.links.terms')}</Text>
             <Ionicons name="chevron-forward" size={20} color="#666" />
           </TouchableOpacity>
 
           <TouchableOpacity style={styles.linkRow} onPress={openSupportEmail}>
-            <Text style={styles.linkText}>Contact Support</Text>
+            <Text style={styles.linkText}>{t('help.links.contact')}</Text>
             <Ionicons name="mail" size={20} color="#666" />
           </TouchableOpacity>
         </View>

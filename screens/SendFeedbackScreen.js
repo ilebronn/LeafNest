@@ -13,20 +13,14 @@ import {
   Linking,
 } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
+import { useTranslation } from 'react-i18next';
 
 const SUPPORT_EMAIL = 'leafnest.capstone@gmail.com';
-
-const topics = [
-  { value: 'bug', label: 'Report a Bug' },
-  { value: 'idea', label: 'Feature Request' },
-  { value: 'ux', label: 'Design / UX' },
-  { value: 'content', label: 'Species / Content' },
-  { value: 'account', label: 'Account / Login' },
-  { value: 'other', label: 'Other' },
-];
+const TOPIC_KEYS = ['bug', 'idea', 'ux', 'content', 'account', 'other'];
 
 const SendFeedbackScreen = ({ navigation, route }) => {
   // Prefill from route if you ever want to deep-link a topic
+  const { t } = useTranslation();
   const prefillTopic = route?.params?.topic ?? 'bug';
 
   const [topic, setTopic] = useState(prefillTopic);
@@ -36,13 +30,24 @@ const SendFeedbackScreen = ({ navigation, route }) => {
   const [includeDiagnostics, setIncludeDiagnostics] = useState(true);
   const [submitting, setSubmitting] = useState(false);
 
+  const topicOptions = useMemo(
+    () =>
+      TOPIC_KEYS.map((key) => ({
+        value: key,
+        label: t(`feedback.topics.${key}`),
+      })),
+    [t]
+  );
+
   const isValid = useMemo(
     () => subject.trim().length > 0 && message.trim().length > 0,
     [subject, message]
   );
+  const footerTemplate = t('feedback.footerText', { email: '__EMAIL__' });
+  const [footerPrefix = '', footerSuffix = ''] = footerTemplate.split('__EMAIL__');
 
   const buildMailTo = () => {
-    const topicLabel = topics.find(t => t.value === topic)?.label ?? 'Other';
+    const topicLabel = topicOptions.find(tItem => tItem.value === topic)?.label ?? t('feedback.topics.other');
 
     const diagnostics = includeDiagnostics
       ? `\n\n---\nDiagnostics (auto-included)\nPlatform: ${Platform.OS}\nOS Version: ${Platform.Version}\nApp: LeafNest\n---`
@@ -63,7 +68,7 @@ const SendFeedbackScreen = ({ navigation, route }) => {
 
   const onSubmit = async () => {
     if (!isValid) {
-      Alert.alert('Missing info', 'Please add a subject and message.');
+      Alert.alert(t('feedback.alerts.missingInfoTitle'), t('feedback.alerts.missingInfoMessage'));
       return;
     }
 
@@ -73,16 +78,16 @@ const SendFeedbackScreen = ({ navigation, route }) => {
       const canOpen = await Linking.canOpenURL(url);
       if (!canOpen) {
         Alert.alert(
-          'Cannot open email app',
-          `Please email us at ${SUPPORT_EMAIL} with your feedback.`
+          t('feedback.alerts.noEmailAppTitle'),
+          t('feedback.alerts.noEmailAppMessage', { email: SUPPORT_EMAIL })
         );
         return;
       }
       await Linking.openURL(url);
     } catch (e) {
       Alert.alert(
-        'Something went wrong',
-        `Please email us at ${SUPPORT_EMAIL} with your feedback.`
+        t('feedback.alerts.genericErrorTitle'),
+        t('feedback.alerts.genericErrorMessage', { email: SUPPORT_EMAIL })
       );
     } finally {
       setSubmitting(false);
@@ -97,24 +102,24 @@ const SendFeedbackScreen = ({ navigation, route }) => {
       </TouchableOpacity>
 
       <ScrollView contentContainerStyle={styles.contentContainer}>
-        <Text style={styles.title}>Send Feedback</Text>
-        <Text style={styles.helper}>
-          Tell us what’s working great or what could be improved. We read every message.
-        </Text>
+        <Text style={styles.title}>{t('feedback.title')}</Text>
+        <Text style={styles.helper}>{t('feedback.subtitle')}</Text>
 
         {/* Topic pills */}
         <View style={styles.section}>
-          <Text style={styles.label}>Topic</Text>
+          <Text style={styles.label}>{t('feedback.topicLabel')}</Text>
           <View style={styles.pills}>
-            {topics.map(t => {
-              const active = t.value === topic;
+            {topicOptions.map(option => {
+              const active = option.value === topic;
               return (
                 <TouchableOpacity
-                  key={t.value}
-                  onPress={() => setTopic(t.value)}
+                  key={option.value}
+                  onPress={() => setTopic(option.value)}
                   style={[styles.pill, active && styles.pillActive]}
                 >
-                  <Text style={[styles.pillText, active && styles.pillTextActive]}>{t.label}</Text>
+                  <Text style={[styles.pillText, active && styles.pillTextActive]}>
+                    {option.label}
+                  </Text>
                 </TouchableOpacity>
               );
             })}
@@ -123,9 +128,9 @@ const SendFeedbackScreen = ({ navigation, route }) => {
 
         {/* Subject */}
         <View style={styles.section}>
-          <Text style={styles.label}>Subject</Text>
+          <Text style={styles.label}>{t('feedback.subjectLabel')}</Text>
           <TextInput
-            placeholder="Short summary (e.g., Scanner mislabels a leaf as maple)"
+            placeholder={t('feedback.subjectPlaceholder')}
             placeholderTextColor="#9aa0a6"
             style={styles.input}
             value={subject}
@@ -136,9 +141,9 @@ const SendFeedbackScreen = ({ navigation, route }) => {
 
         {/* Message */}
         <View style={styles.section}>
-          <Text style={styles.label}>Message</Text>
+          <Text style={styles.label}>{t('feedback.messageLabel')}</Text>
           <TextInput
-            placeholder="Describe what happened, steps to reproduce, and expectations…"
+            placeholder={t('feedback.messagePlaceholder')}
             placeholderTextColor="#9aa0a6"
             style={[styles.input, styles.textarea]}
             value={message}
@@ -150,9 +155,9 @@ const SendFeedbackScreen = ({ navigation, route }) => {
 
         {/* Optional contact email */}
         <View style={styles.section}>
-          <Text style={styles.label}>Your Email (optional)</Text>
+          <Text style={styles.label}>{t('feedback.emailLabel')}</Text>
           <TextInput
-            placeholder="We’ll reply here if needed"
+            placeholder={t('feedback.emailPlaceholder')}
             placeholderTextColor="#9aa0a6"
             style={styles.input}
             value={email}
@@ -166,10 +171,8 @@ const SendFeedbackScreen = ({ navigation, route }) => {
         {/* Include diagnostics */}
         <View style={[styles.section, styles.switchRow]}>
           <View style={{ flex: 1 }}>
-            <Text style={styles.label}>Include Diagnostics</Text>
-            <Text style={styles.caption}>
-              Helps us debug issues (platform & OS only).
-            </Text>
+            <Text style={styles.label}>{t('feedback.includeDiagnostics')}</Text>
+            <Text style={styles.caption}>{t('feedback.diagnosticsHint')}</Text>
           </View>
           <Switch
             value={includeDiagnostics}
@@ -186,13 +189,17 @@ const SendFeedbackScreen = ({ navigation, route }) => {
           style={[styles.submitBtn, (!isValid || submitting) && styles.submitBtnDisabled]}
         >
           <Ionicons name="paper-plane" size={18} color="#fff" />
-          <Text style={styles.submitText}>{submitting ? 'Opening Mail…' : 'Send Feedback'}</Text>
+          <Text style={styles.submitText}>
+            {submitting ? t('feedback.submitting') : t('feedback.submit')}
+          </Text>
         </TouchableOpacity>
 
         {/* Footer / alt contact */}
         <View style={styles.footer}>
           <Text style={styles.footerText}>
-            Or email us directly at <Text style={styles.link}>{SUPPORT_EMAIL}</Text>
+            {footerPrefix}
+            <Text style={styles.link}>{SUPPORT_EMAIL}</Text>
+            {footerSuffix}
           </Text>
         </View>
       </ScrollView>
@@ -287,6 +294,12 @@ const styles = StyleSheet.create({
     gap: 16,
   },
 
+  caption: {
+    fontSize: 12,
+    color: '#6b7280',
+    marginTop: 4,
+  },
+
   submitBtn: {
     marginTop: 10,
     backgroundColor: '#5E936C',
@@ -306,3 +319,4 @@ const styles = StyleSheet.create({
   footerText: { color: '#667085' },
   link: { color: '#5E936C', fontWeight: '700' },
 });
+

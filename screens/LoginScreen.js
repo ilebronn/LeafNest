@@ -61,8 +61,8 @@ export default function LoginScreen({ navigation }) {
                 />
               </LinearGradient>
             </View>
-            <Text style={styles.welcomeText}>Welcome to LeafNest</Text>
-            <Text style={styles.subtitleText}>Discover Nature's Beauty</Text>
+            <Text style={styles.welcomeText}>{t('login.welcomeTitle')}</Text>
+            <Text style={styles.subtitleText}>{t('login.welcomeSubtitle')}</Text>
           </View>
 
           {/* Spacer */}
@@ -84,7 +84,7 @@ export default function LoginScreen({ navigation }) {
               >
                 <Ionicons name="mail-outline" size={moderateScale(20)} color="white" />
                 <Text style={styles.mainButtonText}>
-                  Sign In with Email
+                  {t('login.signInWithEmailButton')}
                 </Text>
                 <Ionicons name="arrow-forward" size={moderateScale(20)} color="white" />
               </LinearGradient>
@@ -93,7 +93,7 @@ export default function LoginScreen({ navigation }) {
             {/* Divider */}
             <View style={styles.dividerContainer}>
               <View style={styles.divider} />
-              <Text style={styles.dividerText}>or</Text>
+              <Text style={styles.dividerText}>{t('login.dividerOr')}</Text>
               <View style={styles.divider} />
             </View>
 
@@ -105,7 +105,7 @@ export default function LoginScreen({ navigation }) {
             >
               <Ionicons name="glasses-outline" size={moderateScale(20)} color="white" />
               <Text style={styles.secondaryButtonText}>
-                Continue as Guest
+                {t('login.signInAsGuest')}
               </Text>
             </TouchableOpacity>
           </View>
@@ -113,17 +113,17 @@ export default function LoginScreen({ navigation }) {
           {/* Terms and Policies Text */}
           <View style={styles.termsContainer}>
             <Text style={styles.termsText}>
-              By continuing, you agree to our{' '}
+              {t('login.continueAgreement')}{' '}
               <TouchableOpacity onPress={() => navigation.navigate('TermsOfUse')}>
-                <Text style={styles.linkText}>Terms of Use</Text>
+                <Text style={styles.linkText}>{t('login.termsOfUse')}</Text>
               </TouchableOpacity>
-              {'  , '}
+              {', '}
               <TouchableOpacity onPress={() => navigation.navigate('PrivacyPolicy')}>
-                <Text style={styles.linkText}>Privacy Policy</Text>
+                <Text style={styles.linkText}>{t('login.privacyPolicy')}</Text>
               </TouchableOpacity>
-              {', and '}
+              {`, ${t('common.and')} `}
               <TouchableOpacity onPress={() => navigation.navigate('CookiesPolicy')}>
-                <Text style={styles.linkText}>Cookie Policy</Text>
+                <Text style={styles.linkText}>{t('login.cookiesPolicy')}</Text>
               </TouchableOpacity>
               .
             </Text>

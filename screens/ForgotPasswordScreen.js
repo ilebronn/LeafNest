@@ -383,6 +383,7 @@ const ForgotPasswordScreen = ({ navigation }) => {
       borderColor: '#E5E7EB',
       paddingHorizontal: clamp(scale(16), 12, 18),
       marginBottom: vScale(16),
+      minHeight: clamp(vScale(50), 44, 56),
     },
     inputIcon: {
       marginRight: clamp(scale(10), 8, 12),
@@ -405,6 +406,7 @@ const ForgotPasswordScreen = ({ navigation }) => {
       paddingVertical: clamp(vScale(16), 14, 18),
       alignItems: 'center',
       justifyContent: 'center',
+      marginTop: vScale(8),
     },
     actionButtonDisabled: {
       backgroundColor: '#9CA3AF',
@@ -506,6 +508,9 @@ const ForgotPasswordScreen = ({ navigation }) => {
       color: '#5E936C',
       textAlign: 'center',
       marginTop: vScale(8),
+    },
+    passwordInputWrapper: {
+      marginBottom: vScale(20),
     },
   });
 
@@ -671,58 +676,74 @@ const ForgotPasswordScreen = ({ navigation }) => {
             </View>
 
             <View style={styles.formCard}>
-              <Text style={styles.label}>New Password</Text>
-              <View style={styles.inputContainer}>
-                <Ionicons 
-                  name="lock-closed" 
-                  size={clamp(scale(20), 18, 24)} 
-                  color="#6B7280" 
-                  style={styles.inputIcon}
-                />
-                <TextInput
-                  style={styles.input}
-                  placeholder="Enter new password"
-                  placeholderTextColor="#9CA3AF"
-                  value={newPassword}
-                  onChangeText={setNewPassword}
-                  secureTextEntry={!showNewPassword}
-                  autoCapitalize="none"
-                  editable={!isLoading}
-                />
-                <TouchableOpacity onPress={() => setShowNewPassword(!showNewPassword)}>
+              {/* New Password Input */}
+              <View style={styles.passwordInputWrapper}>
+                <Text style={styles.label}>New Password</Text>
+                <View style={styles.inputContainer}>
                   <Ionicons 
-                    name={showNewPassword ? "eye-off" : "eye"} 
+                    name="lock-closed" 
                     size={clamp(scale(20), 18, 24)} 
                     color="#6B7280" 
+                    style={styles.inputIcon}
                   />
-                </TouchableOpacity>
+                  <TextInput
+                    style={styles.input}
+                    placeholder="Enter new password"
+                    placeholderTextColor="#9CA3AF"
+                    value={newPassword}
+                    onChangeText={setNewPassword}
+                    secureTextEntry={!showNewPassword}
+                    autoCapitalize="none"
+                    autoCorrect={false}
+                    editable={!isLoading}
+                    textContentType="newPassword"
+                  />
+                  <TouchableOpacity 
+                    onPress={() => setShowNewPassword(!showNewPassword)}
+                    hitSlop={{ top: 10, bottom: 10, left: 10, right: 10 }}
+                  >
+                    <Ionicons 
+                      name={showNewPassword ? "eye-off" : "eye"} 
+                      size={clamp(scale(20), 18, 24)} 
+                      color="#6B7280" 
+                    />
+                  </TouchableOpacity>
+                </View>
               </View>
 
-              <Text style={styles.label}>Confirm Password</Text>
-              <View style={styles.inputContainer}>
-                <Ionicons 
-                  name="lock-closed" 
-                  size={clamp(scale(20), 18, 24)} 
-                  color="#6B7280" 
-                  style={styles.inputIcon}
-                />
-                <TextInput
-                  style={styles.input}
-                  placeholder="Confirm new password"
-                  placeholderTextColor="#9CA3AF"
-                  value={confirmPassword}
-                  onChangeText={setConfirmPassword}
-                  secureTextEntry={!showConfirmPassword}
-                  autoCapitalize="none"
-                  editable={!isLoading}
-                />
-                <TouchableOpacity onPress={() => setShowConfirmPassword(!showConfirmPassword)}>
+              {/* Confirm Password Input */}
+              <View style={styles.passwordInputWrapper}>
+                <Text style={styles.label}>Confirm Password</Text>
+                <View style={styles.inputContainer}>
                   <Ionicons 
-                    name={showConfirmPassword ? "eye-off" : "eye"} 
+                    name="lock-closed" 
                     size={clamp(scale(20), 18, 24)} 
                     color="#6B7280" 
+                    style={styles.inputIcon}
                   />
-                </TouchableOpacity>
+                  <TextInput
+                    style={styles.input}
+                    placeholder="Confirm new password"
+                    placeholderTextColor="#9CA3AF"
+                    value={confirmPassword}
+                    onChangeText={setConfirmPassword}
+                    secureTextEntry={!showConfirmPassword}
+                    autoCapitalize="none"
+                    autoCorrect={false}
+                    editable={!isLoading}
+                    textContentType="newPassword"
+                  />
+                  <TouchableOpacity 
+                    onPress={() => setShowConfirmPassword(!showConfirmPassword)}
+                    hitSlop={{ top: 10, bottom: 10, left: 10, right: 10 }}
+                  >
+                    <Ionicons 
+                      name={showConfirmPassword ? "eye-off" : "eye"} 
+                      size={clamp(scale(20), 18, 24)} 
+                      color="#6B7280" 
+                    />
+                  </TouchableOpacity>
+                </View>
               </View>
 
               <TouchableOpacity 
@@ -788,10 +809,12 @@ const ForgotPasswordScreen = ({ navigation }) => {
       <KeyboardAvoidingView 
         behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
         style={{ flex: 1 }}
+        keyboardVerticalOffset={Platform.OS === 'ios' ? 0 : 20}
       >
         <ScrollView 
           contentContainerStyle={styles.scrollContainer}
           showsVerticalScrollIndicator={false}
+          keyboardShouldPersistTaps="handled"
         >
           {/* Progress Indicator */}
           <View style={styles.progressContainer}>

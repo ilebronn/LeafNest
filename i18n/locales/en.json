@@ -1,4 +1,4 @@
-{
+﻿{
   "common": {
     "welcome": "Welcome",
     "guest": "Guest",
@@ -10,7 +10,8 @@
     "save": "Save",
     "back": "Back",
     "edit": "Edit",
-    "username": "Username"
+    "username": "Username",
+    "and": "and"
   },
   "login": {
     "title": "LeafNest",
@@ -24,7 +25,13 @@
     "termsOfUse": "Terms of Use",
     "privacyPolicy": "Privacy Policy",
     "cookiesPolicy": "Cookies Policy",
-    "signIn": "Sign In"
+    "signIn": "Sign In",
+    "welcomeTitle": "Welcome to LeafNest",
+    "welcomeSubtitle": "Discover nature's beauty",
+    "signInWithEmailButton": "Sign in with Email",
+    "dividerOr": "or",
+    "continueAsGuest": "Continue as Guest",
+    "continueAgreement": "By continuing, you agree to our"
   },
   "home": {
     "welcomeGuest": "Welcome, Guest",
@@ -59,7 +66,54 @@
     "funFact": "Fun Fact",
     "newFact": "New Fact",
     "trendingPlants": "Trending Plants",
-    "trendingAnimals": "Trending Animals"
+    "trendingAnimals": "Trending Animals",
+    "alerts": {
+      "authRequiredTitle": "Authentication Required",
+      "authRequiredBody": "Please sign in to download the PDF.",
+      "pdfSuccessTitle": "Success",
+      "pdfSuccessBody": "The PDF has been generated and sent to your email.",
+      "pdfErrorTitle": "Error",
+      "pdfErrorBody": "Failed to generate PDF. Please try again.",
+      "signInRequiredTitle": "Sign in required",
+      "signInLikeBody": "Please sign in to like posts.",
+      "signInCommentBody": "Please sign in to comment."
+    },
+    "pdf": {
+      "defaultCommon": "Unknown",
+      "defaultScientific": "Unknown",
+      "defaultRank": "Unknown rank",
+      "defaultTaxon": "Unknown",
+      "noDescription": "No description available.",
+      "infoUnavailable": "Information not available.",
+      "notEvaluated": "Not evaluated"
+    },
+    "trending": {
+      "title": "Trending Species",
+      "subtitle": "Most scanned this week"
+    },
+    "emptyState": {
+      "title": "Welcome to the Community",
+      "subtitle": "Start exploring and sharing your nature discoveries.",
+      "cta": "Scan Your First Species"
+    },
+    "feed": {
+      "likesCount": "{{count}} like",
+      "likesCount_plural": "{{count}} likes",
+      "beFirst": "Be the first to like this",
+      "showMore": "Show more",
+      "showLess": "Show less",
+      "viewComments": "View all {{count}} comment",
+      "viewComments_plural": "View all {{count}} comments",
+      "unknownUser": "Anonymous",
+      "unknownSpecies": "Unknown species",
+      "likeError": "Failed to like post."
+    },
+    "relativeTime": {
+      "justNow": "Just now",
+      "minutes": "{{count}}m ago",
+      "hours": "{{count}}h ago",
+      "days": "{{count}}d ago"
+    }
   },
   "settings": {
     "title": "Settings",
@@ -88,7 +142,10 @@
     "help": "Help",
     "sendFeedback": "Send Feedback",
     "faq": "FAQ",
-    "termsOfUse": "Terms of Use"
+    "termsOfUse": "Terms of Use",
+    "generalSection": "General",
+    "supportSection": "Support",
+    "legalSection": "Legal"
   },
   "profile": {
     "title": "Profile",
@@ -98,7 +155,46 @@
     "signIn": "Sign In",
     "accessFullFeatures": "Access all features",
     "createAccount": "Create Account",
-    "joinLeafNest": "Join LeafNest"
+    "joinLeafNest": "Join LeafNest",
+    "guestUser": "Guest User",
+    "statsTitle": "Scan Statistics",
+    "viewAll": "View All",
+    "guestPromptTitle": "Track Your Progress",
+    "guestPromptText": "Sign in to track scans, discover species, and unlock achievements.",
+    "badgeNew": "New",
+    "editPlaceholder": "Enter username",
+    "stats": {
+      "total": "Total Scans",
+      "week": "This Week",
+      "species": "Species"
+    },
+    "sections": {
+      "account": "Account Settings"
+    },
+    "menu": {
+      "planTitle": "Your Plan",
+      "planSubtitle": "LeafNest Free",
+      "notificationsTitle": "Notifications",
+      "notificationsSubtitle": "Manage your notifications",
+      "passwordTitle": "Forgot Password",
+      "passwordSubtitle": "Reset your password",
+      "signOutTitle": "Sign Out",
+      "signOutSubtitle": "Sign out from your account",
+      "signInTitle": "Sign In",
+      "signInSubtitle": "Access all features",
+      "createAccountTitle": "Create Account",
+      "createAccountSubtitle": "Join LeafNest today"
+    },
+    "alerts": {
+      "syncSuccess": "Synced {{count}} pending scan",
+      "syncSuccess_plural": "Synced {{count}} pending scans",
+      "usernameUpdated": "Username updated successfully!",
+      "usernameUpdateError": "Failed to update username.",
+      "signOutTitle": "Sign Out",
+      "signOutMessage": "Are you sure you want to sign out?",
+      "signOutConfirm": "Sign Out",
+      "signOutError": "Failed to sign out. Please try again."
+    }
   },
   "languages": {
     "en": "English",
@@ -148,7 +244,7 @@
     "share": "Share Animal"
   },
   "signup": {
-    "title": "Register",
+    "title": "Create Account",
     "username": "Username",
     "email": "Email",
     "password": "Password",
@@ -157,10 +253,14 @@
     "alreadyHaveAccount": "Already have an Account? Sign In",
     "passwordsDontMatch": "Passwords don't match!",
     "fillAllFields": "Please fill in all fields.",
-    "signUpSuccessful": "Sign-Up Successful",
     "verificationEmailSent": "A verification email has been sent to your email.",
     "emailAlreadyInUse": "The email address is already in use.",
-    "invalidEmail": "The email address is not valid."
+    "invalidEmail": "The email address is not valid.",
+    "subtitle": "Join us to explore nature",
+    "processing": "Processing...",
+    "dividerOr": "or",
+    "alreadyMember": "Already a member?",
+    "signInLink": "Sign In"
   },
   "signin": {
     "title": "Sign In",
@@ -171,10 +271,15 @@
     "dontHaveAccount": "Don't have an Account? Sign Up",
     "fillAllFields": "Please fill in all fields.",
     "signInSuccessful": "Sign-In Successful",
-    "welcomeBack": "Welcome back!",
+    "welcomeBack": "Welcome back",
     "userNotFound": "No user found with this email.",
     "wrongPassword": "Incorrect password.",
-    "invalidEmail": "Invalid email address."
+    "invalidEmail": "Invalid email address.",
+    "subtitle": "Sign in to continue your journey",
+    "forgotPasswordLink": "Forgot Password?",
+    "dividerOr": "or",
+    "noAccountPrompt": "Don't have an account?",
+    "signUpLink": "Sign Up"
   },
   "scan": {
     "loadingCamera": "Loading camera...",
@@ -216,7 +321,10 @@
     "credits": "Originally created by the LeafNest team with support from Pinamalayan Maritime Foundation And Technological College INC. (PMFTCI) and the School of Computer Studies.",
     "privacyPolicy": "Privacy Policy",
     "version": "Version 0.0.1 (1)",
-    "help": "For help: leafnest.capstone@gmail.com"
+    "help": "For help: help.leafnest.capstone@gmail.com",
+    "tagline": "Plant & Animal Identification",
+    "institutionalSupport": "Institutional Support",
+    "mentorRole": "Project Mentor & Adviser"
   },
   "plan": {
     "title": "Plans",
@@ -236,5 +344,271 @@
     "premiumFeature4": "Ad-free experience",
     "subscribeNow": "Subscribe Now",
     "selectedPlan": "You selected the {{plan}} plan!"
+  },
+  "legal": {
+    "cookies": {
+      "title": "Cookies Policy",
+      "subtitle": "How we use cookies to enhance your experience",
+      "effectiveDate": "Effective Date: July 1, 2025",
+      "intro": "This Cookies Policy explains how we use cookies to enhance your experience when you visit our app and use its features. By using this app, you consent to the use of cookies as described in this policy.",
+      "sections": [
+        {
+          "title": "What Are Cookies?",
+          "content": "Cookies are small text files stored on your device when you visit websites or use apps. They help us understand how you interact with our service and allow us to provide you with a better, more personalized experience."
+        },
+        {
+          "title": "How We Use Cookies",
+          "content": "We use cookies for several essential purposes:",
+          "list": [
+            "To personalize content and advertisements",
+            "To analyze traffic patterns and improve user experience",
+            "To enable certain features and functionality of our app",
+            "To remember your preferences and settings",
+            "To provide secure access to your account"
+          ]
+        },
+        {
+          "title": "Types of Cookies We Use",
+          "content": "We use different types of cookies to enhance your experience:",
+          "list": [
+            "Essential Cookies: Required for basic app functionality",
+            "Performance Cookies: Help us understand how you use the app",
+            "Functional Cookies: Remember your preferences and choices",
+            "Analytics Cookies: Provide insights into app usage patterns"
+          ]
+        },
+        {
+          "title": "Managing Cookies",
+          "content": "You can control and manage cookies through your device settings. However, please note that disabling certain cookies may affect your experience and limit the functionality of the app."
+        },
+        {
+          "title": "Cookie Duration",
+          "content": "Some cookies are temporary (session cookies) and are deleted when you close the app. Others remain on your device for a set period to remember your preferences across sessions."
+        },
+        {
+          "title": "Changes to This Policy",
+          "content": "We may update this Cookies Policy from time to time to reflect changes in technology or legal requirements. Any changes will be posted on this page with an updated revision date."
+        },
+        {
+          "title": "Contact Us",
+          "content": "If you have any questions, concerns, or feedback regarding this Cookies Policy, please contact us at leafnest.capstone@gmail.com."
+        }
+      ],
+      "footerTitle": "Your Privacy Matters",
+      "footerText": "We are committed to transparency about how we use cookies. Your continued use of our app indicates your acceptance of this policy.",
+      "copyright": "© 2025 LeafNest. All rights reserved.",
+      "lastUpdated": "Last updated: July 1, 2025"
+    },
+    "privacy": {
+      "title": "Privacy Policy",
+      "subtitle": "Your privacy matters to us",
+      "effectiveDate": "Effective Date: July 1, 2025",
+      "intro": "At LeafNest, we are committed to protecting your privacy and ensuring the security of your personal information.",
+      "sections": [
+        {
+          "title": "Information We Collect",
+          "content": "We collect information you provide directly to us, such as when you create an account, upload photos, or contact us for support. This may include your name, email address, and any other information you choose to provide."
+        },
+        {
+          "title": "How We Use Your Information",
+          "content": "We use the information we collect to provide, maintain, and improve our services, to communicate with you, and to develop new features. We do not sell your personal information to third parties."
+        },
+        {
+          "title": "Data Security",
+          "content": "We implement appropriate technical and organizational measures to protect your personal information against unauthorized access, alteration, disclosure, or destruction."
+        },
+        {
+          "title": "Your Rights",
+          "content": "You have the right to access, update, or delete your personal information. You can do this through your account settings or by contacting us directly."
+        },
+        {
+          "title": "Third-Party Services",
+          "content": "Our app may contain links to third-party websites and services. We are not responsible for their privacy practices. We encourage you to review their privacy policies."
+        },
+        {
+          "title": "Changes to Privacy Policy",
+          "content": "We reserve the right to update this Privacy Policy at any time. Changes will be posted on this page with an updated effective date. Your continued use constitutes acceptance of changes."
+        },
+        {
+          "title": "Contact Us",
+          "content": "If you have any questions about this Privacy Policy or our privacy practices, please contact us at privacy@leafnest.com."
+        }
+      ],
+      "footerTitle": "We Care About You",
+      "footerText": "Your trust is important to us. We are committed to transparent data practices and your right to privacy.",
+      "copyright": "© 2025 LeafNest. All rights reserved.",
+      "lastUpdated": "Last updated: July 1, 2025"
+    },
+    "terms": {
+      "title": "Terms of Use",
+      "subtitle": "Please read carefully before using",
+      "effectiveDate": "Effective Date: July 1, 2025",
+      "intro": "These Terms of Use govern the use of the LeafNest app and services. By using our app, you agree to these terms and conditions.",
+      "sections": [
+        {
+          "title": "Acceptance of Terms",
+          "content": "By accessing or using the LeafNest app, you agree to be bound by these Terms of Use. If you do not agree to these terms, you should not use the app."
+        },
+        {
+          "title": "User Responsibilities",
+          "content": "You agree to use the app only for lawful purposes and in a manner that does not infringe on the rights of others. You are responsible for maintaining the confidentiality of your account information."
+        },
+        {
+          "title": "Intellectual Property",
+          "content": "All content, trademarks, logos, and intellectual property within the app are owned by LeafNest or licensed to us. Unauthorized use of our intellectual property is strictly prohibited."
+        },
+        {
+          "title": "Privacy and Data Collection",
+          "content": "We collect and process personal information as described in our Privacy Policy. By using our app, you consent to our data collection, storage, and processing practices."
+        },
+        {
+          "title": "Limitation of Liability",
+          "content": "LeafNest is not liable for any damages, losses, or injuries arising from the use of the app or its services. You use the app at your own risk and discretion."
+        },
+        {
+          "title": "Changes to Terms",
+          "content": "We reserve the right to update these Terms of Use at any time. Any changes will be posted on this page with an updated effective date. Continued use constitutes acceptance of changes."
+        },
+        {
+          "title": "Contact Us",
+          "content": "If you have any questions, concerns, or feedback about these Terms of Use, please contact us at leafnest.capstone@gmail.com."
+        }
+      ],
+      "footerTitle": "Thank You",
+      "footerText": "Thank you for taking the time to review our Terms of Use. Your trust and compliance help us create a better experience for everyone.",
+      "copyright": "© 2025 LeafNest. All rights reserved.",
+      "lastUpdated": "Last updated: July 1, 2025"
+    }
+  },
+  "faq": {
+    "title": "Help & FAQ",
+    "subtitle": "Find answers to common questions",
+    "categories": [
+      {
+        "title": "Getting Started",
+        "items": [
+          {
+            "question": "What is LeafNest?",
+            "answer": "LeafNest is a plant identification and information app that uses AI technology to help you identify plants and animals to provide knowledge about nature."
+          },
+          {
+            "question": "How do I get started?",
+            "answer": "Open the app, tap the scan icon, and point it at any plant or animal. The AI will identify it and provide detailed information about that species."
+          }
+        ]
+      },
+      {
+        "title": "Using the Scanner",
+        "items": [
+          {
+            "question": "How do I scan a species?",
+            "answer": "Tap the scan icon on the home screen, point your camera at the species, and capture a clear photo. The app will automatically identify it."
+          },
+          {
+            "question": "What makes a good scan?",
+            "answer": "Ensure good lighting, focus on distinctive features, and keep the camera steady for the best results."
+          },
+          {
+            "question": "Can I scan from my photo gallery?",
+            "answer": "Yes. You can upload existing photos from your gallery by selecting the gallery option in the scanner screen."
+          }
+        ]
+      },
+      {
+        "title": "Accuracy & Features",
+        "items": [
+          {
+            "question": "How accurate is the identification?",
+            "answer": "LeafNest uses advanced machine learning models. Accuracy varies by lighting and image quality, but typically exceeds 90%."
+          },
+          {
+            "question": "Can I save my favorite plants?",
+            "answer": "Yes. Tap the heart icon on any identified species to add it to your favorites for quick access later."
+          }
+        ]
+      },
+      {
+        "title": "Support & Help",
+        "items": [
+          {
+            "question": "How do I contact support?",
+            "answer": "Open the Settings menu and select Help & Support, or email us at leafnest.capstone@gmail.com."
+          }
+        ]
+      }
+    ]
+  },
+  "help": {
+    "title": "Help & Support",
+    "subtitle": "Tips for scanning plants & animals with AI — and where to get more help.",
+    "quickStart": {
+      "title": "Quick Start",
+      "bullets": [
+        "Tap the Scan button from the home screen.",
+        "Center the plant or animal in the frame.",
+        "Hold steady, then capture a clear photo."
+      ],
+      "cta": "Open Scanner"
+    },
+    "bestResults": {
+      "title": "How to get better results",
+      "bullets": [
+        "Use good lighting and avoid harsh backlight.",
+        "Fill the frame with the subject, focusing on distinctive details.",
+        "Try multiple angles such as leaves, flowers, bark, or profile shots."
+      ]
+    },
+    "troubleshooting": {
+      "title": "Troubleshooting",
+      "bullets": [
+        "Daily highlights look the same? Pull to refresh or reopen the app after midnight (Philippine time).",
+        "No internet? Check your connection because image recognition needs a network connection.",
+        "Low accuracy? Take a clearer, closer photo with better lighting."
+      ]
+    },
+    "links": {
+      "faq": "FAQ",
+      "feedback": "Send Feedback",
+      "about": "About LeafNest",
+      "privacy": "Privacy Policy",
+      "terms": "Terms of Use",
+      "contact": "Contact Support"
+    },
+    "alerts": {
+      "noEmailTitle": "Cannot open email app",
+      "noEmailBody": "Please email us at {{email}}."
+    }
+  },
+  "feedback": {
+    "title": "Send Feedback",
+    "subtitle": "Tell us what is working great or what could be improved. We read every message.",
+    "topicLabel": "Topic",
+    "topics": {
+      "bug": "Report a Bug",
+      "idea": "Feature Request",
+      "ux": "Design / UX",
+      "content": "Species / Content",
+      "account": "Account / Login",
+      "other": "Other"
+    },
+    "subjectLabel": "Subject",
+    "subjectPlaceholder": "Short summary (e.g., Scanner mislabels a leaf as maple)",
+    "messageLabel": "Message",
+    "messagePlaceholder": "Describe what happened, steps to reproduce, and expectations.",
+    "emailLabel": "Your Email (optional)",
+    "emailPlaceholder": "We will reply here if needed",
+    "includeDiagnostics": "Include diagnostics",
+    "diagnosticsHint": "Helps us debug issues (platform & OS only).",
+    "submit": "Send Feedback",
+    "submitting": "Opening Mail…",
+    "footerText": "Or email us directly at {{email}}",
+    "alerts": {
+      "missingInfoTitle": "Missing info",
+      "missingInfoMessage": "Please add a subject and message.",
+      "noEmailAppTitle": "Cannot open email app",
+      "noEmailAppMessage": "Please email us at {{email}} with your feedback.",
+      "genericErrorTitle": "Something went wrong",
+      "genericErrorMessage": "Please email us at {{email}} with your feedback."
+    }
   }
 }

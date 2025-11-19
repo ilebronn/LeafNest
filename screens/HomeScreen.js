@@ -1,4 +1,4 @@
-// HomeScreen.js - ENHANCED WITH REAL-TIME NOTIFICATION UPDATES
+﻿// HomeScreen.js - ENHANCED WITH REAL-TIME NOTIFICATION UPDATES
 import React, { useRef, useState, useEffect, useCallback } from 'react';
 import {
   View,
@@ -30,7 +30,7 @@ const { width, height } = Dimensions.get('window');
 
 export default function HomeScreen({ route, navigation }) {
   const displayName = route?.params?.displayName ?? '';
-  const { t } = useTranslation();
+  const { t, i18n } = useTranslation();
   const [isGuest, setIsGuest] = useState(true);
   const [publicScans, setPublicScans] = useState([]);
   const [trendingSpecies, setTrendingSpecies] = useState([]);
@@ -47,7 +47,8 @@ export default function HomeScreen({ route, navigation }) {
 
   const currentUser = auth.currentUser;
   const currentUserId = currentUser?.uid || null;
-  const currentUsername = currentUser?.displayName || currentUser?.email?.split('@')[0] || 'Anonymous';
+  const fallbackUsername = t('home.feed.unknownUser');
+  const currentUsername = currentUser?.displayName || currentUser?.email?.split('@')[0] || fallbackUsername;
 
   useEffect(() => {
     const user = auth.currentUser;
@@ -56,7 +57,7 @@ export default function HomeScreen({ route, navigation }) {
     setIsGuest(userIsGuest);
   }, [route?.params?.guest]);
 
-  // ✅ LOAD NOTIFICATION COUNT ON MOUNT
+  // âœ… LOAD NOTIFICATION COUNT ON MOUNT
   const loadUnreadCount = async () => {
     if (!currentUserId) {
       setUnreadNotifCount(0);
@@ -67,14 +68,14 @@ export default function HomeScreen({ route, navigation }) {
       const result = await getUnreadNotificationCount(currentUserId);
       if (result.success) {
         setUnreadNotifCount(result.count);
-        console.log('🔔 Unread notifications:', result.count);
+        console.log(' Unread notifications:', result.count);
       }
     } catch (error) {
       console.error('Error loading unread count:', error);
     }
   };
 
-  // ✅ REFRESH NOTIFICATION COUNT WHEN SCREEN IS FOCUSED
+  // âœ… REFRESH NOTIFICATION COUNT WHEN SCREEN IS FOCUSED
   useFocusEffect(
     useCallback(() => {
       if (currentUserId) {
@@ -83,7 +84,7 @@ export default function HomeScreen({ route, navigation }) {
     }, [currentUserId])
   );
 
-  // ✅ AUTO-REFRESH NOTIFICATION COUNT EVERY 30 SECONDS (OPTIONAL)
+  // âœ… AUTO-REFRESH NOTIFICATION COUNT EVERY 30 SECONDS (OPTIONAL)
   useEffect(() => {
     if (!currentUserId) return;
 
@@ -200,7 +201,7 @@ export default function HomeScreen({ route, navigation }) {
       const [scansResult, trendingResult] = await Promise.all([
         getPublicScans(),
         getTrendingSpecies(10, 7),
-        currentUserId ? loadUnreadCount() : Promise.resolve() // ✅ REFRESH NOTIFICATIONS TOO
+        currentUserId ? loadUnreadCount() : Promise.resolve() // âœ… REFRESH NOTIFICATIONS TOO
       ]);
       
       if (scansResult.success) {
@@ -222,9 +223,9 @@ export default function HomeScreen({ route, navigation }) {
   const handleDownloadPDF = async (item) => {
     if (!currentUser || !currentUser.email) {
       Alert.alert(
-        'Authentication Required',
-        'Please log in to download the PDF.',
-        [{ text: 'OK' }]
+        t('home.alerts.authRequiredTitle'),
+        t('home.alerts.authRequiredBody'),
+        [{ text: t('common.ok') }]
       );
       return;
     }
@@ -232,28 +233,36 @@ export default function HomeScreen({ route, navigation }) {
     setDownloadingPosts(prev => ({ ...prev, [item.id]: true }));
 
     try {
-      console.log('📄 Generating PDF report for:', item.name || item.scientificName);
+      console.log('Generating PDF report for:', item.name || item.scientificName);
+
+      const fallbackCommon = t('home.pdf.defaultCommon');
+      const fallbackScientific = t('home.pdf.defaultScientific');
+      const fallbackRank = t('home.pdf.defaultRank');
+      const fallbackTaxon = t('home.pdf.defaultTaxon');
+      const fallbackDescription = t('home.pdf.noDescription');
+      const fallbackInfo = t('home.pdf.infoUnavailable');
+      const fallbackConservation = t('home.pdf.notEvaluated');
 
       const pdfData = {
         email: currentUser.email,
         speciesData: {
-          commonName: item.commonName || item.name || 'N/A',
-          scientificName: item.scientificName || item.name || 'N/A',
-          rank: item.rank || 'Unknown',
-          iconicTaxon: item.iconicTaxon || 'Unknown',
+          commonName: item.commonName || item.name || fallbackCommon,
+          scientificName: item.scientificName || item.name || fallbackScientific,
+          rank: item.rank || fallbackRank,
+          iconicTaxon: item.iconicTaxon || fallbackTaxon,
           taxonomy: item.taxonomy || [],
-          fullDescription: item.about || item.description || 'No description available.',
-          habitat: item.habitat || 'Information not available.',
-          distribution: item.distribution || 'Information not available.',
-          characteristics: item.characteristics || 'Information not available.',
-          behavior: item.behavior || 'Information not available.',
-          conservation: item.conservation || 'Not Evaluated',
-          uses: item.uses || 'Information not available.',
+          fullDescription: item.about || item.description || fallbackDescription,
+          habitat: item.habitat || fallbackInfo,
+          distribution: item.distribution || fallbackInfo,
+          characteristics: item.characteristics || fallbackInfo,
+          behavior: item.behavior || fallbackInfo,
+          conservation: item.conservation || fallbackConservation,
+          uses: item.uses || fallbackInfo,
           imageUrl: item.imageUrl || null,
         },
       };
 
-      console.log('📤 Sending PDF request to Cloud Function...');
+      console.log('Sending PDF request to Cloud Function...');
 
       const axios = require('axios');
       const response = await axios.post(
@@ -267,10 +276,10 @@ export default function HomeScreen({ route, navigation }) {
       );
 
       if (response.status === 200) {
-        console.log('✅ PDF generated and sent successfully');
+        console.log('PDF generated and sent successfully');
 
         try {
-          const downloaderUsername = currentUser.displayName || currentUser.email?.split('@')[0] || 'Someone';
+          const downloaderUsername = currentUser.displayName || currentUser.email?.split('@')[0] || fallbackUsername;
           await createDownloadNotification(
             item.id,
             item.userId,
@@ -278,18 +287,18 @@ export default function HomeScreen({ route, navigation }) {
             downloaderUsername,
             item
           );
-          console.log('✅ Download notification created');
+          console.log('Download notification created');
         } catch (notifError) {
-          console.warn('⚠️ Failed to create download notification:', notifError);
+          console.warn('Failed to create download notification:', notifError);
         }
 
         Alert.alert(
-          'Success',
-          'The PDF has been generated and sent to your email!',
-          [{ text: 'OK' }]
+          t('home.alerts.pdfSuccessTitle'),
+          t('home.alerts.pdfSuccessBody'),
+          [{ text: t('common.ok') }]
         );
       } else {
-        throw new Error('Failed to generate PDF');
+        throw new Error(t('home.alerts.pdfErrorBody'));
       }
 
     } catch (error) {
@@ -298,9 +307,9 @@ export default function HomeScreen({ route, navigation }) {
       console.error('Error response:', error.response?.data);
 
       Alert.alert(
-        'Error',
-        'Failed to generate PDF. Please try again.',
-        [{ text: 'OK' }]
+        t('home.alerts.pdfErrorTitle'),
+        t('home.alerts.pdfErrorBody'),
+        [{ text: t('common.ok') }]
       );
     } finally {
       setDownloadingPosts(prev => {
@@ -313,7 +322,11 @@ export default function HomeScreen({ route, navigation }) {
 
   const handleLikePress = async (postId) => {
     if (!currentUserId) {
-      Alert.alert('Sign in required', 'Please sign in to like posts');
+      Alert.alert(
+        t('home.alerts.signInRequiredTitle'),
+        t('home.alerts.signInLikeBody'),
+        [{ text: t('common.ok') }]
+      );
       return;
     }
 
@@ -332,7 +345,7 @@ export default function HomeScreen({ route, navigation }) {
       }));
     } catch (error) {
       console.error('Error liking post:', error);
-      Alert.alert('Error', 'Failed to like post');
+      Alert.alert(t('common.error'), t('home.feed.likeError'));
     }
   };
 
@@ -389,7 +402,11 @@ export default function HomeScreen({ route, navigation }) {
 
   const handleCommentPress = (postId) => {
     if (!currentUserId) {
-      Alert.alert('Sign in required', 'Please sign in to comment');
+      Alert.alert(
+        t('home.alerts.signInRequiredTitle'),
+        t('home.alerts.signInCommentBody'),
+        [{ text: t('common.ok') }]
+      );
       return;
     }
     
@@ -418,13 +435,31 @@ export default function HomeScreen({ route, navigation }) {
     const date = new Date(timestamp);
     const now = new Date();
     const diffInSeconds = (now - date) / 1000;
-    
-    if (diffInSeconds < 60) return 'Just now';
-    if (diffInSeconds < 3600) return `${Math.floor(diffInSeconds / 60)}m ago`;
-    if (diffInSeconds < 86400) return `${Math.floor(diffInSeconds / 3600)}h ago`;
-    if (diffInSeconds < 604800) return `${Math.floor(diffInSeconds / 86400)}d ago`;
-    return date.toLocaleDateString([], { month: 'short', day: 'numeric' });
+
+    if (diffInSeconds < 60) return t('home.relativeTime.justNow');
+    if (diffInSeconds < 3600) {
+      const minutes = Math.floor(diffInSeconds / 60);
+      return t('home.relativeTime.minutes', { count: minutes });
+    }
+    if (diffInSeconds < 86400) {
+      const hours = Math.floor(diffInSeconds / 3600);
+      return t('home.relativeTime.hours', { count: hours });
+    }
+    if (diffInSeconds < 604800) {
+      const days = Math.floor(diffInSeconds / 86400);
+      return t('home.relativeTime.days', { count: days });
+    }
+
+    const locale = i18n?.language && i18n.language !== 'en' ? i18n.language : undefined;
+    return date.toLocaleDateString(locale, { month: 'short', day: 'numeric' });
   };
+
+  const getLikesLabel = (count) => {
+    if (!count) return t('home.feed.beFirst');
+    return t('home.feed.likesCount', { count });
+  };
+
+  const getCommentsLabel = (count) => t('home.feed.viewComments', { count });
 
   const togglePostExpansion = (postId) => {
     setExpandedPosts(prev => ({
@@ -485,7 +520,7 @@ export default function HomeScreen({ route, navigation }) {
 
           <View style={styles.trendingInfo}>
             <Text style={styles.trendingName} numberOfLines={2}>
-              {item.plantName || item.name || item.commonName || item.scientificName || 'Unknown'}
+              {item.plantName || item.name || item.commonName || item.scientificName || t('home.feed.unknownSpecies')}
             </Text>
             <View style={styles.trendingStats}>
               <View style={styles.trendingStat}>
@@ -631,12 +666,12 @@ export default function HomeScreen({ route, navigation }) {
 
         <View style={styles.postContent}>
           <Text style={styles.postLikes}>
-            {stats.likesCount > 0 ? `${stats.likesCount} ${stats.likesCount === 1 ? 'like' : 'likes'}` : 'Be the first to like this'}
+            {getLikesLabel(stats.likesCount)}
           </Text>
           <View style={styles.postCaption}>
-            <Text style={styles.postUsername}>{item.userName || 'Anonymous'}</Text>
+            <Text style={styles.postUsername}>{item.userName || t('home.feed.unknownUser')}</Text>
             <Text style={styles.postCaptionText}>
-              {' '}{item.name || 'Unknown Species'}
+              {' '}{item.name || t('home.feed.unknownSpecies')}
               {item.scientificName && item.scientificName !== item.name && (
                 <Text style={styles.scientificName}> ({item.scientificName})</Text>
               )}
@@ -650,7 +685,7 @@ export default function HomeScreen({ route, navigation }) {
               {shouldShowMore && (
                 <TouchableOpacity onPress={() => togglePostExpansion(item.id)}>
                   <Text style={styles.showMoreText}>
-                    {isExpanded ? 'Show less' : 'Show more'}
+                    {isExpanded ? t('home.feed.showLess') : t('home.feed.showMore')}
                   </Text>
                 </TouchableOpacity>
               )}
@@ -659,7 +694,7 @@ export default function HomeScreen({ route, navigation }) {
           {stats.commentsCount > 0 && (
             <TouchableOpacity onPress={() => handleCommentPress(item.id)}>
               <Text style={styles.viewCommentsText}>
-                View all {stats.commentsCount} {stats.commentsCount === 1 ? 'comment' : 'comments'}
+                {getCommentsLabel(stats.commentsCount)}
               </Text>
             </TouchableOpacity>
           )}
@@ -676,9 +711,9 @@ export default function HomeScreen({ route, navigation }) {
           <View style={styles.trendingHeader}>
             <View style={styles.trendingHeaderLeft}>
               <Ionicons name="flame" size={20} color="#EF4444" />
-              <Text style={styles.trendingTitle}>Trending Species</Text>
+              <Text style={styles.trendingTitle}>{t('home.trending.title')}</Text>
             </View>
-            <Text style={styles.trendingSubtitle}>Most scanned this week</Text>
+            <Text style={styles.trendingSubtitle}>{t('home.trending.subtitle')}</Text>
           </View>
           <FlatList
             horizontal
@@ -719,7 +754,7 @@ export default function HomeScreen({ route, navigation }) {
               style={styles.headerIcon}
               onPress={() => navigation.navigate('NotificationScreen')}
             >
-              {/* ✅ ANIMATED NOTIFICATION BADGE */}
+              {/* âœ… ANIMATED NOTIFICATION BADGE */}
               {unreadNotifCount > 0 && (
                 <Animated.View 
                   style={[
@@ -755,15 +790,15 @@ export default function HomeScreen({ route, navigation }) {
         ) : publicScans.length === 0 ? (
           <View style={styles.emptyContainer}>
             <Ionicons name="telescope-outline" size={80} color="#c7c7c7" />
-            <Text style={styles.emptyTitle}>Welcome to the Community</Text>
+            <Text style={styles.emptyTitle}>{t('home.emptyState.title')}</Text>
             <Text style={styles.emptyDescription}>
-              Start exploring and sharing your nature discoveries
+              {t('home.emptyState.subtitle')}
             </Text>
             <TouchableOpacity
               style={styles.emptyButton}
               onPress={() => navigation.navigate('ScanScreen')}
             >
-              <Text style={styles.emptyButtonText}>Scan Your First Species</Text>
+              <Text style={styles.emptyButtonText}>{t('home.emptyState.cta')}</Text>
             </TouchableOpacity>
           </View>
         ) : (
@@ -1125,3 +1160,4 @@ const styles = StyleSheet.create({
     fontWeight: '600',
   },
 });
+

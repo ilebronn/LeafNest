@@ -94,8 +94,8 @@ export default function SignInScreen({ navigation }) {
                   />
                 </LinearGradient>
               </View>
-              <Text style={styles.welcomeText}>Welcome Back</Text>
-              <Text style={styles.subtitleText}>Sign in to continue your journey</Text>
+              <Text style={styles.welcomeText}>{t('signin.welcomeBack')}</Text>
+              <Text style={styles.subtitleText}>{t('signin.subtitle')}</Text>
             </View>
 
             <View style={styles.formContainer}>
@@ -159,7 +159,7 @@ export default function SignInScreen({ navigation }) {
                 onPress={() => navigation.navigate('ForgotPassword')}
               >
                 <Text style={styles.forgotPasswordText}>
-                  Forgot Password?
+                  {t('signin.forgotPasswordLink')}
                 </Text>
               </TouchableOpacity>
 
@@ -183,7 +183,7 @@ export default function SignInScreen({ navigation }) {
 
               <View style={styles.dividerContainer}>
                 <View style={styles.divider} />
-                <Text style={styles.dividerText}>or</Text>
+                <Text style={styles.dividerText}>{t('signin.dividerOr')}</Text>
                 <View style={styles.divider} />
               </View>
 
@@ -192,7 +192,8 @@ export default function SignInScreen({ navigation }) {
                 onPress={() => navigation.navigate('SignUp')}
               >
                 <Text style={styles.signUpText}>
-                  Don't have an account? <Text style={styles.signUpLink}>Sign Up</Text>
+                  {t('signin.noAccountPrompt')}{' '}
+                  <Text style={styles.signUpLink}>{t('signin.signUpLink')}</Text>
                 </Text>
               </TouchableOpacity>
             </View>

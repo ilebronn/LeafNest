@@ -6,6 +6,8 @@ import { auth } from '../firebase';
 import { addToHistory, addToFavorites, removeFromFavorites, isInFavorites } from '../firestoreService';
 import axios from 'axios';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
+import { decrementDownloadCount, getUsageLimits } from '../firestoreService/subscriptionService';
+import PremiumGate from '../components/PremiumGate';
 
 // SpeciesLandingPage.js (Near the top, after imports)
 
@@ -248,6 +250,8 @@ export default function SpeciesLandingPage({ route, navigation }) {
   const [wikiCommonData, setWikiCommonData] = useState(null);
   const [wikiInfoboxData, setWikiInfoboxData] = useState(null);
   const [isGeneratingPDF, setIsGeneratingPDF] = useState(false);
+  const [showPremiumGate, setShowPremiumGate] = useState(false);
+  const [usageLimits, setUsageLimits] = useState(null);
 
   // Character limit for description preview
   const DESCRIPTION_PREVIEW_LENGTH = 500;
@@ -719,11 +723,35 @@ export default function SpeciesLandingPage({ route, navigation }) {
   };
 
   const handleDownloadPDF = async () => {
-    if (!auth.currentUser) {
-      Alert.alert('Authentication Required', 'Please log in to download the PDF.');
+    if (!auth.currentUser || !auth.currentUser.email) {
+      Alert.alert(
+        "Authentication Required",
+        "Please log in to download PDFs.",
+        [{ text: "OK" }]
+      );
       return;
     }
 
+    // ✅ CHECK DOWNLOAD LIMIT
+    try {
+      const limits = await getUsageLimits(auth.currentUser.uid);
+      setUsageLimits(limits);
+
+      // Premium users have unlimited
+      if (!limits.unlimited) {
+        if (limits.downloadsRemaining <= 0) {
+          setShowPremiumGate(true);
+          return;
+        }
+
+        // Decrement download count
+        await decrementDownloadCount(auth.currentUser.uid);
+      }
+    } catch (error) {
+      console.error('Error checking download limit:', error);
+    }
+
+    // ... rest of existing download code
     setIsGeneratingPDF(true);
     try {
       const pdfData = {

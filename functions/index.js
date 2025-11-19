@@ -817,8 +817,8 @@ exports.generatePdfAndEmail = onRequest(
             console.error('Error type:', error.constructor.name);
             console.error('Error message:', error.message);
             console.error('Error stack:', error.stack);
-            
-            return res.status(500).json({ 
+
+            return res.status(500).json({
                 error: 'Internal server error while generating PDF.',
                 details: error.message,
                 code: error.code || 'UNKNOWN'
@@ -826,3 +826,556 @@ exports.generatePdfAndEmail = onRequest(
         }
     }
 );
+
+// =========================================================================
+// WEEKLY REPORT - DEBUG VERSION
+// =========================================================================
+exports.sendWeeklyReports = onSchedule({
+  schedule: '0 9 * * 1',
+  timeZone: 'Asia/Manila',
+}, async (event) => {
+  try {
+    console.log('📊 Starting weekly report generation...');
+
+    const usersSnapshot = await admin.firestore().collection('users').get();
+    let reportsSent = 0;
+    let skippedDisabled = 0;
+    let errors = 0;
+
+    console.log(`✅ Found ${usersSnapshot.size} total users`);
+
+    for (const userDoc of usersSnapshot.docs) {
+      const userId = userDoc.id;
+      console.log(`\n--- Processing user: ${userId} ---`);
+
+      try {
+        // Check if weekly reports are enabled
+        const settingsRef = admin.firestore().doc(`users/${userId}/settings/notifications`);
+        const settingsDoc = await settingsRef.get();
+
+        console.log(`Settings doc exists: ${settingsDoc.exists}`);
+        
+        // DEFAULT TO TRUE - if no settings, send notification
+        let shouldSendReport = true;
+        
+        if (settingsDoc.exists) {
+          const settingsData = settingsDoc.data();
+          console.log(`Settings data:`, JSON.stringify(settingsData));
+          
+          // Only skip if explicitly set to false
+          if (settingsData.weeklyReport === false) {
+            shouldSendReport = false;
+            console.log(`⏭️ User ${userId}: Weekly report explicitly disabled`);
+            skippedDisabled++;
+            continue;
+          }
+        } else {
+          console.log(`ℹ️ User ${userId}: No settings doc, will send (default behavior)`);
+        }
+
+        // Get scans from user's history subcollection (past 7 days)
+        const oneWeekAgo = new Date();
+        oneWeekAgo.setDate(oneWeekAgo.getDate() - 7);
+        console.log(`Querying history since: ${oneWeekAgo.toISOString()}`);
+
+        const historySnapshot = await admin.firestore()
+          .collection('users')
+          .doc(userId)
+          .collection('history')
+          .where('timestamp', '>=', admin.firestore.Timestamp.fromDate(oneWeekAgo))
+          .get();
+
+        console.log(`Found ${historySnapshot.size} scans in the past week`);
+
+        const weeklyScans = historySnapshot.docs.map(doc => doc.data());
+        
+        // Count unique species
+        const uniqueSpecies = new Set();
+        weeklyScans.forEach(scan => {
+          const speciesId = scan.taxonId || scan.scientificName || scan.plantName || scan.name;
+          if (speciesId) uniqueSpecies.add(speciesId);
+        });
+
+        console.log(`Unique species found: ${uniqueSpecies.size}`);
+
+        // Find top 3 most scanned species
+        const speciesCount = {};
+        weeklyScans.forEach(scan => {
+          const name = scan.scientificName || scan.plantName || scan.name;
+          if (name) speciesCount[name] = (speciesCount[name] || 0) + 1;
+        });
+
+        const topSpecies = Object.entries(speciesCount)
+          .sort((a, b) => b[1] - a[1])
+          .slice(0, 3)
+          .map(([name, count]) => ({ name, count }));
+
+        // Get favorites count
+        const favoritesSnapshot = await admin.firestore()
+          .collection('users')
+          .doc(userId)
+          .collection('favorites')
+          .get();
+
+        console.log(`Favorites count: ${favoritesSnapshot.size}`);
+
+        // Create weekly report notification in Firestore
+        const reportData = {
+          totalScans: weeklyScans.length,
+          newSpecies: uniqueSpecies.size,
+          topSpecies: topSpecies,
+          totalFavorites: favoritesSnapshot.size,
+          weekStart: oneWeekAgo.toLocaleDateString(),
+          weekEnd: new Date().toLocaleDateString(),
+        };
+
+        const message = weeklyScans.length > 0
+          ? `🎉 This week: ${weeklyScans.length} scan${weeklyScans.length !== 1 ? 's' : ''}, ${uniqueSpecies.size} unique species discovered!`
+          : `🌿 No scans this week. Start exploring nature and discover new plants!`;
+
+        console.log(`Creating notification with message: ${message}`);
+
+        const notificationRef = await admin.firestore().collection('notifications').add({
+          type: 'weekly_report',
+          recipientId: userId,
+          senderId: 'system',
+          senderUsername: 'LeafNest',
+          senderAvatar: null,
+          message: message,
+          reportData: reportData,
+          timestamp: admin.firestore.FieldValue.serverTimestamp(),
+          read: false,
+        });
+
+        console.log(`✅ Notification created with ID: ${notificationRef.id}`);
+        reportsSent++;
+
+      } catch (userError) {
+        errors++;
+        console.error(`❌ Error processing user ${userId}:`, userError.message);
+        console.error(`Error stack:`, userError.stack);
+      }
+    }
+
+    console.log(`\n=== SUMMARY ===`);
+    console.log(`Total users: ${usersSnapshot.size}`);
+    console.log(`✅ Reports sent: ${reportsSent}`);
+    console.log(`⏭️ Skipped (disabled): ${skippedDisabled}`);
+    console.log(`❌ Errors: ${errors}`);
+    
+    return null;
+  } catch (error) {
+    console.error('❌ FATAL ERROR in sendWeeklyReports:', error);
+    return null;
+  }
+});
+
+// =========================================================================
+// DAILY TIPS - DEBUG VERSION
+// =========================================================================
+exports.sendDailyTips = onSchedule({
+  schedule: '0 10 * * *',
+  timeZone: 'Asia/Manila',
+}, async (event) => {
+  try {
+    console.log('💡 Starting daily tips distribution...');
+
+    const tipsDatabase = [
+      {
+        title: "🌞 Perfect Lighting",
+        content: "Take photos in natural daylight for best results. Avoid harsh shadows and direct sunlight. Overcast days provide ideal diffused lighting!"
+      },
+      {
+        title: "🔍 Focus on Details",
+        content: "Capture leaves, flowers, or bark patterns clearly. These unique features help our AI identify species more accurately."
+      },
+      {
+        title: "📸 Multiple Angles",
+        content: "Try scanning from different angles - leaf shape, flower detail, or bark texture. Each angle provides valuable identification clues."
+      },
+      {
+        title: "📚 Keep Learning",
+        content: "Read the full species information after each scan. You'll learn about habitat, characteristics, and conservation status!"
+      },
+      {
+        title: "🏆 Build Your Collection",
+        content: "Track your discoveries in your history! Challenge yourself to find new species each week."
+      },
+      {
+        title: "🌍 Share Your Finds",
+        content: "Post your interesting discoveries to the public feed to inspire other nature explorers in the community."
+      },
+      {
+        title: "✨ Clean Your Lens",
+        content: "A smudged camera lens can affect scan accuracy. Keep it clean for crystal-clear species identification!"
+      },
+      {
+        title: "🎯 Steady Your Shot",
+        content: "Hold your device steady or use a stable surface. Clear, focused images lead to better identification results."
+      },
+      {
+        title: "🌿 Explore Native Species",
+        content: "Scan local native plants to learn about your region's natural ecosystem and biodiversity."
+      },
+      {
+        title: "⏰ Best Scanning Time",
+        content: "Morning hours (7-10 AM) provide the best natural lighting conditions for plant photography."
+      },
+      {
+        title: "🍃 Leaf Condition Matters",
+        content: "Scan healthy, mature leaves for best results. Damaged or diseased leaves may affect identification accuracy."
+      },
+      {
+        title: "🌺 Flower Power",
+        content: "Flowers are excellent identification features! If a plant is blooming, include the flower in your scan."
+      },
+    ];
+
+    const todaysTip = tipsDatabase[Math.floor(Math.random() * tipsDatabase.length)];
+    console.log(`Selected tip: ${todaysTip.title}`);
+
+    const usersSnapshot = await admin.firestore().collection('users').get();
+    let tipsSent = 0;
+    let skippedDisabled = 0;
+    let errors = 0;
+
+    console.log(`✅ Found ${usersSnapshot.size} total users`);
+
+    for (const userDoc of usersSnapshot.docs) {
+      const userId = userDoc.id;
+      console.log(`\n--- Processing user: ${userId} ---`);
+
+      try {
+        const settingsRef = admin.firestore().doc(`users/${userId}/settings/notifications`);
+        const settingsDoc = await settingsRef.get();
+
+        console.log(`Settings doc exists: ${settingsDoc.exists}`);
+
+        let shouldSendTip = true;
+        
+        if (settingsDoc.exists) {
+          const settingsData = settingsDoc.data();
+          console.log(`Settings data:`, JSON.stringify(settingsData));
+          
+          if (settingsData.tips === false) {
+            shouldSendTip = false;
+            console.log(`⏭️ User ${userId}: Tips explicitly disabled`);
+            skippedDisabled++;
+            continue;
+          }
+        } else {
+          console.log(`ℹ️ User ${userId}: No settings doc, will send (default behavior)`);
+        }
+
+        console.log(`Creating tip notification...`);
+
+        const notificationRef = await admin.firestore().collection('notifications').add({
+          type: 'tip',
+          recipientId: userId,
+          senderId: 'system',
+          senderUsername: 'LeafNest',
+          senderAvatar: null,
+          message: todaysTip.title,
+          tipContent: todaysTip.content,
+          timestamp: admin.firestore.FieldValue.serverTimestamp(),
+          read: false,
+        });
+
+        console.log(`✅ Notification created with ID: ${notificationRef.id}`);
+        tipsSent++;
+
+      } catch (userError) {
+        errors++;
+        console.error(`❌ Error sending tip to ${userId}:`, userError.message);
+      }
+    }
+
+    console.log(`\n=== SUMMARY ===`);
+    console.log(`Total users: ${usersSnapshot.size}`);
+    console.log(`✅ Tips sent: ${tipsSent}`);
+    console.log(`⏭️ Skipped (disabled): ${skippedDisabled}`);
+    console.log(`❌ Errors: ${errors}`);
+    
+    return null;
+  } catch (error) {
+    console.error('❌ FATAL ERROR in sendDailyTips:', error);
+    return null;
+  }
+});
+
+// =========================================================================
+// SCAN REMINDERS - DEBUG VERSION
+// =========================================================================
+exports.sendDailyScanReminders = onSchedule({
+  schedule: '0 15 * * *',
+  timeZone: 'Asia/Manila',
+}, async (event) => {
+  try {
+    console.log('⏰ Starting daily scan reminders...');
+
+    const today = new Date();
+    today.setHours(0, 0, 0, 0);
+    console.log(`Checking for scans since: ${today.toISOString()}`);
+
+    const usersSnapshot = await admin.firestore().collection('users').get();
+    let remindersSent = 0;
+    let alreadyScanned = 0;
+    let skippedDisabled = 0;
+    let errors = 0;
+
+    console.log(`✅ Found ${usersSnapshot.size} total users`);
+
+    for (const userDoc of usersSnapshot.docs) {
+      const userId = userDoc.id;
+      console.log(`\n--- Processing user: ${userId} ---`);
+
+      try {
+        const settingsRef = admin.firestore().doc(`users/${userId}/settings/notifications`);
+        const settingsDoc = await settingsRef.get();
+
+        console.log(`Settings doc exists: ${settingsDoc.exists}`);
+
+        let shouldSendReminder = true;
+        
+        if (settingsDoc.exists) {
+          const settingsData = settingsDoc.data();
+          console.log(`Settings data:`, JSON.stringify(settingsData));
+          
+          if (settingsData.scanReminders === false) {
+            shouldSendReminder = false;
+            console.log(`⏭️ User ${userId}: Scan reminders explicitly disabled`);
+            skippedDisabled++;
+            continue;
+          }
+        } else {
+          console.log(`ℹ️ User ${userId}: No settings doc, will send (default behavior)`);
+        }
+
+        // Check if user has scanned today
+        const historySnapshot = await admin.firestore()
+          .collection('users')
+          .doc(userId)
+          .collection('history')
+          .where('timestamp', '>=', admin.firestore.Timestamp.fromDate(today))
+          .limit(1)
+          .get();
+
+        console.log(`Scans today: ${historySnapshot.size}`);
+
+        if (historySnapshot.empty) {
+          const motivationalMessages = [
+            { title: "🌿 Daily Exploration", content: "Haven't explored nature today? Take a quick scan and discover something new!" },
+            { title: "🔍 Discover Today", content: "Something amazing awaits! Your daily scan is ready. What will you find?" },
+            { title: "🌱 Keep Your Streak", content: "Maintain your scanning habit! Quick scan time - nature is waiting." },
+            { title: "📸 Nature Calls", content: "Nature is calling! Time for your daily discovery. Let's explore!" },
+            { title: "🌳 Stay Curious", content: "Keep exploring! Your daily scan awaits. What plant will you discover?" },
+            { title: "🍃 Daily Challenge", content: "Challenge yourself! Find a new species today and expand your collection." },
+          ];
+
+          const randomMessage = motivationalMessages[
+            Math.floor(Math.random() * motivationalMessages.length)
+          ];
+
+          console.log(`Creating reminder notification: ${randomMessage.title}`);
+
+          const notificationRef = await admin.firestore().collection('notifications').add({
+            type: 'scan_reminder',
+            recipientId: userId,
+            senderId: 'system',
+            senderUsername: 'LeafNest',
+            senderAvatar: null,
+            message: randomMessage.title,
+            tipContent: randomMessage.content,
+            timestamp: admin.firestore.FieldValue.serverTimestamp(),
+            read: false,
+          });
+
+          console.log(`✅ Notification created with ID: ${notificationRef.id}`);
+          remindersSent++;
+        } else {
+          alreadyScanned++;
+          console.log(`⏭️ User ${userId} already scanned today`);
+        }
+
+      } catch (userError) {
+        errors++;
+        console.error(`❌ Error processing user ${userId}:`, userError.message);
+      }
+    }
+
+    console.log(`\n=== SUMMARY ===`);
+    console.log(`Total users: ${usersSnapshot.size}`);
+    console.log(`✅ Reminders sent: ${remindersSent}`);
+    console.log(`⏭️ Already scanned: ${alreadyScanned}`);
+    console.log(`⏭️ Skipped (disabled): ${skippedDisabled}`);
+    console.log(`❌ Errors: ${errors}`);
+    
+    return null;
+  } catch (error) {
+    console.error('❌ FATAL ERROR in sendDailyScanReminders:', error);
+    return null;
+  }
+});
+
+// =========================================================================
+// SUBSCRIPTION EXPIRATION CHECK - Runs daily at 8:00 AM (Asia/Manila timezone)
+// =========================================================================
+exports.checkSubscriptionExpiration = onSchedule({
+  schedule: '0 8 * * *',
+  timeZone: 'Asia/Manila',
+}, async (event) => {
+    try {
+        console.log('📅 Checking subscription expirations...');
+
+    const now = new Date();
+    const nowTimestamp = now.getTime();
+
+    const usersSnapshot = await admin.firestore().collection('users').get();
+    let warningsSent = 0;
+    let expiredCount = 0;
+
+    for (const userDoc of usersSnapshot.docs) {
+      const userId = userDoc.id;
+
+      try {
+        // Get subscription from subcollection: users/{userId}/subscription/current
+        const subDoc = await admin.firestore()
+          .doc(`users/${userId}/subscription/current`)
+          .get();
+
+        if (!subDoc.exists) {
+          continue; // No subscription, skip
+        }
+
+        const subData = subDoc.data();
+
+        // Check if it's a premium subscription
+        if (subData.tier !== 'premium' || subData.status === 'expired') {
+          continue;
+        }
+
+        // Get expiry date
+        const expiryDate = subData.expiryDate?.toDate ? subData.expiryDate.toDate() : null;
+        if (!expiryDate) continue;
+
+        const expiryTimestamp = expiryDate.getTime();
+        const daysRemaining = Math.ceil((expiryTimestamp - nowTimestamp) / (1000 * 60 * 60 * 24));
+
+        let shouldNotify = false;
+        let message, details;
+
+        // Check if subscription has expired
+        if (expiryTimestamp <= nowTimestamp) {
+          shouldNotify = true;
+          message = "⚠️ Your premium subscription has expired";
+          details = "Renew now to continue enjoying unlimited scans, no ads, and all premium features!";
+          expiredCount++;
+
+          // Update subscription status to expired
+          await subDoc.ref.update({
+            status: 'expired',
+            tier: 'free',
+            lastUpdated: admin.firestore.FieldValue.serverTimestamp(),
+          });
+
+          console.log(`⚠️ Subscription expired for user ${userId}`);
+        }
+        // Check if subscription expires in 3 days
+        else if (daysRemaining <= 3 && daysRemaining > 0) {
+          shouldNotify = true;
+          message = `⏰ Your subscription expires in ${daysRemaining} day${daysRemaining > 1 ? 's' : ''}!`;
+          details = "Don't miss out on premium features! Renew your subscription today to keep exploring without limits.";
+        }
+        // Check if subscription expires in 7 days
+        else if (daysRemaining <= 7 && daysRemaining > 3) {
+          shouldNotify = true;
+          message = `⏰ Your subscription expires in ${daysRemaining} days`;
+          details = "Renew soon to maintain uninterrupted access to unlimited scans and premium features.";
+        }
+
+        if (shouldNotify) {
+          await admin.firestore().collection('notifications').add({
+            type: 'system',
+            recipientId: userId,
+            senderId: 'system',
+            senderUsername: 'LeafNest',
+            senderAvatar: null,
+            message: message,
+            systemTitle: 'Subscription Alert',
+            updateDetails: details,
+            timestamp: admin.firestore.FieldValue.serverTimestamp(),
+            read: false,
+          });
+
+          warningsSent++;
+          console.log(`✅ Subscription warning sent to ${userId}: ${daysRemaining} days remaining`);
+        }
+
+      } catch (userError) {
+        console.error(`❌ Error processing subscription for ${userId}:`, userError);
+      }
+    }
+
+        console.log(`✅ Subscription warnings sent: ${warningsSent}`);
+        console.log(`⚠️ Subscriptions expired: ${expiredCount}`);
+        return null;
+    } catch (error) {
+        console.error('❌ Error checking subscriptions:', error);
+        return null;
+    }
+});
+
+// =========================================================================
+// MANUAL SYSTEM UPDATE BROADCAST (Call via Admin Panel)
+// =========================================================================
+exports.broadcastSystemUpdate = onCall(async (request) => {
+    try {
+        // Optional: Add admin authentication check here
+        const { title, message, details } = request.data;
+
+        if (!title || !message) {
+            throw new HttpsError('invalid-argument', 'Title and message are required');
+        }
+
+        const usersSnapshot = await admin.firestore().collection('users').get();
+        let notificationsSent = 0;
+
+        const batch = admin.firestore().batch();
+
+        for (const userDoc of usersSnapshot.docs) {
+            const userId = userDoc.id;
+
+            // Check if system updates are enabled
+            const settingsRef = admin.firestore().doc(`users/${userId}/settings/notifications`);
+            const settingsDoc = await settingsRef.get();
+
+            if (settingsDoc.exists() && settingsDoc.data().systemUpdates === false) {
+                continue;
+            }
+
+            const notificationRef = admin.firestore().collection('notifications').doc();
+            batch.set(notificationRef, {
+                type: 'system',
+                recipientId: userId,
+                senderId: 'system',
+                senderUsername: 'LeafNest',
+                message: message,
+                systemTitle: title,
+                updateDetails: details || null,
+                timestamp: admin.firestore.FieldValue.serverTimestamp(),
+                read: false
+            });
+
+            notificationsSent++;
+        }
+
+        await batch.commit();
+
+        console.log(`✅ System update broadcast sent: ${notificationsSent} notifications`);
+        return { success: true, sent: notificationsSent };
+
+    } catch (error) {
+        console.error('❌ Error broadcasting system update:', error);
+        throw new HttpsError('internal', error.message);
+    }
+});

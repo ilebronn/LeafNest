@@ -10,7 +10,8 @@
     "save": "Sauvegarder",
     "back": "Retour",
     "edit": "Modifier",
-    "username": "Nom d'utilisateur"
+    "username": "Nom d'utilisateur",
+    "and": "et"
   },
   "login": {
     "title": "Bienvenue sur LeafNest !",
@@ -24,7 +25,13 @@
     "termsOfUse": "Conditions d'Utilisation",
     "privacyPolicy": "Politique de Confidentialité",
     "cookiesPolicy": "Politique des Cookies",
-    "signIn": "Se Connecter"
+    "signIn": "Se Connecter",
+    "welcomeTitle": "Bienvenue sur LeafNest",
+    "welcomeSubtitle": "Découvrez la beauté de la nature",
+    "signInWithEmailButton": "Connectez-vous avec e-mail",
+    "dividerOr": "ou",
+    "continueAsGuest": "Continuer en tant qu'invité",
+    "continueAgreement": "En continuant, vous acceptez notre"
   },
   "home": {
     "welcomeGuest": "Bienvenue, Invité",
@@ -118,7 +125,54 @@
       "Les plantes peuvent \"entendre\" les sons et répondre aux vibrations."
     ],
     "trendingPlants": "Plantes Tendances",
-    "trendingAnimals": "Animaux Tendances"
+    "trendingAnimals": "Animaux Tendances",
+    "alerts": {
+      "authRequiredTitle": "Authentification requise",
+      "authRequiredBody": "Connectez-vous pour télécharger le PDF.",
+      "pdfSuccessTitle": "Succès",
+      "pdfSuccessBody": "Le PDF a été généré et envoyé à votre adresse e-mail.",
+      "pdfErrorTitle": "Erreur",
+      "pdfErrorBody": "La génération du PDF a échoué. Veuillez réessayer.",
+      "signInRequiredTitle": "Connexion requise",
+      "signInLikeBody": "Connectez-vous pour aimer les publications.",
+      "signInCommentBody": "Connectez-vous pour commenter."
+    },
+    "pdf": {
+      "defaultCommon": "Inconnu",
+      "defaultScientific": "Inconnu",
+      "defaultRank": "Rang inconnu",
+      "defaultTaxon": "Inconnu",
+      "noDescription": "Aucune description disponible.",
+      "infoUnavailable": "Information non disponible.",
+      "notEvaluated": "Non évalué"
+    },
+    "trending": {
+      "title": "Espèces tendance",
+      "subtitle": "Les plus scannées cette semaine"
+    },
+    "emptyState": {
+      "title": "Bienvenue dans la communauté",
+      "subtitle": "Commencez à explorer et à partager vos découvertes de la nature.",
+      "cta": "Scannez votre première espèce"
+    },
+    "feed": {
+      "likesCount": "{{count}} mention J’aime",
+      "likesCount_plural": "{{count}} mentions J’aime",
+      "beFirst": "Soyez le premier à aimer cette publication",
+      "showMore": "Afficher plus",
+      "showLess": "Afficher moins",
+      "viewComments": "Voir les {{count}} commentaire",
+      "viewComments_plural": "Voir les {{count}} commentaires",
+      "unknownUser": "Anonyme",
+      "unknownSpecies": "Espèce inconnue",
+      "likeError": "Impossible d’aimer la publication."
+    },
+    "relativeTime": {
+      "justNow": "À l’instant",
+      "minutes": "Il y a {{count}} min",
+      "hours": "Il y a {{count}} h",
+      "days": "Il y a {{count}} j"
+    }
   },
   "settings": {
     "title": "Paramètres",
@@ -147,7 +201,10 @@
     "help": "Aide",
     "sendFeedback": "Envoyer des Commentaires",
     "faq": "FAQ",
-    "termsOfUse": "Conditions d'Utilisation"
+    "termsOfUse": "Conditions d'Utilisation",
+    "generalSection": "Général",
+    "supportSection": "Assistance",
+    "legalSection": "Mentions légales"
   },
   "profile": {
     "title": "Profil",
@@ -157,7 +214,46 @@
     "signIn": "Se Connecter",
     "accessFullFeatures": "Accéder à toutes les fonctionnalités",
     "createAccount": "Créer un Compte",
-    "joinLeafNest": "Rejoignez LeafNest"
+    "joinLeafNest": "Rejoignez LeafNest",
+    "guestUser": "Utilisateur invité",
+    "statsTitle": "Statistiques de scan",
+    "viewAll": "Tout afficher",
+    "guestPromptTitle": "Suivez vos progrès",
+    "guestPromptText": "Connectez-vous pour suivre vos scans, découvrir des espèces et débloquer des réussites.",
+    "badgeNew": "Nouveau",
+    "editPlaceholder": "Entrez un nom d’utilisateur",
+    "stats": {
+      "total": "Scans totaux",
+      "week": "Cette semaine",
+      "species": "Espèces"
+    },
+    "sections": {
+      "account": "Paramètres du compte"
+    },
+    "menu": {
+      "planTitle": "Votre abonnement",
+      "planSubtitle": "LeafNest Free",
+      "notificationsTitle": "Notifications",
+      "notificationsSubtitle": "Gérez vos notifications",
+      "passwordTitle": "Mot de passe oublié",
+      "passwordSubtitle": "Réinitialisez votre mot de passe",
+      "signOutTitle": "Se déconnecter",
+      "signOutSubtitle": "Déconnectez-vous de votre compte",
+      "signInTitle": "Se connecter",
+      "signInSubtitle": "Accédez à toutes les fonctionnalités",
+      "createAccountTitle": "Créer un compte",
+      "createAccountSubtitle": "Rejoignez LeafNest dès aujourd’hui"
+    },
+    "alerts": {
+      "syncSuccess": "{{count}} scan en attente synchronisé",
+      "syncSuccess_plural": "{{count}} scans en attente synchronisés",
+      "usernameUpdated": "Nom d’utilisateur mis à jour avec succès.",
+      "usernameUpdateError": "La mise à jour du nom d’utilisateur a échoué.",
+      "signOutTitle": "Se déconnecter",
+      "signOutMessage": "Voulez-vous vraiment vous déconnecter ?",
+      "signOutConfirm": "Se déconnecter",
+      "signOutError": "Échec de la déconnexion. Veuillez réessayer."
+    }
   },
   "languages": {
     "en": "English",
@@ -207,7 +303,7 @@
     "share": "Partager l'animal"
   },
   "signup": {
-    "title": "S'inscrire",
+    "title": "Créer un compte",
     "username": "Nom d'utilisateur",
     "email": "E-mail",
     "password": "Mot de passe",
@@ -216,10 +312,14 @@
     "alreadyHaveAccount": "Vous avez déjà un compte ? Se connecter",
     "passwordsDontMatch": "Les mots de passe ne correspondent pas !",
     "fillAllFields": "Veuillez remplir tous les champs.",
-    "signUpSuccessful": "Inscription réussie",
     "verificationEmailSent": "Un e-mail de vérification a été envoyé à votre adresse e-mail.",
     "emailAlreadyInUse": "L'adresse e-mail est déjà utilisée.",
-    "invalidEmail": "L'adresse e-mail n'est pas valide."
+    "invalidEmail": "L'adresse e-mail n'est pas valide.",
+    "subtitle": "Rejoignez-nous pour explorer la nature",
+    "processing": "Traitement...",
+    "dividerOr": "ou",
+    "alreadyMember": "Déjà membre ?",
+    "signInLink": "Se connecter"
   },
   "signin": {
     "title": "Se connecter",
@@ -230,10 +330,15 @@
     "dontHaveAccount": "Vous n'avez pas de compte ? S'inscrire",
     "fillAllFields": "Veuillez remplir tous les champs.",
     "signInSuccessful": "Connexion réussie",
-    "welcomeBack": "Bienvenue de retour !",
+    "welcomeBack": "Content de te revoir",
     "userNotFound": "Aucun utilisateur trouvé avec cet e-mail.",
     "wrongPassword": "Mot de passe incorrect.",
-    "invalidEmail": "Adresse e-mail invalide."
+    "invalidEmail": "Adresse e-mail invalide.",
+    "subtitle": "Connectez-vous pour continuer votre voyage",
+    "forgotPasswordLink": "Mot de passe oublié ?",
+    "dividerOr": "ou",
+    "noAccountPrompt": "Vous n'avez pas de compte ?",
+    "signUpLink": "S'inscrire"
   },
   "scan": {
     "loadingCamera": "Chargement de la caméra...",
@@ -262,7 +367,6 @@
     "noFavoritesYet": "Pas encore de favoris",
     "addFromDaily": "Ajoutez-en depuis Plantes ou Animaux du Jour."
   },
-
   "history": {
     "title": "Historique",
     "noHistory": "Pas encore d'historique"
@@ -276,7 +380,10 @@
     "credits": "Créé à l'origine par l'équipe LeafNest avec le soutien de Pinamalayan Maritime Foundation And Technological College INC. (PMFTCI) et de l'École d'Études Informatiques.",
     "privacyPolicy": "Politique de Confidentialité",
     "version": "Version 0.0.1 (1)",
-    "help": "Pour de l'aide : leafnest.capstone@gmail.com"
+    "help": "Pour obtenir de l'aide : help.leafnest.capstone@gmail.com",
+    "tagline": "Identification des plantes et des animaux",
+    "institutionalSupport": "Soutien institutionnel",
+    "mentorRole": "Mentor et conseiller du projet"
   },
   "plan": {
     "title": "Plans",
@@ -296,5 +403,271 @@
     "premiumFeature4": "Expérience sans publicité",
     "subscribeNow": "S'abonner Maintenant",
     "selectedPlan": "Vous avez sélectionné le plan {{plan}} !"
+  },
+  "legal": {
+    "cookies": {
+      "title": "Politique de cookies",
+      "subtitle": "Comment nous utilisons les cookies pour améliorer votre expérience",
+      "effectiveDate": "Date d'entrée en vigueur : 1er juillet 2025",
+      "intro": "Cette politique de cookies explique comment nous utilisons les cookies pour améliorer votre expérience lorsque vous visitez notre application et utilisez ses fonctionnalités. En utilisant cette application, vous consentez à l'utilisation de cookies comme décrit dans cette politique.",
+      "sections": [
+        {
+          "title": "Que sont les cookies ?",
+          "content": "Les cookies sont de petits fichiers texte stockés sur votre appareil lorsque vous visitez des sites Web ou utilisez des applications. Ils nous aident à comprendre comment vous interagissez avec notre service et nous permettent de vous offrir une expérience meilleure et plus personnalisée."
+        },
+        {
+          "title": "Comment nous utilisons les cookies",
+          "content": "Nous utilisons des cookies à plusieurs fins essentielles :",
+          "list": [
+            "Pour personnaliser le contenu et les publicités",
+            "Analyser les modèles de trafic et améliorer l’expérience utilisateur",
+            "Pour activer certaines fonctionnalités et fonctionnalités de notre application",
+            "Pour mémoriser vos préférences et paramètres",
+            "Pour fournir un accès sécurisé à votre compte"
+          ]
+        },
+        {
+          "title": "Types de cookies que nous utilisons",
+          "content": "Nous utilisons différents types de cookies pour améliorer votre expérience :",
+          "list": [
+            "Cookies essentiels : requis pour la fonctionnalité de base de l'application",
+            "Cookies de performance : aidez-nous à comprendre comment vous utilisez l'application",
+            "Cookies fonctionnels : mémorisez vos préférences et vos choix",
+            "Cookies d'analyse : fournissent des informations sur les modèles d'utilisation des applications"
+          ]
+        },
+        {
+          "title": "Gestion des cookies",
+          "content": "Vous pouvez contrôler et gérer les cookies via les paramètres de votre appareil. Veuillez toutefois noter que la désactivation de certains cookies peut affecter votre expérience et limiter les fonctionnalités de l'application."
+        },
+        {
+          "title": "Durée des cookies",
+          "content": "Certains cookies sont temporaires (cookies de session) et sont supprimés lorsque vous fermez l'application. D'autres restent sur votre appareil pendant une période définie pour mémoriser vos préférences au fil des sessions."
+        },
+        {
+          "title": "Modifications de cette politique",
+          "content": "Nous pouvons mettre à jour cette politique en matière de cookies de temps à autre pour refléter les changements technologiques ou les exigences légales. Toute modification sera publiée sur cette page avec une date de révision mise à jour."
+        },
+        {
+          "title": "Contactez-nous",
+          "content": "Si vous avez des questions, des préoccupations ou des commentaires concernant cette politique en matière de cookies, veuillez nous contacter à leafnest.capstone@gmail.com."
+        }
+      ],
+      "footerTitle": "Votre vie privée est importante",
+      "footerText": "Nous nous engageons à faire preuve de transparence sur la manière dont nous utilisons les cookies. Votre utilisation continue de notre application indique votre acceptation de cette politique.",
+      "copyright": "© 2025 LeafNest. Tous droits réservés.",
+      "lastUpdated": "Dernière mise à jour : 1 juillet 2025"
+    },
+    "privacy": {
+      "title": "politique de confidentialité",
+      "subtitle": "Votre vie privée nous tient à cœur",
+      "effectiveDate": "Date d'entrée en vigueur : 1er juillet 2025",
+      "intro": "Chez LeafNest, nous nous engageons à protéger votre vie privée et à assurer la sécurité de vos informations personnelles.",
+      "sections": [
+        {
+          "title": "Informations que nous collectons",
+          "content": "Nous collectons les informations que vous nous fournissez directement, par exemple lorsque vous créez un compte, téléchargez des photos ou nous contactez pour obtenir de l'aide. Cela peut inclure votre nom, votre adresse e-mail et toute autre information que vous choisissez de fournir."
+        },
+        {
+          "title": "Comment nous utilisons vos informations",
+          "content": "Nous utilisons les informations que nous collectons pour fournir, maintenir et améliorer nos services, communiquer avec vous et développer de nouvelles fonctionnalités. Nous ne vendons pas vos informations personnelles à des tiers."
+        },
+        {
+          "title": "Sécurité des données",
+          "content": "Nous mettons en œuvre des mesures techniques et organisationnelles appropriées pour protéger vos informations personnelles contre tout accès, altération, divulgation ou destruction non autorisés."
+        },
+        {
+          "title": "Vos droits",
+          "content": "Vous avez le droit d'accéder, de mettre à jour ou de supprimer vos informations personnelles. Vous pouvez le faire via les paramètres de votre compte ou en nous contactant directement."
+        },
+        {
+          "title": "Services tiers",
+          "content": "Notre application peut contenir des liens vers des sites Web et des services tiers. Nous ne sommes pas responsables de leurs pratiques de confidentialité. Nous vous encourageons à consulter leurs politiques de confidentialité."
+        },
+        {
+          "title": "Modifications de la politique de confidentialité",
+          "content": "Nous nous réservons le droit de mettre à jour cette politique de confidentialité à tout moment. Les modifications seront publiées sur cette page avec une date d'entrée en vigueur mise à jour. Votre utilisation continue constitue l’acceptation des modifications."
+        },
+        {
+          "title": "Contactez-nous",
+          "content": "Si vous avez des questions sur cette politique de confidentialité ou sur nos pratiques de confidentialité, veuillez nous contacter à l'adresse Privacy@leafnest.com."
+        }
+      ],
+      "footerTitle": "Nous nous soucions de vous",
+      "footerText": "Votre confiance est importante pour nous. Nous nous engageons à respecter des pratiques transparentes en matière de données et à respecter votre droit à la vie privée.",
+      "copyright": "© 2025 LeafNest. Tous droits réservés.",
+      "lastUpdated": "Dernière mise à jour : 1 juillet 2025"
+    },
+    "terms": {
+      "title": "Conditions d'utilisation",
+      "subtitle": "Veuillez lire attentivement avant d'utiliser",
+      "effectiveDate": "Date d'entrée en vigueur : 1er juillet 2025",
+      "intro": "Ces conditions d'utilisation régissent l'utilisation de l'application et des services LeafNest. En utilisant notre application, vous acceptez ces termes et conditions.",
+      "sections": [
+        {
+          "title": "Acceptation des conditions",
+          "content": "En accédant ou en utilisant l'application LeafNest, vous acceptez d'être lié par ces conditions d'utilisation. Si vous n'acceptez pas ces conditions, vous ne devez pas utiliser l'application."
+        },
+        {
+          "title": "Responsabilités des utilisateurs",
+          "content": "Vous acceptez d'utiliser l'application uniquement à des fins licites et d'une manière qui ne porte pas atteinte aux droits d'autrui. Vous êtes responsable du maintien de la confidentialité des informations de votre compte."
+        },
+        {
+          "title": "Propriété intellectuelle",
+          "content": "Tout le contenu, les marques déposées, les logos et la propriété intellectuelle de l'application sont la propriété de LeafNest ou nous sont concédés sous licence. L'utilisation non autorisée de notre propriété intellectuelle est strictement interdite."
+        },
+        {
+          "title": "Confidentialité et collecte de données",
+          "content": "Nous collectons et traitons les informations personnelles comme décrit dans notre Politique de confidentialité. En utilisant notre application, vous consentez à nos pratiques de collecte, de stockage et de traitement des données."
+        },
+        {
+          "title": "Limitation de responsabilité",
+          "content": "LeafNest n'est pas responsable des dommages, pertes ou blessures résultant de l'utilisation de l'application ou de ses services. Vous utilisez l'application à vos propres risques et discrétion."
+        },
+        {
+          "title": "Modifications des conditions",
+          "content": "Nous nous réservons le droit de mettre à jour ces conditions d'utilisation à tout moment. Toute modification sera publiée sur cette page avec une date d’entrée en vigueur mise à jour. L'utilisation continue constitue l'acceptation des modifications."
+        },
+        {
+          "title": "Contactez-nous",
+          "content": "Si vous avez des questions, des préoccupations ou des commentaires concernant ces conditions d'utilisation, veuillez nous contacter à leafnest.capstone@gmail.com."
+        }
+      ],
+      "footerTitle": "Merci",
+      "footerText": "Merci d'avoir pris le temps de consulter nos conditions d'utilisation. Votre confiance et votre conformité nous aident à créer une meilleure expérience pour chacun.",
+      "copyright": "© 2025 LeafNest. Tous droits réservés.",
+      "lastUpdated": "Dernière mise à jour : 1 juillet 2025"
+    }
+  },
+  "faq": {
+    "title": "Aide et FAQ",
+    "subtitle": "Trouvez des réponses aux questions courantes",
+    "categories": [
+      {
+        "title": "Commencer",
+        "items": [
+          {
+            "question": "Qu’est-ce que LeafNest ?",
+            "answer": "LeafNest est une application d'identification et d'information sur les plantes qui utilise la technologie de l'IA pour vous aider à identifier les plantes et les animaux afin de fournir des connaissances sur la nature."
+          },
+          {
+            "question": "Comment puis-je commencer ?",
+            "answer": "Ouvrez l'application, appuyez sur l'icône de numérisation et pointez-la vers n'importe quelle plante ou animal. L'IA l'identifiera et fournira des informations détaillées sur cette espèce."
+          }
+        ]
+      },
+      {
+        "title": "Utiliser le scanner",
+        "items": [
+          {
+            "question": "Comment scanner une espèce ?",
+            "answer": "Appuyez sur l'icône de numérisation sur l'écran d'accueil, pointez votre appareil photo vers l'espèce et prenez une photo claire. L'application l'identifiera automatiquement."
+          },
+          {
+            "question": "Qu’est-ce qui fait une bonne analyse ?",
+            "answer": "Assurez un bon éclairage, concentrez-vous sur les caractéristiques distinctives et maintenez la caméra stable pour de meilleurs résultats."
+          },
+          {
+            "question": "Puis-je numériser depuis ma galerie de photos ?",
+            "answer": "Oui. Vous pouvez télécharger des photos existantes de votre galerie en sélectionnant l'option Galerie sur l'écran du scanner."
+          }
+        ]
+      },
+      {
+        "title": "Précision et fonctionnalités",
+        "items": [
+          {
+            "question": "Quelle est la précision de l’identification ?",
+            "answer": "LeafNest utilise des modèles avancés d'apprentissage automatique. La précision varie en fonction de l'éclairage et de la qualité de l'image, mais dépasse généralement 90 %."
+          },
+          {
+            "question": "Puis-je sauvegarder mes plantes préférées ?",
+            "answer": "Oui. Appuyez sur l'icône en forme de cœur sur n'importe quelle espèce identifiée pour l'ajouter à vos favoris pour un accès rapide plus tard."
+          }
+        ]
+      },
+      {
+        "title": "Assistance et aide",
+        "items": [
+          {
+            "question": "Comment contacter l'assistance ?",
+            "answer": "Ouvrez le menu Paramètres et sélectionnez Aide et support, ou envoyez-nous un e-mail à leafnest.capstone@gmail.com."
+          }
+        ]
+      }
+    ]
+  },
+  "help": {
+    "title": "Aide et assistance",
+    "subtitle": "Conseils pour scanner les plantes et les animaux avec l’IA – et où obtenir de l’aide supplémentaire.",
+    "quickStart": {
+      "title": "Démarrage rapide",
+      "bullets": [
+        "Appuyez sur le bouton Numériser depuis l'écran d'accueil.",
+        "Centrez la plante ou l'animal dans le cadre.",
+        "Restez stable, puis prenez une photo claire."
+      ],
+      "cta": "Ouvrir le scanner"
+    },
+    "bestResults": {
+      "title": "Comment obtenir de meilleurs résultats",
+      "bullets": [
+        "Utilisez un bon éclairage et évitez les contre-jours intenses.",
+        "Remplissez le cadre avec le sujet, en vous concentrant sur les détails distinctifs.",
+        "Essayez plusieurs angles tels que les feuilles, les fleurs, l'écorce ou les photos de profil."
+      ]
+    },
+    "troubleshooting": {
+      "title": "Dépannage",
+      "bullets": [
+        "Les faits saillants quotidiens se ressemblent ? Tirez pour actualiser ou rouvrir l'application après minuit (heure des Philippines).",
+        "Pas d'internet ? Vérifiez votre connexion car la reconnaissance d'images nécessite une connexion réseau.",
+        "Faible précision ? Prenez une photo plus claire et plus proche avec un meilleur éclairage."
+      ]
+    },
+    "links": {
+      "faq": "FAQ",
+      "feedback": "Envoyer des commentaires",
+      "about": "À propos de LeafNest",
+      "privacy": "politique de confidentialité",
+      "terms": "Conditions d'utilisation",
+      "contact": "Contacter l'assistance"
+    },
+    "alerts": {
+      "noEmailTitle": "Impossible d'ouvrir l'application de messagerie",
+      "noEmailBody": "Merci de nous écrire à {{email}}."
+    }
+  },
+  "feedback": {
+    "title": "Envoyer des commentaires",
+    "subtitle": "Dites-nous ce qui fonctionne bien ou ce qui pourrait être amélioré. Nous lisons chaque message.",
+    "topicLabel": "Sujet",
+    "topics": {
+      "bug": "Signaler un bug",
+      "idea": "Demande de fonctionnalité",
+      "ux": "Conception/UX",
+      "content": "Espèce / Contenu",
+      "account": "Compte / Connexion",
+      "other": "Autre"
+    },
+    "subjectLabel": "Sujet",
+    "subjectPlaceholder": "Bref résumé (par exemple, le scanner qualifie à tort une feuille d'érable)",
+    "messageLabel": "Message",
+    "messagePlaceholder": "Décrivez ce qui s'est passé, les étapes à suivre et les attentes.",
+    "emailLabel": "Votre email (facultatif)",
+    "emailPlaceholder": "Nous vous répondrons ici si besoin",
+    "includeDiagnostics": "Inclure les diagnostics",
+    "diagnosticsHint": "Nous aide à déboguer les problèmes (plateforme et système d'exploitation uniquement).",
+    "submit": "Envoyer des commentaires",
+    "submitting": "Ouverture du courrier…",
+    "footerText": "Ou envoyez-nous directement un e-mail à {{email}}",
+    "alerts": {
+      "missingInfoTitle": "Informations manquantes",
+      "missingInfoMessage": "Veuillez ajouter un sujet et un message.",
+      "noEmailAppTitle": "Impossible d'ouvrir l'application de messagerie",
+      "noEmailAppMessage": "Merci de nous écrire à {{email}} avec vos commentaires.",
+      "genericErrorTitle": "Quelque chose s'est mal passé",
+      "genericErrorMessage": "Merci de nous écrire à {{email}} avec vos commentaires."
+    }
   }
 }

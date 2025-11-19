@@ -279,14 +279,6 @@ export default function ManageNotificationsScreen({ navigation }) {
             settingKey="tips"
             iconColor="#9C27B0"
           />
-          
-          <NotificationToggle
-            icon="construct"
-            title="System Updates"
-            description="Important app updates, new features, and announcements"
-            settingKey="systemUpdates"
-            iconColor="#607D8B"
-          />
         </Section>
 
         {/* Other Notifications */}
@@ -299,24 +291,6 @@ export default function ManageNotificationsScreen({ navigation }) {
             iconColor="#2196F3"
           />
           
-          <NotificationToggle
-            icon="leaf"
-            title="New Species"
-            description="Updates when new species are added to the database"
-            settingKey="newSpecies"
-            iconColor="#4CAF50"
-          />
-        </Section>
-
-        {/* Email Notifications */}
-        <Section title="Email Notifications">
-          <NotificationToggle
-            icon="mail"
-            title="Email Notifications"
-            description="Receive important updates via email"
-            settingKey="email"
-            iconColor="#1976D2"
-          />
         </Section>
 
         {/* Quick Actions */}
