@@ -1,49 +1,54 @@
 import * as React from 'react';
 import { useEffect, useState } from 'react';
-import { View, ActivityIndicator } from 'react-native';
+import { View, ActivityIndicator, StatusBar, Platform } from 'react-native';
 import { NavigationContainer } from '@react-navigation/native';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import { Ionicons } from '@expo/vector-icons';
 import { useTranslation } from 'react-i18next';
 import { onAuthStateChanged } from 'firebase/auth';
-import { auth } from './firebase';
-
+import { auth } from '@config/firebase';
+import * as NavigationBar from 'expo-navigation-bar';
+import { CameraCaptureScreen } from '@screens/Main';
+import { LogBox } from 'react-native';
+LogBox.ignoreLogs([
+  'auth/invalid-credential'
+]);
 // Import i18n configuration
-import './i18n';
+import './src/i18n';
 
 // Import context
-import { LanguageProvider } from './contexts/LanguageContext';
+import { LanguageProvider } from '@contexts';
 
 // Import Custom Splash Screen
-import CustomSplashScreen from './screens/SplashScreen';
+import SplashScreen from '@screens/SplashScreen';
 
 // Import Screens
-import LoginScreen from './screens/LoginScreen';
-import SignInScreen from './screens/SignInScreen';
-import SignUpScreen from './screens/SignUpScreen';
-import ForgotPasswordScreen from './screens/ForgotPasswordScreen';
-import HomeScreen from './screens/HomeScreen';
-import SettingsScreen from './screens/SettingsScreen';
-import HistoryScreen from './screens/HistoryScreen';
-import NotificationScreen from './screens/NotificationScreen';
-import ManageNotificationsScreen from './screens/ManageNotificationsScreen';
-import ProfileScreen from './screens/ProfileScreen';
-import AboutScreen from './screens/AboutScreen';
-import PrivacyPolicyScreen from './screens/PrivacyPolicyScreen';
-import FavoritesScreen from './screens/FavoritesScreen';
-import CameraCaptureScreen from './screens/ScanScreen';
-import ScanStatsScreen from './screens/ScanStatsScreen';
-import TermsOfUseScreen from './screens/TermsOfUseScreen';
-import CookiesPolicyScreen from './screens/CookiesPolicyScreen';
-import FAQScreen from './screens/FAQScreen';
-import SendFeedbackScreen from './screens/SendFeedbackScreen';
-import HelpScreen from './screens/HelpScreen';
-import PlanScreen from './screens/PlanScreen';
-import ManualPaymentScreen from './screens/ManualPaymentScreen';
-import SpeciesLandingPage from './screens/SpeciesLandingPage';
-import SpeciesGalleryScreen from './screens/SpeciesGalleryScreen';
-import PostDetailScreen from './screens/PostDetailScreen'; // ✅ NEW IMPORT
+import { LoginScreen } from '@screens/Auth';
+import { SignInScreen } from '@screens/Auth';
+import { SignUpScreen } from '@screens/Auth';
+import { ForgotPasswordScreen } from '@screens/Auth';
+import { HomeScreen } from '@screens/Main';
+import { SettingsScreen } from '@screens/User';
+import { HistoryScreen } from '@screens/User';
+import { NotificationScreen } from '@screens/User';
+import { ManageNotificationsScreen } from '@screens/User';
+import { ProfileScreen } from '@screens/User';
+import { AboutScreen } from '@screens/Info';
+import { PrivacyPolicyScreen } from '@screens/Info';
+import { FavoritesScreen } from '@screens/Main';
+import { ScanScreen } from '@screens/Main';
+import { ScanStatsScreen } from '@screens/Stats';
+import { TermsOfUseScreen } from '@screens/Info';
+import { CookiesPolicyScreen } from '@screens/Info';
+import { FAQScreen } from '@screens/Info';
+import { SendFeedbackScreen } from '@screens/Info';
+import { HelpScreen } from '@screens/Info';
+import { PlanScreen } from '@screens/Plant';
+import { ManualPaymentScreen } from '@screens/Payment';
+import { SpeciesLandingPage } from '@screens/Plant';
+import { SpeciesGalleryScreen } from '@screens/Plant';
+import { PostDetailScreen } from '@screens/Plant';
 
 const Stack = createNativeStackNavigator();
 const Tab = createBottomTabNavigator();
@@ -118,6 +123,14 @@ export default function App() {
   const [user, setUser] = useState(null);
 
   useEffect(() => {
+    // Configure navigation bar for Android
+    if (Platform.OS === 'android') {
+      //NavigationBar.setPositionAsync('absolute');
+      NavigationBar.setVisibilityAsync('hidden');
+      //NavigationBar.setBehaviorAsync('overlay-swipe');
+      //NavigationBar.setBackgroundColorAsync('#00000000');
+    }
+
     const unsubscribe = onAuthStateChanged(auth, (currentUser) => {
       setUser(currentUser);
       setInitializing(false);
@@ -127,7 +140,7 @@ export default function App() {
   }, []);
 
   if (showCustomSplash) {
-    return <CustomSplashScreen onFinish={() => setShowCustomSplash(false)} />;
+    return <SplashScreen onFinish={() => setShowCustomSplash(false)} />;
   }
 
   if (initializing) {
@@ -140,6 +153,7 @@ export default function App() {
 
   return (
     <LanguageProvider>
+      <StatusBar translucent backgroundColor="transparent" barStyle="dark-content" />
       <NavigationContainer>
         <Stack.Navigator screenOptions={{ headerShown: false }}>
           {user ? (
@@ -166,7 +180,6 @@ export default function App() {
           <Stack.Screen name="Settings" component={SettingsScreen} />
           <Stack.Screen name="NotificationScreen" component={NotificationScreen} />
           <Stack.Screen name="ManageNotifications" component={ManageNotificationsScreen} />
-          {/* ✅ NEW: Post Detail Screen */}
           <Stack.Screen 
             name="PostDetailScreen" 
             component={PostDetailScreen}
@@ -192,10 +205,10 @@ export default function App() {
           />
           <Stack.Screen name="PlanScreen" component={PlanScreen} />
           <Stack.Screen 
-  name="ManualPayment" 
-  component={ManualPaymentScreen}
-  options={{ headerShown: false }}
-/>
+            name="ManualPayment" 
+            component={ManualPaymentScreen}
+            options={{ headerShown: false }}
+          />
           <Stack.Screen name="SpeciesLandingPage" component={SpeciesLandingPage} />
           <Stack.Screen
             name="SpeciesGalleryScreen"

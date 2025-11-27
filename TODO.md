@@ -1,6 +1,4 @@
--
- [x] Fix template literal for Google Vision API endpoint in ScanScreen.js
-- [x] Fix template literal for GBIF API in fetchSpeciesData in ScanScreen.js
-- [x] Fix template literals for iNaturalist APIs in fetchINaturalistData in ScanScreen.js
-- [x] Fix template literal for key prop in SpeciesLandingPage.js
-- [x] Remove duplicate SpeciesLandingPage code from ScanScreen.js
+- [ ] Update imports in ScanScreen.js to include hasGuestReachedLimit from guestScanUtils
+- [ ] Replace checkScanLimit function with new implementation that handles guests first
+- [ ] Move checkScanLimit call in handleGalleryPick to before launchImageLibraryAsync
+- [ ] Verify handleCapture has checkScanLimit in correct position

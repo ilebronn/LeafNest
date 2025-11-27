@@ -4,7 +4,7 @@
     "slug": "LeafNest",
     "version": "1.0.0",
     "orientation": "portrait",
-    "icon": "./assets/icon.png",
+    "icon": "src/assets/images/logos/icon.png",
     "userInterfaceStyle": "light",
     "newArchEnabled": true,
     "scheme": "leafnest",
@@ -17,7 +17,7 @@
     "android": {
       "package": "com.dev.leafnest",
       "adaptiveIcon": {
-        "foregroundImage": "./assets/adaptive-icon.png",
+        "foregroundImage": "src/assets/images/logos/PMFTCI.png",
         "backgroundColor": "#ffffff"
       },
       "edgeToEdgeEnabled": true
