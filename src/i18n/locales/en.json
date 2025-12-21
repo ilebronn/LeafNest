@@ -610,5 +610,115 @@
       "genericErrorTitle": "Something went wrong",
       "genericErrorMessage": "Please email us at {{email}} with your feedback."
     }
+  },
+  "postDetail": {
+    "title": "Post",
+    "errorTitle": "Error",
+    "postNotFound": "Post not found",
+    "failedToLoadPost": "Failed to load post",
+    "signInRequired": "Sign in required",
+    "signInToLike": "Please sign in to like posts",
+    "signInToComment": "Please sign in to comment",
+    "failedToLike": "Failed to like post",
+    "unknownSpecies": "Unknown Species",
+    "about": "About",
+    "showMore": "Show more",
+    "showLess": "Show less",
+    "beFirstToLike": "Be the first to like this",
+    "like": "like",
+    "likes": "likes",
+    "comment": "comment",
+    "comments": "comments",
+    "viewAllComments": "View all {{count}} {{type}}"
+  },
+  "comments": {
+    "title": "Comments",
+    "noComments": "No comments yet",
+    "beFirstToComment": "Be the first to comment!",
+    "addComment": "Add a comment...",
+    "deleteComment": "Delete Comment",
+    "deleteConfirm": "Are you sure you want to delete this comment?",
+    "delete": "Delete",
+    "failedToDelete": "Failed to delete comment",
+    "failedToLike": "Failed to like comment",
+    "loginRequired": "Login Required",
+    "loginToComment": "You must be logged in to comment",
+    "loginToLike": "You must be logged in to like comments",
+    "justNow": "Just now"
+  },
+  "notification": {
+    "title": "Notifications",
+    "noNotifications": "No notifications yet",
+    "markAsRead": "Mark as read",
+    "markAllAsRead": "Mark all as read",
+    "delete": "Delete",
+    "deleteAll": "Delete all"
+  },
+  "manageNotifications": {
+    "title": "Manage Notifications",
+    "pushNotifications": "Push Notifications",
+    "emailNotifications": "Email Notifications",
+    "likeNotifications": "Like Notifications",
+    "commentNotifications": "Comment Notifications",
+    "followNotifications": "Follow Notifications",
+    "enabled": "Enabled",
+    "disabled": "Disabled",
+    "save": "Save Settings"
+  },
+  "history": {
+    "title": "History",
+    "noHistory": "No history yet",
+    "startScanning": "Start scanning to build your history",
+    "delete": "Delete",
+    "deleteAll": "Delete all",
+    "deleteConfirm": "Are you sure you want to delete this item?",
+    "deleteAllConfirm": "Are you sure you want to delete all history?",
+    "scannedOn": "Scanned on {{date}}"
+  },
+  "speciesGallery": {
+    "title": "Gallery",
+    "noResults": "No results found",
+    "loadMore": "Load more",
+    "error": "Failed to load gallery"
+  },
+  "speciesLanding": {
+    "title": "Species Details",
+    "scientificName": "Scientific Name",
+    "commonName": "Common Name",
+    "description": "Description",
+    "habitat": "Habitat",
+    "diet": "Diet",
+    "lifespan": "Lifespan",
+    "conservationStatus": "Conservation Status",
+    "addToFavorites": "Add to Favorites",
+    "removeFromFavorites": "Remove from Favorites",
+    "share": "Share",
+    "viewMore": "View More",
+    "error": "Failed to load species details"
+  },
+  "manualPayment": {
+    "title": "Manual Payment",
+    "uploadProof": "Upload Payment Proof",
+    "selectImage": "Select Image",
+    "takePhoto": "Take Photo",
+    "chooseFromGallery": "Choose from Gallery",
+    "uploadImage": "Upload Image",
+    "uploading": "Uploading...",
+    "submit": "Submit Payment",
+    "submitting": "Submitting...",
+    "successTitle": "Success",
+    "successMessage": "Payment submitted successfully. We will verify it shortly.",
+    "errorTitle": "Error",
+    "errorMessage": "Failed to submit payment. Please try again.",
+    "selectImageFirst": "Please select an image first"
+  },
+  "scanStats": {
+    "title": "Scan Statistics",
+    "totalScans": "Total Scans",
+    "thisWeek": "This Week",
+    "thisMonth": "This Month",
+    "plants": "Plants",
+    "animals": "Animals",
+    "noData": "No scan data available yet"
   }
 }

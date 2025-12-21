@@ -19,7 +19,7 @@ import { auth } from '@config/firebase';
 import { doc, getDoc } from 'firebase/firestore';
 import { db } from '@config/firebase';
 import { likePost, getPostStats } from '@services/notifications/postInteractionsService';
-import CommentsModal from '@components/modals';
+import { CommentsModal } from '@components/modals';
 
 const { width } = Dimensions.get('window');
 

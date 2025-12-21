@@ -1,3 +1,4 @@
+// HistoryScreen/index.
 import React, { useCallback, useState, useEffect, useRef } from 'react';
 import {
   View, Text, StyleSheet, TouchableOpacity,
@@ -88,22 +89,22 @@ export default function HistoryScreen({ navigation }) {
         setItems(normalized);
 
       const countsResult = await getGlobalObservationCounts(normalized);
-      if (countsResult.success) {
-        setGlobalCounts(countsResult.counts);
+if (countsResult.success) {
+  setGlobalCounts(countsResult.counts);
         
         const updatedItems = normalized.map(item => {
-          const docId = item.taxonId 
-            ? `taxon_${item.taxonId}` 
-            : (item.scientificName || item.name || '').toLowerCase().replace(/\s+/g, '_');
+    const docId = item.taxonId 
+      ? `taxon_${item.taxonId}` 
+      : (item.scientificName || item.name || '').toLowerCase().replace(/\s+/g, '_');
           
-          return {
-            ...item,
-            globalObsCount: countsResult.counts[docId] || item.globalObsCount || 0
-          };
-        });
+           return {
+      ...item,
+      globalObsCount: countsResult.counts[docId] || item.globalObsCount || 0
+    };
+  });
         
-        setItems(updatedItems);
-      }
+         setItems(updatedItems);
+}
     } else {
       console.warn('Failed to load history:', result.error);
       setItems([]);

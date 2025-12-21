@@ -17,7 +17,7 @@
     "android": {
       "package": "com.dev.leafnest",
       "adaptiveIcon": {
-        "foregroundImage": "src/assets/images/logos/PMFTCI.png",
+        "foregroundImage": "src/assets/images/logos/icon.png",
         "backgroundColor": "#ffffff"
       },
       "edgeToEdgeEnabled": true

@@ -52,7 +52,7 @@ export default function useHomeFeed() {
 
   const loadTrendingSpecies = useCallback(async () => {
     try {
-      const result = await getTrendingSpecies(10, 7);
+      const result = await getTrendingSpecies(10);
       if (result.success) {
         setTrendingSpecies(result.data);
       }
@@ -66,21 +66,21 @@ export default function useHomeFeed() {
     try {
       const promises = [
         getPublicScans(),
-        getTrendingSpecies(10, 7),
+        getTrendingSpecies(10),
       ];
-      
+
       if (loadUnreadCount) {
         promises.push(loadUnreadCount());
       }
 
       const [scansResult, trendingResult] = await Promise.all(promises);
-      
+
       if (scansResult.success) {
         const shuffledData = shuffleArray(scansResult.data);
         setPublicScans(shuffledData);
         await loadPostStats(shuffledData);
       }
-      
+
       if (trendingResult.success) {
         setTrendingSpecies(trendingResult.data);
       }

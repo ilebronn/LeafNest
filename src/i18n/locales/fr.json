@@ -669,5 +669,115 @@
       "genericErrorTitle": "Quelque chose s'est mal passé",
       "genericErrorMessage": "Merci de nous écrire à {{email}} avec vos commentaires."
     }
+  },
+  "postDetail": {
+    "title": "Publication",
+    "errorTitle": "Erreur",
+    "postNotFound": "Publication non trouvée",
+    "failedToLoadPost": "Impossible de charger la publication",
+    "signInRequired": "Connexion requise",
+    "signInToLike": "Connectez-vous pour aimer les publications",
+    "signInToComment": "Connectez-vous pour commenter",
+    "failedToLike": "Impossible d'aimer la publication",
+    "unknownSpecies": "Espèce inconnue",
+    "about": "À propos",
+    "showMore": "Afficher plus",
+    "showLess": "Afficher moins",
+    "beFirstToLike": "Soyez le premier à aimer cette publication",
+    "like": "mention J'aime",
+    "likes": "mentions J'aime",
+    "comment": "commentaire",
+    "comments": "commentaires",
+    "viewAllComments": "Voir les {{count}} {{type}}"
+  },
+  "comments": {
+    "title": "Commentaires",
+    "noComments": "Pas encore de commentaires",
+    "beFirstToComment": "Soyez le premier à commenter !",
+    "addComment": "Ajouter un commentaire...",
+    "deleteComment": "Supprimer le commentaire",
+    "deleteConfirm": "Êtes-vous sûr de vouloir supprimer ce commentaire ?",
+    "delete": "Supprimer",
+    "failedToDelete": "Impossible de supprimer le commentaire",
+    "failedToLike": "Impossible d'aimer le commentaire",
+    "loginRequired": "Connexion requise",
+    "loginToComment": "Vous devez être connecté pour commenter",
+    "loginToLike": "Vous devez être connecté pour aimer",
+    "justNow": "À l'instant"
+  },
+  "notification": {
+    "title": "Notifications",
+    "noNotifications": "Pas encore de notifications",
+    "markAsRead": "Marquer comme lu",
+    "markAllAsRead": "Marquer tout comme lu",
+    "delete": "Supprimer",
+    "deleteAll": "Supprimer tout"
+  },
+  "manageNotifications": {
+    "title": "Gérer les notifications",
+    "pushNotifications": "Notifications push",
+    "emailNotifications": "Notifications par e-mail",
+    "likeNotifications": "Notifications d'aime",
+    "commentNotifications": "Notifications de commentaires",
+    "followNotifications": "Notifications de suivi",
+    "enabled": "Activé",
+    "disabled": "Désactivé",
+    "save": "Enregistrer les paramètres"
+  },
+  "history": {
+    "title": "Historique",
+    "noHistory": "Pas encore d'historique",
+    "startScanning": "Commencez à scanner pour construire votre historique",
+    "delete": "Supprimer",
+    "deleteAll": "Supprimer tout",
+    "deleteConfirm": "Êtes-vous sûr de vouloir supprimer cet élément ?",
+    "deleteAllConfirm": "Êtes-vous sûr de vouloir supprimer tout l'historique ?",
+    "scannedOn": "Scanné le {{date}}"
+  },
+  "speciesGallery": {
+    "title": "Galerie",
+    "noResults": "Aucun résultat trouvé",
+    "loadMore": "Charger plus",
+    "error": "Impossible de charger la galerie"
+  },
+  "speciesLanding": {
+    "title": "Détails de l'espèce",
+    "scientificName": "Nom scientifique",
+    "commonName": "Nom commun",
+    "description": "Description",
+    "habitat": "Habitat",
+    "diet": "Régime alimentaire",
+    "lifespan": "Durée de vie",
+    "conservationStatus": "Statut de conservation",
+    "addToFavorites": "Ajouter aux favoris",
+    "removeFromFavorites": "Retirer des favoris",
+    "share": "Partager",
+    "viewMore": "Voir plus",
+    "error": "Impossible de charger les détails de l'espèce"
+  },
+  "manualPayment": {
+    "title": "Paiement manuel",
+    "uploadProof": "Télécharger la preuve de paiement",
+    "selectImage": "Sélectionner une image",
+    "takePhoto": "Prendre une photo",
+    "chooseFromGallery": "Choisir dans la galerie",
+    "uploadImage": "Télécharger une image",
+    "uploading": "Téléchargement...",
+    "submit": "Soumettre le paiement",
+    "submitting": "Soumission...",
+    "successTitle": "Succès",
+    "successMessage": "Paiement soumis avec succès. Nous le vérifierons bientôt.",
+    "errorTitle": "Erreur",
+    "errorMessage": "Impossible de soumettre le paiement. Veuillez réessayer.",
+    "selectImageFirst": "Veuillez d'abord sélectionner une image"
+  },
+  "scanStats": {
+    "title": "Statistiques de numérisation",
+    "totalScans": "Scans totaux",
+    "thisWeek": "Cette semaine",
+    "thisMonth": "Ce mois",
+    "plants": "Plantes",
+    "animals": "Animaux",
+    "noData": "Aucune donnée de numérisation disponible pour le moment"
   }
 }

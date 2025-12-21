@@ -22,8 +22,9 @@ const useScanLimits = () => {
   const [isCheckingLimit, setIsCheckingLimit] = useState(false);
 
   /**
-   * Check if user can perform a scan
+   * Check if user can perform a scan (PRE-SCAN CHECK)
    * Handles both guest and authenticated users
+   * Only checks if limit is reached, does NOT decrement count
    * 
    * @returns {Promise<boolean>} - True if scan is allowed, false if limit reached
    */
@@ -74,9 +75,7 @@ const useScanLimits = () => {
         return false;
       }
 
-      // Decrement scan count
-      await decrementScanCount(user.uid);
-      console.log(`✅ Scan allowed (${limits.scansRemaining - 1} remaining)`);
+      console.log(`✅ Scan allowed (${limits.scansRemaining} remaining)`);
       
       setIsCheckingLimit(false);
       return true;
@@ -85,6 +84,31 @@ const useScanLimits = () => {
       // Fail-safe: allow scan if check fails
       setIsCheckingLimit(false);
       return true;
+    }
+  }, []);
+
+  /**
+   * Decrement scan count for authenticated users (POST-SCAN)
+   * Called after successful scan completion
+   * 
+   * @returns {Promise<boolean>} - True if successful
+   */
+  const decrementScanCountPostScan = useCallback(async () => {
+    const user = auth.currentUser;
+
+    if (!user || isGuestUser(user)) {
+      return false; // Only for authenticated users
+    }
+
+    try {
+      await decrementScanCount(user.uid);
+      const limits = await getUsageLimits(user.uid);
+      setUsageLimits(limits);
+      console.log(`✅ Scan count decremented (${limits.scansRemaining} remaining)`);
+      return true;
+    } catch (error) {
+      console.error('❌ Error decrementing scan count:', error);
+      return false;
     }
   }, []);
 
@@ -251,6 +275,7 @@ const useScanLimits = () => {
 
     // Actions
     checkScanLimit,
+    decrementScanCountPostScan,
     handleGuestPostScan,
     refreshUsageLimits,
     closePremiumGate,

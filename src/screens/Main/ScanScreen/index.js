@@ -1,10 +1,12 @@
-import React, { useRef, useEffect } from 'react';
+import React, { useRef, useEffect, useCallback } from 'react';
 import { View, Text, TouchableOpacity, Alert, ActivityIndicator } from 'react-native';
 import { CameraView, useCameraPermissions } from 'expo-camera';
 import { Ionicons } from '@expo/vector-icons';
 import { GestureHandlerRootView, PinchGestureHandler } from 'react-native-gesture-handler';
 import * as ImagePicker from 'expo-image-picker';
 import * as FileSystem from 'expo-file-system/legacy'; // Use legacy API
+import { auth } from '@config/firebase';
+import { isGuestUser } from '@utils/guest';
 
 // Components
 import { PremiumGate } from '@components/modals';
@@ -54,6 +56,7 @@ export default function ScanScreen({ navigation }) {
     showPremiumGate,
     usageLimits,
     checkScanLimit,
+    decrementScanCountPostScan,
     handleGuestPostScan,
     closePremiumGate,
     handleUpgrade,
@@ -71,6 +74,23 @@ export default function ScanScreen({ navigation }) {
   useEffect(() => {
     initializeCache();
   }, [initializeCache]);
+
+  /**
+   * Wrapper for post-scan operations
+   * Handles both guest and authenticated users
+   */
+  const handlePostScanSuccess = useCallback(async (navigation) => {
+    const user = auth.currentUser;
+    
+    // Handle guest users
+    if (isGuestUser(user)) {
+      await handleGuestPostScan(navigation);
+    } 
+    // Handle authenticated users
+    else if (user && decrementScanCountPostScan) {
+      await decrementScanCountPostScan();
+    }
+  }, [handleGuestPostScan, decrementScanCountPostScan]);
 
   /**
    * Handle camera capture button press

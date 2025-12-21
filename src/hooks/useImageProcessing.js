@@ -5,6 +5,7 @@ import { auth } from '@config/firebase';
 import { recordScan } from '@services/scanning/scanStatsService';
 import { isGuestUser } from '@utils/guest';
 import { isOnline } from '@utils/network/networkUtils';
+import { addToHistory, incrementGlobalObservation } from '@services/firebase';
 
 // API Services
 import {
@@ -38,6 +39,15 @@ const useImageProcessing = () => {
   const [isProcessing, setIsProcessing] = useState(false);
   const [processingStage, setProcessingStage] = useState('');
   const isProcessingRef = useRef(false); // Prevent race conditions
+  const [decrementScanCountPostScan, setDecrementScanCountPostScan] = useState(null);
+
+  /**
+   * Set the decrement function from useScanLimits hook
+   * This is passed from ScanScreen to avoid circular dependencies
+   */
+  const setDecrementFunction = useCallback((fn) => {
+    setDecrementScanCountPostScan(() => fn);
+  }, []);
 
   /**
    * Initialize cache on mount
@@ -120,9 +130,7 @@ const useImageProcessing = () => {
             scanType: 'camera',
           });
 
-          // Update global observation count and history
-          const { addToHistory, incrementGlobalObservation } = require('@firestoreService');
-          
+          // ✅ FIXED: Increment global observation count for all users
           const globalObsResult = await incrementGlobalObservation({
             taxonId: matchResult.taxonId,
             name: matchResult.name,
@@ -130,8 +138,10 @@ const useImageProcessing = () => {
             commonName: matchResult.commonName,
           });
 
+          console.log(`✅ Global observation count: ${globalObsResult.success ? globalObsResult.count : 'failed'}`);
+
+          // ✅ FIXED: Add to user history with global count
           await addToHistory(user.uid, {
-            plantName: matchResult.commonName || matchResult.name,
             name: matchResult.name,
             scientificName: matchResult.name,
             commonName: matchResult.commonName,

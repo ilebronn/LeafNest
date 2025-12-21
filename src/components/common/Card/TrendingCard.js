@@ -49,13 +49,13 @@ export default function TrendingCard({ item, index, onPress, t }) {
 
         <View style={styles.trendingInfo}>
           <Text style={styles.trendingName} numberOfLines={2}>
-            {item.plantName || item.name || item.commonName || item.scientificName || t('home.feed.unknownSpecies')}
+            {item.commonName || item.name || item.scientificName || t('home.feed.unknownSpecies')}
           </Text>
           <View style={styles.trendingStats}>
             <View style={styles.trendingStat}>
-              <Ionicons name="scan-outline" size={12} color="rgba(255,255,255,0.9)" />
-              <Text style={styles.trendingStatText}>{item.count} scans</Text>
-            </View>
+  <Ionicons name="scan-outline" size={12} color="rgba(255,255,255,0.9)" />
+  <Text style={styles.trendingStatText}>{item.count} scans</Text>
+</View>
             {item.iconicTaxon && (
               <View style={styles.trendingCategory}>
                 <Text style={styles.trendingCategoryText}>{item.iconicTaxon}</Text>
