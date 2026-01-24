@@ -1,7 +1,8 @@
+// FavoritesScreen/index.js
 import React, { useCallback, useState } from 'react';
 import {
   View, Text, StyleSheet, TouchableOpacity,
-  FlatList, RefreshControl, Alert, ActivityIndicator
+  FlatList, RefreshControl, Alert, ActivityIndicator, Modal, ScrollView, Image, Switch
 } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import { useFocusEffect } from '@react-navigation/native';
@@ -9,13 +10,49 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 import { LinearGradient } from 'expo-linear-gradient';
 import useFavorites from '@hooks/useFavorites';
 import FavoriteCard from '@components/common/Card/FavoriteCard';
+import { cacheFullDetails } from '@services/storage/offlineStorage';
+
+// ✅ ADD IMPORTS
+import { useOfflineAccess } from '@hooks/useOfflineAccess';
+import PremiumGate from '@components/modals/PremiumGate';
 
 export default function FavoritesScreen({ navigation }) {
   const { items, loading, refreshing, uid, loadFavorites, onRefresh, deleteSelected, clearAll } = useFavorites();
   const [selectionMode, setSelectionMode] = useState(false);
   const [selectedItems, setSelectedItems] = useState(new Set());
+  const [detailsModalVisible, setDetailsModalVisible] = useState(false);
+  const [selectedSpecies, setSelectedSpecies] = useState(null);
+  const [modalImageError, setModalImageError] = useState(false);
+  
+  // ✅ ADD STATE for premium gate
+  const [premiumGateVisible, setPremiumGateVisible] = useState(false);
+
+  // ✅ ADD HOOK for offline access
+  const { 
+    isOffline, 
+    isPremium, 
+    canAccessOffline, 
+    shouldBlockOfflineAccess 
+  } = useOfflineAccess();
 
   useFocusEffect(useCallback(() => { loadFavorites(); }, [loadFavorites]));
+
+  // ✅ FIX: Validate image URL - only use if it's a valid remote URL
+  const isValidImageUrl = (url) => {
+    if (!url) return false;
+    return url.startsWith('http://') || url.startsWith('https://');
+  };
+
+  // ✅ FIX: Get the best available image URL
+  const getImageSource = (item) => {
+    if (isValidImageUrl(item?.imageUrl)) {
+      return item.imageUrl;
+    }
+    if (isValidImageUrl(item?.imageUri)) {
+      return item.imageUri;
+    }
+    return null;
+  };
 
   const toggleSelectionMode = () => {
     setSelectionMode(!selectionMode);
@@ -46,20 +83,38 @@ export default function FavoritesScreen({ navigation }) {
     setSelectionMode(false);
   };
 
+  // ✅ MODIFIED openItem function with offline premium check
   const openItem = (item) => {
     if (selectionMode) {
       toggleItemSelection(item.id);
       return;
     }
 
-    Alert.alert(
-      item.name,
-      `${item.scientificName ? `Scientific Name: ${item.scientificName}\n` : ''}` +
-      `${item.rank ? `Rank: ${item.rank}\n` : ''}` +
-      `${item.iconicTaxon ? `Type: ${item.iconicTaxon}\n` : ''}` +
-      `${item.taxonId ? `Taxon ID: ${item.taxonId}` : ''}`,
-      [{ text: 'Close' }]
-    );
+    // ✅ OFFLINE PREMIUM CHECK - Block non-premium users
+    if (isOffline && !isPremium) {
+      console.log('❌ Offline access blocked - Premium required');
+      setPremiumGateVisible(true);
+      return;
+    }
+
+    setSelectedSpecies(item);
+    setModalImageError(false); // Reset error state when opening new modal
+    setDetailsModalVisible(true);
+  };
+
+  const closeModal = () => {
+    setDetailsModalVisible(false);
+    setSelectedSpecies(null);
+    setModalImageError(false);
+  };
+
+  const formatDate = (timestamp) => {
+    const date = new Date(timestamp);
+    return date.toLocaleDateString([], { 
+      month: 'long', 
+      day: 'numeric', 
+      year: 'numeric' 
+    });
   };
 
   const renderItem = ({ item }) => {
@@ -78,6 +133,239 @@ export default function FavoritesScreen({ navigation }) {
           }
         }}
       />
+    );
+  };
+
+  const SpeciesDetailsModal = () => {
+    if (!selectedSpecies || !detailsModalVisible) return null;
+
+    const modalImageSource = getImageSource(selectedSpecies);
+    const shouldShowModalImage = modalImageSource && !modalImageError;
+
+    return (
+      <Modal
+        transparent={true}
+        visible={detailsModalVisible}
+        animationType="slide"
+        onRequestClose={closeModal}
+        presentationStyle="overFullScreen"
+      >
+        <View style={styles.modalOverlay}>
+          <TouchableOpacity 
+            style={styles.modalBackground}
+            activeOpacity={1}
+            onPress={closeModal}
+          />
+          
+          <View style={styles.modalContainer}>
+            <View style={styles.modalHeader}>
+              <View style={styles.modalHandle} />
+              <TouchableOpacity 
+                style={styles.closeButton}
+                onPress={closeModal}
+              >
+                <Ionicons name="close" size={22} color="#6B7280" />
+              </TouchableOpacity>
+            </View>
+
+            <ScrollView 
+              style={styles.modalContent}
+              showsVerticalScrollIndicator={false}
+              bounces={true}
+            >
+              <View style={styles.modalImageContainer}>
+                {shouldShowModalImage ? (
+                  <Image 
+                    source={{ uri: modalImageSource }} 
+                    style={styles.modalImage}
+                    resizeMode="cover"
+                    onError={(error) => {
+                      console.error('❌ Modal image failed to load:', modalImageSource);
+                      console.error('Error:', error.nativeEvent.error);
+                      setModalImageError(true);
+                    }}
+                    onLoad={() => {
+                      console.log('✅ Modal image loaded:', modalImageSource);
+                    }}
+                  />
+                ) : (
+                  <LinearGradient
+                    colors={['#E8F5E9', '#C8E6C9']}
+                    style={[styles.modalImage, styles.modalImageFallback]}
+                  >
+                    <Ionicons name="image-outline" size={56} color="#5E936C" />
+                  </LinearGradient>
+                )}
+              </View>
+
+              <Text style={styles.modalTitle}>
+                {selectedSpecies.name || 'Unknown Species'}
+              </Text>
+
+              <View style={styles.detailsContainer}>
+                {selectedSpecies.commonName && selectedSpecies.commonName !== selectedSpecies.name && (
+                  <View style={styles.detailRow}>
+                    <Ionicons name="leaf-outline" size={20} color="#5E936C" style={styles.detailIcon} />
+                    <View style={styles.detailTextContainer}>
+                      <Text style={styles.detailLabel}>Common Name</Text>
+                      <Text style={styles.detailValue}>{selectedSpecies.commonName}</Text>
+                    </View>
+                  </View>
+                )}
+                
+                {selectedSpecies.scientificName && selectedSpecies.scientificName !== selectedSpecies.name && (
+                  <View style={styles.detailRow}>
+                    <Ionicons name="flask-outline" size={20} color="#5E936C" style={styles.detailIcon} />
+                    <View style={styles.detailTextContainer}>
+                      <Text style={styles.detailLabel}>Scientific Name</Text>
+                      <Text style={[styles.detailValue, styles.italicText]}>
+                        {selectedSpecies.scientificName}
+                      </Text>
+                    </View>
+                  </View>
+                )}
+                
+                {selectedSpecies.rank && (
+                  <View style={styles.detailRow}>
+                    <Ionicons name="git-branch-outline" size={20} color="#5E936C" style={styles.detailIcon} />
+                    <View style={styles.detailTextContainer}>
+                      <Text style={styles.detailLabel}>Taxonomic Rank</Text>
+                      <Text style={styles.detailValue}>{selectedSpecies.rank}</Text>
+                    </View>
+                  </View>
+                )}
+                
+                {selectedSpecies.iconicTaxon && (
+                  <View style={styles.detailRow}>
+                    <Ionicons name="scan-circle-outline" size={20} color="#5E936C" style={styles.detailIcon} />
+                    <View style={styles.detailTextContainer}>
+                      <Text style={styles.detailLabel}>Type</Text>
+                      <Text style={styles.detailValue}>{selectedSpecies.iconicTaxon}</Text>
+                    </View>
+                  </View>
+                )}
+
+                {selectedSpecies.conservation && (
+                  <View style={styles.detailRow}>
+                    <Ionicons name="shield-checkmark-outline" size={20} color="#059669" style={styles.detailIcon} />
+                    <View style={styles.detailTextContainer}>
+                      <Text style={styles.detailLabel}>Conservation Status</Text>
+                      <Text style={[styles.detailValue, styles.conservationText]}>
+                        {selectedSpecies.conservation}
+                      </Text>
+                    </View>
+                  </View>
+                )}
+
+                {selectedSpecies.iNatObsCount > 0 && (
+                  <View style={styles.detailRow}>
+                    <Ionicons name="earth-outline" size={20} color="#059669" style={styles.detailIcon} />
+                    <View style={styles.detailTextContainer}>
+                      <Text style={styles.detailLabel}>iNaturalist Observations</Text>
+                      <Text style={[styles.detailValue, styles.globalObsDetailText]}>
+                        {selectedSpecies.iNatObsCount.toLocaleString()} {selectedSpecies.iNatObsCount === 1 ? 'observation' : 'observations'}
+                      </Text>
+                    </View>
+                  </View>
+                )}
+                
+                <View style={styles.detailRow}>
+                  <Ionicons name="heart" size={20} color="#ef4444" style={styles.detailIcon} />
+                  <View style={styles.detailTextContainer}>
+                    <Text style={styles.detailLabel}>Added to Favorites</Text>
+                    <Text style={styles.detailValue}>
+                      {formatDate(selectedSpecies.createdAt || Date.now())}
+                    </Text>
+                  </View>
+                </View>
+              </View>
+
+              {selectedSpecies.about && (
+                <View style={styles.descriptionContainer}>
+                  <Text style={styles.descriptionTitle}>About</Text>
+                  <Text style={styles.descriptionText}>
+                    {selectedSpecies.about}
+                  </Text>
+                </View>
+              )}
+
+              {/* ✅ MODIFIED View Full Details button with offline premium check */}
+              <TouchableOpacity
+                style={styles.viewDetailsButton}
+                onPress={async () => {
+                  // ✅ OFFLINE PREMIUM CHECK before navigation
+                  if (isOffline && !isPremium) {
+                    closeModal();
+                    console.log('❌ Offline navigation blocked - Premium required');
+                    setPremiumGateVisible(true);
+                    return;
+                  }
+
+                  closeModal();
+                  
+                  // ✅ OFFLINE CACHING: Cache full details for offline access
+                  if (uid && selectedSpecies) {
+                    try {
+                      const itemId = selectedSpecies.taxonId || selectedSpecies.scientificName || selectedSpecies.name;
+                      
+                      const fullData = {
+                        ...selectedSpecies,
+                        originalData: selectedSpecies.originalData,
+                        cachedFrom: 'favorites',
+                        cachedAt: Date.now(),
+                      };
+                      
+                      await cacheFullDetails(uid, itemId, fullData);
+                      console.log('✅ Cached details from Favorites for offline access');
+                    } catch (error) {
+                      console.error('❌ Failed to cache details:', error);
+                    }
+                  }
+                  
+                  const validImageSource = getImageSource(selectedSpecies);
+                  navigation.navigate('SpeciesLandingPage', {
+                  photoUri: validImageSource || selectedSpecies.imageUri || selectedSpecies.imageUrl,
+                  speciesData: selectedSpecies.originalData || {
+                  scientificName: selectedSpecies.scientificName,
+                  canonicalName: selectedSpecies.scientificName,
+                  rank: selectedSpecies.rank,
+                  },
+                  iNaturalistData: {
+                  id: selectedSpecies.taxonId,
+                  name: selectedSpecies.scientificName,
+                  preferred_common_name: selectedSpecies.commonName,
+                  rank: selectedSpecies.rank,
+                  iconic_taxon_name: selectedSpecies.iconicTaxon,
+                  conservation_status: selectedSpecies.conservation ? {
+                  status_name: selectedSpecies.conservation
+                    } : null,
+                  wikipedia_summary: selectedSpecies.about,
+                  default_photo: validImageSource ? {
+                  medium_url: validImageSource
+                    } : null,
+                  },
+                  iNatObsCount: selectedSpecies.iNatObsCount || 0,
+                  confidence: selectedSpecies.confidence || null, // ✅ ADD THIS LINE
+                  offlineCacheId: selectedSpecies.taxonId || selectedSpecies.scientificName || selectedSpecies.name,
+                });
+                }}
+                activeOpacity={0.8}
+              >
+                <LinearGradient
+                  colors={['#5E936C', '#3E704C']}
+                  style={styles.viewDetailsGradient}
+                >
+                  <Ionicons name="information-circle" size={22} color="#fff" />
+                  <Text style={styles.viewDetailsText}>View Full Details</Text>
+                  <Ionicons name="arrow-forward" size={20} color="#fff" />
+                </LinearGradient>
+              </TouchableOpacity>
+
+              <View style={{ height: 40 }} />
+            </ScrollView>
+          </View>
+        </View>
+      </Modal>
     );
   };
 
@@ -175,6 +463,16 @@ export default function FavoritesScreen({ navigation }) {
         </SafeAreaView>
       </LinearGradient>
 
+      {/* ✅ ADD Visual indicator for offline mode */}
+      {isOffline && (
+        <View style={styles.offlineBanner}>
+          <Ionicons name="cloud-offline-outline" size={16} color="#fff" />
+          <Text style={styles.offlineBannerText}>
+            {isPremium ? '✅ Offline Mode (Premium)' : '⚠️ Offline - Subscribe for access'}
+          </Text>
+        </View>
+      )}
+
       {items.length === 0 ? (
         <View style={styles.emptyStateContainer}>
           <View style={styles.emptyIconWrapper}>
@@ -226,6 +524,21 @@ export default function FavoritesScreen({ navigation }) {
           </LinearGradient>
         </TouchableOpacity>
       )}
+
+      <SpeciesDetailsModal />
+
+      {/* ✅ OFFLINE PREMIUM GATE */}
+      <PremiumGate
+        visible={premiumGateVisible}
+        onClose={() => setPremiumGateVisible(false)}
+        onUpgrade={() => {
+          setPremiumGateVisible(false);
+          navigation.navigate('Plan');
+        }}
+        title="Subscribe to Access Offline Mode"
+        message="Offline access to your Favorites is a premium feature. Subscribe to view your favorite species when you're offline."
+        feature="offline_favorites"
+      />
     </View>
   );
 }
@@ -287,6 +600,21 @@ const styles = StyleSheet.create({
     fontSize: 13,
     fontWeight: '600',
     color: 'rgba(255,255,255,0.9)',
+  },
+  // ✅ ADD Offline Banner Styles
+  offlineBanner: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'center',
+    backgroundColor: '#EF4444',
+    paddingVertical: 8,
+    paddingHorizontal: 16,
+    gap: 8,
+  },
+  offlineBannerText: {
+    fontSize: 13,
+    fontWeight: '600',
+    color: '#fff',
   },
   listContent: {
     paddingTop: 20,
@@ -359,7 +687,7 @@ const styles = StyleSheet.create({
   },
   bottomBar: {
     position: 'absolute',
-    bottom: 0,
+    bottom: 88,
     left: 0,
     right: 0,
     elevation: 8,
@@ -371,7 +699,7 @@ const styles = StyleSheet.create({
   bottomBarGradient: {
     paddingVertical: 16,
     paddingHorizontal: 20,
-    paddingBottom: 32,
+    paddingBottom: 20,
   },
   bottomBarButton: {
     flexDirection: 'row',
@@ -386,7 +714,7 @@ const styles = StyleSheet.create({
   },
   fab: {
     position: 'absolute',
-    bottom: 30,
+    bottom: 104,
     right: 20,
     width: 56,
     height: 56,
@@ -403,5 +731,169 @@ const styles = StyleSheet.create({
     borderRadius: 28,
     alignItems: 'center',
     justifyContent: 'center',
+  },
+  modalOverlay: {
+    flex: 1,
+    backgroundColor: 'rgba(0, 0, 0, 0.6)',
+    justifyContent: 'flex-end',
+  },
+  modalBackground: {
+    position: 'absolute',
+    top: 0,
+    left: 0,
+    right: 0,
+    bottom: 0,
+  },
+  modalContainer: {
+    backgroundColor: '#ffffff',
+    borderTopLeftRadius: 28,
+    borderTopRightRadius: 28,
+    maxHeight: '85%',
+    minHeight: '50%',
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: -4 },
+    shadowOpacity: 0.25,
+    shadowRadius: 20,
+    elevation: 20,
+  },
+  modalHeader: {
+    alignItems: 'center',
+    paddingTop: 12,
+    paddingHorizontal: 20,
+    paddingBottom: 8,
+    position: 'relative',
+    borderBottomWidth: 0.5,
+    borderBottomColor: '#E5E7EB',
+  },
+  modalHandle: {
+    width: 36,
+    height: 4,
+    backgroundColor: '#D1D5DB',
+    borderRadius: 2,
+    marginBottom: 12,
+  },
+  closeButton: {
+    position: 'absolute',
+    right: 20,
+    top: 16,
+    width: 32,
+    height: 32,
+    borderRadius: 16,
+    backgroundColor: '#F3F4F6',
+    justifyContent: 'center',
+    alignItems: 'center',
+    zIndex: 10,
+  },
+  modalContent: {
+    flex: 1,
+    paddingHorizontal: 24,
+  },
+  modalImageContainer: {
+    alignItems: 'center',
+    marginTop: 20,
+    marginBottom: 20,
+  },
+  modalImage: {
+    width: 160,
+    height: 160,
+    borderRadius: 24,
+    backgroundColor: '#E5E7EB',
+  },
+  modalImageFallback: {
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  modalTitle: {
+    fontSize: 26,
+    fontWeight: '700',
+    color: '#0f172a',
+    textAlign: 'center',
+    marginBottom: 24,
+    lineHeight: 34,
+    paddingHorizontal: 10,
+  },
+  detailsContainer: {
+    marginBottom: 24,
+  },
+  detailRow: {
+    flexDirection: 'row',
+    alignItems: 'flex-start',
+    paddingVertical: 16,
+    borderBottomWidth: 0.5,
+    borderBottomColor: '#E5E7EB',
+  },
+  detailIcon: {
+    marginRight: 12,
+    marginTop: 2,
+  },
+  detailTextContainer: {
+    flex: 1,
+  },
+  detailLabel: {
+    fontSize: 13,
+    fontWeight: '500',
+    color: '#6B7280',
+    marginBottom: 4,
+    textTransform: 'uppercase',
+    letterSpacing: 0.5,
+  },
+  detailValue: {
+    fontSize: 16,
+    fontWeight: '600',
+    color: '#0f172a',
+    lineHeight: 22,
+  },
+  italicText: {
+    fontStyle: 'italic',
+    fontWeight: '500',
+  },
+  conservationText: {
+    color: '#059669',
+    fontWeight: '700',
+  },
+  globalObsDetailText: {
+    color: '#059669',
+    fontWeight: '700',
+  },
+  descriptionContainer: {
+    marginBottom: 32,
+    backgroundColor: '#F9FAFB',
+    borderRadius: 16,
+    padding: 20,
+  },
+  descriptionTitle: {
+    fontSize: 18,
+    fontWeight: '700',
+    color: '#0f172a',
+    marginBottom: 12,
+  },
+  descriptionText: {
+    fontSize: 15,
+    lineHeight: 24,
+    color: '#374151',
+    textAlign: 'left',
+  },
+  viewDetailsButton: {
+    backgroundColor: 'transparent',
+    borderRadius: 16,
+    overflow: 'hidden',
+    elevation: 4,
+    shadowColor: '#5E936C',
+    shadowOpacity: 0.3,
+    shadowRadius: 8,
+    shadowOffset: { width: 0, height: 4 },
+  },
+  viewDetailsGradient: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'center',
+    paddingHorizontal: 24,
+    paddingVertical: 16,
+    gap: 8,
+  },
+  viewDetailsText: {
+    fontSize: 16,
+    fontWeight: '700',
+    color: '#fff',
   },
 });

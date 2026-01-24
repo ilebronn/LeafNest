@@ -4,11 +4,64 @@ import { auth } from '@config/firebase';
 import { onAuthStateChanged } from 'firebase/auth';
 import { getFavorites, removeFromFavorites } from '@services/firebase';
 
+// ✅ FIX: Helper to safely get timestamp value
+const getTimestampValue = (timestamp) => {
+  // Already a number
+  if (typeof timestamp === 'number') {
+    return timestamp;
+  }
+  
+  // Firestore Timestamp object
+  if (timestamp?.toMillis && typeof timestamp.toMillis === 'function') {
+    return timestamp.toMillis();
+  }
+  
+  // Date object
+  if (timestamp?.getTime && typeof timestamp.getTime === 'function') {
+    return timestamp.getTime();
+  }
+  
+  // Fallback to current time
+  return Date.now();
+};
+
 export default function useFavorites() {
   const [items, setItems] = useState([]);
   const [loading, setLoading] = useState(true);
   const [refreshing, setRefreshing] = useState(false);
   const [uid, setUid] = useState(auth.currentUser?.uid ?? null);
+
+  // ✅ FIX: Validate image URL - only use if it's a valid remote URL
+  const isValidImageUrl = (url) => {
+    if (!url) return false;
+    // Check if it's a valid HTTP/HTTPS URL (not a local file:// URI)
+    return url.startsWith('http://') || url.startsWith('https://');
+  };
+
+  // ✅ FIX: Get valid image URL from item data
+  const getValidImageUrl = (item) => {
+    // Try imageUrl first
+    if (isValidImageUrl(item.imageUrl)) {
+      return item.imageUrl;
+    }
+    
+    // Try imageUri as fallback
+    if (isValidImageUrl(item.imageUri)) {
+      return item.imageUri;
+    }
+    
+    // Try other possible image fields
+    if (isValidImageUrl(item.image)) {
+      return item.image;
+    }
+    
+    if (isValidImageUrl(item.photoUrl)) {
+      return item.photoUrl;
+    }
+    
+    // No valid URL found
+    return null;
+  };
 
   const loadFavorites = useCallback(async () => {
     if (!uid) {
@@ -21,20 +74,44 @@ export default function useFavorites() {
       const result = await getFavorites(uid);
       
       if (result.success) {
-        const normalized = result.data.map((it, idx) => ({
-          id: it.id || `favorite:${it.plantName || it.name || 'item'}:${idx}`,
-          name: it.plantName || it.name || it.commonName || it.scientificName || 'Unknown',
-          scientificName: it.scientificName || null,
-          commonName: it.commonName || null,
-          rank: it.rank || null,
-          iconicTaxon: it.iconicTaxon || null,
-          taxonId: it.taxonId || null,
-          imageUrl: it.imageUrl || null,
-          type: it.type || 'favorite',
-          createdAt: it.addedAt?.toMillis() || it.createdAt || Date.now(),
-        }));
+        const normalized = result.data.map((it, idx) => {
+          // ✅ FIX: Get valid image URL, filtering out file:// URIs
+          const validImageUrl = getValidImageUrl(it);
+          
+          // ✅ FIX: Use getTimestampValue instead of .toMillis()
+          const createdAtValue = getTimestampValue(it.addedAt || it.createdAt);
+          
+          return {
+            id: it.id || `favorite:${it.plantName || it.name || 'item'}:${idx}`,
+            name: it.plantName || it.name || it.commonName || it.scientificName || 'Unknown',
+            scientificName: it.scientificName || null,
+            commonName: it.commonName || null,
+            rank: it.rank || null,
+            iconicTaxon: it.iconicTaxon || null,
+            taxonId: it.taxonId || null,
+            conservation: it.conservation || null,
+            about: it.about || it.description || null,
+            iNatObsCount: it.iNatObsCount || 0,
+            // ✅ FIX: Only store valid remote URLs
+            imageUrl: validImageUrl,
+            imageUri: validImageUrl, // Keep both for compatibility
+            type: it.type || 'favorite',
+            createdAt: createdAtValue, // ✅ FIX: Already a number
+            originalData: it.originalData || null,
+          };
+        });
         
+        // ✅ FIX: Sort using numbers (no .toMillis needed)
         normalized.sort((a, b) => (b.createdAt ?? 0) - (a.createdAt ?? 0));
+        
+        // ✅ Log items with invalid images for debugging
+        const itemsWithoutImages = normalized.filter(item => !item.imageUrl);
+        if (itemsWithoutImages.length > 0) {
+          console.warn(`⚠️ ${itemsWithoutImages.length} favorites have no valid image URL:`, 
+            itemsWithoutImages.map(i => i.name)
+          );
+        }
+        
         setItems(normalized);
       } else {
         console.warn('Failed to load favorites:', result.error);

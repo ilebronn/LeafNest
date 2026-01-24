@@ -561,7 +561,11 @@ export const getUserNotifications = async (userId, limitCount = 50) => {
 
 export const getUnreadNotificationCount = async (userId) => {
   try {
-    if (!userId) return { success: false, count: 0 };
+    // ✅ FIXED: Return early if no user
+    if (!userId) {
+      console.log('ℹ️ No user logged in, skipping unread count');
+      return { success: true, count: 0 };  // Changed from success: false
+    }
 
     const notificationsRef = collection(db, 'notifications');
     const q = query(
@@ -574,7 +578,7 @@ export const getUnreadNotificationCount = async (userId) => {
     return { success: true, count: querySnapshot.size };
   } catch (error) {
     console.error('❌ Error getting unread count:', error);
-    return { success: false, count: 0 };
+    return { success: true, count: 0 };  // ✅ Also changed this to success: true
   }
 };
 

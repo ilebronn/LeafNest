@@ -68,29 +68,20 @@ export default function ScanScreen({ navigation }) {
     initializeCache,
     handleCameraCapture,
     handleGalleryImage,
+    setDecrementScanCount, // ✅ NEW: Get the setter function
   } = useImageProcessing();
+
+  // ✅ NEW: Pass the decrement function to useImageProcessing on mount
+  useEffect(() => {
+    if (decrementScanCountPostScan) {
+      setDecrementScanCount(decrementScanCountPostScan);
+    }
+  }, [decrementScanCountPostScan, setDecrementScanCount]);
 
   // Initialize cache on mount
   useEffect(() => {
     initializeCache();
   }, [initializeCache]);
-
-  /**
-   * Wrapper for post-scan operations
-   * Handles both guest and authenticated users
-   */
-  const handlePostScanSuccess = useCallback(async (navigation) => {
-    const user = auth.currentUser;
-    
-    // Handle guest users
-    if (isGuestUser(user)) {
-      await handleGuestPostScan(navigation);
-    } 
-    // Handle authenticated users
-    else if (user && decrementScanCountPostScan) {
-      await decrementScanCountPostScan();
-    }
-  }, [handleGuestPostScan, decrementScanCountPostScan]);
 
   /**
    * Handle camera capture button press
@@ -100,7 +91,7 @@ export default function ScanScreen({ navigation }) {
       return;
     }
 
-    // Check scan limits
+    // ✅ Check scan limits BEFORE scanning
     const canScan = await checkScanLimit();
     if (!canScan) {
       return;
@@ -114,6 +105,7 @@ export default function ScanScreen({ navigation }) {
         exif: true,
       });
 
+      // ✅ The decrement will happen automatically in useImageProcessing after success
       await handleCameraCapture(
         photo,
         navigation,
@@ -169,12 +161,13 @@ export default function ScanScreen({ navigation }) {
         selectedImage.base64 = base64;
       }
 
-      // Check scan limits
+      // ✅ Check scan limits BEFORE scanning
       const canScan = await checkScanLimit();
       if (!canScan) {
         return;
       }
 
+      // ✅ The decrement will happen automatically in useImageProcessing after success
       await handleGalleryImage(
         selectedImage,
         navigation,
@@ -266,16 +259,7 @@ export default function ScanScreen({ navigation }) {
               <Ionicons name={getFlashIcon()} size={24} color="#fff" />
             </TouchableOpacity>
 
-            <TouchableOpacity
-              style={[styles.controlButton, styles.controlButtonSpacing]}
-              onPress={toggleAutofocus}
-            >
-              <Ionicons
-                name={autofocus === 'on' ? 'scan' : 'scan-outline'}
-                size={24}
-                color="#fff"
-              />
-            </TouchableOpacity>
+            
           </View>
 
           {/* Zoom Controls */}

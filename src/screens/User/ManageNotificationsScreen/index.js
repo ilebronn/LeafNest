@@ -181,6 +181,73 @@ export default function ManageNotificationsScreen({ navigation }) {
     );
   };
 
+  // Mock notification service functions
+  const checkNotificationEligibility = async () => {
+    return {
+      success: true,
+      willReceive: {
+        dailyTips: settings.tips,
+        weeklyReports: settings.weeklyReport,
+        scanReminders: settings.scanReminders,
+        achievements: settings.achievements
+      }
+    };
+  };
+
+  const testWeeklyReport = async () => {
+    return {
+      success: true,
+      reportData: {
+        totalScans: 42,
+        newSpecies: 8,
+        weeklyChange: '+12%',
+        mostScanned: 'Oak Tree'
+      }
+    };
+  };
+
+  const getUserNotificationStats = async () => {
+    return {
+      success: true,
+      stats: {
+        total: 156,
+        unread: 12,
+        byType: {
+          likes: 45,
+          comments: 32,
+          achievements: 15,
+          tips: 42,
+          weeklyReport: 8,
+          scanReminders: 14
+        }
+      }
+    };
+  };
+
+  const createTipNotification = async (userId, title, message) => {
+    if (!currentUser) {
+      return { success: false, error: 'User not logged in' };
+    }
+    
+    try {
+      // Create notification in Firestore
+      const notificationRef = doc(collection(db, 'users', currentUser.uid, 'notifications'));
+      await setDoc(notificationRef, {
+        id: notificationRef.id,
+        title,
+        message,
+        type: 'tip',
+        read: false,
+        createdAt: new Date().toISOString(),
+      });
+      
+      return { success: true };
+    } catch (error) {
+      console.error('Error creating notification:', error);
+      return { success: false, error: error.message };
+    }
+  };
+
   return (
     <View style={styles.container}>
       <StatusBar barStyle="light-content" backgroundColor="#5E936C" />
@@ -290,8 +357,92 @@ export default function ManageNotificationsScreen({ navigation }) {
             settingKey="scanReminders"
             iconColor="#2196F3"
           />
-          
         </Section>
+
+        {/* Testing Tools */}
+        <View style={styles.section}>
+          <Text style={styles.sectionTitle}>🧪 Testing Tools</Text>
+          
+          {/* Check Eligibility */}
+          <TouchableOpacity
+            style={styles.testButton}
+            onPress={async () => {
+              setLoading(true);
+              const result = await checkNotificationEligibility();
+              setLoading(false);
+              
+              if (result.success) {
+                Alert.alert(
+                  '✅ Eligibility Check',
+                  `Daily Tips: ${result.willReceive.dailyTips ? '✅ Enabled' : '❌ Disabled'}\n` +
+                  `Weekly Reports: ${result.willReceive.weeklyReports ? '✅ Enabled' : '❌ Disabled'}\n` +
+                  `Scan Reminders: ${result.willReceive.scanReminders ? '✅ Enabled' : '❌ Disabled'}\n` +
+                  `Achievements: ${result.willReceive.achievements ? '✅ Enabled' : '❌ Disabled'}`
+                );
+              } else {
+                Alert.alert('Error', result.error);
+              }
+            }}
+            activeOpacity={0.7}
+          >
+            <Ionicons name="checkmark-circle" size={20} color="#5E936C" />
+            <Text style={styles.testButtonText}>Check My Eligibility</Text>
+          </TouchableOpacity>
+
+          {/* Test Weekly Report */}
+          <TouchableOpacity
+            style={styles.testButton}
+            onPress={async () => {
+              setLoading(true);
+              const result = await testWeeklyReport();
+              setLoading(false);
+              
+              if (result.success) {
+                Alert.alert(
+                  '📊 Weekly Report Data',
+                  `Total Scans: ${result.reportData.totalScans}\n` +
+                  `Unique Species: ${result.reportData.newSpecies}\n\n` +
+                  `This is what your weekly report would show!`
+                );
+              } else {
+                Alert.alert('Error', result.error);
+              }
+            }}
+            activeOpacity={0.7}
+          >
+            <Ionicons name="bar-chart" size={20} color="#FF5722" />
+            <Text style={styles.testButtonText}>Preview Weekly Report</Text>
+          </TouchableOpacity>
+
+          {/* View Stats */}
+          <TouchableOpacity
+            style={styles.testButton}
+            onPress={async () => {
+              setLoading(true);
+              const result = await getUserNotificationStats();
+              setLoading(false);
+              
+              if (result.success) {
+                const typesList = Object.entries(result.stats.byType)
+                  .map(([type, count]) => `${type}: ${count}`)
+                  .join('\n');
+                
+                Alert.alert(
+                  '📊 Your Notification Stats',
+                  `Total: ${result.stats.total}\n` +
+                  `Unread: ${result.stats.unread}\n\n` +
+                  `By Type:\n${typesList || 'No notifications yet'}`
+                );
+              } else {
+                Alert.alert('Error', result.error);
+              }
+            }}
+            activeOpacity={0.7}
+          >
+            <Ionicons name="stats-chart" size={20} color="#2196F3" />
+            <Text style={styles.testButtonText}>View My Stats</Text>
+          </TouchableOpacity>
+        </View>
 
         {/* Quick Actions */}
         <View style={styles.actionsSection}>
@@ -438,6 +589,28 @@ const styles = StyleSheet.create({
     fontSize: 13,
     color: '#666',
     lineHeight: 18,
+  },
+  testButton: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    backgroundColor: '#fff',
+    paddingVertical: 14,
+    paddingHorizontal: 16,
+    borderRadius: 12,
+    marginBottom: 10,
+    gap: 10,
+    borderWidth: 1,
+    borderColor: '#E5E7EB',
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 1 },
+    shadowOpacity: 0.05,
+    shadowRadius: 2,
+    elevation: 1,
+  },
+  testButtonText: {
+    fontSize: 14,
+    fontWeight: '500',
+    color: '#333',
   },
   actionsSection: {
     flexDirection: 'row',

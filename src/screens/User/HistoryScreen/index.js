@@ -1,5 +1,5 @@
-// HistoryScreen/index.
-import React, { useCallback, useState, useEffect, useRef } from 'react';
+// HistoryScreen/index.js 
+import React, { useCallback, useState, useEffect, useRef, useMemo } from 'react';
 import {
   View, Text, StyleSheet, TouchableOpacity,
   FlatList, Image, RefreshControl, Alert, Dimensions,
@@ -14,12 +14,241 @@ import { LinearGradient } from 'expo-linear-gradient';
 import { 
   getHistory, 
   deleteHistoryItem, 
+  deleteMultipleHistoryItems, // ✅ ADDED: Batch delete function
   clearAllHistory, 
   getGlobalObservationCounts,
   toggleHistoryItemVisibility,
 } from '@services/firebase';
 
+// ✅ ADD IMPORT for offline access hook
+import { useOfflineAccess } from '@hooks/useOfflineAccess';
+import PremiumGate from '@components/modals/PremiumGate';
+
 const { width } = Dimensions.get('window');
+
+// ✅ ADD THIS
+const CARD_HEIGHT = 116; // Card height for performance optimization
+const ITEMS_PER_PAGE = 20; // Pagination constant
+
+// ✅ FIX: Helper to safely get timestamp value
+const getTimestampValue = (timestamp) => {
+  // Already a number
+  if (typeof timestamp === 'number') {
+    return timestamp;
+  }
+  
+  // Firestore Timestamp object
+  if (timestamp?.toMillis && typeof timestamp.toMillis === 'function') {
+    return timestamp.toMillis();
+  }
+  
+  // Date object
+  if (timestamp?.getTime && typeof timestamp.getTime === 'function') {
+    return timestamp.getTime();
+  }
+  
+  // Fallback to current time
+  return Date.now();
+};
+
+// ========== FIX 1: OPTIMIZED IMAGE COMPONENT ==========
+const OptimizedImage = React.memo(({ uri, style }) => {
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(false);
+
+  if (!uri || error) {
+    return (
+      <LinearGradient
+        colors={['#E8F5E9', '#C8E6C9']}
+        style={[style, styles.imageFallback]}
+      >
+        <Ionicons name="image-outline" size={32} color="#5E936C" />
+      </LinearGradient>
+    );
+  }
+
+  return (
+    <View style={style}>
+      <Image
+        source={{ 
+          uri: uri,
+          cache: 'default' // ✅ Better than force-cache
+        }}
+        style={[style, { position: 'absolute' }]}
+        resizeMode="cover"
+        onLoadStart={() => setLoading(true)}
+        onLoadEnd={() => setLoading(false)}
+        onError={() => {
+          setLoading(false);
+          setError(true);
+        }}
+        progressiveRenderingEnabled={true}
+        fadeDuration={200}
+      />
+      {loading && (
+        <View style={[style, styles.imageLoader]}>
+          <ActivityIndicator size="small" color="#5E936C" />
+        </View>
+      )}
+    </View>
+  );
+});
+
+// ========== FIX 7: UPDATED SwipeableCard with disabled prop ==========
+const SwipeableCard = React.memo(({ 
+  item, 
+  isSelected, 
+  selectionMode, 
+  onPress, 
+  onDelete, 
+  formatDate,
+  disabled // ✅ Add disabled prop
+}) => {
+  const translateX = useRef(new Animated.Value(0)).current;
+  const [isRevealed, setIsRevealed] = useState(false);
+
+  const panResponder = useMemo(() => PanResponder.create({
+    onMoveShouldSetPanResponder: (evt, gestureState) => {
+      return Math.abs(gestureState.dx) > 10 && Math.abs(gestureState.dy) < 50;
+    },
+    onPanResponderMove: (evt, gestureState) => {
+      if (gestureState.dx < 0) {
+        translateX.setValue(Math.max(gestureState.dx, -80));
+      }
+    },
+    onPanResponderRelease: (evt, gestureState) => {
+      if (gestureState.dx < -50) {
+        Animated.timing(translateX, {
+          toValue: -80,
+          duration: 250,
+          useNativeDriver: false,
+        }).start();
+        setIsRevealed(true);
+      } else {
+        Animated.timing(translateX, {
+          toValue: 0,
+          duration: 250,
+          useNativeDriver: false,
+        }).start();
+        setIsRevealed(false);
+      }
+    },
+  }), [translateX]);
+
+  const resetSwipe = useCallback(() => {
+    Animated.timing(translateX, {
+      toValue: 0,
+      duration: 250,
+      useNativeDriver: false,
+    }).start();
+    setIsRevealed(false);
+  }, [translateX]);
+
+  const handlePress = useCallback(() => {
+    if (isRevealed) {
+      resetSwipe();
+    } else {
+      onPress();
+    }
+  }, [isRevealed, resetSwipe, onPress]);
+
+  const handleDelete = useCallback(() => {
+    resetSwipe();
+    onDelete(item);
+  }, [resetSwipe, onDelete, item]);
+
+  return (
+    <View style={styles.swipeContainer}>
+      <LinearGradient
+        colors={['#ef4444', '#dc2626']}
+        style={styles.deleteBackground}
+      >
+        <TouchableOpacity
+          style={styles.deleteButton}
+          onPress={handleDelete}
+          disabled={disabled} // ✅ Disable when deleting
+        >
+          <Ionicons name="trash-outline" size={22} color="#fff" />
+        </TouchableOpacity>
+      </LinearGradient>
+
+      <Animated.View
+        style={[
+          styles.cardWrapper,
+          { transform: [{ translateX }] },
+          disabled && { opacity: 0.5 } // ✅ Visual feedback
+        ]}
+        {...panResponder.panHandlers}
+      >
+        <TouchableOpacity 
+          style={[styles.card, isSelected && styles.cardSelected]} 
+          activeOpacity={0.7} 
+          onPress={handlePress}
+          disabled={disabled} // ✅ Disable when deleting
+          onLongPress={() => {
+            if (!selectionMode && !disabled) {
+              onPress();
+            }
+          }}
+        >
+          {selectionMode && (
+            <View style={styles.selectionCheckbox}>
+              {isSelected ? (
+                <Ionicons name="checkmark-circle" size={28} color="#22c55e" />
+              ) : (
+                <View style={styles.emptyCheckbox} />
+              )}
+            </View>
+          )}
+
+          {/* ✅ USE OPTIMIZED IMAGE */}
+          <OptimizedImage 
+            uri={item.imageUrl}
+            style={styles.image}
+          />
+          
+          <View style={styles.infoContainer}>
+            <View style={styles.nameRow}>
+              <Text numberOfLines={1} style={styles.name}>{item.name}</Text>
+              <Ionicons 
+                name={item.isPublic ? "eye-outline" : "eye-off-outline"} 
+                size={16} 
+                color={item.isPublic ? "#059669" : "#9CA3AF"} 
+              />
+            </View>
+            
+            {item.scientificName && item.scientificName !== item.name && (
+              <Text numberOfLines={1} style={styles.scientificName}>{item.scientificName}</Text>
+            )}
+            
+            <View style={styles.bottomRow}>
+              <View style={styles.metadataRow}>
+                <Ionicons name="time-outline" size={14} color="#9ca3af" />
+                <Text style={styles.timestamp}>{formatDate(item.createdAt)}</Text>
+              </View>
+              
+              {item.globalObsCount > 0 && (
+                <View style={styles.globalObsCount}>
+                  <Ionicons name="globe-outline" size={14} color="#059669" />
+                  <Text style={styles.globalObsText}>{item.globalObsCount}</Text>
+                </View>
+              )}
+            </View>
+          </View>
+        </TouchableOpacity>
+      </Animated.View>
+    </View>
+  );
+}, (prevProps, nextProps) => {
+  // ✅ Custom comparison - CHECK isPublic changes
+  return (
+    prevProps.item.id === nextProps.item.id &&
+    prevProps.item.isPublic === nextProps.item.isPublic && // ✅ ADD THIS LINE
+    prevProps.isSelected === nextProps.isSelected &&
+    prevProps.selectionMode === nextProps.selectionMode &&
+    prevProps.disabled === nextProps.disabled
+  );
+});
 
 export default function HistoryScreen({ navigation }) {
   const [items, setItems] = useState([]);
@@ -30,42 +259,64 @@ export default function HistoryScreen({ navigation }) {
   const [selectedItems, setSelectedItems] = useState(new Set());
   const [detailsModalVisible, setDetailsModalVisible] = useState(false);
   const [selectedSpecies, setSelectedSpecies] = useState(null);
-  const [searchQuery, setSearchQuery] = useState('');
   const [filterType, setFilterType] = useState('all');
   const [globalCounts, setGlobalCounts] = useState({});
+  
+  // ✅ ADD STATE for premium gate
+  const [premiumGateVisible, setPremiumGateVisible] = useState(false);
+  
+  // ========== FIX 4: DEBOUNCED SEARCH ==========
+  const [searchText, setSearchText] = useState('');
+  const [debouncedSearch, setDebouncedSearch] = useState('');
+  
+  // ========== FIX 3: PAGINATION ==========
+  const [currentPage, setCurrentPage] = useState(1);
 
+  // ========== FIX 6: LOADING STATE FOR DELETE OPERATIONS ==========
+  const [isDeletingBatch, setIsDeletingBatch] = useState(false); // ✅ RENAMED for clarity
+
+  // ✅ ADD OFFLINE ACCESS HOOK
+  const { 
+    isOffline, 
+    isPremium, 
+    canAccessOffline, 
+    shouldBlockOfflineAccess 
+  } = useOfflineAccess();
+
+  // ✅ ADD REF FOR MODAL SCROLL INSIDE THE COMPONENT
+  const modalScrollRef = useRef(null);
+
+  // ========== FIX 2: OPTIMIZED loadHistory ==========
   const loadHistory = useCallback(async () => {
-  if (!uid) {
-    setItems([]);
-    setLoading(false);
-    return;
-  }
-
+    if (!uid) {
+      setItems([]);
+      setLoading(false);
+      return;
+    }
 
     try {
-    const result = await getHistory(uid);
-    
-    if (result.success) {
-      const normalized = result.data.map((it, idx) => ({
-        id: it.id || `history:${it.plantName || it.name || 'item'}:${idx}`,
-        name: it.plantName || it.name || it.commonName || it.scientificName || 'Unknown',
-        scientificName: it.scientificName || null,
-        commonName: it.commonName || null,
-        rank: it.rank || null,
-        iconicTaxon: it.iconicTaxon || null,
-        taxonId: it.taxonId || null,
-        imageUrl: it.imageUrl || null,
-        conservation: it.conservation || null,
-        about: it.about || it.description || null,
-        iNatObsCount: it.iNatObsCount || 0,
-        globalObsCount: it.globalObsCount || 0,
-        type: it.type || 'history',
-        createdAt: it.timestamp?.toMillis() || it.createdAt || Date.now(),
-        originalData: it.originalData || null,
-        // ✅ FIX: Each scan has its own privacy status, defaults to false if not set
-        isPublic: it.isPublic === true ? true : false,
-        scanCount: it.scanCount || 1,
-      }));
+      const result = await getHistory(uid);
+      
+      if (result.success) {
+        const normalized = result.data.map((it, idx) => ({
+          id: it.id || `history:${it.plantName || it.name || 'item'}:${idx}`,
+          name: it.plantName || it.name || it.commonName || it.scientificName || 'Unknown',
+          scientificName: it.scientificName || null,
+          commonName: it.commonName || null,
+          rank: it.rank || null,
+          iconicTaxon: it.iconicTaxon || null,
+          taxonId: it.taxonId || null,
+          imageUrl: it.imageUrl || null,
+          conservation: it.conservation || null,
+          about: it.about || it.description || null,
+          iNatObsCount: it.iNatObsCount || 0,
+          globalObsCount: it.globalObsCount || 0,
+          type: it.type || 'history',
+          createdAt: getTimestampValue(it.timestamp || it.createdAt),
+          originalData: it.originalData || null,
+          isPublic: it.isPublic === true ? true : false,
+          scanCount: it.scanCount || 1,
+        }));
         
         // Remove duplicates by keeping only the most recent scan of each species
         const uniqueItems = [];
@@ -86,36 +337,55 @@ export default function HistoryScreen({ navigation }) {
           }
         }
         
-        setItems(normalized);
+        // ✅ CRITICAL: Set items IMMEDIATELY - don't wait for counts
+        setItems(uniqueItems);
+        setLoading(false);
 
-      const countsResult = await getGlobalObservationCounts(normalized);
-if (countsResult.success) {
-  setGlobalCounts(countsResult.counts);
-        
-        const updatedItems = normalized.map(item => {
-    const docId = item.taxonId 
-      ? `taxon_${item.taxonId}` 
-      : (item.scientificName || item.name || '').toLowerCase().replace(/\s+/g, '_');
-          
-           return {
-      ...item,
-      globalObsCount: countsResult.counts[docId] || item.globalObsCount || 0
-    };
-  });
-        
-         setItems(updatedItems);
-}
-    } else {
-      console.warn('Failed to load history:', result.error);
+        // ✅ Fetch counts ONLY ONCE in background - SKIP if batch deleting
+        if (!isDeletingBatch && Object.keys(globalCounts).length === 0 && uniqueItems.length > 0) {
+          // Don't await - let it run in background
+          getGlobalObservationCounts(uniqueItems).then(countsResult => {
+            if (countsResult.success) {
+              setGlobalCounts(countsResult.counts);
+              
+              setItems(prevItems => prevItems.map(item => {
+                const docId = item.taxonId 
+                  ? `taxon_${item.taxonId}` 
+                  : (item.scientificName || item.name || '').toLowerCase().replace(/\s+/g, '_');
+                
+                return {
+                  ...item,
+                  globalObsCount: countsResult.counts[docId] || item.globalObsCount || 0
+                };
+              }));
+            }
+          }).catch(err => console.warn('⚠️ Count fetch failed:', err));
+        }
+      } else {
+        console.warn('Failed to load history:', result.error);
+        setItems([]);
+        setLoading(false);
+      }
+    } catch (e) {
+      console.error('Error loading history:', e);
       setItems([]);
+      setLoading(false);
     }
-  } catch (e) {
-    console.error('Error loading history:', e);
-    setItems([]);
-  } finally {
-    setLoading(false);
-  }
-}, [uid]);
+  }, [uid, isDeletingBatch]); // ✅ Add isDeletingBatch dependency
+
+  // ========== FIX 4: DEBOUNCE SEARCH EFFECT ==========
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      setDebouncedSearch(searchText);
+    }, 300);
+
+    return () => clearTimeout(timer);
+  }, [searchText]);
+
+  // ========== FIX 3: RESET PAGINATION WHEN FILTER CHANGES ==========
+  useEffect(() => {
+    setCurrentPage(1);
+  }, [filterType, debouncedSearch]);
 
   useEffect(() => {
     const unsub = onAuthStateChanged(auth, async (user) => {
@@ -136,51 +406,90 @@ if (countsResult.success) {
   };
 
   const handleTogglePublic = async (item) => {
-    if (!uid) return;
+  if (!uid) return;
 
-    try {
-      const newStatus = !item.isPublic;
-      const result = await toggleHistoryItemVisibility(uid, item.id, newStatus);
-      
-      if (result.success) {
-        // Update local state in items list
-        setItems(prevItems => 
-          prevItems.map(i => 
-            i.id === item.id ? { ...i, isPublic: newStatus } : i
-          )
-        );
-        
-        // Close the modal
-        closeModal();
-        
-        // Show success message
-        Alert.alert(
-          'Success',
-          `Scan is now ${newStatus ? 'public' : 'private'}`
-        );
-      } else {
-        Alert.alert('Error', 'Failed to update visibility');
+  try {
+    const newStatus = !item.isPublic;
+
+    // ✅ FIX: Update selectedSpecies FIRST for instant modal update
+    setSelectedSpecies(prev => prev ? { ...prev, isPublic: newStatus } : null);
+
+    // Then update items list
+    setItems(prevItems =>
+      prevItems.map(i =>
+        i.id === item.id ? { ...i, isPublic: newStatus } : i
+      )
+    );
+
+    const result = await toggleHistoryItemVisibility(uid, item.id, newStatus);
+
+    if (result.success) {
+      // Show success message (don't close modal)
+      Alert.alert(
+        'Success',
+        `Scan is now ${newStatus ? 'public' : 'private'}`
+      );
+    } else {
+      // Revert both states on failure
+      setSelectedSpecies(prev => prev ? { ...prev, isPublic: item.isPublic } : null);
+      setItems(prevItems =>
+        prevItems.map(i =>
+          i.id === item.id ? { ...i, isPublic: item.isPublic } : i
+        )
+      );
+
+      let errorMessage = 'Failed to update visibility';
+      if (result.error?.includes('No document to update')) {
+        errorMessage = 'This scan needs to sync first. Please try again in a moment.';
+      } else if (result.error?.includes('offline')) {
+        errorMessage = 'Cannot change visibility while offline. Please check your connection.';
+      } else if (result.error) {
+        errorMessage = `Error: ${result.error}`;
       }
-    } catch (error) {
-      console.error('Error toggling visibility:', error);
-      Alert.alert('Error', 'Failed to update visibility');
+
+      Alert.alert('Error', errorMessage);
     }
-  };
+  } catch (error) {
+    console.error('Error toggling visibility:', error);
+
+    setSelectedSpecies(prev => prev ? { ...prev, isPublic: item.isPublic } : null);
+    setItems(prevItems =>
+      prevItems.map(i =>
+        i.id === item.id ? { ...i, isPublic: item.isPublic } : i
+      )
+    );
+
+    let errorMessage = 'Failed to update visibility';
+    if (error.message?.includes('No document to update')) {
+      errorMessage = 'This scan hasn\'t been synced to the cloud yet. Please wait for sync to complete and try again.';
+    } else if (error.message?.includes('permission-denied')) {
+      errorMessage = 'You don\'t have permission to modify this scan.';
+    } else if (error.message?.includes('network')) {
+      errorMessage = 'Network error. Please check your connection and try again.';
+    } else if (error.message) {
+      errorMessage = `Error: ${error.message}`;
+    }
+
+    Alert.alert('Error', errorMessage);
+  }
+};
 
   const toggleSelectionMode = () => {
     setSelectionMode(!selectionMode);
     setSelectedItems(new Set());
   };
 
-  const toggleItemSelection = (itemId) => {
-    const newSelection = new Set(selectedItems);
-    if (newSelection.has(itemId)) {
-      newSelection.delete(itemId);
-    } else {
-      newSelection.add(itemId);
-    }
-    setSelectedItems(newSelection);
-  };
+  const toggleItemSelection = useCallback((itemId) => {
+    setSelectedItems(prev => {
+      const newSelection = new Set(prev);
+      if (newSelection.has(itemId)) {
+        newSelection.delete(itemId);
+      } else {
+        newSelection.add(itemId);
+      }
+      return newSelection;
+    });
+  }, []);
 
   const selectAll = () => {
     if (selectedItems.size === filteredItems.length) {
@@ -190,12 +499,13 @@ if (countsResult.success) {
     }
   };
 
-  const deleteSelected = async () => {
-    if (selectedItems.size === 0 || !uid) return;
-
+  // ========== deleteItem function ==========
+  const deleteItem = useCallback(async (item) => {
+    if (!uid || isDeletingBatch) return; // ✅ Prevent during batch delete
+    
     Alert.alert(
-      'Delete Selected',
-      `Delete ${selectedItems.size} ${selectedItems.size === 1 ? 'record' : 'records'} from history?`,
+      'Delete Record',
+      `Delete "${item.name}" from history?`,
       [
         { text: 'Cancel', style: 'cancel' },
         {
@@ -203,18 +513,63 @@ if (countsResult.success) {
           style: 'destructive',
           onPress: async () => {
             try {
-              const deletePromises = Array.from(selectedItems).map(itemId => 
-                deleteHistoryItem(uid, itemId)
-              );
+              // Delete from service (AsyncStorage + Firestore)
+              const result = await deleteHistoryItem(uid, item.id);
               
-              await Promise.all(deletePromises);
+              if (result.success) {
+                // Reload to get fresh AsyncStorage data
+                await loadHistory();
+                
+                Alert.alert('Success', 'Record deleted');
+              } else {
+                Alert.alert('Error', 'Failed to delete record');
+              }
+            } catch (error) {
+              console.error('Error deleting item:', error);
+              Alert.alert('Error', 'Failed to delete record');
+            }
+          },
+        },
+      ]
+    );
+  }, [uid, loadHistory, isDeletingBatch]);
+
+  // ========== FIXED: deleteSelected function with BATCH DELETE ==========
+  const deleteSelected = async () => {
+    if (selectedItems.size === 0 || !uid || isDeletingBatch) return;
+
+    const countToDelete = selectedItems.size;
+
+    Alert.alert(
+      'Delete Selected',
+      `Delete ${countToDelete} ${countToDelete === 1 ? 'record' : 'records'} from history?`,
+      [
+        { text: 'Cancel', style: 'cancel' },
+        {
+          text: 'Delete',
+          style: 'destructive',
+          onPress: async () => {
+            setIsDeletingBatch(true); // ✅ Set loading state
+            
+            try {
+              const idsToDelete = Array.from(selectedItems);
+              
+              // ✅ USE BATCH DELETE (single operation - prevents race condition)
+              await deleteMultipleHistoryItems(uid, idsToDelete);
+
+              // ✅ Reload to get fresh data
               await loadHistory();
+              
               setSelectedItems(new Set());
               setSelectionMode(false);
-              Alert.alert('Success', `${selectedItems.size} ${selectedItems.size === 1 ? 'record' : 'records'} deleted`);
+              
+              Alert.alert('Success', `${countToDelete} ${countToDelete === 1 ? 'record' : 'records'} deleted`);
             } catch (error) {
               console.error('Error deleting items:', error);
               Alert.alert('Error', 'Failed to delete selected records');
+              await loadHistory(); // Reload on error
+            } finally {
+              setIsDeletingBatch(false); // ✅ Clear loading state
             }
           },
         },
@@ -222,6 +577,7 @@ if (countsResult.success) {
     );
   };
 
+  // ========== clearAllHistoryData function ==========
   const clearAllHistoryData = () => {
     if (items.length === 0 || !uid) return;
     
@@ -235,11 +591,16 @@ if (countsResult.success) {
           style: 'destructive',
           onPress: async () => {
             try {
+              // Clear all from service
               const result = await clearAllHistory(uid);
+              
               if (result.success) {
-                setItems([]);
+                // Reload to verify
+                await loadHistory();
+                
                 setSelectionMode(false);
                 setSelectedItems(new Set());
+                
                 Alert.alert('Success', 'All history cleared');
               } else {
                 Alert.alert('Error', 'Failed to clear history');
@@ -247,6 +608,7 @@ if (countsResult.success) {
             } catch (error) {
               console.error('Error clearing history:', error);
               Alert.alert('Error', 'Failed to clear history');
+              await loadHistory(); // Reload on error
             }
           },
         },
@@ -254,52 +616,30 @@ if (countsResult.success) {
     );
   };
 
-  const deleteItem = async (item) => {
-    if (!uid) return;
-    
-    Alert.alert(
-      'Delete Record',
-      `Delete "${item.name}" from history?`,
-      [
-        { text: 'Cancel', style: 'cancel' },
-        {
-          text: 'Delete',
-          style: 'destructive',
-          onPress: async () => {
-            try {
-              const result = await deleteHistoryItem(uid, item.id);
-              if (result.success) {
-                await loadHistory();
-                Alert.alert('Success', 'Record deleted');
-              } else {
-                Alert.alert('Error', 'Failed to delete record');
-              }
-            } catch (error) {
-              console.error('Error deleting item:', error);
-              Alert.alert('Error', 'Failed to delete record');
-            }
-          },
-        },
-      ]
-    );
-  };
-
-  const openItem = (item) => {
+  // ✅ MODIFIED openItem function with offline premium check
+  const openItem = useCallback((item) => {
     if (selectionMode) {
       toggleItemSelection(item.id);
       return;
     }
 
+    // ✅ OFFLINE PREMIUM CHECK - Block non-premium users
+    if (isOffline && !isPremium) {
+      console.log('❌ Offline access blocked - Premium required');
+      setPremiumGateVisible(true);
+      return;
+    }
+
     setSelectedSpecies(item);
     setDetailsModalVisible(true);
-  };
+  }, [selectionMode, isOffline, isPremium, toggleItemSelection]);
 
   const closeModal = () => {
     setDetailsModalVisible(false);
     setSelectedSpecies(null);
   };
 
-  const formatDate = (timestamp) => {
+  const formatDate = useCallback((timestamp) => {
     const date = new Date(timestamp);
     const now = new Date();
     const diffInHours = (now - date) / (1000 * 60 * 60);
@@ -315,9 +655,10 @@ if (countsResult.success) {
     } else {
       return date.toLocaleDateString([], { month: 'short', day: 'numeric' });
     }
-  };
+  }, []);
 
-  const getFilteredItems = () => {
+  // ========== FIX: UPDATED getFilteredItems with debounced search ==========
+  const getFilteredItems = useCallback(() => {
     let filtered = items;
 
     if (filterType === 'plants') {
@@ -339,8 +680,8 @@ if (countsResult.success) {
       );
     }
 
-    if (searchQuery.trim()) {
-      const query = searchQuery.toLowerCase();
+    if (debouncedSearch.trim()) {
+      const query = debouncedSearch.toLowerCase();
       filtered = filtered.filter(item => 
         item.name?.toLowerCase().includes(query) ||
         item.commonName?.toLowerCase().includes(query) ||
@@ -349,9 +690,51 @@ if (countsResult.success) {
     }
 
     return filtered;
-  };
+  }, [items, filterType, debouncedSearch]);
 
   const filteredItems = getFilteredItems();
+  
+  // ========== FIX 3: PAGINATED ITEMS ==========
+  const paginatedItems = useMemo(() => {
+    return filteredItems.slice(0, currentPage * ITEMS_PER_PAGE);
+  }, [filteredItems, currentPage]);
+
+  const hasMore = useMemo(() => {
+    return paginatedItems.length < filteredItems.length;
+  }, [paginatedItems.length, filteredItems.length]);
+
+  const handleLoadMore = useCallback(() => {
+    if (hasMore) {
+      setCurrentPage(prev => prev + 1);
+    }
+  }, [hasMore]);
+
+  // ✅ OPTIMIZED renderItem
+  const renderItem = useCallback(({ item }) => {
+    const isSelected = selectedItems.has(item.id);
+
+    return (
+      <SwipeableCard
+        item={item}
+        isSelected={isSelected}
+        selectionMode={selectionMode}
+        onPress={() => openItem(item)}
+        onDelete={deleteItem}
+        formatDate={formatDate}
+        disabled={isDeletingBatch} // ✅ Disable during batch delete
+      />
+    );
+  }, [selectedItems, selectionMode, openItem, deleteItem, formatDate, isDeletingBatch]);
+
+  // ✅ ADD keyExtractor
+  const keyExtractor = useCallback((item) => item.id, []);
+
+  // ✅ ADD getItemLayout for huge performance boost
+  const getItemLayout = useCallback((data, index) => ({
+    length: CARD_HEIGHT,
+    offset: CARD_HEIGHT * index,
+    index,
+  }), []);
 
   const SpeciesDetailsModal = () => {
     if (!selectedSpecies || !detailsModalVisible) return null;
@@ -383,14 +766,21 @@ if (countsResult.success) {
             </View>
 
             <ScrollView 
+              ref={modalScrollRef}
               style={styles.modalContent}
               showsVerticalScrollIndicator={false}
               bounces={true}
+              maintainVisibleContentPosition={{
+                minIndexForVisible: 0,
+              }}
             >
               <View style={styles.modalImageContainer}>
                 {selectedSpecies.imageUrl ? (
                   <Image 
-                    source={{ uri: selectedSpecies.imageUrl }} 
+                    source={{ 
+                      uri: selectedSpecies.imageUrl,
+                      cache: 'force-cache'
+                    }} 
                     style={styles.modalImage}
                     resizeMode="cover"
                   />
@@ -531,12 +921,20 @@ if (countsResult.success) {
                 </View>
               )}
 
-              {/* VIEW FULL DETAILS BUTTON */}
+              {/* ✅ MODIFIED View Full Details button with offline premium check */}
               <TouchableOpacity
                 style={styles.viewDetailsButton}
-                onPress={() => {
-                  closeModal();
-                  navigation.navigate('SpeciesLandingPage', {
+                onPress={async () => {
+                  // ✅ OFFLINE PREMIUM CHECK before navigation
+                  if (isOffline && !isPremium) {
+                    closeModal();
+                    console.log('❌ Offline navigation blocked - Premium required');
+                    setPremiumGateVisible(true);
+                    return;
+                  }
+
+                  // ✅ DON'T CLOSE MODAL IMMEDIATELY - NAVIGATE FIRST
+                  const navigationData = {
                     photoUri: selectedSpecies.imageUri || selectedSpecies.imageUrl,
                     speciesData: selectedSpecies.originalData || {
                       scientificName: selectedSpecies.scientificName,
@@ -566,7 +964,16 @@ if (countsResult.success) {
                     },
                     iNatObsCount: selectedSpecies.iNatObsCount || 0,
                     confidence: selectedSpecies.confidence || null,
-                  });
+                    offlineCacheId: selectedSpecies.taxonId || selectedSpecies.scientificName || selectedSpecies.name,
+                  };
+                  
+                  // ✅ NAVIGATE FIRST, THEN CLOSE MODAL
+                  navigation.navigate('SpeciesLandingPage', navigationData);
+                  
+                  // ✅ CLOSE MODAL AFTER SHORT DELAY
+                  setTimeout(() => {
+                    closeModal();
+                  }, 100);
                 }}
                 activeOpacity={0.8}
               >
@@ -585,156 +992,6 @@ if (countsResult.success) {
           </View>
         </View>
       </Modal>
-    );
-  };
-
-  const SwipeableCard = ({ item, isSelected, onPress, onDelete }) => {
-    const translateX = useRef(new Animated.Value(0)).current;
-    const [isRevealed, setIsRevealed] = useState(false);
-
-    const panResponder = PanResponder.create({
-      onMoveShouldSetPanResponder: (evt, gestureState) => {
-        return Math.abs(gestureState.dx) > 10 && Math.abs(gestureState.dy) < 50;
-      },
-      onPanResponderMove: (evt, gestureState) => {
-        if (gestureState.dx < 0) {
-          translateX.setValue(Math.max(gestureState.dx, -80));
-        }
-      },
-      onPanResponderRelease: (evt, gestureState) => {
-        if (gestureState.dx < -50) {
-          Animated.timing(translateX, {
-            toValue: -80,
-            duration: 250,
-            useNativeDriver: false,
-          }).start();
-          setIsRevealed(true);
-        } else {
-          Animated.timing(translateX, {
-            toValue: 0,
-            duration: 250,
-            useNativeDriver: false,
-          }).start();
-          setIsRevealed(false);
-        }
-      },
-    });
-
-    const resetSwipe = () => {
-      Animated.timing(translateX, {
-        toValue: 0,
-        duration: 250,
-        useNativeDriver: false,
-      }).start();
-      setIsRevealed(false);
-    };
-
-    return (
-      <View style={styles.swipeContainer}>
-        <LinearGradient
-          colors={['#ef4444', '#dc2626']}
-          style={styles.deleteBackground}
-        >
-          <TouchableOpacity
-            style={styles.deleteButton}
-            onPress={() => {
-              resetSwipe();
-              onDelete(item);
-            }}
-          >
-            <Ionicons name="trash-outline" size={22} color="#fff" />
-          </TouchableOpacity>
-        </LinearGradient>
-
-        <Animated.View
-          style={[
-            styles.cardWrapper,
-            { transform: [{ translateX }] }
-          ]}
-          {...panResponder.panHandlers}
-        >
-          <TouchableOpacity 
-            style={[styles.card, isSelected && styles.cardSelected]} 
-            activeOpacity={0.7} 
-            onPress={() => {
-              if (isRevealed) {
-                resetSwipe();
-              } else {
-                onPress();
-              }
-            }}
-            onLongPress={() => {
-              if (!selectionMode) {
-                toggleSelectionMode();
-                toggleItemSelection(item.id);
-              }
-            }}
-          >
-            {selectionMode && (
-              <View style={styles.selectionCheckbox}>
-                {isSelected ? (
-                  <Ionicons name="checkmark-circle" size={28} color="#22c55e" />
-                ) : (
-                  <View style={styles.emptyCheckbox} />
-                )}
-              </View>
-            )}
-
-            {item.imageUrl ? (
-              <Image source={{ uri: item.imageUrl }} style={styles.image} resizeMode="cover" />
-            ) : (
-              <LinearGradient
-                colors={['#E8F5E9', '#C8E6C9']}
-                style={[styles.image, styles.imageFallback]}
-              >
-                <Ionicons name="image-outline" size={32} color="#5E936C" />
-              </LinearGradient>
-            )}
-            
-            <View style={styles.infoContainer}>
-              <View style={styles.nameRow}>
-                <Text numberOfLines={1} style={styles.name}>{item.name}</Text>
-                <Ionicons 
-                  name={item.isPublic ? "eye-outline" : "eye-off-outline"} 
-                  size={16} 
-                  color={item.isPublic ? "#059669" : "#9CA3AF"} 
-                />
-              </View>
-              
-              {item.scientificName && item.scientificName !== item.name && (
-                <Text numberOfLines={1} style={styles.scientificName}>{item.scientificName}</Text>
-              )}
-              
-              <View style={styles.bottomRow}>
-                <View style={styles.metadataRow}>
-                  <Ionicons name="time-outline" size={14} color="#9ca3af" />
-                  <Text style={styles.timestamp}>{formatDate(item.createdAt)}</Text>
-                </View>
-                
-                {item.globalObsCount > 0 && (
-                  <View style={styles.globalObsCount}>
-                    <Ionicons name="globe-outline" size={14} color="#059669" />
-                    <Text style={styles.globalObsText}>{item.globalObsCount}</Text>
-                  </View>
-                )}
-              </View>
-            </View>
-          </TouchableOpacity>
-        </Animated.View>
-      </View>
-    );
-  };
-
-  const renderItem = ({ item }) => {
-    const isSelected = selectedItems.has(item.id);
-
-    return (
-      <SwipeableCard
-        item={item}
-        isSelected={isSelected}
-        onPress={() => openItem(item)}
-        onDelete={deleteItem}
-      />
     );
   };
 
@@ -830,7 +1087,10 @@ if (countsResult.success) {
               <>
                 <Text style={styles.headerTitle}>History</Text>
                 {items.length > 0 && (
-                  <TouchableOpacity onPress={toggleSelectionMode} style={styles.headerButton}>
+                  <TouchableOpacity 
+                    onPress={toggleSelectionMode} 
+                    style={styles.headerButton}
+                  >
                     <Ionicons name="checkmark-circle-outline" size={24} color="#fff" />
                   </TouchableOpacity>
                 )}
@@ -844,13 +1104,23 @@ if (countsResult.success) {
               <View style={styles.statItem}>
                 <Ionicons name="time" size={16} color="rgba(255,255,255,0.9)" />
                 <Text style={styles.statText}>
-                  {filteredItems.length} of {items.length} {items.length === 1 ? 'record' : 'records'}
+                  {paginatedItems.length} of {filteredItems.length} shown • Total: {items.length}
                 </Text>
               </View>
             </View>
           )}
         </SafeAreaView>
       </LinearGradient>
+
+      {/* ✅ ADD Visual indicator for offline mode */}
+      {isOffline && (
+        <View style={styles.offlineBanner}>
+          <Ionicons name="cloud-offline-outline" size={16} color="#fff" />
+          <Text style={styles.offlineBannerText}>
+            {isPremium ? '✅ Offline Mode (Premium)' : '⚠️ Offline - Subscribe for access'}
+          </Text>
+        </View>
+      )}
 
       {items.length > 0 && !selectionMode && (
         <View style={styles.searchFilterContainer}>
@@ -860,12 +1130,15 @@ if (countsResult.success) {
               style={styles.searchInput}
               placeholder="Search by name..."
               placeholderTextColor="#9CA3AF"
-              value={searchQuery}
-              onChangeText={setSearchQuery}
+              value={searchText}
+              onChangeText={setSearchText}
               returnKeyType="search"
             />
-            {searchQuery.length > 0 && (
-              <TouchableOpacity onPress={() => setSearchQuery('')} style={styles.clearButton}>
+            {searchText.length > 0 && (
+              <TouchableOpacity 
+                onPress={() => setSearchText('')} 
+                style={styles.clearButton}
+              >
                 <Ionicons name="close-circle" size={20} color="#9CA3AF" />
               </TouchableOpacity>
             )}
@@ -873,17 +1146,26 @@ if (countsResult.success) {
 
           <View style={styles.filterButtons}>
             <TouchableOpacity
-              style={[styles.filterButton, filterType === 'all' && styles.filterButtonActive]}
+              style={[
+                styles.filterButton, 
+                filterType === 'all' && styles.filterButtonActive
+              ]}
               onPress={() => setFilterType('all')}
               activeOpacity={0.7}
             >
-              <Text style={[styles.filterButtonText, filterType === 'all' && styles.filterButtonTextActive]}>
+              <Text style={[
+                styles.filterButtonText, 
+                filterType === 'all' && styles.filterButtonTextActive
+              ]}>
                 All
               </Text>
             </TouchableOpacity>
 
             <TouchableOpacity
-              style={[styles.filterButton, filterType === 'plants' && styles.filterButtonActive]}
+              style={[
+                styles.filterButton, 
+                filterType === 'plants' && styles.filterButtonActive
+              ]}
               onPress={() => setFilterType('plants')}
               activeOpacity={0.7}
             >
@@ -893,13 +1175,19 @@ if (countsResult.success) {
                 color={filterType === 'plants' ? '#fff' : '#5E936C'} 
                 style={{ marginRight: 4 }}
               />
-              <Text style={[styles.filterButtonText, filterType === 'plants' && styles.filterButtonTextActive]}>
+              <Text style={[
+                styles.filterButtonText, 
+                filterType === 'plants' && styles.filterButtonTextActive
+              ]}>
                 Plants
               </Text>
             </TouchableOpacity>
 
             <TouchableOpacity
-              style={[styles.filterButton, filterType === 'animals' && styles.filterButtonActive]}
+              style={[
+                styles.filterButton, 
+                filterType === 'animals' && styles.filterButtonActive
+              ]}
               onPress={() => setFilterType('animals')}
               activeOpacity={0.7}
             >
@@ -909,7 +1197,10 @@ if (countsResult.success) {
                 color={filterType === 'animals' ? '#fff' : '#5E936C'} 
                 style={{ marginRight: 4 }}
               />
-              <Text style={[styles.filterButtonText, filterType === 'animals' && styles.filterButtonTextActive]}>
+              <Text style={[
+                styles.filterButtonText, 
+                filterType === 'animals' && styles.filterButtonTextActive
+              ]}>
                 Animals
               </Text>
             </TouchableOpacity>
@@ -949,7 +1240,7 @@ if (countsResult.success) {
           <TouchableOpacity 
             style={styles.signInButton}
             onPress={() => {
-              setSearchQuery('');
+              setSearchText('');
               setFilterType('all');
             }}
           >
@@ -962,17 +1253,42 @@ if (countsResult.success) {
           </TouchableOpacity>
         </View>
       ) : (
+        // ========== FIX 5: UPDATED FLATLIST WITH PAGINATION ==========
         <FlatList
-          data={filteredItems}
-          keyExtractor={(item) => item.id}
-          contentContainerStyle={styles.listContent}
+          data={paginatedItems}
+          keyExtractor={keyExtractor}
           renderItem={renderItem}
+          getItemLayout={getItemLayout}
+          extraData={paginatedItems.length}
+          contentContainerStyle={styles.listContent}
+          
+          // ✅ PERFORMANCE PROPS
+          initialNumToRender={10}
+          maxToRenderPerBatch={10}
+          windowSize={5}
+          removeClippedSubviews={true}
+          updateCellsBatchingPeriod={50}
+          
+          // ✅ PAGINATION
+          onEndReached={handleLoadMore}
+          onEndReachedThreshold={0.5}
+          
+          ListFooterComponent={
+            hasMore ? (
+              <View style={styles.loadMoreIndicator}>
+                <ActivityIndicator size="small" color="#5E936C" />
+                <Text style={styles.loadMoreText}>Loading more...</Text>
+              </View>
+            ) : null
+          }
+          
           refreshControl={
             <RefreshControl 
               refreshing={refreshing} 
               onRefresh={onRefresh} 
               colors={['#5E936C']} 
-              tintColor="#5E936C"/>
+              tintColor="#5E936C"
+            />
           }
         />
       )}
@@ -987,11 +1303,18 @@ if (countsResult.success) {
               style={styles.bottomBarButton}
               onPress={deleteSelected}
               activeOpacity={0.8}
+              disabled={isDeletingBatch} // ✅ Disable during batch delete
             >
-              <Ionicons name="trash-outline" size={22} color="#fff" />
-              <Text style={styles.bottomBarText}>
-                Delete {selectedItems.size} {selectedItems.size === 1 ? 'record' : 'records'}
-              </Text>
+              {isDeletingBatch ? (
+                <ActivityIndicator size="small" color="#fff" />
+              ) : (
+                <>
+                  <Ionicons name="trash-outline" size={22} color="#fff" />
+                  <Text style={styles.bottomBarText}>
+                    Delete {selectedItems.size} {selectedItems.size === 1 ? 'record' : 'records'}
+                  </Text>
+                </>
+              )}
             </TouchableOpacity>
           </LinearGradient>
         </View>
@@ -1013,6 +1336,19 @@ if (countsResult.success) {
       )}
 
       <SpeciesDetailsModal />
+
+      {/* ✅ OFFLINE PREMIUM GATE */}
+      <PremiumGate
+        visible={premiumGateVisible}
+        onClose={() => setPremiumGateVisible(false)}
+        onUpgrade={() => {
+          setPremiumGateVisible(false);
+          navigation.navigate('Plan');
+        }}
+        title="Subscribe to Access Offline Mode"
+        message="Offline access to your History is a premium feature. Subscribe to view your scan history when you're offline."
+        feature="offline_history"
+      />
     </View>
   );
 }
@@ -1038,6 +1374,7 @@ const styles = StyleSheet.create({
     color: '#fff',
     flex: 1,
     textAlign: 'center',
+    left: 9,
   },
   selectionTitle: {
     fontSize: 20,
@@ -1075,6 +1412,21 @@ const styles = StyleSheet.create({
     fontWeight: '600',
     color: 'rgba(255,255,255,0.9)',
   },
+  // ✅ ADD Offline Banner Styles
+  offlineBanner: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'center',
+    backgroundColor: '#EF4444',
+    paddingVertical: 8,
+    paddingHorizontal: 16,
+    gap: 8,
+  },
+  offlineBannerText: {
+    fontSize: 13,
+    fontWeight: '600',
+    color: '#fff',
+  },
   searchFilterContainer: {
     paddingHorizontal: 16,
     paddingTop: 16,
@@ -1105,7 +1457,7 @@ const styles = StyleSheet.create({
     paddingVertical: 0,
   },
   clearButton: {
-    padding: 4,
+    padding: 5,
   },
   filterButtons: {
     flexDirection: 'row',
@@ -1212,6 +1564,17 @@ const styles = StyleSheet.create({
     borderRadius: 12,
     backgroundColor: '#E5E7EB',
     marginRight: 12,
+  },
+  // ========== FIX 1: ADDED IMAGE LOADER STYLE ==========
+  imageLoader: {
+    position: 'absolute',
+    top: 0,
+    left: 0,
+    right: 0,
+    bottom: 0,
+    backgroundColor: '#F3F4F6',
+    alignItems: 'center',
+    justifyContent: 'center',
   },
   imageFallback: { 
     alignItems: 'center', 
@@ -1331,7 +1694,7 @@ const styles = StyleSheet.create({
   },
   bottomBar: {
     position: 'absolute',
-    bottom: 0,
+    bottom: 88,
     left: 0,
     right: 0,
     elevation: 8,
@@ -1343,7 +1706,7 @@ const styles = StyleSheet.create({
   bottomBarGradient: {
     paddingVertical: 16,
     paddingHorizontal: 20,
-    paddingBottom: 32,
+    paddingBottom: 20,
   },
   bottomBarButton: {
     flexDirection: 'row',
@@ -1358,7 +1721,7 @@ const styles = StyleSheet.create({
   },
   fab: {
     position: 'absolute',
-    bottom: 30,
+    bottom: 104,
     right: 20,
     width: 56,
     height: 56,
@@ -1367,7 +1730,7 @@ const styles = StyleSheet.create({
     shadowColor: '#ef4444',
     shadowOpacity: 0.4,
     shadowRadius: 12,
-    shadowOffset: { width: 0, height: 4 },
+    shadowOffset: { width: 0, height: 4 }, 
   },
   fabGradient: {
     width: '100%',
@@ -1559,5 +1922,18 @@ const styles = StyleSheet.create({
     fontSize: 16,
     fontWeight: '700',
     color: '#fff',
+  },
+  // ========== FIX 3: ADDED LOAD MORE STYLES ==========
+  loadMoreIndicator: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'center',
+    paddingVertical: 20,
+    gap: 10,
+  },
+  loadMoreText: {
+    fontSize: 14,
+    color: '#6B7280',
+    fontWeight: '500',
   },
 });

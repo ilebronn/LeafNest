@@ -1,4 +1,4 @@
-﻿// screens/ProfileScreen.js - WITH PREMIUM STATUS DISPLAY
+﻿// screens/User/ProfileScreen/index.js - WITH BADGE DISPLAY
 import React, { useEffect, useState } from 'react';
 import { 
   View, 
@@ -20,6 +20,10 @@ import { clearAllUserData } from '@utils/auth';
 import { useTranslation } from 'react-i18next';
 import { getScanStats, syncPendingScans } from '@services/scanning/scanStatsService';
 import { getUserSubscription } from '@services/subscription/subscriptionService';
+import ProfileBorder from '@components/common/ProfileBorder/ProfileBorder';
+import { getActiveBorder } from '@services/rewards/borderRewardService';
+import ProfileBadge from '@components/common/ProfileBadge/ProfileBadge'; // ✅ NEW
+import { getActiveBadge } from '@services/rewards/badgeRewardService'; // ✅ NEW
 
 const { width } = Dimensions.get('window');
 
@@ -44,6 +48,10 @@ export default function ProfileScreen({ route, navigation }) {
   });
   const [isLoadingStats, setIsLoadingStats] = useState(false);
   const [isSyncing, setIsSyncing] = useState(false);
+  
+  // Border & Badge state
+  const [activeBorder, setActiveBorder] = useState(null);
+  const [activeBadge, setActiveBadge] = useState(null); // ✅ NEW
 
   useEffect(() => {
     const user = auth.currentUser;
@@ -73,6 +81,8 @@ export default function ProfileScreen({ route, navigation }) {
         setNewUsername('');
         setStats({ totalScans: 0, weekScans: 0, uniqueSpecies: 0 });
         setSubscription(null);
+        setActiveBorder(null);
+        setActiveBadge(null); // ✅ Clear badge for guest
       } else if (user) {
         setUsername(user.displayName || t('common.welcome'));
         setEmail(user.email || t('common.loading'));
@@ -81,23 +91,58 @@ export default function ProfileScreen({ route, navigation }) {
         
         await loadStats(user.uid);
         await loadSubscription(user.uid);
+        await loadActiveBorder(user.uid);
+        await loadActiveBadge(user.uid); // ✅ Load active badge
       }
     };
     
     loadUserData();
   }, [route?.params?.guest, t]);
 
-  // Add this useEffect to reload subscription when screen comes into focus
+  // Reload on focus
   useEffect(() => {
     const unsubscribe = navigation.addListener('focus', async () => {
       const user = auth.currentUser;
       if (user && !isGuest) {
         await loadSubscription(user.uid);
+        await loadActiveBorder(user.uid);
+        await loadActiveBadge(user.uid); // ✅ Reload badge
       }
     });
 
     return unsubscribe;
   }, [navigation, isGuest]);
+
+  const loadActiveBorder = async (userId) => {
+    try {
+      const result = await getActiveBorder(userId);
+      if (result.success && result.border) {
+        setActiveBorder(result.border);
+        console.log('✅ Active border loaded:', result.border.name);
+      } else {
+        setActiveBorder(null);
+      }
+    } catch (error) {
+      console.error('Error loading active border:', error);
+      setActiveBorder(null);
+    }
+  };
+
+  // ✅ NEW: Load active badge
+  const loadActiveBadge = async (userId) => {
+    try {
+      const result = await getActiveBadge(userId);
+      if (result.success && result.badge) {
+        setActiveBadge(result.badge);
+        console.log('✅ Active badge loaded:', result.badge.name);
+      } else {
+        setActiveBadge(null);
+      }
+    } catch (error) {
+      console.error('Error loading active badge:', error);
+      setActiveBadge(null);
+    }
+  };
 
   const loadSubscription = async (userId) => {
     setLoadingSubscription(true);
@@ -278,25 +323,38 @@ export default function ProfileScreen({ route, navigation }) {
           </TouchableOpacity>
         </View>
 
-        {/* Profile Avatar Section */}
-        <View style={styles.profileHeader}>
-          <View style={styles.avatarContainer}>
-            {profilePicture ? (
-              <Image source={{ uri: profilePicture }} style={styles.avatar} />
-            ) : (
-              <View style={styles.avatarPlaceholder}>
-                <Text style={styles.avatarText}>
-                  {username ? username.charAt(0).toUpperCase() : 'G'}
-                </Text>
-              </View>
-            )}
-            {/* Premium Crown Badge on Avatar */}
-            {isPremium && (
-              <View style={styles.premiumCrown}>
-                <Ionicons name="star" size={20} color="#FFD700" />
-              </View>
-            )}
+        {/* Profile Avatar Section with Border & Badge */}
+       <View style={styles.profileHeader}>
+  <View style={styles.avatarContainer}>
+    {activeBorder ? (
+      <ProfileBorder border={activeBorder} size={100}>
+        {profilePicture ? (
+          <Image source={{ uri: profilePicture }} style={styles.avatar} />
+        ) : (
+          <View style={styles.avatarPlaceholder}>
+            <Text style={styles.avatarText}>
+              {username ? username.charAt(0).toUpperCase() : 'G'}
+            </Text>
           </View>
+        )}
+      </ProfileBorder>
+    ) : (
+      // No border - simple white circle
+      <View style={styles.simpleAvatarWrapper}>
+        {profilePicture ? (
+          <Image source={{ uri: profilePicture }} style={styles.avatar} />
+        ) : (
+          <View style={styles.avatarPlaceholder}>
+            <Text style={styles.avatarText}>
+              {username ? username.charAt(0).toUpperCase() : 'G'}
+            </Text>
+          </View>
+        )}
+      </View>
+    )}
+  </View>
+    
+          
           <View style={styles.userInfo}>
             {isEditing ? (
               <View style={styles.editContainer}>
@@ -340,7 +398,16 @@ export default function ProfileScreen({ route, navigation }) {
                     </TouchableOpacity>
                   )}
                 </View>
+                
+                {/* ✅ NEW: Display Active Badge */}
+                {activeBadge && !isGuest && (
+                  <View style={styles.badgeContainer}>
+                    <ProfileBadge badge={activeBadge} size="medium" showName={true} />
+                  </View>
+                )}
+                
                 <Text style={styles.email}>{email}</Text>
+                
                 {/* Premium Status Label */}
                 {isPremium && (
                   <View style={styles.premiumStatusBadge}>
@@ -516,7 +583,8 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'space-between',
     paddingHorizontal: 20,
-    marginBottom: 20,
+    marginBottom: 25,
+    top: 10,
   },
   headerTitle: {
     fontSize: 20,
@@ -551,8 +619,7 @@ const styles = StyleSheet.create({
     width: 100,
     height: 100,
     borderRadius: 50,
-    borderWidth: 4,
-    borderColor: '#fff',
+    overflow: 'hidden', // Ensures image is clipped
   },
   avatarPlaceholder: {
     width: 100,
@@ -561,29 +628,14 @@ const styles = StyleSheet.create({
     backgroundColor: '#fff',
     justifyContent: 'center',
     alignItems: 'center',
-    borderWidth: 4,
-    borderColor: '#fff',
+    overflow: 'hidden', // Critical: clips the container to circle
   },
   avatarText: {
-    fontSize: 40,
-    fontWeight: 'bold',
+    fontSize: 42,
+    fontWeight: '700',
     color: '#5E936C',
-  },
-  premiumCrown: {
-    position: 'absolute',
-    top: -5,
-    right: -5,
-    width: 36,
-    height: 36,
-    borderRadius: 18,
-    backgroundColor: '#fff',
-    justifyContent: 'center',
-    alignItems: 'center',
-    shadowColor: '#FFD700',
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.5,
-    shadowRadius: 4,
-    elevation: 5,
+    includeFontPadding: false, // Android: removes extra padding
+    textAlignVertical: 'center', // Android: centers text
   },
   userInfo: {
     alignItems: 'center',
@@ -606,6 +658,11 @@ const styles = StyleSheet.create({
     backgroundColor: '#fff',
     justifyContent: 'center',
     alignItems: 'center',
+  },
+  // ✅ NEW: Badge display styles
+  badgeContainer: {
+    marginTop: 8,
+    marginBottom: 4,
   },
   email: {
     fontSize: 14,
@@ -770,20 +827,6 @@ const styles = StyleSheet.create({
     textAlign: 'center',
     lineHeight: 20,
     marginBottom: 20,
-  },
-  signInButton: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    backgroundColor: '#5E936C',
-    paddingHorizontal: 30,
-    paddingVertical: 12,
-    borderRadius: 25,
-    gap: 8,
-  },
-  signInButtonText: {
-    color: '#fff',
-    fontSize: 16,
-    fontWeight: '600',
   },
   menuItem: {
     flexDirection: 'row',

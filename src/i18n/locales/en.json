@@ -88,8 +88,7 @@
       "notEvaluated": "Not evaluated"
     },
     "trending": {
-      "title": "Trending Species",
-      "subtitle": "Most scanned this week"
+      "title": "Trending Species"
     },
     "emptyState": {
       "title": "Welcome to the Community",
@@ -286,10 +285,6 @@
     "needPermission": "We need your permission to show the camera",
     "grantPermission": "Grant Permission",
     "preparingCamera": "Preparing camera..."
-  },
-  "history": {
-    "title": "History",
-    "noHistory": "No history yet"
   },
   "favorites": {
     "title": "Favorites",

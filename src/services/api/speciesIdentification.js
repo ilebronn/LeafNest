@@ -269,7 +269,30 @@ export const identifyWithPlantNet = async (photoUri) => {
       rank: taxonDetails?.rank || 'species'
     };
   } catch (error) {
-    console.error('❌ PlantNet error:', error.message);
+    // Enhanced error handling for PlantNet API
+    if (error.code === 'ECONNABORTED' || error.message.includes('timeout')) {
+      console.warn('⏰ PlantNet API timeout - this is common due to large image processing. Continuing with other methods...');
+      return null;
+    }
+
+    if (error.response) {
+      // Server responded with error status
+      const status = error.response.status;
+      if (status === 429) {
+        console.warn('🚦 PlantNet API rate limited. Continuing with other methods...');
+      } else if (status >= 500) {
+        console.warn('🛠️ PlantNet API server error. Continuing with other methods...');
+      } else {
+        console.error(`❌ PlantNet API error (${status}):`, error.response.data?.message || error.message);
+      }
+    } else if (error.request) {
+      // Network error
+      console.warn('🌐 PlantNet API network error. Continuing with other methods...');
+    } else {
+      // Other error
+      console.error('❌ PlantNet API error:', error.message);
+    }
+
     return null;
   }
 };
@@ -545,6 +568,84 @@ export const fetchGBIF = async (speciesName) => {
   }
 };
 
+/**
+ * 🎯 NEW: Extract best common name with fallback handling
+ */
+export const extractBestCommonName = (result) => {
+  // Priority order for common name extraction
+  const candidates = [
+    result.commonName,
+    result.preferred_common_name,
+    result.name,
+    result.scientificName
+  ].filter(Boolean);
+
+  if (candidates.length === 0) {
+    return 'Unknown Species';
+  }
+
+  // Filter out scientific-looking names (all lowercase, contains 'sp.', etc.)
+  const commonNameCandidates = candidates.filter(name => {
+    const lower = name.toLowerCase();
+    
+    // Reject if it looks like scientific name
+    if (lower.includes(' sp.') || lower.includes(' spp.')) return false;
+    if (lower === lower.toLowerCase() && !lower.includes(' ')) return false; // All lowercase single word
+    if (/^[a-z]+aceae$/i.test(lower)) return false; // Family names ending in -aceae
+    if (/^[a-z]+idae$/i.test(lower)) return false; // Family names ending in -idae
+    
+    return true;
+  });
+
+  // Use first valid common name, or fallback to first candidate
+  const bestName = commonNameCandidates[0] || candidates[0];
+  
+  // Capitalize properly
+  return bestName
+    .split(' ')
+    .map(word => word.charAt(0).toUpperCase() + word.slice(1).toLowerCase())
+    .join(' ');
+};
+export const validateAndEnrichResult = (result, visionCandidates, category) => {
+  if (!result) return null;
+
+  // Ensure common name is always set
+  const enrichedResult = {
+    ...result,
+    commonName: extractBestCommonName(result),
+    name: result.name || result.scientificName || 'Unknown',
+    rank: result.rank || 'species',
+    confidence: result.confidence || 50
+  };
+
+  // Validate confidence isn't unrealistically high for low-rank results
+  if (enrichedResult.rank === 'genus' && enrichedResult.confidence > 75) {
+    enrichedResult.confidence = Math.min(enrichedResult.confidence, 75);
+    console.log('  ⚠️ Confidence capped for genus-level identification');
+  } else if (enrichedResult.rank === 'family' && enrichedResult.confidence > 65) {
+    enrichedResult.confidence = Math.min(enrichedResult.confidence, 65);
+    console.log('  ⚠️ Confidence capped for family-level identification');
+  }
+
+  // Ensure name doesn't contain generic terms
+  const genericTerms = ['plantae', 'animalia', 'unknown', 'unidentified'];
+  if (genericTerms.some(term => enrichedResult.commonName.toLowerCase().includes(term))) {
+    // Try to use a more specific candidate
+    const betterCandidate = visionCandidates.find(c => 
+      !genericTerms.some(term => c.name.toLowerCase().includes(term))
+    );
+    
+    if (betterCandidate) {
+      enrichedResult.commonName = extractBestCommonName({ name: betterCandidate.name });
+      enrichedResult.confidence = Math.min(enrichedResult.confidence, 60);
+      console.log(`  ✅ Used better candidate: ${enrichedResult.commonName}`);
+    }
+  }
+
+  console.log(`✅ Result validated and enriched: ${enrichedResult.commonName} (${enrichedResult.confidence}%)`);
+  
+  return enrichedResult;
+};
 // ===========================
 // EXPORTS
 // ===========================
@@ -556,8 +657,9 @@ export default {
   detectCategoryFromLabels,
   identifyWithPlantNet,
   searchINaturalistByName,
-  searchINaturalistByNames,
   fetchTaxonDetails,
   fetchObservationCount,
-  fetchGBIF
+  fetchGBIF,
+  extractBestCommonName,
+  validateAndEnrichResult  // ✅ ADD THIS
 };

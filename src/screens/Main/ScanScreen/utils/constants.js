@@ -1,3 +1,4 @@
+// src/screens/Main/ScanScreen/utils/constants.js
 // ===========================
 // CACHE CONFIGURATION
 // ===========================
@@ -7,12 +8,45 @@ export const CACHE_SAVE_DEBOUNCE_MS = 5000; // 5 seconds debounce for cache savi
 export const CACHE_STORAGE_KEY = 'species_cache';
 
 // ===========================
-// CONFIDENCE & SCORING
+// CONFIDENCE & SCORING - OPTIMIZED
 // ===========================
-export const CONFIDENCE_THRESHOLD = 40; // Minimum confidence to fetch iNat details
-export const MIN_OBSERVATIONS_FOR_BOOST = 1000; // Observation count for reliability boost
-export const MAX_CONFIDENCE_DISPLAY = 95; // Maximum confidence to show to user
-export const CONFIDENCE_BOOST_MULTIPLIER = 1.1; // Boost multiplier for reliable species
+export const CONFIDENCE_THRESHOLD = 35; // Lowered from 40 for more results
+export const MIN_OBSERVATIONS_FOR_BOOST = 500; // Lowered from 1000 for broader boost
+export const MAX_CONFIDENCE_DISPLAY = 95; // Keep at 95
+export const CONFIDENCE_BOOST_MULTIPLIER = 1.12; // Increased from 1.1
+
+// ===========================
+// TAXONOMIC FILTERING CONSTANTS
+// ===========================
+export const TAXONOMIC_RANKS = {
+  SPECIES: 'species',
+  SUBSPECIES: 'subspecies',
+  VARIETY: 'variety',
+  FORM: 'form',
+  HYBRID: 'hybrid',
+  GENUS: 'genus',
+  FAMILY: 'family',
+  ORDER: 'order',
+  CLASS: 'class',
+  PHYLUM: 'phylum',
+  KINGDOM: 'kingdom'
+};
+
+export const DESIRED_RANKS = [
+  TAXONOMIC_RANKS.SPECIES,
+  TAXONOMIC_RANKS.SUBSPECIES,
+  TAXONOMIC_RANKS.VARIETY,
+  TAXONOMIC_RANKS.FORM,
+  TAXONOMIC_RANKS.HYBRID
+];
+
+export const GENERIC_RANKS = [
+  TAXONOMIC_RANKS.FAMILY,
+  TAXONOMIC_RANKS.ORDER,
+  TAXONOMIC_RANKS.CLASS,
+  TAXONOMIC_RANKS.PHYLUM,
+  TAXONOMIC_RANKS.KINGDOM
+];
 
 // ===========================
 // IMAGE PROCESSING
@@ -29,13 +63,13 @@ export const RETRY_ATTEMPTS = 3; // Number of retry attempts for failed API call
 export const RETRY_DELAY_BASE_MS = 1000; // Base delay for exponential backoff (1 second)
 
 // ===========================
-// VISION API CONFIGURATION
+// VISION API CONFIGURATION - OPTIMIZED
 // ===========================
-export const VISION_MAX_LABELS = 25; // Maximum labels to request from Vision API
-export const VISION_MAX_WEB_ENTITIES = 20; // Maximum web entities from Vision API
-export const MAX_CANDIDATES_TO_PROCESS = 15; // Maximum candidates to extract
+export const VISION_MAX_LABELS = 30; // Increased from 25
+export const VISION_MAX_WEB_ENTITIES = 25; // Increased from 20
+export const MAX_CANDIDATES_TO_PROCESS = 20; // Increased from 15
 export const MAX_CANDIDATES_FOR_CACHE_CHECK = 5; // How many top candidates to check in cache
-export const MAX_CANDIDATES_FOR_SEARCH = 8; // Maximum candidates to search in iNaturalist
+export const MAX_CANDIDATES_FOR_SEARCH = 10; // Increased from 8
 
 // ===========================
 // COMMON SPECIES (for scoring boost)
@@ -55,7 +89,13 @@ export const GENERIC_TERMS = new Set([
   'photo', 'image', 'picture', 'camera', 'photography', 
   'outdoor', 'natural', 'environment', 'view', 'scene',
   'nature', 'background', 'landscape', 'closeup', 'macro',
-  'shot', 'capture', 'snapshot', 'wildlife photography'
+  'shot', 'capture', 'snapshot', 'wildlife photography',
+  // Add generic biological terms
+  'plantae', 'animalia', 'fungi', 'bacteria', 'archaea', 'protista',
+  'phylum', 'classis', 'ordo', 'familia', 'genus', 'species',
+  'chordata', 'arthropoda', 'mollusca', 'annelida',
+  'magnoliopsida', 'liliopsida', 'pinopsida',
+  'mammalia', 'aves', 'reptilia', 'amphibia', 'actinopterygii'
 ]);
 
 // ===========================
@@ -69,53 +109,56 @@ export const PLANT_KEYWORDS = [
 ];
 
 export const ANIMAL_KEYWORDS = [
-  'animal', 'bird', 'insect', 'fish', 'mammal', 'reptile', 
+  'animal', 'bird', 'insect', 'fish', 'mammal', 'reptile',
   'amphibian', 'wildlife', 'fauna', 'creature', 'pet', 'wing',
-  'feather', 'fur', 'scale', 'beak', 'claw', 'tail', 'fin'
+  'feather', 'fur', 'scale', 'beak', 'claw', 'tail', 'fin',
+  'face', 'head', 'eye', 'eyes', 'nose', 'mouth', 'lips', 'chin',
+  'cheek', 'eyebrow', 'forehead', 'hair', 'skin', 'body', 'hand',
+  'arm', 'leg', 'foot', 'ear', 'teeth', 'smile', 'selfie', 'portrait',
+  'human', 'person', 'people', 'man', 'woman', 'child', 'boy', 'girl'
 ];
 
 // ===========================
 // IRRELEVANT KEYWORDS (not plants/animals)
 // ===========================
 export const IRRELEVANT_KEYWORDS = [
-  'person', 'people', 'human', 'man', 'woman', 'child', 'face', 
-  'hand', 'building', 'architecture', 'car', 'vehicle', 'furniture', 
+  'building', 'architecture', 'car', 'vehicle', 'furniture', 
   'food', 'dish', 'meal', 'object', 'tool', 'device', 'machine', 
   'electronics', 'clothing', 'indoor', 'room', 'text', 'sign',
   'street', 'road', 'sky', 'water', 'rock', 'stone'
 ];
 
 // ===========================
-// SCORING WEIGHTS
+// SCORING WEIGHTS - OPTIMIZED
 // ===========================
 export const SCORE_WEIGHTS = {
   EXACT_MATCH: 100,
-  COMMON_NAME_EXACT: 90,
-  CONTAINS_MATCH: 50,
-  COMMON_NAME_CONTAINS: 40,
-  PARTIAL_MATCH: 30,
-  SPECIES_RANK: 60,
-  SUBSPECIES_RANK: 50,
-  GENUS_RANK: 20,
-  OTHER_RANK_PENALTY: -10,
-  OBSERVATIONS_50K_PLUS: 40,
-  OBSERVATIONS_10K_PLUS: 30,
-  OBSERVATIONS_1K_PLUS: 20,
-  OBSERVATIONS_100_PLUS: 10,
-  OBSERVATIONS_UNDER_10_PENALTY: -20,
-  PHOTO_AVAILABLE: 15,
-  WIKIPEDIA_AVAILABLE: 10,
-  COMMON_SPECIES_BOOST: 1.3,
+  COMMON_NAME_EXACT: 95, // Increased from 90
+  CONTAINS_MATCH: 55, // Increased from 50
+  COMMON_NAME_CONTAINS: 45, // Increased from 40
+  PARTIAL_MATCH: 35, // Increased from 30
+  SPECIES_RANK: 65, // Increased from 60
+  SUBSPECIES_RANK: 55, // Increased from 50
+  GENUS_RANK: 25, // Increased from 20
+  OTHER_RANK_PENALTY: -15, // More penalty
+  OBSERVATIONS_50K_PLUS: 45, // Increased from 40
+  OBSERVATIONS_10K_PLUS: 35, // Increased from 30
+  OBSERVATIONS_1K_PLUS: 25, // Increased from 20
+  OBSERVATIONS_100_PLUS: 15, // Increased from 10
+  OBSERVATIONS_UNDER_10_PENALTY: -25, // More penalty
+  PHOTO_AVAILABLE: 18, // Increased from 15
+  WIKIPEDIA_AVAILABLE: 12, // Increased from 10
+  COMMON_SPECIES_BOOST: 1.35, // Increased from 1.3
   BEST_GUESS_LABEL_SCORE: 100,
-  WEB_ENTITY_MULTIPLIER: 0.8,
-  LABEL_ANNOTATION_MULTIPLIER: 0.6,
-  VISION_API_WEIGHT: 0.5
+  WEB_ENTITY_MULTIPLIER: 0.85, // Increased from 0.8
+  LABEL_ANNOTATION_MULTIPLIER: 0.65, // Increased from 0.6
+  VISION_API_WEIGHT: 0.55 // Increased from 0.5
 };
 
 // ===========================
-// RELEVANCE THRESHOLDS
+// RELEVANCE THRESHOLDS - OPTIMIZED
 // ===========================
-export const RELEVANCE_THRESHOLD = 0.5; // Minimum relevance score for plant/animal
+export const RELEVANCE_THRESHOLD = 0.45; // Lowered from 0.5 for more inclusivity
 export const INATURALIST_SEARCH_DELAY_MS = 200; // Delay between iNaturalist searches
 
 // ===========================
@@ -189,6 +232,10 @@ export default {
   CONFIDENCE_THRESHOLD,
   MIN_OBSERVATIONS_FOR_BOOST,
   MAX_CONFIDENCE_DISPLAY,
+  CONFIDENCE_BOOST_MULTIPLIER,
+  TAXONOMIC_RANKS,
+  DESIRED_RANKS,
+  GENERIC_RANKS,
   IMAGE_MAX_WIDTH,
   IMAGE_QUALITY,
   IMAGE_FORMAT,
@@ -198,6 +245,8 @@ export default {
   VISION_MAX_LABELS,
   VISION_MAX_WEB_ENTITIES,
   MAX_CANDIDATES_TO_PROCESS,
+  MAX_CANDIDATES_FOR_CACHE_CHECK,
+  MAX_CANDIDATES_FOR_SEARCH,
   COMMON_SPECIES,
   GENERIC_TERMS,
   PLANT_KEYWORDS,
@@ -205,14 +254,18 @@ export default {
   IRRELEVANT_KEYWORDS,
   SCORE_WEIGHTS,
   RELEVANCE_THRESHOLD,
+  INATURALIST_SEARCH_DELAY_MS,
   DEFAULT_ZOOM,
   MAX_ZOOM,
   MIN_ZOOM,
   ZOOM_INCREMENT,
+  PINCH_ZOOM_SENSITIVITY,
   FLASH_MODES,
   AUTOFOCUS_MODES,
   ERROR_MESSAGES,
   SUCCESS_MESSAGES,
   PROCESSING_STAGES,
+  FEEDBACK_STORAGE_PREFIX,
+  MAX_FEEDBACK_RECORDS,
   GUEST_SCAN_LIMIT
 };

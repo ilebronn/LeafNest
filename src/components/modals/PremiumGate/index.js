@@ -1,4 +1,4 @@
-// components/PremiumGate.js - UPGRADE PROMPT MODAL
+// components/modals/PremiumGate/index.js - UPGRADE PROMPT MODAL WITH OFFLINE SUPPORT
 import React from 'react';
 import {
   View,
@@ -18,12 +18,45 @@ export default function PremiumGate({
   visible,
   onClose,
   onUpgrade,
-  limitType, // 'scan' or 'download'
+  limitType, // 'scan' or 'download' or 'offline_history' or 'offline_favorites'
   hoursUntilReset = 0,
   scansRemaining = 0,
   downloadsRemaining = 0,
+  title = null, // ✅ NEW: Custom title
+  message = null, // ✅ NEW: Custom message
+  feature = null, // ✅ NEW: Feature type for customization
 }) {
   const getMessage = () => {
+    // ✅ Handle custom title/message (for offline access)
+    if (title && message) {
+      return {
+        title: title,
+        subtitle: '',
+        description: message,
+        icon: 'cloud-offline-outline',
+      };
+    }
+
+    // ✅ Offline-specific messages
+    if (limitType === 'offline_history' || feature === 'offline_history') {
+      return {
+        title: '🔒 Offline Access Required',
+        subtitle: 'Subscribe to access History offline',
+        description: 'Offline access to your scan history is a premium feature. Upgrade to view your history anytime, anywhere.',
+        icon: 'cloud-offline-outline',
+      };
+    }
+
+    if (limitType === 'offline_favorites' || feature === 'offline_favorites') {
+      return {
+        title: '🔒 Offline Access Required',
+        subtitle: 'Subscribe to access Favorites offline',
+        description: 'Offline access to your favorites is a premium feature. Upgrade to view your favorites anytime, anywhere.',
+        icon: 'cloud-offline-outline',
+      };
+    }
+
+    // Existing messages for scan/download limits
     if (limitType === 'scan') {
       return {
         title: '🔒 Scan Limit Reached',
@@ -41,7 +74,9 @@ export default function PremiumGate({
     }
   };
 
-  const message = getMessage();
+  const messageData = getMessage();
+  const isOfflineFeature = feature === 'offline_history' || feature === 'offline_favorites' || 
+                         limitType === 'offline_history' || limitType === 'offline_favorites';
 
   return (
     <Modal
@@ -71,46 +106,70 @@ export default function PremiumGate({
             {/* Icon */}
             <View style={styles.iconContainer}>
               <LinearGradient
-                colors={['#FF6B6B', '#EE5A52']}
+                colors={isOfflineFeature ? ['#059669', '#047857'] : ['#FF6B6B', '#EE5A52']}
                 style={styles.iconGradient}
               >
-                <Ionicons name={message.icon} size={48} color="#fff" />
+                <Ionicons name={messageData.icon} size={48} color="#fff" />
               </LinearGradient>
             </View>
 
             {/* Title */}
-            <Text style={styles.title}>{message.title}</Text>
-            <Text style={styles.subtitle}>{message.subtitle}</Text>
+            <Text style={styles.title}>{messageData.title}</Text>
+            {messageData.subtitle ? (
+              <Text style={styles.subtitle}>{messageData.subtitle}</Text>
+            ) : null}
 
-            {/* Reset Timer */}
-            <View style={styles.timerCard}>
-              <Ionicons name="time-outline" size={20} color="#5E936C" />
-              <Text style={styles.timerText}>
-                Resets in {hoursUntilReset} hours
-              </Text>
-            </View>
+            {/* ✅ Only show reset timer for scan/download limits, not offline */}
+            {!isOfflineFeature && hoursUntilReset > 0 && (
+              <View style={styles.timerCard}>
+                <Ionicons name="time-outline" size={20} color="#5E936C" />
+                <Text style={styles.timerText}>
+                  Resets in {hoursUntilReset} hours
+                </Text>
+              </View>
+            )}
 
-            {/* Current Usage */}
-            <View style={styles.usageCard}>
-              <View style={styles.usageRow}>
-                <Ionicons name="scan-outline" size={20} color="#666" />
-                <Text style={styles.usageLabel}>Scans:</Text>
-                <Text style={styles.usageValue}>{scansRemaining}/5</Text>
+            {/* ✅ Only show usage for scan/download limits, not offline */}
+            {!isOfflineFeature && (
+              <View style={styles.usageCard}>
+                <View style={styles.usageRow}>
+                  <Ionicons name="scan-outline" size={20} color="#666" />
+                  <Text style={styles.usageLabel}>Scans:</Text>
+                  <Text style={styles.usageValue}>{scansRemaining}/5</Text>
+                </View>
+                <View style={styles.usageRow}>
+                  <Ionicons name="download-outline" size={20} color="#666" />
+                  <Text style={styles.usageLabel}>Downloads:</Text>
+                  <Text style={styles.usageValue}>{downloadsRemaining}/5</Text>
+                </View>
               </View>
-              <View style={styles.usageRow}>
-                <Ionicons name="download-outline" size={20} color="#666" />
-                <Text style={styles.usageLabel}>Downloads:</Text>
-                <Text style={styles.usageValue}>{downloadsRemaining}/5</Text>
-              </View>
-            </View>
+            )}
 
             {/* Description */}
-            <Text style={styles.description}>{message.description}</Text>
+            <Text style={styles.description}>{messageData.description}</Text>
 
             {/* Premium Features */}
             <View style={styles.featuresContainer}>
               <Text style={styles.featuresTitle}>Premium Benefits:</Text>
               
+              {isOfflineFeature && (
+                <>
+                  <View style={styles.feature}>
+                    <View style={styles.checkCircle}>
+                      <Ionicons name="checkmark" size={16} color="#fff" />
+                    </View>
+                    <Text style={styles.featureText}>Offline History access</Text>
+                  </View>
+
+                  <View style={styles.feature}>
+                    <View style={styles.checkCircle}>
+                      <Ionicons name="checkmark" size={16} color="#fff" />
+                    </View>
+                    <Text style={styles.featureText}>Offline Favorites access</Text>
+                  </View>
+                </>
+              )}
+
               <View style={styles.feature}>
                 <View style={styles.checkCircle}>
                   <Ionicons name="checkmark" size={16} color="#fff" />
@@ -125,25 +184,25 @@ export default function PremiumGate({
                 <Text style={styles.featureText}>Unlimited downloads</Text>
               </View>
 
-              <View style={styles.feature}>
-                <View style={styles.checkCircle}>
-                  <Ionicons name="checkmark" size={16} color="#fff" />
-                </View>
-                <Text style={styles.featureText}>Offline favorites access</Text>
-              </View>
+              {!isOfflineFeature && (
+                <>
+                  <View style={styles.feature}>
+                    <View style={styles.checkCircle}>
+                      <Ionicons name="checkmark" size={16} color="#fff" />
+                    </View>
+                    <Text style={styles.featureText}>Offline favorites access</Text>
+                  </View>
+
+                  <View style={styles.feature}>
+                    <View style={styles.checkCircle}>
+                      <Ionicons name="checkmark" size={16} color="#fff" />
+                    </View>
+                    <Text style={styles.featureText}>Offline history access</Text>
+                  </View>
+                </>
+              )}
 
               <View style={styles.feature}>
-                <View style={styles.checkCircle}>
-                  <Ionicons name="checkmark" size={16} color="#fff" />
-                </View>
-                <Text style={styles.featureText}>Offline history access</Text>
-              </View>
-
-              <View style={styles.feature}>
-                <View style={styles.checkCircle}>
-                  <Ionicons name="checkmark" size={16} color="#fff" />
-                </View>
-                <Text style={styles.featureText}>Priority support</Text>
               </View>
             </View>
 

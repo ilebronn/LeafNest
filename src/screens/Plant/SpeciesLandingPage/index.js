@@ -1,24 +1,34 @@
-import React, { useState, useEffect } from 'react';
-import { View, Text, StyleSheet, ScrollView, Image, TouchableOpacity, Alert, ImageBackground, ActivityIndicator } from 'react-native';
+import React, { useState, useEffect, useRef } from 'react';
+import { 
+  View, Text, StyleSheet, ScrollView, Image, TouchableOpacity, 
+  Alert, ActivityIndicator, Animated, Dimensions 
+} from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
+import { LinearGradient } from 'expo-linear-gradient';
+import { BlurView } from 'expo-blur';
 import * as Speech from 'expo-speech';
 import { auth } from '@config/firebase';
 import { addToHistory, addToFavorites, removeFromFavorites, isInFavorites } from '@services/firebase';
 import axios from 'axios';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
-import { decrementDownloadCount, getUsageLimits } from '@services/subscription/subscriptionService';
+import { 
+  canDownload, 
+  decrementDownloadCount, 
+  getUsageLimits 
+} from '@services/subscription/subscriptionService';
 import { PremiumGate } from '@components/modals';
 import { createDownloadNotification } from '@services/notifications/notificationService';
+import { isGuestUser } from '@utils/guest';
+// ✅ ADD THESE IMPORTS for offline feature
+import { useOfflineAccess } from '@hooks/useOfflineAccess';
+import { getCachedFullDetails, cacheFullDetails } from '@services/storage/offlineStorage';
 
-// SpeciesLandingPage.js (Near the top, after imports)
-
-// ⚠️ REPLACE 'YOUR-PROJECT-ID' with your actual project ID from .firebaserc
+const { width, height } = Dimensions.get('window');
 const PDF_BACKEND_URL = 'https://us-central1-leafnest-98408.cloudfunctions.net/generatePdfAndEmail';
 
-// Helper function to strip HTML tags and clean text thoroughly
+// Helper Functions
 const stripHtmlTags = (htmlString) => {
   if (!htmlString) return '';
-  
   let cleaned = htmlString
     .replace(/<\/?[^>]+(>|$)/g, "")
     .replace(/&nbsp;/g, " ")
@@ -31,11 +41,9 @@ const stripHtmlTags = (htmlString) => {
     .replace(/\s+/g, " ")
     .replace(/[<>]/g, "")
     .trim();
-  
   return cleaned;
 };
 
-// Enhanced description builder
 const buildComprehensiveDescription = (wikiData, wikiCommonData, wikiInfoboxData, fallbackAbout) => {
   const descriptions = [
     wikiData?.fullDescription,
@@ -131,7 +139,6 @@ const expandDescriptionWithDetails = (description, wikiData, wikiCommonData, eol
   return expanded;
 };
 
-// Fallback generator when external APIs fail
 const generateDetailedDescription = (commonName, scientificName, rank, iconicTaxon, taxonomy, about, gbifOccurrence, conservation) => {
   let description = '';
 
@@ -148,14 +155,9 @@ const generateDetailedDescription = (commonName, scientificName, rank, iconicTax
 
   if (iconicTaxon) {
     const taxonDescriptions = {
-      'Plantae': 'As a plant, this species plays an important role in ecosystems by producing oxygen, providing food and shelter for fauna, and contributing to nutrient cycling. Many plant species have been utilized by humans for medicinal, nutritional, and commercial purposes throughout history.',
-      'Animalia': `This is an animal species. Animals are multicellular organisms that play crucial roles in their ecosystems. They may serve as predators, prey, pollinators, or decomposers depending on their ecological niche. ${commonName || scientificName} exhibits behaviors and characteristics adapted to its specific environmental requirements.`,
-      'Fungi': 'As a fungus, this organism plays a critical role in decomposition and nutrient cycling in ecosystems. Fungi form symbiotic relationships with plants and animals, break down organic matter, and contribute to soil health and fertility. Some fungal species are edible and have been used in cuisine and medicine.',
-      'Bacteria': 'This is a bacterial species. Bacteria are single-celled prokaryotic organisms found in virtually every environment on Earth. They play essential roles in nutrient cycling, decomposition, and various other ecological processes. Some bacterial species have significant impacts on human health, agriculture, and industry.',
-      'Archaea': 'This is an archaeal species. Archaea are ancient microorganisms that often thrive in extreme environments such as hot springs, salt lakes, and deep ocean hydrothermal vents. They play important roles in biogeochemical cycles and represent a distinct branch of microbial life.',
-      'Protozoa': 'This is a protozoal organism. Protozoans are single-celled or simple multicellular eukaryotes found in aquatic and moist environments. They play important roles in food webs as both consumers and producers, and some species have significance in human health.',
-      'Chromista': 'This is a member of the Chromista group, which includes diverse organisms such as diatoms and brown algae. These organisms are photosynthetic and play vital roles in aquatic ecosystems, particularly in ocean productivity and oxygen production.',
-      'Incertae sedis': 'This species belongs to a taxonomic group whose exact classification remains uncertain. Such organisms are of particular scientific interest as they help researchers understand evolutionary relationships and may represent unique evolutionary lineages.'
+      'Plantae': 'As a plant, this species plays an important role in ecosystems by producing oxygen, providing food and shelter for fauna, and contributing to nutrient cycling.',
+      'Animalia': `This is an animal species. Animals are multicellular organisms that play crucial roles in their ecosystems.`,
+      'Fungi': 'As a fungus, this organism plays a critical role in decomposition and nutrient cycling in ecosystems.',
     };
 
     if (taxonDescriptions[iconicTaxon]) {
@@ -173,11 +175,7 @@ const generateDetailedDescription = (commonName, scientificName, rank, iconicTax
     description += `Conservation Status: ${conservation}. `;
   }
 
-  description += `This species occupies specific ecological niches and contributes to the biodiversity of its habitat. Understanding the distribution, behavior, and ecological requirements of this species is crucial for conservation efforts and environmental management. `;
-
-  description += `Like many species, ${commonName || scientificName} is of interest to researchers, naturalists, and conservationists who work to document and preserve Earth's biological diversity. `;
-
-  description += `If you encounter this species in the wild, consider contributing your observations to citizen science platforms to help expand our understanding of its distribution and ecology.`;
+  description += `This species occupies specific ecological niches and contributes to the biodiversity of its habitat.`;
 
   description = stripHtmlTags(description);
   description = description.replace(/\s{2,}/g, ' ').trim();
@@ -185,22 +183,158 @@ const generateDetailedDescription = (commonName, scientificName, rank, iconicTax
   return description;
 };
 
+const extractHabitat = (text) => {
+  const habitatKeywords = ['habitat', 'found in', 'lives in', 'native to', 'grows in', 'occurs in', 'inhabits', 'dwelling', 'environment', 'ecosystem'];
+  const sentences = text.split(/[.!?]+/);
+  const habitatSentences = [];
+  
+  for (const sentence of sentences) {
+    const lowerSentence = sentence.toLowerCase();
+    if (habitatKeywords.some(keyword => lowerSentence.includes(keyword))) {
+      habitatSentences.push(sentence.trim());
+      if (habitatSentences.length >= 5) break;
+    }
+  }
+  
+  return habitatSentences.length > 0 
+    ? habitatSentences.join('. ') + '.'
+    : 'Habitat information not available';
+};
+
+const extractDistribution = (text) => {
+  const distKeywords = ['distributed', 'range', 'endemic', 'native to', 'found throughout', 'widespread', 'region', 'continent', 'country', 'geographical', 'tropical', 'temperate', 'arctic'];
+  const sentences = text.split(/[.!?]+/);
+  const distSentences = [];
+  
+  for (const sentence of sentences) {
+    const lowerSentence = sentence.toLowerCase();
+    if (distKeywords.some(keyword => lowerSentence.includes(keyword))) {
+      distSentences.push(sentence.trim());
+      if (distSentences.length >= 5) break;
+    }
+  }
+  
+  return distSentences.length > 0 
+    ? distSentences.join('. ') + '.'
+    : 'Distribution information not available';
+};
+
+const extractCharacteristics = (text) => {
+  const charKeywords = ['characterized by', 'features', 'appearance', 'measures', 'size', 'color', 'shaped', 'length', 'weight', 'plumage', 'feathers', 'bill', 'wingspan', 'tail', 'structure', 'morphology', 'distinct'];
+  const sentences = text.split(/[.!?]+/);
+  const characteristics = [];
+  
+  for (const sentence of sentences) {
+    const lowerSentence = sentence.toLowerCase();
+    if (charKeywords.some(keyword => lowerSentence.includes(keyword))) {
+      characteristics.push(sentence.trim());
+      if (characteristics.length >= 7) break;
+    }
+  }
+  
+  return characteristics.length > 0 
+    ? characteristics.join('. ') + '.'
+    : 'Physical characteristics not available';
+};
+
+const extractBehavior = (text) => {
+  const behaviorKeywords = ['behavior', 'behaves', 'feeds on', 'diet', 'active', 'nocturnal', 'diurnal', 'social', 'breeding', 'nesting', 'foraging', 'hunting', 'migration', 'territorial', 'habits', 'activity'];
+  const sentences = text.split(/[.!?]+/);
+  const behaviorSentences = [];
+  
+  for (const sentence of sentences) {
+    const lowerSentence = sentence.toLowerCase();
+    if (behaviorKeywords.some(keyword => lowerSentence.includes(keyword))) {
+      behaviorSentences.push(sentence.trim());
+      if (behaviorSentences.length >= 6) break;
+    }
+  }
+  
+  return behaviorSentences.length > 0 
+    ? behaviorSentences.join('. ') + '.'
+    : 'Behavior information not available';
+};
+
+const extractUses = (text) => {
+  const useKeywords = ['used for', 'medicinal', 'cultivated', 'economic', 'traditional', 'commercial', 'agriculture', 'farming', 'domesticated', 'value', 'important', 'significance', 'benefit', 'application'];
+  const sentences = text.split(/[.!?]+/);
+  const useSentences = [];
+  
+  for (const sentence of sentences) {
+    const lowerSentence = sentence.toLowerCase();
+    if (useKeywords.some(keyword => lowerSentence.includes(keyword))) {
+      useSentences.push(sentence.trim());
+      if (useSentences.length >= 5) break;
+    }
+  }
+  
+  return useSentences.length > 0 
+    ? useSentences.join('. ') + '.'
+    : 'Usage information not available';
+};
+
+// Animated Glass Card Component
+const AnimatedGlassCard = ({ children, delay = 0, style }) => {
+  const fadeAnim = useRef(new Animated.Value(0)).current;
+  const slideAnim = useRef(new Animated.Value(30)).current;
+
+  useEffect(() => {
+    Animated.parallel([
+      Animated.timing(fadeAnim, {
+        toValue: 1,
+        duration: 600,
+        delay,
+        useNativeDriver: true,
+      }),
+      Animated.timing(slideAnim, {
+        toValue: 0,
+        duration: 600,
+        delay,
+        useNativeDriver: true,
+      }),
+    ]).start();
+  }, []);
+
+  return (
+    <Animated.View
+      style={[
+        {
+          opacity: fadeAnim,
+          transform: [{ translateY: slideAnim }],
+        },
+        style,
+      ]}
+    >
+      <BlurView intensity={15} tint="light" style={styles.glassCard}>
+        {children}
+      </BlurView>
+    </Animated.View>
+  );
+};
+
 export default function SpeciesLandingPage({ route, navigation }) {
-  const { photoUri, speciesData, iNaturalistData, iNatObsCount, confidence } = route.params || {};
+  const { 
+    photoUri, 
+    speciesData, 
+    iNaturalistData, 
+    iNatObsCount, 
+    confidence,
+    offlineCacheId // ✅ NEW: Offline cache identifier from History/Favorites
+  } = route.params || {};
+  
+  // ✅ NEW: Offline access hook
+  const { isOffline, isPremium, canAccessOffline, userId } = useOfflineAccess();
 
   const commonName = iNaturalistData?.preferred_common_name || null;
-  const scientificName =
-    iNaturalistData?.name ||
-    speciesData?.scientificName ||
-    speciesData?.canonicalName ||
-    'Unknown';
-
-  // ✅ GUARANTEED: Always show both names with proper fallbacks
+  const scientificName = iNaturalistData?.name || speciesData?.scientificName || speciesData?.canonicalName || 'Unknown';
+  
+  // ✅ UPDATED: Show only specific species name, not family or genus
   const displayCommonName = commonName || scientificName || 'Unknown Species';
   const displayScientificName = scientificName || commonName || 'Unknown';
-
-  // Ensure they're different - if they're the same, add clarification
   const showBothNames = displayCommonName.toLowerCase() !== displayScientificName.toLowerCase();
+  
+  // ✅ NEW: Determine if we should show scientific name (only if different from common name)
+  const shouldShowScientificName = showBothNames && scientificName && scientificName !== 'Unknown';
 
   const rank = speciesData?.rank || iNaturalistData?.rank || '—';
   const iconicTaxon = iNaturalistData?.iconic_taxon_name || '—';
@@ -230,12 +364,10 @@ export default function SpeciesLandingPage({ route, navigation }) {
     iNaturalistData?.conservation_status?.status ||
     null;
 
-  const about =
-    iNaturalistData?.wikipedia_summary ||
-    null;
-
+  const about = iNaturalistData?.wikipedia_summary || null;
   const cleanAboutText = about ? stripHtmlTags(about) : 'No description available for this species.';
 
+  // State Management
   const [isSpeaking, setIsSpeaking] = useState(false);
   const [isFavorite, setIsFavorite] = useState(false);
   const [favoriteId, setFavoriteId] = useState(null);
@@ -260,16 +392,107 @@ export default function SpeciesLandingPage({ route, navigation }) {
   const [isGeneratingPDF, setIsGeneratingPDF] = useState(false);
   const [showPremiumGate, setShowPremiumGate] = useState(false);
   const [usageLimits, setUsageLimits] = useState(null);
+  const [isTogglingFavorite, setIsTogglingFavorite] = useState(false);
+  
+  // ✅ NEW: Offline-related states
+  const [isLoadingFromCache, setIsLoadingFromCache] = useState(false);
+  const [showOfflinePremiumGate, setShowOfflinePremiumGate] = useState(false);
 
-  // Character limit for description preview
+  const scrollY = useRef(new Animated.Value(0)).current;
+  const scaleAnim = useRef(new Animated.Value(0)).current;
+
   const DESCRIPTION_PREVIEW_LENGTH = 500;
 
   useEffect(() => {
+    Animated.spring(scaleAnim, {
+      toValue: 1,
+      tension: 50,
+      friction: 7,
+      useNativeDriver: true,
+    }).start();
+
     saveToHistory();
     checkIfFavorited();
-    fetchAdditionalDetails();
+    
+    // ✅ OFFLINE LOGIC: Check if offline and handle accordingly
+    handleDataLoading();
   }, []);
 
+  // ✅ NEW: Handle data loading (online or offline)
+  const handleDataLoading = async () => {
+    // OFFLINE MODE
+    if (isOffline) {
+      console.log('📴 Offline mode detected');
+      
+      // Check if premium
+      if (!canAccessOffline) {
+        console.log('❌ Non-premium user trying to access offline');
+        setShowOfflinePremiumGate(true);
+        setIsLoadingDetails(false);
+        return;
+      }
+      
+      // Premium user - load from cache
+      console.log('✅ Premium user - loading from cache');
+      setIsLoadingFromCache(true);
+      
+      try {
+        if (offlineCacheId && userId) {
+          const cached = await getCachedFullDetails(userId, offlineCacheId);
+          
+          if (cached) {
+            console.log('✅ Loaded data from offline cache');
+            
+            // Set cached data
+            setFullDescription(cached.fullDescription || cleanAboutText);
+            setAdditionalInfo({
+              habitat: cached.habitat || additionalInfo.habitat,
+              distribution: cached.distribution || additionalInfo.distribution,
+              characteristics: cached.characteristics || additionalInfo.characteristics,
+              behavior: cached.behavior || additionalInfo.behavior,
+              threats: cached.threats || additionalInfo.threats,
+              uses: cached.uses || additionalInfo.uses,
+              similarSpecies: cached.similarSpecies || [],
+              alternativeNames: cached.alternativeNames || [],
+            });
+            
+            setIsLoadingDetails(false);
+          } else {
+            console.log('⚠️ No cached data found');
+            Alert.alert(
+              'No Offline Data',
+              'This species information is not available offline. Please connect to the internet to view details.',
+              [{ text: 'OK', onPress: () => navigation.goBack() }]
+            );
+          }
+        } else {
+          console.log('⚠️ No cache ID provided');
+          Alert.alert(
+            'No Offline Data',
+            'This species information is not available offline.',
+            [{ text: 'OK', onPress: () => navigation.goBack() }]
+          );
+        }
+      } catch (error) {
+        console.error('❌ Error loading from cache:', error);
+        Alert.alert(
+          'Error',
+          'Failed to load offline data.',
+          [{ text: 'OK', onPress: () => navigation.goBack() }]
+        );
+      } finally {
+        setIsLoadingFromCache(false);
+      }
+      
+      return;
+    }
+    
+    // ONLINE MODE - normal fetch
+    console.log('🌐 Online mode - fetching fresh data');
+    fetchAdditionalDetails();
+  };
+
+  // Data Fetching Functions
   const fetchAdditionalDetails = async () => {
     setIsLoadingDetails(true);
     try {
@@ -316,7 +539,7 @@ export default function SpeciesLandingPage({ route, navigation }) {
       console.log(`Final description length: ${fullDesc.length} characters`);
       setFullDescription(fullDesc);
 
-      setAdditionalInfo({
+      const infoData = {
         habitat: stripHtmlTags(wikiData?.habitat || wikiDataCommon?.habitat || eolData?.habitat || extractHabitat(fullDesc)),
         distribution: stripHtmlTags(gbifOccurrence?.distribution || wikiData?.distribution || wikiDataCommon?.distribution || extractDistribution(fullDesc)),
         characteristics: stripHtmlTags(wikiData?.characteristics || wikiDataCommon?.characteristics || wikiInfoboxData?.characteristics || extractCharacteristics(fullDesc)),
@@ -325,7 +548,32 @@ export default function SpeciesLandingPage({ route, navigation }) {
         uses: stripHtmlTags(wikiData?.uses || wikiDataCommon?.uses || eolData?.uses || extractUses(fullDesc)),
         similarSpecies: iNaturalistData?.ancestors?.slice(0, 3) || [],
         alternativeNames: iNaturalistData?.names || [],
-      });
+      };
+      
+      setAdditionalInfo(infoData);
+      
+      // ✅ CACHE DATA FOR OFFLINE (Premium users only)
+      if (isPremium && userId && offlineCacheId) {
+        try {
+          const cacheData = {
+            fullDescription: fullDesc,
+            ...infoData,
+            commonName,
+            scientificName,
+            rank,
+            iconicTaxon,
+            taxonomy,
+            conservation,
+            displayImageUri,
+            cachedAt: Date.now(),
+          };
+          
+          await cacheFullDetails(userId, offlineCacheId, cacheData);
+          console.log('✅ Cached full details for offline access');
+        } catch (error) {
+          console.error('❌ Failed to cache details:', error);
+        }
+      }
     } catch (error) {
       console.error('Error fetching additional details:', error);
       setFullDescription(stripHtmlTags(cleanAboutText));
@@ -517,96 +765,7 @@ export default function SpeciesLandingPage({ route, navigation }) {
     return null;
   };
 
-  const extractHabitat = (text) => {
-    const habitatKeywords = ['habitat', 'found in', 'lives in', 'native to', 'grows in', 'occurs in', 'inhabits', 'dwelling', 'environment', 'ecosystem'];
-    const sentences = text.split(/[.!?]+/);
-    const habitatSentences = [];
-    
-    for (const sentence of sentences) {
-      const lowerSentence = sentence.toLowerCase();
-      if (habitatKeywords.some(keyword => lowerSentence.includes(keyword))) {
-        habitatSentences.push(sentence.trim());
-        if (habitatSentences.length >= 5) break;
-      }
-    }
-    
-    return habitatSentences.length > 0 
-      ? habitatSentences.join('. ') + '.'
-      : 'Habitat information not available';
-  };
-
-  const extractDistribution = (text) => {
-    const distKeywords = ['distributed', 'range', 'endemic', 'native to', 'found throughout', 'widespread', 'region', 'continent', 'country', 'geographical', 'tropical', 'temperate', 'arctic'];
-    const sentences = text.split(/[.!?]+/);
-    const distSentences = [];
-    
-    for (const sentence of sentences) {
-      const lowerSentence = sentence.toLowerCase();
-      if (distKeywords.some(keyword => lowerSentence.includes(keyword))) {
-        distSentences.push(sentence.trim());
-        if (distSentences.length >= 5) break;
-      }
-    }
-    
-    return distSentences.length > 0 
-      ? distSentences.join('. ') + '.'
-      : 'Distribution information not available';
-  };
-
-  const extractCharacteristics = (text) => {
-    const charKeywords = ['characterized by', 'features', 'appearance', 'measures', 'size', 'color', 'shaped', 'length', 'weight', 'plumage', 'feathers', 'bill', 'wingspan', 'tail', 'structure', 'morphology', 'distinct'];
-    const sentences = text.split(/[.!?]+/);
-    const characteristics = [];
-    
-    for (const sentence of sentences) {
-      const lowerSentence = sentence.toLowerCase();
-      if (charKeywords.some(keyword => lowerSentence.includes(keyword))) {
-        characteristics.push(sentence.trim());
-        if (characteristics.length >= 7) break;
-      }
-    }
-    
-    return characteristics.length > 0 
-      ? characteristics.join('. ') + '.'
-      : 'Physical characteristics not available';
-  };
-
-  const extractBehavior = (text) => {
-    const behaviorKeywords = ['behavior', 'behaves', 'feeds on', 'diet', 'active', 'nocturnal', 'diurnal', 'social', 'breeding', 'nesting', 'foraging', 'hunting', 'migration', 'territorial', 'habits', 'activity'];
-    const sentences = text.split(/[.!?]+/);
-    const behaviorSentences = [];
-    
-    for (const sentence of sentences) {
-      const lowerSentence = sentence.toLowerCase();
-      if (behaviorKeywords.some(keyword => lowerSentence.includes(keyword))) {
-        behaviorSentences.push(sentence.trim());
-        if (behaviorSentences.length >= 6) break;
-      }
-    }
-    
-    return behaviorSentences.length > 0 
-      ? behaviorSentences.join('. ') + '.'
-      : 'Behavior information not available';
-  };
-
-  const extractUses = (text) => {
-    const useKeywords = ['used for', 'medicinal', 'cultivated', 'economic', 'traditional', 'commercial', 'agriculture', 'farming', 'domesticated', 'value', 'important', 'significance', 'benefit', 'application'];
-    const sentences = text.split(/[.!?]+/);
-    const useSentences = [];
-    
-    for (const sentence of sentences) {
-      const lowerSentence = sentence.toLowerCase();
-      if (useKeywords.some(keyword => lowerSentence.includes(keyword))) {
-        useSentences.push(sentence.trim());
-        if (useSentences.length >= 5) break;
-      }
-    }
-    
-    return useSentences.length > 0 
-      ? useSentences.join('. ') + '.'
-      : 'Usage information not available';
-  };
-
+  // User Interaction Functions
   const saveToHistory = async () => {
     try {
       const uid = auth.currentUser?.uid;
@@ -623,7 +782,7 @@ export default function SpeciesLandingPage({ route, navigation }) {
         rank: rank,
         iconicTaxon: iconicTaxon,
         taxonId: taxonId,
-        imageUri: photoUri, // ← ADD THIS LINE - This is the captured image URI
+        imageUri: photoUri,
         imageUrl: displayImageUri,
         conservation: conservation,
         about: cleanAboutText,
@@ -678,91 +837,90 @@ export default function SpeciesLandingPage({ route, navigation }) {
     setIsSpeaking(!isSpeaking);
   };
 
-  const [isTogglingFavorite, setIsTogglingFavorite] = useState(false);
-
-const toggleFavorite = async () => {
-  // ✅ Prevent multiple rapid clicks
-  if (isTogglingFavorite) {
-    console.log('Already processing favorite...');
-    return;
-  }
-
-  try {
-    const uid = auth.currentUser?.uid;
-    if (!uid) {
-      Alert.alert('Authentication Required', 'Please log in to add favorites.');
+  const toggleFavorite = async () => {
+    if (isTogglingFavorite) {
+      console.log('Already processing favorite...');
       return;
     }
 
-    setIsTogglingFavorite(true);
-
-    if (isFavorite && favoriteId) {
-      // Remove from favorites
-      const result = await removeFromFavorites(uid, favoriteId);
-      
-      if (result.success) {
-        setIsFavorite(false);
-        setFavoriteId(null);
-        Alert.alert('Removed', `${commonName || scientificName} has been removed from favorites.`);
-      } else {
-        Alert.alert('Error', 'Failed to remove from favorites. Please try again.');
+    try {
+      const uid = auth.currentUser?.uid;
+      if (!uid) {
+        Alert.alert('Authentication Required', 'Please log in to add favorites.');
+        return;
       }
-    } else {
-      // ✅ Double-check before adding
-      const { getFavorites } = require('@services/firebase');
-      const favoritesResult = await getFavorites(uid);
-      
-      if (favoritesResult.success) {
-        const alreadyExists = favoritesResult.data.find(
-          fav => (fav.scientificName === scientificName) || 
-                (fav.taxonId && fav.taxonId === taxonId)
-        );
+
+      setIsTogglingFavorite(true);
+
+      if (isFavorite && favoriteId) {
+        const result = await removeFromFavorites(uid, favoriteId);
         
-        if (alreadyExists) {
+        if (result.success) {
+          setIsFavorite(false);
+          setFavoriteId(null);
+          Alert.alert('Removed', `${commonName || scientificName} has been removed from favorites.`);
+        } else {
+          Alert.alert('Error', 'Failed to remove from favorites. Please try again.');
+        }
+      } else {
+        const { getFavorites } = require('@services/firebase');
+        const favoritesResult = await getFavorites(uid);
+        
+        if (favoritesResult.success) {
+          const alreadyExists = favoritesResult.data.find(
+            fav => (fav.scientificName === scientificName) || 
+                  (fav.taxonId && fav.taxonId === taxonId)
+          );
+          
+          if (alreadyExists) {
+            setIsFavorite(true);
+            setFavoriteId(alreadyExists.id);
+            console.log('Already in favorites, not adding again');
+            return;
+          }
+        }
+
+        const favoriteData = {
+          plantName: commonName || scientificName,
+          name: commonName || scientificName,
+          scientificName: scientificName,
+          commonName: commonName,
+          rank: rank,
+          iconicTaxon: iconicTaxon,
+          taxonId: taxonId,
+          imageUrl: displayImageUri,
+          type: 'species',
+        };
+
+        const result = await addToFavorites(uid, favoriteData);
+        
+        if (result.success) {
           setIsFavorite(true);
-          setFavoriteId(alreadyExists.id);
-          console.log('Already in favorites, not adding again');
-          return;
+          setFavoriteId(result.id);
+          Alert.alert('Added to Favorites', `${commonName || scientificName} has been added to your favorites!`);
+        } else {
+          Alert.alert('Error', 'Failed to add to favorites. Please try again.');
         }
       }
-
-      const favoriteData = {
-        plantName: commonName || scientificName,
-        name: commonName || scientificName,
-        scientificName: scientificName,
-        commonName: commonName,
-        rank: rank,
-        iconicTaxon: iconicTaxon,
-        taxonId: taxonId,
-        imageUrl: displayImageUri,
-        type: 'species',
-      };
-
-      const result = await addToFavorites(uid, favoriteData);
-      
-      if (result.success) {
-        setIsFavorite(true);
-        setFavoriteId(result.id);
-        Alert.alert('Added to Favorites', `${commonName || scientificName} has been added to your favorites!`);
-      } else {
-        Alert.alert('Error', 'Failed to add to favorites. Please try again.');
-      }
+    } catch (error) {
+      console.error("Error toggling favorite:", error);
+      Alert.alert('Error', 'Failed to update favorites. Please try again.');
+    } finally {
+      setIsTogglingFavorite(false);
     }
-  } catch (error) {
-    console.error("Error toggling favorite:", error);
-    Alert.alert('Error', 'Failed to update favorites. Please try again.');
-  } finally {
-    setIsTogglingFavorite(false);
-  }
-};
+  };
 
   const handleBackPress = () => {
     Speech.stop();
     navigation.goBack();
   };
 
+  // ✅ DOWNLOAD LIMIT FIX: Improved handleDownloadPDF function
   const handleDownloadPDF = async () => {
-    if (!auth.currentUser || !auth.currentUser.email) {
+    const user = auth.currentUser;
+
+    // ✅ Check 1: User must be authenticated
+    if (!user || !user.email) {
       Alert.alert(
         "Authentication Required",
         "Please log in to download PDFs.",
@@ -771,30 +929,51 @@ const toggleFavorite = async () => {
       return;
     }
 
-    // Check download limit
-    try {
-      const limits = await getUsageLimits(auth.currentUser.uid);
-      setUsageLimits(limits);
-
-      // Premium users have unlimited
-      if (!limits.unlimited) {
-        if (limits.downloadsRemaining <= 0) {
-          setShowPremiumGate(true);
-          return;
-        }
-
-        // Decrement download count
-        await decrementDownloadCount(auth.currentUser.uid);
-      }
-    } catch (error) {
-      console.error('Error checking download limit:', error);
+    // ✅ Check 2: Guest users cannot download
+    if (isGuestUser(user)) {
+      Alert.alert(
+        "📥 Downloads Unavailable",
+        "Please sign up for a free account to download species information!",
+        [{ text: "OK" }]
+      );
+      return;
     }
 
+    try {
+      // ✅ Check 3: Get usage limits
+      const limits = await getUsageLimits(user.uid);
+      setUsageLimits(limits);
+
+      // ✅ Check 4: Check if user can download
+      const downloadCheck = await canDownload(user.uid);
+
+      if (!downloadCheck.success) {
+        Alert.alert("Error", "Failed to check download limit. Please try again.");
+        return;
+      }
+
+      // ✅ Check 5: If not unlimited and no downloads remaining, show premium gate
+      if (!downloadCheck.unlimited && !downloadCheck.canDownload) {
+        console.log('❌ Download limit reached');
+        setShowPremiumGate(true);
+        return;
+      }
+
+      // ✅ Check 6: User can download - show confirmation
+      console.log(`✅ Download allowed (${downloadCheck.downloadsRemaining || '∞'} remaining)`);
+
+    } catch (error) {
+      console.error('❌ Error checking download limit:', error);
+      Alert.alert("Error", "Failed to check download limit. Please try again.");
+      return;
+    }
+
+    // ✅ START DOWNLOAD PROCESS
     setIsGeneratingPDF(true);
 
     try {
       const pdfData = {
-        email: auth.currentUser.email,
+        email: user.email,
         speciesData: {
           commonName: commonName || 'N/A',
           scientificName: scientificName || 'N/A',
@@ -819,12 +998,49 @@ const toggleFavorite = async () => {
       });
 
       if (response.status === 200) {
-        // Create download notification (similar to HomeScreen)
-        try {
-          const downloaderUsername = auth.currentUser.displayName ||
-            auth.currentUser.email?.split('@')[0] || 'User';
+        // ✅ SUCCESS! Now decrement download count
+        const limits = await getUsageLimits(user.uid);
+        
+        if (!limits.unlimited) {
+          const decrementResult = await decrementDownloadCount(user.uid);
+          
+          if (decrementResult.success) {
+            console.log(`✅ Download count decremented (${decrementResult.downloadsRemaining} remaining)`);
+            
+            // Update local state
+            setUsageLimits({
+              ...limits,
+              downloadsRemaining: decrementResult.downloadsRemaining,
+            });
 
-          // Create notification data object matching the expected format
+            // ✅ Show warning if low on downloads
+            if (decrementResult.downloadsRemaining === 1) {
+              Alert.alert(
+                'Success',
+                `The PDF has been generated and sent to your email!\n\n⚠️ You have ${decrementResult.downloadsRemaining} download remaining. Resets in ${decrementResult.hoursUntilReset} hours.`,
+                [{ text: 'OK' }]
+              );
+            } else if (decrementResult.downloadsRemaining === 0) {
+              Alert.alert(
+                'Success',
+                `The PDF has been generated and sent to your email!\n\n⚠️ You've used all your downloads. Resets in ${decrementResult.hoursUntilReset} hours.`,
+                [{ text: 'OK' }]
+              );
+            } else {
+              Alert.alert('Success', 'The PDF has been generated and sent to your email!');
+            }
+          } else {
+            Alert.alert('Success', 'The PDF has been generated and sent to your email!');
+          }
+        } else {
+          Alert.alert('Success', 'The PDF has been generated and sent to your email!');
+        }
+
+        // ✅ Create download notification
+        try {
+          const downloaderUsername = user.displayName ||
+            user.email?.split('@')[0] || 'User';
+
           const itemData = {
             name: commonName || scientificName,
             scientificName: scientificName,
@@ -832,45 +1048,39 @@ const toggleFavorite = async () => {
             iconicTaxon: iconicTaxon,
           };
 
-          // If this species came from a public post, you might have the original userId
-          // For now, we'll skip notification if there's no original poster
-          // You can pass postId and originalUserId via route.params if needed
           const postId = route.params?.postId || null;
           const originalUserId = route.params?.originalUserId || null;
 
-          if (postId && originalUserId && originalUserId !== auth.currentUser.uid) {
+          if (postId && originalUserId && originalUserId !== user.uid) {
             await createDownloadNotification(
               postId,
               originalUserId,
-              auth.currentUser.uid,
+              user.uid,
               downloaderUsername,
               itemData
             );
-            console.log('Download notification created');
+            console.log('✅ Download notification created');
           }
         } catch (notifError) {
-          console.warn('Failed to create download notification:', notifError);
+          console.warn('⚠️ Failed to create download notification:', notifError);
         }
 
-        Alert.alert('Success', 'The PDF has been generated and sent to your email!');
       } else {
         throw new Error('Failed to generate PDF');
       }
     } catch (error) {
-      console.error('PDF generation error:', error);
+      console.error('❌ PDF generation error:', error);
       Alert.alert('Error', 'Failed to generate PDF. Please try again.');
     } finally {
       setIsGeneratingPDF(false);
     }
   };
 
-  // Function to get preview text
   const getDescriptionPreview = () => {
     if (fullDescription.length <= DESCRIPTION_PREVIEW_LENGTH) {
       return fullDescription;
     }
     
-    // Find the last complete sentence within the limit
     const preview = fullDescription.substring(0, DESCRIPTION_PREVIEW_LENGTH);
     const lastPeriod = preview.lastIndexOf('.');
     const lastQuestion = preview.lastIndexOf('?');
@@ -885,612 +1095,683 @@ const toggleFavorite = async () => {
     return preview + '...';
   };
 
+  const headerOpacity = scrollY.interpolate({
+    inputRange: [0, 200],
+    outputRange: [0, 1],
+    extrapolate: 'clamp',
+  });
+
   return (
-    <ImageBackground
-      source={require('@assets/images/backgrounds/background-result.jpg')}
-      style={styles.backgroundImage}
-      resizeMode="cover"
-    >
-      <View style={styles.overlay}>
-        <View style={styles.container}>
-          <TouchableOpacity
-            style={styles.backButton}
-            onPress={handleBackPress}
-          >
-            <Ionicons name="arrow-back" size={28} color="#fff" />
-          </TouchableOpacity>
+    <View style={styles.container}>
+      <LinearGradient
+        colors={['#2D5016', '#4A7C59', '#6B8E23']}
+        start={{ x: 0, y: 0 }}
+        end={{ x: 1, y: 1 }}
+        style={StyleSheet.absoluteFill}
+      />
 
-          <ScrollView contentContainerStyle={styles.contentContainer}>
-            <Text style={styles.title}>Species Details</Text>
-
-            {displayImageUri ? (
-              <Image source={{ uri: displayImageUri }} style={styles.heroImage} resizeMode="cover" />
-            ) : (
-              <View style={[styles.heroImage, styles.heroPlaceholder]}>
-                <Text style={styles.placeholderText}>No image available</Text>
-              </View>
-            )}
-
-            <View style={styles.card}>
-              <View style={styles.namesContainer}>
-                <Text style={styles.commonName}>{displayCommonName}</Text>
-                {showBothNames ? (
-                  <Text style={styles.sciName}>{displayScientificName}</Text>
-                ) : (
-                  <Text style={styles.sciName}>(No separate scientific name available)</Text>
-                )}
-              </View>
-
-              <View style={styles.metaRow}>
-                <MetaPill label="Rank" value={rank} />
-                <MetaPill label="Type" value={iconicTaxon} />
-                {taxonId ? <MetaPill label="ID" value={String(taxonId)} /> : null}
-                {confidence ? <MetaPill label="Confidence" value={`${confidence}%`} icon="checkmark-circle" /> : null}
-              </View>
-
-                  <TouchableOpacity 
-                onPress={toggleFavorite} 
-                style={styles.favoriteButton}
-                disabled={isTogglingFavorite}
-              >
-                {isTogglingFavorite ? (
-                  <ActivityIndicator size="small" color="#ff0000" />
-                ) : (
-                  <Ionicons
-                    name={isFavorite ? "heart" : "heart-outline"}
-                    size={30}
-                    color={isFavorite ? "#ff0000" : "#555"}
-                  />
-                )}
-              </TouchableOpacity>
-            </View>
-
-            <View style={styles.card}>
-              <View style={styles.cardHeader}>
-                <Ionicons name="information-circle" size={24} color="#00695c" />
-                <Text style={styles.cardTitle}>Complete Description</Text>
-              </View>
-              {isLoadingDetails ? (
-                <View style={styles.loadingSection}>
-                  <ActivityIndicator size="small" color="#00695c" />
-                  <Text style={styles.loadingText}>Loading full description...</Text>
-                </View>
-              ) : (
-                <>
-                  <Text style={styles.fullDescription}>
-                    {isDescriptionExpanded ? fullDescription : getDescriptionPreview()}
-                  </Text>
-                  
-                  {fullDescription.length > DESCRIPTION_PREVIEW_LENGTH && (
-                    <TouchableOpacity 
-                      style={styles.showMoreButton}
-                      onPress={() => setIsDescriptionExpanded(!isDescriptionExpanded)}
-                    >
-                      <Text style={styles.showMoreText}>
-                        {isDescriptionExpanded ? 'Show Less' : 'Show More'}
-                      </Text>
-                      <Ionicons 
-                        name={isDescriptionExpanded ? "chevron-up" : "chevron-down"} 
-                        size={18} 
-                        color="#00695c" 
-                      />
-                    </TouchableOpacity>
-                  )}
-                  
-                  {fullDescription.length > 500 && (
-                    <View style={styles.descriptionInfo}>
-                      <Ionicons name="book" size={16} color="#00695c" />
-                      <Text style={styles.descriptionInfoText}>
-                        {Math.ceil(fullDescription.split(' ').length)} words • {Math.ceil(fullDescription.split(/[.!?]+/).length)} sentences
-                      </Text>
-                    </View>
-                  )}
-                </>
-              )}
-            </View>
-
-            {isLoadingDetails ? (
-              <View style={styles.card}>
-                <ActivityIndicator size="large" color="#00695c" />
-                <Text style={styles.loadingText}>Loading detailed information...</Text>
-              </View>
-            ) : (
-              <>
-                {additionalInfo.characteristics && additionalInfo.characteristics !== 'Physical characteristics not available' && (
-                  <View style={styles.card}>
-                    <View style={styles.cardHeader}>
-                      <Ionicons name="eye" size={24} color="#00695c" />
-                      <Text style={styles.cardTitle}>Physical Characteristics</Text>
-                    </View>
-                    <Text style={styles.value}>{additionalInfo.characteristics}</Text>
-                  </View>
-                )}
-
-                <View style={styles.card}>
-                  <View style={styles.cardHeader}>
-                    <Ionicons name="location" size={24} color="#00695c" />
-                    <Text style={styles.cardTitle}>Habitat & Distribution</Text>
-                  </View>
-                  <View style={styles.infoSection}>
-                    <Text style={styles.infoLabel}>Habitat:</Text>
-                    <Text style={styles.value}>{additionalInfo.habitat}</Text>
-                  </View>
-                  <View style={styles.infoSection}>
-                    <Text style={styles.infoLabel}>Distribution:</Text>
-                    <Text style={styles.value}>{additionalInfo.distribution}</Text>
-                  </View>
-                </View>
-
-                {additionalInfo.behavior && additionalInfo.behavior !== 'Behavior information not available' && (
-                  <View style={styles.card}>
-                    <View style={styles.cardHeader}>
-                      <Ionicons name="flash" size={24} color="#00695c" />
-                      <Text style={styles.cardTitle}>Behavior & Ecology</Text>
-                    </View>
-                    <Text style={styles.value}>{additionalInfo.behavior}</Text>
-                  </View>
-                )}
-
-                {conservation && (
-                  <View style={styles.card}>
-                    <View style={styles.cardHeader}>
-                      <Ionicons name="shield-checkmark" size={24} color="#00695c" />
-                      <Text style={styles.cardTitle}>Conservation Status</Text>
-                    </View>
-                    <View style={styles.conservationBadge}>
-                      <Text style={styles.conservationText}>{conservation}</Text>
-                    </View>
-                    <Text style={styles.value}>{additionalInfo.threats}</Text>
-                  </View>
-                )}
-
-                {additionalInfo.uses && additionalInfo.uses !== 'Usage information not available' && (
-                  <View style={styles.card}>
-                    <View style={styles.cardHeader}>
-                      <Text style={styles.cardTitle}>Uses & Importance</Text>
-                    </View>
-                    <Text style={styles.value}>{additionalInfo.uses}</Text>
-                  </View>
-                )}
-
-                {additionalInfo.alternativeNames.length > 0 && (
-                  <View style={styles.card}>
-                    <View style={styles.cardHeader}>
-                      <Ionicons name="language" size={24} color="#00695c" />
-                      <Text style={styles.cardTitle}>Alternative Names</Text>
-                    </View>
-                    <View style={styles.namesList}>
-                      {additionalInfo.alternativeNames.slice(0, 5).map((name, idx) => (
-                        <View key={idx} style={styles.nameItem}>
-                          <Text style={styles.nameLang}>{name.locale || 'Common'}:</Text>
-                          <Text style={styles.nameValue}>{name.name}</Text>
-                        </View>
-                      ))}
-                    </View>
-                  </View>
-                )}
-              </>
-            )}
-
-            
-
-            {taxonomy.length > 0 && (
-              <View style={styles.card}>
-                <View style={styles.cardHeader}>
-                  <Ionicons name="git-branch" size={24} color="#00695c" />
-                  <Text style={styles.cardTitle}>Complete Taxonomy</Text>
-                </View>
-                <View style={styles.taxTable}>
-                  {taxonomy.map((row, idx) => (
-                    <View key={`${row.label}-${idx}`} style={styles.taxRow}>
-                      <Text style={styles.taxLabel}>{row.label}</Text>
-                      <Text style={styles.taxValue}>{row.value}</Text>
-                    </View>
-                  ))}
-
-                  {speciesData?.usageKey && (
-                    <View style={styles.taxRow}>
-                      <Text style={styles.taxLabel}>GBIF Key</Text>
-                      <Text style={styles.taxValue}>{speciesData.usageKey}</Text>
-                    </View>
-                  )}
-                  {speciesData?.status && (
-                    <View style={styles.taxRow}>
-                      <Text style={styles.taxLabel}>Taxonomic Status</Text>
-                      <Text style={styles.taxValue}>{speciesData.status}</Text>
-                    </View>
-                  )}
-                </View>
-              </View>
-            )}
-
-            <View style={styles.sourcesCard}>
-              <Text style={styles.sourcesTitle}>Data Sources</Text>
-              <Text style={styles.sourcesText}>
-                • GBIF - Global biodiversity data{'\n'}
-                • Wikipedia - General information{'\n'}
-                • EOL - Encyclopedia of Life{'\n'}
-                • Google Vision AI - Image recognition
-              </Text>
-            </View>
-
-            <View style={{ height: 80 }} />
-          </ScrollView>
-            <TouchableOpacity
-        style={styles.downloadButton}
-        onPress={handleDownloadPDF}
-        disabled={isGeneratingPDF}
-      >
-        {isGeneratingPDF ? (
-          <ActivityIndicator size="small" color="#fff" />
-        ) : (
-          <MaterialCommunityIcons
-            name="download"
-            size={28}
-            color="#fff"
-          />
-        )}
-        </TouchableOpacity>
-          <TouchableOpacity
-            style={styles.speechButton}
-            onPress={handleSpeech}
-          >
-            <Ionicons name={isSpeaking ? "pause" : "volume-high"} size={30} color="#fff" />
-          </TouchableOpacity>
-          
+      {/* ✅ NEW: Offline Mode Banner */}
+      {isOffline && canAccessOffline && (
+        <View style={styles.offlineBanner}>
+          <BlurView intensity={60} tint="dark" style={styles.offlineBannerBlur}>
+            <Ionicons name="cloud-offline" size={16} color="#FFA726" />
+            <Text style={styles.offlineBannerText}>Offline Mode - Cached Data</Text>
+          </BlurView>
         </View>
-      </View>
-    </ImageBackground>
-  );
-}
+      )}
 
-function MetaPill({ label, value, icon }) {
-  if (!value) return null;
-  return (
-    <View style={styles.pill}>
-      {icon && <Ionicons name={icon} size={16} color="#00695c" style={{ marginRight: 4 }} />}
-      <Text style={styles.pillLabel}>{label}:</Text>
-      <Text style={styles.pillValue}> {value}</Text>
+      <Animated.ScrollView
+        contentContainerStyle={styles.scrollContent}
+        showsVerticalScrollIndicator={false}
+        onScroll={Animated.event(
+          [{ nativeEvent: { contentOffset: { y: scrollY } } }],
+          { useNativeDriver: true }
+        )}
+        scrollEventThrottle={16}
+      >
+        {/* Hero Section */}
+        <View style={styles.heroSection}>
+          {displayImageUri ? (
+            <Image source={{ uri: displayImageUri }} style={styles.heroImage} />
+          ) : (
+            <View style={[styles.heroImage, styles.heroPlaceholder]}>
+              <Ionicons name="leaf" size={80} color="rgba(255,255,255,0.3)" />
+            </View>
+          )}
+          
+          <LinearGradient
+            colors={['transparent', 'rgba(45,80,22,0.9)']}
+            style={styles.heroGradient}
+          />
+
+          <View style={styles.heroContent}>
+            <Text style={styles.speciesName}>{displayCommonName}</Text>
+            {showBothNames && (
+              <Text style={styles.speciesScientific}>{displayScientificName}</Text>
+            )}
+            
+            <View style={styles.badges}>
+              {confidence && (
+                <View style={styles.badge}>
+                  <Ionicons name="checkmark-circle" size={16} color="#fff" />
+                  <Text style={styles.badgeText}>{confidence}% Match</Text>
+                </View>
+              )}
+              <View style={styles.badge}>
+                <Text style={styles.badgeText}>{iconicTaxon}</Text>
+              </View>
+              <View style={styles.badge}>
+                <Text style={styles.badgeText}>{rank}</Text>
+              </View>
+            </View>
+          </View>
+
+         
+        </View>
+
+        {/* Stats Card */}
+        <AnimatedGlassCard delay={100} style={styles.statsCard}>
+          <View style={styles.statsGrid}>
+            <View style={styles.statItem}>
+              <Text style={styles.statValue}>
+                {confidence ? `${confidence}%` : '—'}
+              </Text>
+              <Text style={styles.statLabel}>CONFIDENCE</Text>
+            </View>
+          </View>
+        </AnimatedGlassCard>
+
+        {/* Description Card */}
+        <AnimatedGlassCard delay={200} style={styles.sectionCard}>
+          <View style={styles.cardHeader}>
+            <View style={styles.iconBadge}>
+              <Ionicons name="book" size={20} color="#6B8E23" />
+            </View>
+            <Text style={styles.sectionTitle}>Overview</Text>
+          </View>
+          {isLoadingDetails ? (
+            <View style={styles.loadingSection}>
+              <ActivityIndicator size="small" color="#fff" />
+              <Text style={styles.loadingText}>Loading description...</Text>
+            </View>
+          ) : (
+            <>
+              <Text style={styles.descriptionText}>
+                {isDescriptionExpanded ? fullDescription : getDescriptionPreview()}
+              </Text>
+              {fullDescription.length > DESCRIPTION_PREVIEW_LENGTH && (
+                <TouchableOpacity
+                  style={styles.expandButton}
+                  onPress={() => setIsDescriptionExpanded(!isDescriptionExpanded)}
+                >
+                  <Text style={styles.expandText}>
+                    {isDescriptionExpanded ? 'Show Less' : 'Read More'}
+                  </Text>
+                  <Ionicons
+                    name={isDescriptionExpanded ? "chevron-up" : "chevron-down"}
+                    size={16}
+                    color="#6B8E23"
+                  />
+                </TouchableOpacity>
+              )}
+            </>
+          )}
+        </AnimatedGlassCard>
+
+        {/* Characteristics */}
+        {additionalInfo.characteristics && additionalInfo.characteristics !== 'Physical characteristics not available' && (
+          <AnimatedGlassCard delay={300} style={styles.sectionCard}>
+            <View style={styles.cardHeader}>
+              <View style={[styles.iconBadge, { backgroundColor: 'rgba(139, 195, 74, 0.2)' }]}>
+                <Ionicons name="eye" size={20} color="#8BC34A" />
+              </View>
+              <Text style={styles.sectionTitle}>Physical Characteristics</Text>
+            </View>
+            <Text style={styles.descriptionText}>{additionalInfo.characteristics}</Text>
+          </AnimatedGlassCard>
+        )}
+
+        {/* Habitat & Distribution */}
+        <AnimatedGlassCard delay={400} style={styles.sectionCard}>
+          <View style={styles.cardHeader}>
+            <View style={[styles.iconBadge, { backgroundColor: 'rgba(102, 187, 106, 0.2)' }]}>
+              <Ionicons name="location" size={20} color="#66BB6A" />
+            </View>
+            <Text style={styles.sectionTitle}>Habitat & Distribution</Text>
+          </View>
+          <View style={styles.infoSection}>
+            <Text style={styles.infoLabel}>Habitat:</Text>
+            <Text style={styles.descriptionText}>{additionalInfo.habitat}</Text>
+          </View>
+          <View style={styles.infoSection}>
+            <Text style={styles.infoLabel}>Distribution:</Text>
+            <Text style={styles.descriptionText}>{additionalInfo.distribution}</Text>
+          </View>
+        </AnimatedGlassCard>
+
+        {/* Behavior */}
+        {additionalInfo.behavior && additionalInfo.behavior !== 'Behavior information not available' && (
+          <AnimatedGlassCard delay={500} style={styles.sectionCard}>
+            <View style={styles.cardHeader}>
+              <View style={[styles.iconBadge, { backgroundColor: 'rgba(205, 220, 57, 0.2)' }]}>
+                <Ionicons name="flash" size={20} color="#CDDC39" />
+              </View>
+              <Text style={styles.sectionTitle}>Behavior & Ecology</Text>
+            </View>
+            <Text style={styles.descriptionText}>{additionalInfo.behavior}</Text>
+          </AnimatedGlassCard>
+        )}
+
+        {/* Conservation */}
+        {conservation && (
+          <AnimatedGlassCard delay={600} style={styles.sectionCard}>
+            <View style={styles.cardHeader}>
+              <View style={[styles.iconBadge, { backgroundColor: 'rgba(129, 199, 132, 0.2)' }]}>
+                <Ionicons name="shield-checkmark" size={20} color="#81C784" />
+              </View>
+              <Text style={styles.sectionTitle}>Conservation Status</Text>
+            </View>
+            <View style={styles.conservationBadge}>
+              <Ionicons name="checkmark-circle" size={20} color="#81C784" />
+              <Text style={styles.conservationText}>{conservation}</Text>
+            </View>
+          </AnimatedGlassCard>
+        )}
+
+        {/* Uses */}
+        {additionalInfo.uses && additionalInfo.uses !== 'Usage information not available' && (
+          <AnimatedGlassCard delay={700} style={styles.sectionCard}>
+            <View style={styles.cardHeader}>
+              <View style={[styles.iconBadge, { backgroundColor: 'rgba(156, 204, 101, 0.2)' }]}>
+                <Ionicons name="information-circle-outline" size={20} color="#9CCC65" />
+              </View>
+              <Text style={styles.sectionTitle}>Uses & Importance</Text>
+            </View>
+            <Text style={styles.descriptionText}>{additionalInfo.uses}</Text>
+          </AnimatedGlassCard>
+        )}
+
+        {/* Alternative Names */}
+        {additionalInfo.alternativeNames.length > 0 && (
+          <AnimatedGlassCard delay={800} style={styles.sectionCard}>
+            <View style={styles.cardHeader}>
+              <View style={[styles.iconBadge, { backgroundColor: 'rgba(174, 213, 129, 0.2)' }]}>
+                <Ionicons name="language" size={20} color="#AED581" />
+              </View>
+              <Text style={styles.sectionTitle}>Alternative Names</Text>
+            </View>
+            <View style={styles.namesList}>
+              {additionalInfo.alternativeNames.slice(0, 5).map((name, idx) => (
+                <View key={idx} style={styles.nameItem}>
+                  <Text style={styles.nameLabel}>{name.locale || 'Common'}:</Text>
+                  <Text style={styles.nameValue}>{name.name}</Text>
+                </View>
+              ))}
+            </View>
+          </AnimatedGlassCard>
+        )}
+
+        {/* Taxonomy */}
+        {taxonomy.length > 0 && (
+          <AnimatedGlassCard delay={900} style={styles.sectionCard}>
+            <View style={styles.cardHeader}>
+              <View style={[styles.iconBadge, { backgroundColor: 'rgba(124, 179, 66, 0.2)' }]}>
+                <Ionicons name="git-branch" size={20} color="#7CB342" />
+              </View>
+              <Text style={styles.sectionTitle}>Taxonomy</Text>
+            </View>
+            <View style={styles.taxonomyList}>
+              {taxonomy.map((item, idx) => (
+                <View key={idx} style={styles.taxonomyItem}>
+                  <Text style={styles.taxonomyLabel}>{item.label}</Text>
+                  <Text style={styles.taxonomyValue}>{item.value}</Text>
+                </View>
+              ))}
+            </View>
+          </AnimatedGlassCard>
+        )}
+
+        <View style={{ height: 120 }} />
+      </Animated.ScrollView>
+
+      <Animated.View style={[styles.fixedHeader, { opacity: headerOpacity }]}>
+        <BlurView intensity={80} tint="dark" style={styles.fixedHeaderBlur}>
+          <Text style={styles.fixedHeaderText} numberOfLines={1}>
+            {displayCommonName}
+          </Text>
+        </BlurView>
+      </Animated.View>
+
+      <TouchableOpacity style={styles.backButton} onPress={handleBackPress}>
+        <BlurView intensity={60} tint="dark" style={styles.backButtonBlur}>
+          <Ionicons name="arrow-back" size={24} color="#fff" />
+        </BlurView>
+      </TouchableOpacity>
+
+     <Animated.View 
+  style={[
+    styles.fabContainer,
+    { transform: [{ scale: scaleAnim }] }
+  ]}
+>
+  {/* ✅ NEW: Favorite Button */}
+  <TouchableOpacity
+    style={[styles.fab, isFavorite && styles.fabFavoriteActive]}
+    onPress={toggleFavorite}
+    disabled={isTogglingFavorite}
+  >
+    <LinearGradient
+      colors={isFavorite ? ['#ef4444', '#dc2626'] : ['#6B8E23', '#556B2F']}
+      start={{ x: 0, y: 0 }}
+      end={{ x: 1, y: 1 }}
+      style={styles.fabGradient}
+    >
+      {isTogglingFavorite ? (
+        <ActivityIndicator color="#fff" size="small" />
+      ) : (
+        <Ionicons 
+          name={isFavorite ? "heart" : "heart-outline"} 
+          size={24} 
+          color="#fff" 
+        />
+      )}
+    </LinearGradient>
+  </TouchableOpacity>
+
+  {/* Download Button */}
+  <TouchableOpacity
+    style={[styles.fab, styles.fabSecondary]}
+    onPress={handleDownloadPDF}
+    disabled={isGeneratingPDF}
+  >
+    <LinearGradient
+      colors={['#6B8E23', '#556B2F']}
+      start={{ x: 0, y: 0 }}
+      end={{ x: 1, y: 1 }}
+      style={styles.fabGradient}
+    >
+      {isGeneratingPDF ? (
+        <ActivityIndicator color="#fff" />
+      ) : (
+        <Ionicons name="download" size={24} color="#fff" />
+      )}
+    </LinearGradient>
+  </TouchableOpacity>
+
+  {/* Text-to-Speech Button */}
+  <TouchableOpacity
+    style={styles.fab}
+    onPress={handleSpeech}
+  >
+    <LinearGradient
+      colors={['#6B8E23', '#556B2F']}
+      start={{ x: 0, y: 0 }}
+      end={{ x: 1, y: 1 }}
+      style={styles.fabGradient}
+    >
+      <Ionicons name={isSpeaking ? "pause" : "volume-high"} size={24} color="#fff" />
+    </LinearGradient>
+  </TouchableOpacity>
+</Animated.View>
+
+      {/* ✅ DOWNLOAD LIMIT FIX: Premium Gate with correct props */}
+      <PremiumGate
+        visible={showPremiumGate}
+        onClose={() => setShowPremiumGate(false)}
+        onUpgrade={() => {
+          setShowPremiumGate(false);
+          navigation.navigate('PlanScreen');
+        }}
+        limitType="download"
+        hoursUntilReset={usageLimits?.hoursUntilReset || 0}
+        scansRemaining={usageLimits?.scansRemaining || 0}
+        downloadsRemaining={usageLimits?.downloadsRemaining || 0}
+      />
+      
+      {/* ✅ NEW: Offline Premium Gate */}
+      <PremiumGate
+        visible={showOfflinePremiumGate}
+        onClose={() => {
+          setShowOfflinePremiumGate(false);
+          navigation.goBack();
+        }}
+        onUpgrade={() => {
+          setShowOfflinePremiumGate(false);
+          navigation.navigate('PlanScreen');
+        }}
+        limitType="offline"
+        hoursUntilReset={0}
+        scansRemaining={0}
+        downloadsRemaining={0}
+      />
     </View>
   );
 }
 
 const styles = StyleSheet.create({
-  backgroundImage: {
+  container: {
     flex: 1,
+    backgroundColor: '#1A2E0A',
+  },
+  // ✅ NEW: Offline banner styles
+  offlineBanner: {
+    position: 'absolute',
+    top: 100,
+    left: 20,
+    right: 20,
+    zIndex: 12,
+    borderRadius: 12,
+    overflow: 'hidden',
+  },
+  offlineBannerBlur: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'center',
+    paddingVertical: 10,
+    paddingHorizontal: 16,
+    gap: 8,
+  },
+  offlineBannerText: {
+    color: '#FFA726',
+    fontSize: 13,
+    fontWeight: '600',
+  },
+  scrollContent: {
+    paddingBottom: 40,
+  },
+  heroSection: {
+    height: 500,
+    width: '100%',
+    position: 'relative',
+  },
+  heroImage: {
     width: '100%',
     height: '100%',
+    backgroundColor: '#2D5016',
   },
-  overlay: {
-    flex: 1,
-    backgroundColor: 'rgba(255, 255, 255, 0.15)',
-  },
-  container: { 
-    flex: 1, 
-    padding: 16,
-  },
-  backButton: {
-    position: 'absolute', 
-    top: 40, 
-    left: 20,
-    backgroundColor: 'rgba(0, 0, 0, 0.6)',
-    padding: 12, 
-    borderRadius: 25, 
-    zIndex: 10,
-    shadowColor: '#000',
-    shadowOpacity: 0.3,
-    shadowRadius: 8,
-    shadowOffset: { width: 0, height: 4 },
-    elevation: 6,
-  },
-  contentContainer: { 
-    flexGrow: 1, 
-    paddingBottom: 24 
-  },
-  title: {
-    fontSize: 32, 
-    fontWeight: '700', 
-    textAlign: 'center', 
-    marginBottom: 16, 
-    color: '#1a2e1b',
-    top: 30,
-    textShadowColor: 'rgba(255, 255, 255, 0.8)',
-    textShadowRadius: 4,
-    textShadowOffset: { width: 0, height: 2 },
-  },
-  heroImage: { 
-    width: '100%', 
-    height: 250, 
-    borderRadius: 16, 
-    marginBottom: 16, 
-    backgroundColor: '#eee', 
-    top: 30,
-  },
-  heroPlaceholder: { 
-    justifyContent: 'center', 
+  heroPlaceholder: {
+    justifyContent: 'center',
     alignItems: 'center',
-    backgroundColor: 'rgba(238, 238, 238, 0.9)',
   },
-  placeholderText: { 
-    color: '#666',
-    fontSize: 16,
-    fontWeight: '500',
+  heroGradient: {
+    position: 'absolute',
+    bottom: 0,
+    left: 0,
+    right: 0,
+    height: 250,
   },
-  card: {
-    backgroundColor: 'rgba(248, 248, 248, 0.95)',
-    borderRadius: 16,
-    padding: 20,
+  heroContent: {
+    position: 'absolute',
+    bottom: 30,
+    left: 20,
+    right: 20,
+  },
+  speciesName: {
+    fontSize: 36,
+    bottom: 15,
+    fontWeight: '800',
+    color: '#fff',
+    marginBottom: 8,
+    letterSpacing: -1,
+    textShadowColor: 'rgba(0, 0, 0, 0.5)',
+    textShadowOffset: { width: 0, height: 2 },
+    textShadowRadius: 8,
+  },
+  speciesScientific: {
+    fontSize: 18,
+    bottom: 15,
+    fontStyle: 'italic',
+    color: 'rgba(255, 255, 255, 0.9)',
     marginBottom: 16,
-    shadowColor: '#000',
-    shadowOpacity: 0.12,
-    shadowRadius: 12,
-    elevation: 8,
-    top: 30,
-    position: 'relative',
+  },
+  badges: {
+    flexDirection: 'row',
+    flexWrap: 'wrap',
+    gap: 10,
+    bottom: 18,
+  },
+  badge: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    backgroundColor: 'rgba(107, 142, 35, 0.3)',
+    paddingHorizontal: 16,
+    paddingVertical: 8,
+    borderRadius: 20,
     borderWidth: 1,
-    borderColor: 'rgba(255, 255, 255, 0.6)',
+    borderColor: 'rgba(139, 195, 74, 0.4)',
+    gap: 6,
+  },
+  badgeText: {
+    color: '#fff',
+    fontSize: 13,
+    fontWeight: '600',
+  },
+  heroActions: {
+    position: 'absolute',
+    top: 60,
+    right: 20,
+    gap: 12,
+  },
+
+  
+  glassCard: {
+    borderRadius: 24,
+    padding: 24,
+    backgroundColor: 'rgba(107, 142, 35, 0.15)',
+    borderWidth: 1,
+    borderColor: 'rgba(139, 195, 74, 0.25)',
+    overflow: 'hidden',
+  },
+  statsCard: {
+    marginHorizontal: 20,
+    marginTop: -40,
+    marginBottom: 20,
+  },
+  statsGrid: {
+    flexDirection: 'row',
+    justifyContent: 'center',
+  },
+  statItem: {
+    alignItems: 'center',
+    flex: 1,
+  },
+  statValue: {
+    fontSize: 28,
+    fontWeight: '800',
+    color: '#fff',
+    marginBottom: 4,
+  },
+  statLabel: {
+    fontSize: 11,
+    color: 'rgba(255, 255, 255, 0.7)',
+    fontWeight: '600',
+    letterSpacing: 1,
+  },
+  sectionCard: {
+    marginHorizontal: 20,
+    marginBottom: 16,
   },
   cardHeader: {
     flexDirection: 'row',
     alignItems: 'center',
-    marginBottom: 12,
-    justifyContent: 'center',
-  },
-  cardTitle: {
-    fontSize: 18, 
-    fontWeight: '600', 
-    color: '#1a2e1b',
-    marginLeft: 8,
-    textShadowColor: 'rgba(255, 255, 255, 0.8)',
-    textShadowRadius: 2,
-    textShadowOffset: { width: 0, height: 1 },
-  },
-  commonName: {
-    fontSize: 22, 
-    fontWeight: '700', 
-    color: '#2d2d2d',
-    marginBottom: 4, 
-    textAlign: 'center',
-  },
-  sciName: {
-    fontSize: 18, 
-    fontStyle: 'italic', 
-    color: '#555',
-    textAlign: 'center',
-  },
-  namesContainer: {
     marginBottom: 16,
-    paddingBottom: 16,
-    borderBottomWidth: 1,
-    borderBottomColor: 'rgba(0, 105, 92, 0.2)',
+    gap: 12,
   },
-  metaRow: { 
-    flexDirection: 'row', 
-    flexWrap: 'wrap', 
-    justifyContent: 'center', 
-    marginTop: 10, 
-    gap: 10 
-  },
-  pill: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    backgroundColor: 'rgba(224, 247, 250, 0.9)',
-    paddingHorizontal: 12,
-    paddingVertical: 8,
-    borderRadius: 999,
-    margin: 4,
-    borderWidth: 1,
-    borderColor: 'rgba(0, 121, 107, 0.2)',
-  },
-  pillLabel: { 
-    color: '#00695c',
-    fontWeight: '600',
-    fontSize: 13,
-  },
-  pillValue: { 
-    color: '#003d35',
-    fontWeight: '500',
-    fontSize: 13,
-  },
-  value: { 
-    fontSize: 16, 
-    color: '#1f1f1f',
-    marginTop: 8, 
-    lineHeight: 24 
-  },
-  infoSection: {
-    marginBottom: 12,
-  },
-  infoLabel: {
-    fontSize: 15,
-    fontWeight: '600',
-    color: '#00695c',
-    marginBottom: 4,
-  },
-  conservationBadge: {
-    backgroundColor: 'rgba(255, 193, 7, 0.2)',
-    paddingVertical: 8,
-    paddingHorizontal: 16,
-    borderRadius: 8,
-    alignSelf: 'flex-start',
-    marginBottom: 8,
-    borderWidth: 1,
-    borderColor: 'rgba(255, 193, 7, 0.5)',
-  },
-  conservationText: {
-    fontSize: 16,
-    fontWeight: '700',
-    color: '#e65100',
-  },
-  namesList: {
-    marginTop: 8,
-  },
-  nameItem: {
-    flexDirection: 'row',
-    paddingVertical: 8,
-    borderBottomWidth: StyleSheet.hairlineWidth,
-    borderBottomColor: 'rgba(229, 229, 229, 0.8)',
-  },
-  nameLang: {
-    fontSize: 15,
-    fontWeight: '600',
-    color: '#00695c',
-    width: 100,
-  },
-  nameValue: {
-    fontSize: 15,
-    color: '#1f1f1f',
-    flex: 1,
-  },
-  statsRow: {
-    flexDirection: 'row',
-    justifyContent: 'space-around',
-    marginTop: 12,
-  },
-  statBox: {
-    alignItems: 'center',
-    flex: 1,
-  },
-  statNumber: {
-    fontSize: 28,
-    fontWeight: '700',
-    color: '#00695c',
-  },
-  statLabel: {
-    fontSize: 13,
-    color: '#555',
-    textAlign: 'center',
-    marginTop: 4,
-  },
-  taxTable: { marginTop: 12 },
-  taxRow: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    paddingVertical: 12,
-    borderBottomWidth: StyleSheet.hairlineWidth,
-    borderBottomColor: 'rgba(229, 229, 229, 0.8)',
-  },
-  taxLabel: { 
-    fontSize: 16, 
-    fontWeight: '600', 
-    color: '#00695c'
-  },
-  taxValue: { 
-    fontSize: 16, 
-    color: '#1f1f1f',
-    flexShrink: 1, 
-    textAlign: 'right' 
-  },
-  sourcesCard: {
-    backgroundColor: 'rgba(230, 230, 230, 0.85)',
+  iconBadge: {
+    width: 40,
+    height: 40,
     borderRadius: 12,
-    padding: 16,
-    marginBottom: 16,
-    top: 30,
+    backgroundColor: 'rgba(107, 142, 35, 0.25)',
+    justifyContent: 'center',
+    alignItems: 'center',
     borderWidth: 1,
-    borderColor: 'rgba(200, 200, 200, 0.5)',
+    borderColor: 'rgba(139, 195, 74, 0.3)',
   },
-  sourcesTitle: {
-    fontSize: 15,
-    fontWeight: '600',
-    color: '#555',
-    marginBottom: 8,
-    textAlign: 'center',
+  sectionTitle: {
+    fontSize: 20,
+    fontWeight: '700',
+    color: '#fff',
+    letterSpacing: -0.3,
   },
-  sourcesText: {
-    fontSize: 13,
-    color: '#666',
-    lineHeight: 20,
-  },
-  loadingText: {
-    textAlign: 'center',
-    marginTop: 12,
-    color: '#00695c',
-    fontSize: 15,
+  descriptionText: {
+    fontSize: 16,
+    lineHeight: 26,
+    color: 'rgba(255, 255, 255, 0.85)',
+    letterSpacing: 0.2,
   },
   loadingSection: {
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'center',
     paddingVertical: 20,
+    gap: 10,
   },
-  fullDescription: { 
-    fontSize: 16, 
-    color: '#1f1f1f',
-    lineHeight: 26,
-    textAlign: 'justify',
-    letterSpacing: 0.3,
+  loadingText: {
+    color: 'rgba(255, 255, 255, 0.7)',
+    fontSize: 14,
   },
-  showMoreButton: {
+  expandButton: {
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'center',
     marginTop: 16,
     paddingVertical: 10,
-    paddingHorizontal: 20,
-    backgroundColor: 'rgba(0, 105, 92, 0.1)',
-    borderRadius: 20,
-    borderWidth: 1,
-    borderColor: 'rgba(0, 105, 92, 0.3)',
-    alignSelf: 'center',
+    gap: 6,
   },
-  showMoreText: {
+  expandText: {
+    color: '#8BC34A',
     fontSize: 15,
     fontWeight: '600',
-    color: '#00695c',
-    marginRight: 6,
   },
-  descriptionInfo: {
+  infoSection: {
+    marginBottom: 12,
+  },
+  infoLabel: {
+    fontSize: 14,
+    fontWeight: '600',
+    color: 'rgba(255, 255, 255, 0.7)',
+    marginBottom: 4,
+  },
+  conservationBadge: {
     flexDirection: 'row',
     alignItems: 'center',
+    backgroundColor: 'rgba(129, 199, 132, 0.2)',
+    paddingVertical: 12,
+    paddingHorizontal: 16,
+    borderRadius: 12,
+    gap: 8,
+    borderWidth: 1,
+    borderColor: 'rgba(129, 199, 132, 0.4)',
+  },
+  conservationText: {
+    color: '#81C784',
+    fontSize: 16,
+    fontWeight: '700',
+  },
+  namesList: {
+    gap: 12,
+  },
+  nameItem: {
+    flexDirection: 'row',
+    paddingVertical: 8,
+    borderBottomWidth: 1,
+    borderBottomColor: 'rgba(139, 195, 74, 0.2)',
+  },
+  nameLabel: {
+    fontSize: 14,
+    color: 'rgba(255, 255, 255, 0.6)',
+    fontWeight: '500',
+    width: 100,
+  },
+  nameValue: {
+    fontSize: 14,
+    color: '#fff',
+    fontWeight: '600',
+    flex: 1,
+  },
+  taxonomyList: {
+    gap: 12,
+  },
+  taxonomyItem: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    paddingVertical: 12,
+    borderBottomWidth: 1,
+    borderBottomColor: 'rgba(139, 195, 74, 0.2)',
+  },
+  taxonomyLabel: {
+    fontSize: 15,
+    color: 'rgba(255, 255, 255, 0.6)',
+    fontWeight: '500',
+  },
+  taxonomyValue: {
+    fontSize: 15,
+    color: '#fff',
+    fontWeight: '600',
+  },
+  fixedHeader: {
+    position: 'absolute',
+    top: 0,
+    left: 0,
+    right: 0,
+    height: 100,
+    zIndex: 10,
+  },
+  fixedHeaderBlur: {
+    flex: 1,
+    justifyContent: 'flex-end',
+    paddingBottom: 12,
+    paddingHorizontal: 60,
+  },
+  fixedHeaderText: {
+    fontSize: 18,
+    fontWeight: '700',
+    color: '#fff',
+    textAlign: 'center',
+  },
+  backButton: {
+    position: 'absolute',
+    top: 50,
+    left: 20,
+    zIndex: 11,
+  },
+  backButtonBlur: {
+    width: 44,
+    height: 44,
+    borderRadius: 22,
     justifyContent: 'center',
-    marginTop: 16,
-    paddingTop: 16,
-    borderTopWidth: 1,
-    borderTopColor: 'rgba(0, 105, 92, 0.2)',
+    alignItems: 'center',
+    overflow: 'hidden',
+    borderWidth: 1,
+    borderColor: 'rgba(139, 195, 74, 0.3)',
   },
-  descriptionInfoText: {
-    fontSize: 13,
-    color: '#00695c',
-    marginLeft: 6,
-    fontStyle: 'italic',
-  },
-  speechButton: {
+  fabContainer: {
     position: 'absolute',
     bottom: 30,
     right: 20,
-    backgroundColor: 'rgba(0, 190, 22, 0.9)',
-    padding: 15,
-    borderRadius: 50,
-    alignItems: 'center',
-    justifyContent: 'center',
-    zIndex: 10,
+    gap: 16,
+  },
+  fab: {
+    width: 56,
+    height: 56,
+    borderRadius: 28,
+    overflow: 'hidden',
     shadowColor: '#000',
+    shadowOffset: { width: 0, height: 4 },
     shadowOpacity: 0.3,
     shadowRadius: 8,
-    shadowOffset: { width: 0, height: 4 },
-    elevation: 6,
+    elevation: 8,
   },
-  favoriteButton: {
-    position: 'absolute',
-    top: 15,
-    right: 15,
-    padding: 8,
+  fabSecondary: {
+    shadowColor: '#6B8E23',
   },
-  downloadButton: {
-    position: 'absolute',
-    bottom: 100, // Position above the speech button
-    right: 20,
-    backgroundColor: 'rgba(17, 118, 34, 0.93)',
-    padding: 15,
-    borderRadius: 50,
-    alignItems: 'center',
+  fabFavoriteActive: {
+  shadowColor: '#ef4444',
+},
+  fabGradient: {
+    flex: 1,
     justifyContent: 'center',
-    zIndex: 10,
-    shadowColor: '#000',
-    shadowOpacity: 0.3,
-    shadowRadius: 8,
-    shadowOffset: { width: 0, height: 4 },
-    elevation: 6,
+    alignItems: 'center',
   },
+
 });

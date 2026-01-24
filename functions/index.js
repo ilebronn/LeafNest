@@ -1,16 +1,476 @@
-// functions/index.js
 const {
   onCall,
   HttpsError,
   onRequest,
 } = require("firebase-functions/v2/https");
 const { onSchedule } = require("firebase-functions/v2/scheduler");
-const { onDocumentUpdated } = require("firebase-functions/v2/firestore");
+const { onDocumentUpdated, onDocumentCreated } = require("firebase-functions/v2/firestore");
 const nodemailer = require("nodemailer");
 const admin = require("firebase-admin");
 const PDFDocument = require("pdfkit");
+const { sendPushNotification, sendBatchPushNotifications } = require("./notifications/sendPushNotification");
+const { NOTIFICATION_TYPES, formatNotificationForPush } = require("./notifications/notificationTypes");
 
 admin.initializeApp();
+
+// =========================================================================
+// EMAIL VERIFICATION FUNCTION
+// =========================================================================
+
+/**
+ * Send verification email with 6-digit code
+ */
+// =========================================================================
+// EMAIL VERIFICATION FUNCTION - FIXED VERSION
+// =========================================================================
+
+/**
+ * Send verification email with 6-digit code
+ */
+exports.sendVerificationEmail = onCall(
+  {
+    secrets: ["EMAIL_USER", "EMAIL_PASS"],
+    timeoutSeconds: 300, // ✅ 5 minutes timeout
+    memory: "256MiB", // ✅ More memory for faster processing
+  },
+  async (request) => {
+    try {
+      const { email, code, userId } = request.data;
+
+      console.log("=== SEND VERIFICATION EMAIL FUNCTION ===");
+      console.log("Email:", email, "Code:", code, "UserID:", userId);
+
+      // Validation
+      if (!email || !code || !userId) {
+        console.error("Validation failed: Missing required fields");
+        throw new HttpsError(
+          'invalid-argument', 
+          'Missing required fields: email, code, or userId'
+        );
+      }
+
+      // Email validation
+      const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+      if (!emailRegex.test(email)) {
+        throw new HttpsError('invalid-argument', 'Invalid email format');
+      }
+
+      // Get email credentials from environment variables (V2 secrets)
+      const gmailUser = process.env.EMAIL_USER;
+      const gmailPass = process.env.EMAIL_PASS;
+
+      console.log("Checking email credentials from environment...");
+      console.log("EMAIL_USER exists:", !!gmailUser);
+      console.log("EMAIL_PASS exists:", !!gmailPass);
+
+      if (!gmailUser || !gmailPass) {
+        console.error("Email credentials not found");
+        throw new HttpsError(
+          'failed-precondition',
+          'Email service is not configured properly'
+        );
+      }
+
+      // Create transporter
+      const transporter = nodemailer.createTransport({
+        service: 'gmail',
+        auth: {
+          user: gmailUser,
+          pass: gmailPass,
+        },
+      });
+
+      // Verify transporter
+      // console.log("Verifying email transporter...");
+      // await transporter.verify();
+      // console.log("Email transporter verified successfully");
+
+      // Email template
+      const mailOptions = {
+        from: 'LeafNest <noreply@leafnest.app>',
+        to: email,
+        subject: '🌿 Verify Your Email - LeafNest',
+        html: `
+          <!DOCTYPE html>
+          <html>
+          <head>
+            <meta charset="utf-8">
+            <meta name="viewport" content="width=device-width, initial-scale=1.0">
+          </head>
+          <body style="margin: 0; padding: 0; font-family: Arial, sans-serif; background-color: #f5f5f5;">
+            <table width="100%" cellpadding="0" cellspacing="0" style="background-color: #f5f5f5; padding: 40px 0;">
+              <tr>
+                <td align="center">
+                  <table width="600" cellpadding="0" cellspacing="0" style="background-color: #ffffff; border-radius: 12px; box-shadow: 0 4px 12px rgba(0,0,0,0.1);">
+                    <tr>
+                      <td style="padding: 40px; text-align: center;">
+                        <h1 style="color: #5E936C; margin: 0 0 20px 0; font-size: 28px;">🌿 Welcome to LeafNest!</h1>
+                        <p style="color: #333; font-size: 16px; line-height: 1.6; margin: 0 0 30px 0;">
+                          Thank you for signing up! To complete your registration, please verify your email address.
+                        </p>
+                        <p style="color: #666; font-size: 14px; margin: 0 0 20px 0;">
+                          Your verification code is:
+                        </p>
+                        <div style="background: linear-gradient(135deg, #5E936C 0%, #4a7757 100%); padding: 30px; border-radius: 12px; margin: 0 0 30px 0;">
+                          <div style="font-size: 42px; font-weight: bold; letter-spacing: 12px; color: #ffffff; font-family: 'Courier New', monospace;">
+                            ${code}
+                          </div>
+                        </div>
+                        <p style="color: #666; font-size: 14px; line-height: 1.6; margin: 0 0 10px 0;">
+                          ⏰ This code will expire in <strong>10 minutes</strong>.
+                        </p>
+                        <p style="color: #999; font-size: 12px; line-height: 1.6; margin: 0;">
+                          If you didn't create an account with LeafNest, please ignore this email.
+                        </p>
+                      </td>
+                    </tr>
+                    <tr>
+                      <td style="background-color: #f9f9f9; padding: 20px; text-align: center; border-radius: 0 0 12px 12px;">
+                        <p style="color: #999; font-size: 12px; margin: 0;">
+                          © ${new Date().getFullYear()} LeafNest. All rights reserved.
+                        </p>
+                      </td>
+                    </tr>
+                  </table>
+                </td>
+              </tr>
+            </table>
+          </body>
+          </html>
+        `,
+      };
+
+      // Send email
+      console.log("Sending verification email...");
+      await transporter.sendMail(mailOptions);
+      
+      console.log(`✅ Verification email sent to ${email}`);
+      
+      return { 
+        success: true, 
+        message: 'Verification email sent successfully' 
+      };
+    } catch (error) {
+      console.error("=== ERROR IN sendVerificationEmail ===");
+      console.error("Error type:", error.constructor.name);
+      console.error("Error message:", error.message);
+      console.error("Error code:", error.code);
+
+      // Re-throw HttpsError as-is
+      if (error instanceof HttpsError) {
+        throw error;
+      }
+
+      // Handle nodemailer errors
+      if (error.code === "EAUTH") {
+        throw new HttpsError(
+          'unauthenticated',
+          'Email authentication failed. Please check email configuration.'
+        );
+      }
+
+      if (error.code === "ECONNECTION") {
+        throw new HttpsError(
+          'unavailable',
+          'Cannot connect to email service. Please try again later.'
+        );
+      }
+
+      // Generic error
+      throw new HttpsError('internal', `Failed to send verification email: ${error.message}`);
+    }
+  }
+);
+// =========================================================================
+// PUSH NOTIFICATION TRIGGERS
+// =========================================================================
+
+/**
+ * Send push notification when a notification document is created
+ * This triggers for ALL notification types
+ */
+exports.onNotificationCreated = onDocumentCreated(
+  'notifications/{notificationId}',
+  async (event) => {
+    try {
+      const notification = event.data.data();
+      const notificationId = event.params.notificationId;
+
+      console.log('🔔 New notification created:', notificationId);
+      console.log('Type:', notification.type);
+      console.log('Recipient:', notification.recipientId);
+
+      // Skip if no recipient
+      if (!notification.recipientId) {
+        console.log('⚠️ No recipient ID, skipping push notification');
+        return null;
+      }
+
+      // Check if user has push notifications enabled for this type
+      const settingsDoc = await admin
+        .firestore()
+        .doc(`users/${notification.recipientId}/settings/notifications`)
+        .get();
+
+      if (settingsDoc.exists) {
+        const settings = settingsDoc.data();
+        
+        // Check if push notifications are disabled globally
+        if (settings.pushNotifications === false) {
+          console.log('⚠️ Push notifications disabled for user');
+          return null;
+        }
+
+        // Check type-specific settings
+        const typeEnabledMap = {
+          [NOTIFICATION_TYPES.LIKE]: settings.likes,
+          [NOTIFICATION_TYPES.COMMENT]: settings.comments,
+          [NOTIFICATION_TYPES.DOWNLOAD]: settings.downloads,
+          [NOTIFICATION_TYPES.ACHIEVEMENT]: settings.achievements,
+          [NOTIFICATION_TYPES.WEEKLY_REPORT]: settings.weeklyReport,
+          [NOTIFICATION_TYPES.TIP]: settings.tips,
+          [NOTIFICATION_TYPES.SYSTEM]: settings.systemUpdates,
+          [NOTIFICATION_TYPES.SCAN_REMINDER]: settings.scanReminders,
+        };
+
+        if (typeEnabledMap[notification.type] === false) {
+          console.log(`⚠️ ${notification.type} notifications disabled for user`);
+          return null;
+        }
+      }
+
+      // Format notification based on type
+      let title, body, data;
+
+      switch (notification.type) {
+        case NOTIFICATION_TYPES.LIKE:
+          title = `${notification.senderUsername} liked your post`;
+          body = notification.postName || 'your post';
+          data = { 
+            type: 'like', 
+            postId: notification.postId,
+            senderId: notification.senderId,
+          };
+          break;
+
+        case NOTIFICATION_TYPES.COMMENT:
+          title = `${notification.senderUsername} commented`;
+          body = notification.commentText 
+            ? notification.commentText.substring(0, 100) 
+            : 'on your post';
+          data = { 
+            type: 'comment', 
+            postId: notification.postId,
+            senderId: notification.senderId,
+          };
+          break;
+
+        case NOTIFICATION_TYPES.DOWNLOAD:
+          title = `${notification.senderUsername} downloaded`;
+          body = notification.postName || 'your species data';
+          data = { 
+            type: 'download', 
+            postId: notification.postId,
+            senderId: notification.senderId,
+          };
+          break;
+
+        case NOTIFICATION_TYPES.ACHIEVEMENT:
+          title = '🏆 Achievement Unlocked!';
+          body = notification.achievementTitle || notification.message;
+          data = { 
+            type: 'achievement',
+            achievementTitle: notification.achievementTitle,
+          };
+          break;
+
+        case NOTIFICATION_TYPES.WEEKLY_REPORT:
+          title = '📊 Your Weekly Report';
+          body = notification.message || 'Check out your weekly stats!';
+          data = { 
+            type: 'weekly_report',
+            reportData: notification.reportData,
+          };
+          break;
+
+        case NOTIFICATION_TYPES.TIP:
+          title = notification.message;
+          body = notification.tipContent 
+            ? notification.tipContent.substring(0, 100) 
+            : 'New tip available';
+          data = { 
+            type: 'tip',
+            tipTitle: notification.message,
+          };
+          break;
+
+        case NOTIFICATION_TYPES.SYSTEM:
+          title = notification.systemTitle || '⚙️ System Update';
+          body = notification.message;
+          data = { 
+            type: 'system',
+            systemTitle: notification.systemTitle,
+          };
+          break;
+
+        case NOTIFICATION_TYPES.SCAN_REMINDER:
+          title = notification.message;
+          body = notification.tipContent || "Haven't explored nature today?";
+          data = { type: 'scan_reminder' };
+          break;
+
+        default:
+          title = notification.message || 'New notification';
+          body = notification.senderUsername || 'LeafNest';
+          data = { type: notification.type || 'general' };
+      }
+
+      // Send push notification
+      const result = await sendPushNotification(
+        notification.recipientId,
+        title,
+        body,
+        data
+      );
+
+      if (result.success) {
+        console.log('✅ Push notification sent successfully');
+      } else {
+        console.error('❌ Failed to send push notification:', result.error);
+      }
+
+      return null;
+    } catch (error) {
+      console.error('❌ Error in onNotificationCreated:', error);
+      return null;
+    }
+  }
+);
+
+/**
+ * Send push notification when payment is approved
+ */
+exports.onPaymentApprovedPush = onDocumentUpdated(
+  'paymentSubmissions/{submissionId}',
+  async (event) => {
+    try {
+      const beforeData = event.data.before.data();
+      const afterData = event.data.after.data();
+
+      // Only trigger if status changed to approved
+      if (beforeData.status !== 'approved' && afterData.status === 'approved') {
+        console.log('💳 Payment approved, sending push notification');
+
+        await sendPushNotification(
+          afterData.userId,
+          '🎉 Payment Approved!',
+          'Your premium subscription is now active',
+          { type: 'payment_approved' }
+        );
+      }
+
+      // Also handle rejection
+      if (beforeData.status !== 'rejected' && afterData.status === 'rejected') {
+        console.log('❌ Payment rejected, sending push notification');
+
+        await sendPushNotification(
+          afterData.userId,
+          '❌ Payment Not Verified',
+          afterData.rejectionReason || 'Please submit a clearer screenshot',
+          { type: 'payment_rejected' }
+        );
+      }
+
+      return null;
+    } catch (error) {
+      console.error('❌ Error in onPaymentApprovedPush:', error);
+      return null;
+    }
+  }
+);
+
+/**
+ * Example: Broadcast push notification to all users (callable function)
+ */
+exports.broadcastPushNotification = onCall(async (request) => {
+  try {
+    const { title, body, data } = request.data;
+
+    if (!title || !body) {
+      throw new HttpsError('invalid-argument', 'Title and body are required');
+    }
+
+    console.log('📢 Broadcasting push notification to all users');
+
+    // Get all users with push tokens
+    const usersSnapshot = await admin.firestore().collection('users').get();
+    
+    const notifications = [];
+
+    for (const userDoc of usersSnapshot.docs) {
+      const userId = userDoc.id;
+      
+      // Check if user has a push token
+      const tokenDoc = await admin
+        .firestore()
+        .doc(`users/${userId}/settings/pushToken`)
+        .get();
+
+      if (tokenDoc.exists) {
+        notifications.push({
+          userId: userId,
+          title: title,
+          body: body,
+          data: data || { type: 'broadcast' },
+        });
+      }
+    }
+
+    console.log(`📤 Sending to ${notifications.length} users`);
+
+    const result = await sendBatchPushNotifications(notifications);
+
+    return { 
+      success: true, 
+      sent: result.sent || 0,
+      total: notifications.length,
+    };
+  } catch (error) {
+    console.error('❌ Error broadcasting:', error);
+    throw new HttpsError('internal', error.message);
+  }
+});
+
+/**
+ * Test function to send a test push notification
+ */
+exports.sendTestPushNotification = onCall(async (request) => {
+  try {
+    const userId = request.auth?.uid;
+
+    if (!userId) {
+      throw new HttpsError('unauthenticated', 'User must be authenticated');
+    }
+
+    console.log('🧪 Sending test push notification to user:', userId);
+
+    const result = await sendPushNotification(
+      userId,
+      '🧪 Test Notification',
+      'This is a test push notification from LeafNest!',
+      { type: 'test' }
+    );
+
+    if (result.success) {
+      return { success: true, message: 'Test notification sent!' };
+    } else {
+      throw new HttpsError('internal', result.error);
+    }
+  } catch (error) {
+    console.error('❌ Error sending test notification:', error);
+    throw new HttpsError('internal', error.message);
+  }
+});
 
 // =========================================================================
 // Cloud Function to send OTP (V2) - Using Secrets
@@ -898,7 +1358,7 @@ exports.generatePdfAndEmail = onRequest(
 );
 
 // =========================================================================
-// WEEKLY REPORT
+// WEEKLY REPORT COMPLETE FIXED VERSION
 // =========================================================================
 exports.sendWeeklyReports = onSchedule(
   {
@@ -910,14 +1370,22 @@ exports.sendWeeklyReports = onSchedule(
       console.log("📊 Starting weekly report generation...");
 
       const usersSnapshot = await admin.firestore().collection("users").get();
+      
       let reportsSent = 0;
       let skippedDisabled = 0;
+      let freeUsersSent = 0;
+      let premiumUsersSent = 0;
       let errors = 0;
+      
       console.log(`✅ Found ${usersSnapshot.size} total users`);
 
       for (const userDoc of usersSnapshot.docs) {
         const userId = userDoc.id;
-        console.log(`\n--- Processing user: ${userId} ---`);
+        const userData = userDoc.data();
+        
+        const isPremium = userData.isPremium === true;
+        
+        console.log(`\n--- Processing user: ${userId} (${isPremium ? 'Premium' : 'Free'}) ---`);
 
         try {
           const settingsRef = admin
@@ -925,59 +1393,34 @@ exports.sendWeeklyReports = onSchedule(
             .doc(`users/${userId}/settings/notifications`);
           const settingsDoc = await settingsRef.get();
 
-          console.log(`Settings doc exists: ${settingsDoc.exists}`);
-
-          let shouldSendReport = true;
-
+          // ✅ FIXED: Use .exists property (not function)
           if (settingsDoc.exists) {
             const settingsData = settingsDoc.data();
-            console.log(`Settings data:`, JSON.stringify(settingsData));
-
             if (settingsData.weeklyReport === false) {
-              shouldSendReport = false;
-              console.log(
-                `⏭️ User ${userId}: Weekly report explicitly disabled`,
-              );
+              console.log(`⏭️ User ${userId}: Weekly report disabled`);
               skippedDisabled++;
               continue;
             }
-          } else {
-            console.log(
-              `ℹ️ User ${userId}: No settings doc, will send (default behavior)`,
-            );
           }
 
           const oneWeekAgo = new Date();
           oneWeekAgo.setDate(oneWeekAgo.getDate() - 7);
-          console.log(`Querying history since: ${oneWeekAgo.toISOString()}`);
 
           const historySnapshot = await admin
             .firestore()
             .collection("users")
             .doc(userId)
             .collection("history")
-            .where(
-              "timestamp",
-              ">=",
-              admin.firestore.Timestamp.fromDate(oneWeekAgo),
-            )
+            .where("timestamp", ">=", admin.firestore.Timestamp.fromDate(oneWeekAgo))
             .get();
-
-          console.log(`Found ${historySnapshot.size} scans in the past week`);
 
           const weeklyScans = historySnapshot.docs.map((doc) => doc.data());
 
           const uniqueSpecies = new Set();
           weeklyScans.forEach((scan) => {
-            const speciesId =
-              scan.taxonId ||
-              scan.scientificName ||
-              scan.plantName ||
-              scan.name;
+            const speciesId = scan.taxonId || scan.scientificName || scan.plantName || scan.name;
             if (speciesId) uniqueSpecies.add(speciesId);
           });
-
-          console.log(`Unique species found: ${uniqueSpecies.size}`);
 
           const speciesCount = {};
           weeklyScans.forEach((scan) => {
@@ -997,8 +1440,6 @@ exports.sendWeeklyReports = onSchedule(
             .collection("favorites")
             .get();
 
-          console.log(`Favorites count: ${favoritesSnapshot.size}`);
-
           const reportData = {
             totalScans: weeklyScans.length,
             newSpecies: uniqueSpecies.size,
@@ -1008,43 +1449,39 @@ exports.sendWeeklyReports = onSchedule(
             weekEnd: new Date().toLocaleDateString(),
           };
 
-          const message =
-            weeklyScans.length > 0
-              ? `🎉 This week: ${weeklyScans.length} scan${weeklyScans.length !== 1 ? "s" : ""}, ${uniqueSpecies.size} unique species discovered!`
-              : `🌿 No scans this week. Start exploring nature and discover new plants!`;
+          const message = weeklyScans.length > 0
+            ? `🎉 This week: ${weeklyScans.length} scan${weeklyScans.length !== 1 ? "s" : ""}, ${uniqueSpecies.size} unique species discovered!`
+            : `🌿 No scans this week. Start exploring nature and discover new plants!`;
 
-          console.log(`Creating notification with message: ${message}`);
+          await admin.firestore().collection("notifications").add({
+            type: "weekly_report",
+            recipientId: userId,
+            senderId: "system",
+            senderUsername: "LeafNest",
+            senderAvatar: null,
+            message: message,
+            reportData: reportData,
+            timestamp: admin.firestore.FieldValue.serverTimestamp(),
+            read: false,
+          });
 
-          const notificationRef = await admin
-            .firestore()
-            .collection("notifications")
-            .add({
-              type: "weekly_report",
-              recipientId: userId,
-              senderId: "system",
-              senderUsername: "LeafNest",
-              senderAvatar: null,
-              message: message,
-              reportData: reportData,
-              timestamp: admin.firestore.FieldValue.serverTimestamp(),
-              read: false,
-            });
-
-          console.log(`✅ Notification created with ID: ${notificationRef.id}`);
           reportsSent++;
+          if (isPremium) {
+            premiumUsersSent++;
+          } else {
+            freeUsersSent++;
+          }
         } catch (userError) {
           errors++;
-          console.error(
-            `❌ Error processing user ${userId}:`,
-            userError.message,
-          );
-          console.error(`Error stack:`, userError.stack);
+          console.error(`❌ Error processing user ${userId}:`, userError.message);
         }
       }
 
-      console.log(`\n=== SUMMARY ===`);
+      console.log(`\n=== WEEKLY REPORT SUMMARY ===`);
       console.log(`Total users: ${usersSnapshot.size}`);
       console.log(`✅ Reports sent: ${reportsSent}`);
+      console.log(`   - Free users: ${freeUsersSent}`);
+      console.log(`   - Premium users: ${premiumUsersSent}`);
       console.log(`⏭️ Skipped (disabled): ${skippedDisabled}`);
       console.log(`❌ Errors: ${errors}`);
 
@@ -1055,8 +1492,9 @@ exports.sendWeeklyReports = onSchedule(
     }
   },
 );
+
 // =========================================================================
-// DAILY TIPS
+// DAILY TIPS Force redeploy - final
 // =========================================================================
 exports.sendDailyTips = onSchedule(
   {
@@ -1066,143 +1504,76 @@ exports.sendDailyTips = onSchedule(
   async (event) => {
     try {
       console.log("💡 Starting daily tips distribution...");
+      
       const tipsDatabase = [
-        {
-          title: "🌞 Perfect Lighting",
-          content:
-            "Take photos in natural daylight for best results. Avoid harsh shadows and direct sunlight. Overcast days provide ideal diffused lighting!",
-        },
-        {
-          title: "🔍 Focus on Details",
-          content:
-            "Capture leaves, flowers, or bark patterns clearly. These unique features help our AI identify species more accurately.",
-        },
-        {
-          title: "📸 Multiple Angles",
-          content:
-            "Try scanning from different angles - leaf shape, flower detail, or bark texture. Each angle provides valuable identification clues.",
-        },
-        {
-          title: "📚 Keep Learning",
-          content:
-            "Read the full species information after each scan. You'll learn about habitat, characteristics, and conservation status!",
-        },
-        {
-          title: "🏆 Build Your Collection",
-          content:
-            "Track your discoveries in your history! Challenge yourself to find new species each week.",
-        },
-        {
-          title: "🌍 Share Your Finds",
-          content:
-            "Post your interesting discoveries to the public feed to inspire other nature explorers in the community.",
-        },
-        {
-          title: "✨ Clean Your Lens",
-          content:
-            "A smudged camera lens can affect scan accuracy. Keep it clean for crystal-clear species identification!",
-        },
-        {
-          title: "🎯 Steady Your Shot",
-          content:
-            "Hold your device steady or use a stable surface. Clear, focused images lead to better identification results.",
-        },
-        {
-          title: "🌿 Explore Native Species",
-          content:
-            "Scan local native plants to learn about your region's natural ecosystem and biodiversity.",
-        },
-        {
-          title: "⏰ Best Scanning Time",
-          content:
-            "Morning hours (7-10 AM) provide the best natural lighting conditions for plant photography.",
-        },
-        {
-          title: "🍃 Leaf Condition Matters",
-          content:
-            "Scan healthy, mature leaves for best results. Damaged or diseased leaves may affect identification accuracy.",
-        },
-        {
-          title: "🌺 Flower Power",
-          content:
-            "Flowers are excellent identification features! If a plant is blooming, include the flower in your scan.",
-        },
+        { title: "🌞 Perfect Lighting", content: "Take photos in natural daylight for best results. Avoid harsh shadows and direct sunlight. Overcast days provide ideal diffused lighting!" },
+        { title: "🔍 Focus on Details", content: "Capture leaves, flowers, or bark patterns clearly. These unique features help our AI identify species more accurately." },
+        { title: "📸 Multiple Angles", content: "Try scanning from different angles - leaf shape, flower detail, or bark texture. Each angle provides valuable identification clues." },
+        { title: "📚 Keep Learning", content: "Read the full species information after each scan. You'll learn about habitat, characteristics, and conservation status!" },
+        { title: "🏆 Build Your Collection", content: "Track your discoveries in your history! Challenge yourself to find new species each week." },
+        { title: "🌍 Share Your Finds", content: "Post your interesting discoveries to the public feed to inspire other nature explorers in the community." },
+        { title: "✨ Clean Your Lens", content: "A smudged camera lens can affect scan accuracy. Keep it clean for crystal-clear species identification!" },
+        { title: "🎯 Steady Your Shot", content: "Hold your device steady or use a stable surface. Clear, focused images lead to better identification results." },
+        { title: "🌿 Explore Native Species", content: "Scan local native plants to learn about your region's natural ecosystem and biodiversity." },
+        { title: "⏰ Best Scanning Time", content: "Morning hours (7-10 AM) provide the best natural lighting conditions for plant photography." },
+        { title: "🍃 Leaf Condition Matters", content: "Scan healthy, mature leaves for best results. Damaged or diseased leaves may affect identification accuracy." },
+        { title: "🌺 Flower Power", content: "Flowers are excellent identification features! If a plant is blooming, include the flower in your scan." },
       ];
 
-      const todaysTip =
-        tipsDatabase[Math.floor(Math.random() * tipsDatabase.length)];
-      console.log(`Selected tip: ${todaysTip.title}`);
-
+      const todaysTip = tipsDatabase[Math.floor(Math.random() * tipsDatabase.length)];
       const usersSnapshot = await admin.firestore().collection("users").get();
+      
       let tipsSent = 0;
       let skippedDisabled = 0;
+      let freeUsersSent = 0;
+      let premiumUsersSent = 0;
       let errors = 0;
-
-      console.log(`✅ Found ${usersSnapshot.size} total users`);
 
       for (const userDoc of usersSnapshot.docs) {
         const userId = userDoc.id;
-        console.log(`\n--- Processing user: ${userId} ---`);
+        const userData = userDoc.data();
+        const isPremium = userData.isPremium === true;
 
         try {
-          const settingsRef = admin
-            .firestore()
-            .doc(`users/${userId}/settings/notifications`);
+          const settingsRef = admin.firestore().doc(`users/${userId}/settings/notifications`);
           const settingsDoc = await settingsRef.get();
 
-          console.log(`Settings doc exists: ${settingsDoc.exists}`);
-
-          let shouldSendTip = true;
-
+          // ✅ FIXED: Use .exists property (not function)
           if (settingsDoc.exists) {
             const settingsData = settingsDoc.data();
-            console.log(`Settings data:`, JSON.stringify(settingsData));
-
             if (settingsData.tips === false) {
-              shouldSendTip = false;
-              console.log(`⏭️ User ${userId}: Tips explicitly disabled`);
               skippedDisabled++;
               continue;
             }
-          } else {
-            console.log(
-              `ℹ️ User ${userId}: No settings doc, will send (default behavior)`,
-            );
           }
 
-          console.log(`Creating tip notification...`);
+          await admin.firestore().collection("notifications").add({
+            type: "tip",
+            recipientId: userId,
+            senderId: "system",
+            senderUsername: "LeafNest",
+            senderAvatar: null,
+            message: todaysTip.title,
+            tipContent: todaysTip.content,
+            timestamp: admin.firestore.FieldValue.serverTimestamp(),
+            read: false,
+          });
 
-          const notificationRef = await admin
-            .firestore()
-            .collection("notifications")
-            .add({
-              type: "tip",
-              recipientId: userId,
-              senderId: "system",
-              senderUsername: "LeafNest",
-              senderAvatar: null,
-              message: todaysTip.title,
-              tipContent: todaysTip.content,
-              timestamp: admin.firestore.FieldValue.serverTimestamp(),
-              read: false,
-            });
-
-          console.log(`✅ Notification created with ID: ${notificationRef.id}`);
           tipsSent++;
+          if (isPremium) {
+            premiumUsersSent++;
+          } else {
+            freeUsersSent++;
+          }
         } catch (userError) {
           errors++;
-          console.error(
-            `❌ Error sending tip to ${userId}:`,
-            userError.message,
-          );
+          console.error(`❌ Error sending tip to ${userId}:`, userError.message);
         }
       }
 
-      console.log(`\n=== SUMMARY ===`);
-      console.log(`Total users: ${usersSnapshot.size}`);
-      console.log(`✅ Tips sent: ${tipsSent}`);
-      console.log(`⏭️ Skipped (disabled): ${skippedDisabled}`);
-      console.log(`❌ Errors: ${errors}`);
+      console.log(`\n=== DAILY TIPS SUMMARY ===`);
+      console.log(`Tips sent: ${tipsSent} (Free: ${freeUsersSent}, Premium: ${premiumUsersSent})`);
+      console.log(`Skipped: ${skippedDisabled}, Errors: ${errors}`);
 
       return null;
     } catch (error) {
@@ -1211,6 +1582,7 @@ exports.sendDailyTips = onSchedule(
     }
   },
 );
+
 // =========================================================================
 // SCAN REMINDERS
 // =========================================================================
@@ -1224,46 +1596,32 @@ exports.sendDailyScanReminders = onSchedule(
       console.log("⏰ Starting daily scan reminders...");
       const today = new Date();
       today.setHours(0, 0, 0, 0);
-      console.log(`Checking for scans since: ${today.toISOString()}`);
 
       const usersSnapshot = await admin.firestore().collection("users").get();
+      
       let remindersSent = 0;
       let alreadyScanned = 0;
       let skippedDisabled = 0;
+      let freeUsersSent = 0;
+      let premiumUsersSent = 0;
       let errors = 0;
-
-      console.log(`✅ Found ${usersSnapshot.size} total users`);
 
       for (const userDoc of usersSnapshot.docs) {
         const userId = userDoc.id;
-        console.log(`\n--- Processing user: ${userId} ---`);
+        const userData = userDoc.data();
+        const isPremium = userData.isPremium === true;
 
         try {
-          const settingsRef = admin
-            .firestore()
-            .doc(`users/${userId}/settings/notifications`);
+          const settingsRef = admin.firestore().doc(`users/${userId}/settings/notifications`);
           const settingsDoc = await settingsRef.get();
 
-          console.log(`Settings doc exists: ${settingsDoc.exists}`);
-
-          let shouldSendReminder = true;
-
+          // ✅ FIXED: Use .exists property (not function)
           if (settingsDoc.exists) {
             const settingsData = settingsDoc.data();
-            console.log(`Settings data:`, JSON.stringify(settingsData));
-
             if (settingsData.scanReminders === false) {
-              shouldSendReminder = false;
-              console.log(
-                `⏭️ User ${userId}: Scan reminders explicitly disabled`,
-              );
               skippedDisabled++;
               continue;
             }
-          } else {
-            console.log(
-              `ℹ️ User ${userId}: No settings doc, will send (default behavior)`,
-            );
           }
 
           const historySnapshot = await admin
@@ -1275,89 +1633,48 @@ exports.sendDailyScanReminders = onSchedule(
             .limit(1)
             .get();
 
-          console.log(`Scans today: ${historySnapshot.size}`);
-
           if (historySnapshot.empty) {
             const motivationalMessages = [
-              {
-                title: "🌿 Daily Exploration",
-                content:
-                  "Haven't explored nature today? Take a quick scan and discover something new!",
-              },
-              {
-                title: "🔍 Discover Today",
-                content:
-                  "Something amazing awaits! Your daily scan is ready. What will you find?",
-              },
-              {
-                title: "🌱 Keep Your Streak",
-                content:
-                  "Maintain your scanning habit! Quick scan time - nature is waiting.",
-              },
-              {
-                title: "📸 Nature Calls",
-                content:
-                  "Nature is calling! Time for your daily discovery. Let's explore!",
-              },
-              {
-                title: "🌳 Stay Curious",
-                content:
-                  "Keep exploring! Your daily scan awaits. What plant will you discover?",
-              },
-              {
-                title: "🍃 Daily Challenge",
-                content:
-                  "Challenge yourself! Find a new species today and expand your collection.",
-              },
+              { title: "🌿 Daily Exploration", content: "Haven't explored nature today? Take a quick scan and discover something new!" },
+              { title: "🔍 Discover Today", content: "Something amazing awaits! Your daily scan is ready. What will you find?" },
+              { title: "🌱 Keep Your Streak", content: "Maintain your scanning habit! Quick scan time - nature is waiting." },
+              { title: "📸 Nature Calls", content: "Nature is calling! Time for your daily discovery. Let's explore!" },
+              { title: "🌳 Stay Curious", content: "Keep exploring! Your daily scan awaits. What plant will you discover?" },
+              { title: "🍃 Daily Challenge", content: "Challenge yourself! Find a new species today and expand your collection." },
             ];
 
-            const randomMessage =
-              motivationalMessages[
-                Math.floor(Math.random() * motivationalMessages.length)
-              ];
+            const randomMessage = motivationalMessages[Math.floor(Math.random() * motivationalMessages.length)];
 
-            console.log(
-              `Creating reminder notification: ${randomMessage.title}`,
-            );
+            await admin.firestore().collection("notifications").add({
+              type: "scan_reminder",
+              recipientId: userId,
+              senderId: "system",
+              senderUsername: "LeafNest",
+              senderAvatar: null,
+              message: randomMessage.title,
+              tipContent: randomMessage.content,
+              timestamp: admin.firestore.FieldValue.serverTimestamp(),
+              read: false,
+            });
 
-            const notificationRef = await admin
-              .firestore()
-              .collection("notifications")
-              .add({
-                type: "scan_reminder",
-                recipientId: userId,
-                senderId: "system",
-                senderUsername: "LeafNest",
-                senderAvatar: null,
-                message: randomMessage.title,
-                tipContent: randomMessage.content,
-                timestamp: admin.firestore.FieldValue.serverTimestamp(),
-                read: false,
-              });
-
-            console.log(
-              `✅ Notification created with ID: ${notificationRef.id}`,
-            );
             remindersSent++;
+            if (isPremium) {
+              premiumUsersSent++;
+            } else {
+              freeUsersSent++;
+            }
           } else {
             alreadyScanned++;
-            console.log(`⏭️ User ${userId} already scanned today`);
           }
         } catch (userError) {
           errors++;
-          console.error(
-            `❌ Error processing user ${userId}:`,
-            userError.message,
-          );
+          console.error(`❌ Error processing user ${userId}:`, userError.message);
         }
       }
 
-      console.log(`\n=== SUMMARY ===`);
-      console.log(`Total users: ${usersSnapshot.size}`);
-      console.log(`✅ Reminders sent: ${remindersSent}`);
-      console.log(`⏭️ Already scanned: ${alreadyScanned}`);
-      console.log(`⏭️ Skipped (disabled): ${skippedDisabled}`);
-      console.log(`❌ Errors: ${errors}`);
+      console.log(`\n=== SCAN REMINDERS SUMMARY ===`);
+      console.log(`Reminders sent: ${remindersSent} (Free: ${freeUsersSent}, Premium: ${premiumUsersSent})`);
+      console.log(`Already scanned: ${alreadyScanned}, Skipped: ${skippedDisabled}, Errors: ${errors}`);
 
       return null;
     } catch (error) {
@@ -1366,6 +1683,7 @@ exports.sendDailyScanReminders = onSchedule(
     }
   },
 );
+
 // =========================================================================
 // SUBSCRIPTION EXPIRATION CHECK
 // =========================================================================
@@ -1380,9 +1698,17 @@ exports.checkSubscriptionExpiration = onSchedule(
       const now = new Date();
       const nowTimestamp = now.getTime();
 
-      const usersSnapshot = await admin.firestore().collection("users").get();
+      // ✅ ONLY GET PREMIUM USERS FOR SUBSCRIPTION CHECKS
+      const usersSnapshot = await admin
+        .firestore()
+        .collection("users")
+        .where("isPremium", "==", true)  // ✅ CORRECT - Only premium users
+        .get();
+        
       let warningsSent = 0;
       let expiredCount = 0;
+
+      console.log(`✅ Found ${usersSnapshot.size} premium users to check`);
 
       for (const userDoc of usersSnapshot.docs) {
         const userId = userDoc.id;
@@ -1469,8 +1795,11 @@ exports.checkSubscriptionExpiration = onSchedule(
         }
       }
 
+      console.log(`\n=== SUBSCRIPTION CHECK SUMMARY ===`);
+      console.log(`Premium users checked: ${usersSnapshot.size}`);
       console.log(`✅ Subscription warnings sent: ${warningsSent}`);
       console.log(`⚠️ Subscriptions expired: ${expiredCount}`);
+      
       return null;
     } catch (error) {
       console.error("❌ Error checking subscriptions:", error);
@@ -1478,6 +1807,7 @@ exports.checkSubscriptionExpiration = onSchedule(
     }
   },
 );
+
 // =========================================================================
 // MANUAL SYSTEM UPDATE BROADCAST
 // =========================================================================
@@ -1504,7 +1834,7 @@ exports.broadcastSystemUpdate = onCall(async (request) => {
         .doc(`users/${userId}/settings/notifications`);
       const settingsDoc = await settingsRef.get();
 
-      if (settingsDoc.exists() && settingsDoc.data().systemUpdates === false) {
+      if (settingsDoc.exists && settingsDoc.data().systemUpdates === false) {
         continue;
       }
 
@@ -1538,8 +1868,9 @@ exports.broadcastSystemUpdate = onCall(async (request) => {
     throw new HttpsError("internal", error.message);
   }
 });
+
 // =========================================================================
-// AUTOMATIC PREMIUM ACTIVATION - Manual Payment Approval
+// FIXED: AUTOMATIC PREMIUM ACTIVATION - Handles Resubscriptions
 // Triggers when payment status changes to "approved"
 // =========================================================================
 exports.onPaymentApproved = onDocumentUpdated(
@@ -1549,73 +1880,107 @@ exports.onPaymentApproved = onDocumentUpdated(
       const beforeData = event.data.before.data();
       const afterData = event.data.after.data();
       const submissionId = event.params.submissionId;
-      console.log(`📝 Payment submission updated: ${submissionId}`);
-      console.log(`Before status: ${beforeData.status}`);
-      console.log(`After status: ${afterData.status}`);
+      
+      console.log('━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━');
+      console.log('📝 Payment submission updated:', submissionId);
+      console.log('Before status:', beforeData.status);
+      console.log('After status:', afterData.status);
 
       // ✅ APPROVED: Activate premium
       if (beforeData.status !== "approved" && afterData.status === "approved") {
         const userId = afterData.userId;
-        console.log(`✅ Payment APPROVED for user: ${userId}`);
+        console.log('✅ Payment APPROVED for user:', userId);
+        console.log('📧 User email:', afterData.userEmail);
 
         try {
-          const startDate = admin.firestore.Timestamp.now();
-          const endDate = new Date();
-          endDate.setMonth(endDate.getMonth() + 1); // 1 month premium
+          const now = Date.now();
+          const expiryDate = now + (30 * 24 * 60 * 60 * 1000); // 30 days
 
-          // 1️⃣ Update MAIN user document (most important!)
-          await admin.firestore().collection("users").doc(userId).update({
+          console.log('🗑️ Step 1: Cleaning up old subscription documents...');
+          
+          // ✅ CRITICAL: Delete ALL old subscription documents (handles resubscription)
+          const subscriptionCollectionRef = admin
+            .firestore()
+            .collection('users')
+            .doc(userId)
+            .collection('subscription');
+          
+          const oldDocsSnapshot = await subscriptionCollectionRef.get();
+          console.log(`📋 Found ${oldDocsSnapshot.size} old subscription documents`);
+          
+          const deletePromises = oldDocsSnapshot.docs.map(doc => doc.ref.delete());
+          await Promise.all(deletePromises);
+          console.log('✅ Deleted all old subscription documents');
+
+          console.log('📦 Step 2: Creating fresh subscription document...');
+          
+          // ✅ Create fresh subscription data
+          const subData = {
             isPremium: true,
-            premiumStatus: "active",
+            premiumType: 'monthly',
+            startDate: admin.firestore.Timestamp.fromMillis(now),
+            endDate: admin.firestore.Timestamp.fromMillis(expiryDate),
+            status: 'active',
+            paymentMethod: 'gcash_manual',
+            transactionId: submissionId,
+            amount: afterData.amount || 99,
+            createdAt: admin.firestore.FieldValue.serverTimestamp(),
+            lastUpdated: admin.firestore.FieldValue.serverTimestamp(),
+            activatedAt: admin.firestore.FieldValue.serverTimestamp(),
+          };
+
+          // ✅ Create new subscription document with consistent ID
+          const subscriptionRef = admin
+            .firestore()
+            .collection('users')
+            .doc(userId)
+            .collection('subscription')
+            .doc('current_subscription');
+          
+          await subscriptionRef.set(subData, { merge: false });
+          console.log('✅ Premium subscription document created');
+
+          console.log('👤 Step 3: Updating main user document...');
+          
+          // ✅ Update main user document
+          await admin.firestore().collection('users').doc(userId).update({
+            isPremium: true,
+            premiumStatus: 'active',
             premiumUpdatedAt: admin.firestore.FieldValue.serverTimestamp(),
           });
-          console.log(`✅ Updated main user document for: ${userId}`);
+          console.log('✅ Main user document updated');
 
-          // 2️⃣ Create subscription document
-          const subRef = admin
-            .firestore()
-            .collection("users")
-            .doc(userId)
-            .collection("subscription")
-            .doc("premium_sub");
-
-          await subRef.set(
-            {
-              isPremium: true,
-              status: "active",
-              premiumType: "monthly",
-              startDate: startDate,
-              endDate: admin.firestore.Timestamp.fromDate(endDate),
-              paymentMethod: "gcash_manual",
-              paymentSubmissionId: submissionId,
-              amount: afterData.amount || 99,
-              createdAt: admin.firestore.FieldValue.serverTimestamp(),
-            },
-            { merge: true },
-          );
-          console.log(`✅ Created subscription document for: ${userId}`);
-
-          // 3️⃣ Send success notification
-          await admin.firestore().collection("notifications").add({
+          console.log('🔔 Step 4: Sending success notification...');
+          
+          // ✅ Send success notification
+          await admin.firestore().collection('notifications').add({
             recipientId: userId,
-            type: "payment_approved",
-            senderId: "system",
-            senderUsername: "LeafNest",
+            type: 'payment_approved',
+            senderId: 'system',
+            senderUsername: 'LeafNest',
             senderAvatar: null,
-            message: "🎉 Payment Approved!",
-            tipContent:
-              "Your premium subscription is now active. Enjoy unlimited scans, no ads, and exclusive features!",
+            message: '🎉 Payment Approved!',
+            tipContent: 'Your premium subscription is now active. Enjoy unlimited scans, no ads, and exclusive features!',
             timestamp: admin.firestore.FieldValue.serverTimestamp(),
             read: false,
           });
-          console.log(`✅ Sent approval notification to: ${userId}`);
+          console.log('✅ Success notification sent');
+
+          console.log('━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━');
+          console.log('🎉 PREMIUM ACTIVATION COMPLETED SUCCESSFULLY');
+          console.log('👤 User ID:', userId);
+          console.log('📅 Expiry:', new Date(expiryDate).toLocaleDateString());
+          console.log('━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━');
 
           return { success: true };
         } catch (activationError) {
-          console.error(
-            `❌ Error activating premium for ${userId}:`,
-            activationError,
-          );
+          console.error('━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━');
+          console.error('❌ ERROR ACTIVATING PREMIUM');
+          console.error('━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━');
+          console.error('User ID:', userId);
+          console.error('Error message:', activationError.message);
+          console.error('Error stack:', activationError.stack);
+          console.error('━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━');
           return { success: false, error: activationError.message };
         }
       }
@@ -1623,43 +1988,48 @@ exports.onPaymentApproved = onDocumentUpdated(
       // ❌ REJECTED: Send rejection notification
       if (beforeData.status !== "rejected" && afterData.status === "rejected") {
         const userId = afterData.userId;
-        console.log(`❌ Payment REJECTED for user: ${userId}`);
+        console.log('❌ Payment REJECTED for user:', userId);
 
         try {
-          const rejectionReason =
-            afterData.rejectionReason ||
-            "We could not verify your payment. Please submit a clearer screenshot showing the complete transaction details.";
+          const rejectionReason = afterData.rejectionReason || 
+            'We could not verify your payment. Please submit a clearer screenshot showing the complete transaction details.';
 
-          await admin.firestore().collection("notifications").add({
+          await admin.firestore().collection('notifications').add({
             recipientId: userId,
-            type: "payment_rejected",
-            senderId: "system",
-            senderUsername: "LeafNest",
+            type: 'payment_rejected',
+            senderId: 'system',
+            senderUsername: 'LeafNest',
             senderAvatar: null,
-            message: "❌ Payment Not Verified",
+            message: '❌ Payment Not Verified',
             tipContent: rejectionReason,
             timestamp: admin.firestore.FieldValue.serverTimestamp(),
             read: false,
           });
-          console.log(`✅ Sent rejection notification to: ${userId}`);
+          console.log('✅ Rejection notification sent to:', userId);
 
           return { success: true };
         } catch (notifError) {
-          console.error(`❌ Error sending rejection notification:`, notifError);
+          console.error('❌ Error sending rejection notification:', notifError);
           return { success: false, error: notifError.message };
         }
       }
 
-      console.log(`ℹ️ Status unchanged or not approval/rejection`);
+      console.log('ℹ️ Status unchanged or not approval/rejection');
       return null;
     } catch (error) {
-      console.error("❌ FATAL ERROR in onPaymentApproved:", error);
+      console.error('━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━');
+      console.error('❌ FATAL ERROR in onPaymentApproved');
+      console.error('━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━');
+      console.error('Error message:', error.message);
+      console.error('Error stack:', error.stack);
+      console.error('━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━');
       return null;
     }
   },
 );
+
 // =========================================================================
-// AUTO-EXPIRE SUBSCRIPTIONS - Runs daily at 2:00 AM
+// AUTO-EXPIRE SUBSCRIPTIONS - Runs daily at 2:00 AM Force redeploy - final
 // =========================================================================
 exports.checkExpiredPremiumSubscriptions = onSchedule(
   {

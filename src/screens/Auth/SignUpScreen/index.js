@@ -6,6 +6,7 @@ import { LinearGradient } from 'expo-linear-gradient';
 import { createUserWithEmailAndPassword, sendEmailVerification, updateProfile } from 'firebase/auth';
 import { auth } from '@config/firebase';
 import { createUserProfile } from '@services/firebase';
+import { sendVerificationCode } from '@services/auth/verificationService';
 import { setUsername, clearAllUserData } from '@utils/auth';
 import { resetGuestScanCount } from '@utils/guest';
 import { CommonActions } from '@react-navigation/native';
@@ -55,26 +56,19 @@ export default function SignUpScreen({ navigation }) {
         console.warn('Failed to create user profile in Firestore:', profileResult.error);
       }
 
+      // 🆕 SEND VERIFICATION CODE (ADDITIVE)
+      const verificationResult = await sendVerificationCode(user.uid, email);
+      if (!verificationResult.success) {
+        console.warn('Failed to send verification code:', verificationResult.error);
+      }
+
       await sendEmailVerification(user);
       await resetGuestScanCount();
-      
-
       await setUsername(username);
       
-      navigation.dispatch(
-        CommonActions.reset({
-          index: 0,
-          routes: [
-            {
-              name: 'MainTabs',
-              params: {
-                screen: 'Home',
-                params: { guest: false, displayName: username },
-              },
-            },
-          ],
-        })
-      );
+      // 🆕 NAVIGATE TO VERIFICATION SCREEN INSTEAD OF MAIN TABS
+      navigation.navigate('VerificationScreen', { email });
+      
     } catch (error) {
       if (error.code === 'auth/email-already-in-use') {
         Alert.alert(t('common.error'), t('signup.emailAlreadyInUse'));

@@ -19,6 +19,11 @@ export default function useHomeFeed() {
     return shuffled;
   };
 
+  // ✅ Sort trending species by count (descending)
+  const sortTrendingByCount = (species) => {
+    return [...species].sort((a, b) => (b.count || 0) - (a.count || 0));
+  };
+
   // ✅ OPTIMIZED: Load stats in parallel (was sequential before!)
   const loadPostStats = async (posts) => {
     try {
@@ -54,7 +59,9 @@ export default function useHomeFeed() {
     try {
       const result = await getTrendingSpecies(10);
       if (result.success) {
-        setTrendingSpecies(result.data);
+        // ✅ Sort by count before setting state
+        const sortedSpecies = sortTrendingByCount(result.data);
+        setTrendingSpecies(sortedSpecies);
       }
     } catch (error) {
       console.error('Error loading trending species:', error);
@@ -82,7 +89,9 @@ export default function useHomeFeed() {
       }
 
       if (trendingResult.success) {
-        setTrendingSpecies(trendingResult.data);
+        // ✅ Sort by count before setting state
+        const sortedSpecies = sortTrendingByCount(trendingResult.data);
+        setTrendingSpecies(sortedSpecies);
       }
     } catch (error) {
       console.error('Error refreshing:', error);

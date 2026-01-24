@@ -1,6 +1,7 @@
 import { useState, useCallback, useRef } from 'react';
 import { Alert } from 'react-native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import * as Location from 'expo-location';
 import { auth } from '@config/firebase';
 import { recordScan } from '@services/scanning/scanStatsService';
 import { isGuestUser } from '@utils/guest';
@@ -17,51 +18,80 @@ import {
   searchINaturalistByNames,
   fetchTaxonDetails,
   fetchObservationCount,
-  fetchGBIF
+  fetchGBIF,
+  extractBestCommonName,
+  validateAndEnrichResult  // ✅ ADD THIS IMPORT
 } from '@services/api/speciesIdentification';
+
+// iNaturalist Helper Functions
+import {
+  calculateEnhancedConfidence,
+  calculateAdaptiveConfidence,
+  identifyWithMultiSource as identifyWithFallbackMethod,
+  detectHuman
+} from '@services/api/inaturalistHelpers';
 
 // Utils
 import cacheManager from '@screens/Main/ScanScreen/utils/cacheManager';
-import { processCameraImage, processGalleryImage } from '@screens/Main/ScanScreen/utils/imageOptimizer';
+import { processCameraImage, processGalleryImage, performPreScanQualityCheck } from '@screens/Main/ScanScreen/utils/imageOptimizer';
 import {
   ERROR_MESSAGES,
   PROCESSING_STAGES,
-  FEEDBACK_STORAGE_PREFIX
+  FEEDBACK_STORAGE_PREFIX,
+  CONFIDENCE_THRESHOLD
 } from '@screens/Main/ScanScreen/utils/constants';
 
 /**
- * Custom hook for image processing and species identification
- * Handles the entire flow from image capture to species identification
- * 
- * @returns {Object} - Processing state and functions
+ * ✅ UPDATED: Assess match quality based on how well sources agree
  */
+const assessMatchQuality = (visionName, plantNetName, iNatName, iNatCVName, candidateScores) => {
+  const normalize = (str) => str?.toLowerCase().replace(/[^a-z0-9]/g, '') || '';
+  
+  const visionNorm = normalize(visionName);
+  const plantNetNorm = normalize(plantNetName);
+  const iNatNorm = normalize(iNatName);
+  const iNatCVNorm = normalize(iNatCVName);
+  
+  let matchCount = 0;
+  let sources = [visionNorm, plantNetNorm, iNatNorm, iNatCVNorm].filter(Boolean);
+  
+  // Count how many sources agree
+  sources.forEach(source => {
+    const matches = sources.filter(s => s === source).length;
+    matchCount = Math.max(matchCount, matches);
+  });
+  
+  // Check if top candidate has high score
+  const topScore = candidateScores?.[0]?.score || 0;
+  
+  // If iNat CV provided a result, give it higher weight
+  if (iNatCVNorm && matchCount >= 2) {
+    return 'high';
+  }
+  
+  if (matchCount >= 3 || topScore >= 0.90) {
+    return 'high';
+  } else if (matchCount >= 2 || topScore >= 0.75) {
+    return 'medium';
+  }
+  
+  return 'low';
+};
+
 const useImageProcessing = () => {
   const [isProcessing, setIsProcessing] = useState(false);
   const [processingStage, setProcessingStage] = useState('');
-  const isProcessingRef = useRef(false); // Prevent race conditions
-  const [decrementScanCountPostScan, setDecrementScanCountPostScan] = useState(null);
+  const isProcessingRef = useRef(false);
+  const decrementScanCountRef = useRef(null);
 
-  /**
-   * Set the decrement function from useScanLimits hook
-   * This is passed from ScanScreen to avoid circular dependencies
-   */
-  const setDecrementFunction = useCallback((fn) => {
-    setDecrementScanCountPostScan(() => fn);
+  const setDecrementScanCount = useCallback((fn) => {
+    decrementScanCountRef.current = fn;
   }, []);
 
-  /**
-   * Initialize cache on mount
-   */
   const initializeCache = useCallback(async () => {
     await cacheManager.initialize();
   }, []);
 
-  /**
-   * Record user feedback for improvement
-   * @param {Array} candidates - Candidate species names
-   * @param {string} actualCategory - 'plant' or 'animal'
-   * @param {boolean} success - Whether identification was successful
-   */
   const recordFeedback = useCallback(async (candidates, actualCategory, success) => {
     try {
       const user = auth.currentUser;
@@ -84,17 +114,49 @@ const useImageProcessing = () => {
   }, []);
 
   /**
-   * Process successful species match
-   * Fetches additional data and navigates to result screen
-   * 
-   * @param {Object} matchResult - Matched species data
-   * @param {string} photoUri - Photo URI
-   * @param {Function} navigation - Navigation object
-   * @param {Function} onGuestPostScan - Callback for guest users
+   * 🌍 Get user's location for better species identification
+   */
+  const getUserLocation = useCallback(async () => {
+    try {
+      const { status } = await Location.requestForegroundPermissionsAsync();
+      
+      if (status !== 'granted') {
+        console.log('⚠️ Location permission not granted');
+        return null;
+      }
+
+      const location = await Location.getCurrentPositionAsync({
+        accuracy: Location.Accuracy.Balanced,
+        timeInterval: 5000,
+        distanceInterval: 0,
+      });
+
+      console.log(`📍 Location obtained: ${location.coords.latitude}, ${location.coords.longitude}`);
+      
+      return {
+        latitude: location.coords.latitude,
+        longitude: location.coords.longitude
+      };
+    } catch (error) {
+      console.warn('⚠️ Could not get location:', error.message);
+      return null;
+    }
+  }, []);
+
+  /**
+   * ✅ ENHANCED: Process successful match with improved confidence calculation
    */
   const processSuccessfulMatch = useCallback(async (matchResult, photoUri, navigation, onGuestPostScan) => {
     try {
       setProcessingStage(PROCESSING_STAGES.LOADING_DETAILS);
+
+      console.log('🔧 Processing match result:', {
+        name: matchResult.name,
+        commonName: matchResult.commonName,
+        taxonId: matchResult.taxonId,
+        rank: matchResult.rank,
+        confidence: matchResult.confidence
+      });
 
       // Fetch additional data in parallel
       const [taxonDetails, gbifData, obsCount] = await Promise.allSettled([
@@ -107,6 +169,30 @@ const useImageProcessing = () => {
       const gbif = gbifData.status === 'fulfilled' ? gbifData.value : null;
       const obs = obsCount.status === 'fulfilled' ? obsCount.value : 0;
 
+      // ✅ FIX: Ensure rank is never undefined
+      const finalRank = matchResult.rank || taxonData?.rank || gbif?.rank || 'species';
+      
+      console.log('📊 Additional data fetched:', {
+        hasTaxonData: !!taxonData,
+        hasGBIF: !!gbif,
+        obsCount: obs,
+        finalRank: finalRank
+      });
+
+      // ✅ ENHANCED: Recalculate confidence with all available data using ADAPTIVE scoring
+      const enhancedConfidence = calculateAdaptiveConfidence({
+        visionScore: matchResult.visionScore,
+        plantNetScore: matchResult.plantNetScore,
+        iNatScore: matchResult.iNatScore,
+        inatCVScore: matchResult.inatCVScore,
+        matchQuality: matchResult.matchQuality || 'medium',
+        hasObservations: obs > 0,
+        taxonRank: finalRank,
+        observationCount: obs,
+      }, matchResult.imageQuality); // Pass image quality data if available
+
+      console.log(`🎯 Enhanced adaptive confidence: ${matchResult.confidence}% → ${enhancedConfidence}%`);
+
       const user = auth.currentUser;
 
       // Handle guest users
@@ -115,67 +201,87 @@ const useImageProcessing = () => {
           await onGuestPostScan(navigation);
         }
       } 
-      // Handle authenticated users
+      // Handle authenticated users - DECREMENT SCAN COUNT
       else if (user) {
         try {
-          // Record successful feedback
+          // ✅ CRITICAL: Decrement scan count AFTER successful scan
+          if (decrementScanCountRef.current) {
+            await decrementScanCountRef.current();
+            console.log('✅ Scan count decremented for authenticated user');
+          }
+
           await recordFeedback([], 'unknown', true);
 
-          // Record scan statistics
+          // Record scan statistics with enhanced confidence
           await recordScan(user.uid, {
             speciesName: matchResult.name,
             plantName: matchResult.commonName || matchResult.name,
-            confidence: matchResult.confidence,
+            confidence: enhancedConfidence,
             taxonId: matchResult.taxonId,
             scanType: 'camera',
           });
 
-          // ✅ FIXED: Increment global observation count for all users
+          // Increment global observation count
           const globalObsResult = await incrementGlobalObservation({
             taxonId: matchResult.taxonId,
             name: matchResult.name,
             scientificName: matchResult.name,
-            commonName: matchResult.commonName,
+            commonName: matchResult.commonName || matchResult.name,
           });
 
           console.log(`✅ Global observation count: ${globalObsResult.success ? globalObsResult.count : 'failed'}`);
 
-          // ✅ FIXED: Add to user history with global count
-          await addToHistory(user.uid, {
+          // ✅ FIX: Prepare history data with all required fields and no undefined values
+          const historyData = {
             name: matchResult.name,
             scientificName: matchResult.name,
-            commonName: matchResult.commonName,
-            taxonId: matchResult.taxonId,
-            rank: taxonData?.rank,
-            iconicTaxon: taxonData?.iconic_taxon_name,
+            commonName: matchResult.commonName || matchResult.name,
+            taxonId: matchResult.taxonId || null,
+            rank: finalRank, // ✅ Never undefined
+            iconicTaxon: taxonData?.iconic_taxon_name || null,
             imageUri: photoUri,
-            imageUrl: taxonData?.default_photo?.medium_url,
-            conservation: gbif?.threatStatus,
-            about: taxonData?.wikipedia_summary,
-            iNatObsCount: obs,
+            imageUrl: taxonData?.default_photo?.medium_url || null,
+            conservation: gbif?.threatStatus || null,
+            about: taxonData?.wikipedia_summary || null,
+            iNatObsCount: obs || 0,
             globalObsCount: globalObsResult.success ? globalObsResult.count : 0,
             type: 'history',
-          });
+          };
+
+          console.log('📝 Saving to history with data:', historyData);
+
+          // Add to user history with global count
+          await addToHistory(user.uid, historyData);
 
           console.log('✅ Scan recorded to user history');
         } catch (error) {
           console.warn('⚠️ Failed to record scan:', error);
-          // Continue even if recording fails
         }
       }
 
-      // Navigate to result screen
+      // ✅ FIX: Ensure speciesData and iNaturalistData are properly passed
+      const navigationParams = {
+        photoUri: photoUri,
+        speciesData: gbif || {
+          scientificName: matchResult.name,
+          commonName: matchResult.commonName || matchResult.name,
+          rank: finalRank
+        },
+        iNaturalistData: taxonData || null,
+        iNatObsCount: obs || 0,
+        confidence: enhancedConfidence,
+        alternativeSuggestions: matchResult.alternativeSuggestions || [],
+        imageQuality: matchResult.imageQuality || null
+      };
+
+      console.log('🧭 Navigating with params:', navigationParams);
+
+      // Navigate to result screen with enhanced confidence
       setIsProcessing(false);
       setProcessingStage('');
 
       if (navigation && navigation.navigate) {
-        navigation.navigate('SpeciesLandingPage', {
-          photoUri: photoUri,
-          speciesData: gbif,
-          iNaturalistData: taxonData,
-          iNatObsCount: obs,
-          confidence: matchResult.confidence,
-        });
+        navigation.navigate('SpeciesLandingPage', navigationParams);
       }
     } catch (error) {
       console.error('❌ Error processing successful match:', error);
@@ -186,16 +292,11 @@ const useImageProcessing = () => {
   }, [recordFeedback]);
 
   /**
-   * Main image analysis function
-   * Analyzes image and identifies species
-   * 
-   * @param {string} base64Image - Base64 encoded image
-   * @param {string} photoUri - Photo URI
-   * @param {Function} navigation - Navigation object
-   * @param {Function} onGuestPostScan - Callback for guest users
+   * 🚀 Main image analysis with fallback method
+   * Note: iNaturalist CV API has been removed (requires authentication)
+   * Using the proven multi-source approach instead
    */
   const analyzeImage = useCallback(async (base64Image, photoUri, navigation, onGuestPostScan) => {
-    // Prevent multiple simultaneous processing
     if (isProcessingRef.current) {
       console.warn('⚠️ Image processing already in progress');
       return;
@@ -205,8 +306,8 @@ const useImageProcessing = () => {
     setIsProcessing(true);
 
     try {
-      console.log('🔍 Starting optimized species identification...');
-      setProcessingStage(PROCESSING_STAGES.ANALYZING);
+      console.log('🔍 Starting enhanced species identification...');
+      setProcessingStage('Analyzing image...');
 
       // Check network connection
       const online = await isOnline();
@@ -218,98 +319,278 @@ const useImageProcessing = () => {
         return;
       }
 
-      // Step 1: Analyze with Google Vision API
-      const visionData = await analyzeWithVisionAPI(base64Image);
+      // STEP 0: Pre-scan quality check
+      console.log('🔍 Step 0/6: Quality check...');
+      const qualityCheck = await performPreScanQualityCheck(photoUri);
 
-      // Step 2: Extract candidate species names
-      const candidates = extractCandidatesWithScores(visionData);
-
-      if (candidates.length === 0) {
+      // Show warning if quality is questionable
+      if (!qualityCheck.shouldProceed) {
+        const issuesList = qualityCheck.issues.join('\n• ');
         Alert.alert(
-          "Unidentified Species",
-          ERROR_MESSAGES.UNIDENTIFIED_SPECIES + "\n\nPlease ensure:\n• Clear view of the subject\n• Good lighting\n• Subject is a plant or animal"
-        );
-        setIsProcessing(false);
-        setProcessingStage('');
-        isProcessingRef.current = false;
-        return;
-      }
-
-      console.log('🎯 Top candidates:', candidates.slice(0, 5).map(c => `${c.name} (${c.score.toFixed(1)})`).join(', '));
-
-      // Step 3: Detect category (plant or animal)
-      const category = detectCategoryFromLabels(visionData);
-      console.log('📋 Detected category:', category);
-
-      // Step 4: Validate it's a plant or animal
-      const isValidSubject = isPlantOrAnimal(visionData);
-      if (!isValidSubject) {
-        Alert.alert("Unidentified Species", ERROR_MESSAGES.NOT_PLANT_OR_ANIMAL);
-        setIsProcessing(false);
-        setProcessingStage('');
-        isProcessingRef.current = false;
-        return;
-      }
-
-      // Step 5: Check cache first
-      const cachedResult = cacheManager.checkCandidates(candidates);
-      if (cachedResult) {
-        console.log('⚡ Found in cache:', cachedResult.name);
-        setProcessingStage(PROCESSING_STAGES.FOUND_MATCH);
-        await processSuccessfulMatch(cachedResult, photoUri, navigation, onGuestPostScan);
-        isProcessingRef.current = false;
-        return;
-      }
-
-      // Step 6: Search in databases
-      setProcessingStage(PROCESSING_STAGES.SEARCHING);
-      let result = null;
-
-      if (category === 'plant') {
-        console.log('🌿 Running parallel plant identification...');
-        setProcessingStage(PROCESSING_STAGES.OPTIMIZING);
-
-        // Try both PlantNet and iNaturalist in parallel
-        const [plantNetResult, iNatResult] = await Promise.allSettled([
-          identifyWithPlantNet(photoUri),
-          searchINaturalistByNames(candidates.slice(0, 5))
-        ]);
-
-        // Prefer PlantNet result if available, otherwise use iNaturalist
-        result = plantNetResult.status === 'fulfilled' && plantNetResult.value
-          ? plantNetResult.value
-          : (iNatResult.status === 'fulfilled' ? iNatResult.value : null);
-      } else {
-        console.log('🔍 Searching iNaturalist database...');
-        result = await searchINaturalistByNames(candidates);
-      }
-
-      // Step 7: Handle no results
-      if (!result) {
-        Alert.alert(
-          "Unidentified Species",
-          "Could not identify this species.\n\nTips:\n• Try a different angle\n• Ensure better lighting\n• Get closer to the subject\n\nHelp us improve: Was this a plant or animal?",
+          "Image Quality Issues Detected",
+          `The image quality may affect identification accuracy:\n\n• ${issuesList}\n\nWould you like to continue anyway?`,
           [
-            { text: "Plant", onPress: () => recordFeedback(candidates, 'plant', false) },
-            { text: "Animal", onPress: () => recordFeedback(candidates, 'animal', false) },
-            { text: "Cancel", style: "cancel" }
+            {
+              text: "Retake Photo",
+              style: "cancel",
+              onPress: () => {
+                setIsProcessing(false);
+                setProcessingStage('');
+                isProcessingRef.current = false;
+              }
+            },
+            {
+              text: "Continue Anyway",
+              onPress: () => {
+                console.log('⚠️ User chose to continue despite quality issues');
+                // Continue with the analysis
+                proceedWithAnalysis();
+              }
+            }
           ]
         );
-        setIsProcessing(false);
-        setProcessingStage('');
-        isProcessingRef.current = false;
         return;
+      } else if (qualityCheck.needsWarning && qualityCheck.warnings.length > 0) {
+        console.log(`⚠️ Quality warnings: ${qualityCheck.warnings.join(', ')}`);
       }
 
-      // Step 8: Cache the successful result
-      cacheManager.set(result.name, result, {
-        alternateKeys: result.commonName ? [result.commonName] : [],
-        persist: false // Will be debounced
-      });
+      // Function to continue with analysis after quality check
+      const proceedWithAnalysis = async () => {
+        // Get user location (optional, improves accuracy)
+        const location = await getUserLocation();
+        console.log(`📍 Location: ${location ? 'available' : 'not available'}`);
 
-      // Step 9: Process successful match
-      setProcessingStage(PROCESSING_STAGES.LOADING_DETAILS);
-      await processSuccessfulMatch(result, photoUri, navigation, onGuestPostScan);
+        // STEP 1: Analyze with Google Vision API
+        console.log('📡 Step 1/6: Vision API analysis...');
+        setProcessingStage('Analyzing with AI...');
+        const visionData = await analyzeWithVisionAPI(base64Image);
+
+        // STEP 2: Extract candidate species names
+        console.log('🎯 Step 2/6: Extracting candidates...');
+        const candidates = extractCandidatesWithScores(visionData);
+
+        if (candidates.length === 0) {
+          Alert.alert(
+            "Unidentified Species",
+            ERROR_MESSAGES.UNIDENTIFIED_SPECIES + "\n\nPlease ensure:\n• Clear view of the subject\n• Good lighting\n• Subject is a plant or animal"
+          );
+          setIsProcessing(false);
+          setProcessingStage('');
+          isProcessingRef.current = false;
+          return;
+        }
+
+        console.log('🎯 Top candidates:', candidates.slice(0, 5).map(c => `${c.name} (${(c.score * 100).toFixed(1)}%)`).join(', '));
+
+        // STEP 3: Detect category (plant or animal)
+        console.log('📋 Step 3/6: Category detection...');
+        const category = detectCategoryFromLabels(visionData);
+        console.log(`   Category: ${category}`);
+
+        // STEP 4: Validate it's a plant or animal
+        const isValidSubject = isPlantOrAnimal(visionData);
+        if (!isValidSubject) {
+          Alert.alert("Unidentified Species", ERROR_MESSAGES.NOT_PLANT_OR_ANIMAL);
+          setIsProcessing(false);
+          setProcessingStage('');
+          isProcessingRef.current = false;
+          return;
+        }
+
+        // ✅ UPDATED: STEP 5: Check for human detection (only if it's an animal)
+        if (category === 'animal') {
+          console.log('👤 Step 5/6: Checking for human detection...');
+          const humanResult = detectHuman(candidates);
+          
+          // ✅ ADDITIONAL CHECK: Verify the image doesn't have strong animal indicators
+          const hasStrongAnimalIndicator = candidates.some(c => {
+            const name = c.name.toLowerCase();
+            return (
+              name.includes('cat') || name.includes('dog') || name.includes('bird') ||
+              name.includes('fur') || name.includes('whiskers') || name.includes('paw') ||
+              name.includes('tail') || name.includes('beak') || name.includes('feather')
+            ) && c.score > 0.5;
+          });
+
+          if (humanResult && !hasStrongAnimalIndicator) {
+            console.log('👤 Human detected! Processing as successful identification');
+            setProcessingStage(PROCESSING_STAGES.FOUND_MATCH);
+            humanResult.imageQuality = qualityCheck.details; // Add quality data
+            await processSuccessfulMatch(humanResult, photoUri, navigation, onGuestPostScan);
+            isProcessingRef.current = false;
+            return;
+          } else if (humanResult && hasStrongAnimalIndicator) {
+            console.log('🐾 Human detection overridden - strong animal indicators present');
+          }
+        }
+
+        // STEP 6: Check cache (skip for plants to ensure fresh API results)
+        if (category !== 'plant') {
+          const cachedResult = cacheManager.checkCandidates(candidates);
+          if (cachedResult) {
+            console.log('⚡ Found in cache:', cachedResult.name);
+            
+            // ✅ ENHANCED: Use validateAndEnrichResult for cached results
+            const enrichedCachedResult = validateAndEnrichResult(
+              {
+                ...cachedResult,
+                name: cachedResult.name || candidates[0]?.name || 'Unknown',
+                commonName: cachedResult.commonName || 'Unknown',
+                confidence: cachedResult.confidence || 85,
+                rank: cachedResult.rank || 'species',
+                imageQuality: qualityCheck.details
+              },
+              candidates,
+              category
+            ) || cachedResult;
+            
+            console.log('✅ Validated cached result:', enrichedCachedResult);
+            
+            setProcessingStage(PROCESSING_STAGES.FOUND_MATCH);
+            await processSuccessfulMatch(enrichedCachedResult, photoUri, navigation, onGuestPostScan);
+            isProcessingRef.current = false;
+            return;
+          }
+        } else {
+          console.log('🌿 Skipping cache for plants - using fresh API results');
+        }
+
+        // STEP 7: Multi-source identification (Vision + PlantNet + iNaturalist)
+        console.log('🔎 Step 7/9: Database search...');
+        setProcessingStage(PROCESSING_STAGES.SEARCHING);
+        
+        let result = await identifyWithFallbackMethod(
+          base64Image,
+          photoUri,
+          category,
+          candidates
+        );
+
+        // ✅ FIX: Better fallback handling - use the most specific candidate
+        if (!result) {
+          console.log('⚠️ No verified result found, using Vision API candidate as fallback');
+
+          // Filter out generic terms that aren't specific enough
+          const genericTerms = new Set([
+            'plant', 'plants', 'animal', 'animals', 'flower', 'flowers', 'tree', 'trees',
+            'grass', 'bird', 'birds', 'insect', 'insects', 'fish', 'fishes',
+            'mammal', 'mammals', 'reptile', 'reptiles', 'amphibian', 'amphibians',
+            'vegetation', 'flora', 'fauna', 'creature', 'creatures', 'wildlife',
+            'nature', 'organism', 'organisms', 'leaf', 'leaves', 'petal', 'petals',
+            'stem', 'root', 'branch', 'branches'
+          ]);
+
+          // Find the first candidate that's NOT a generic term
+          const specificCandidate = candidates.find(candidate => 
+            !genericTerms.has(candidate.name.toLowerCase())
+          );
+
+          const topCandidate = specificCandidate || candidates[0];
+
+          if (topCandidate && !genericTerms.has(topCandidate.name.toLowerCase())) {
+            // We have a specific species name
+            const detectedName = topCandidate.name;
+            
+            // ✅ ENHANCED: Use validateAndEnrichResult for fallback results
+            const fallbackResult = {
+              taxonId: null,
+              name: detectedName,
+              commonName: detectedName,
+              confidence: Math.min(Math.round(topCandidate.score * 100 * 0.8), 65),
+              source: 'vision_fallback',
+              rank: 'species',
+              visionScore: topCandidate.score,
+              plantNetScore: null,
+              iNatScore: null,
+              matchQuality: 'low',
+              imageQuality: qualityCheck.details
+            };
+
+            result = validateAndEnrichResult(fallbackResult, candidates, category) || fallbackResult;
+            
+            console.log(`✅ Validated fallback result: ${result.name} (${result.confidence}% confidence)`);
+          } else {
+            // All candidates are generic - show error
+            Alert.alert(
+              "Unable to Identify",
+              "Could not identify the specific species.\n\nTips for better results:\n• Get closer to the subject\n• Capture distinctive features (flowers, leaves, face)\n• Ensure good lighting\n• Try a different angle",
+              [
+                { text: "Try Again", style: "default" }
+              ]
+            );
+            setIsProcessing(false);
+            setProcessingStage('');
+            isProcessingRef.current = false;
+            return;
+          }
+        }
+
+        // ✅ ENHANCED: Validate and enrich result with intelligent validation
+        result = validateAndEnrichResult(
+          {
+            taxonId: result.taxonId || null,
+            name: result.name || candidates[0]?.name || 'Unknown Species',
+            commonName: result.commonName || 'Unknown Species',
+            confidence: result.confidence || 50,
+            source: result.source || 'unknown',
+            rank: result.rank || 'species',
+            visionScore: result.visionScore || null,
+            plantNetScore: result.plantNetScore || null,
+            iNatScore: result.iNatScore || null,
+            matchQuality: result.matchQuality || 'low',
+            alternativeSuggestions: result.alternativeSuggestions || [],
+            imageQuality: qualityCheck.details
+          },
+          candidates,
+          category
+        ) || result;
+
+        console.log('✅ Validated and enriched result:', result);
+
+        // STEP 8: Calculate confidence
+        console.log('🎯 Step 8/9: Calculating confidence...');
+
+        const matchQuality = assessMatchQuality(
+          candidates[0]?.name,
+          result.plantNetName || result.name,
+          result.iNatName || result.name,
+          null, // No iNat CV result
+          candidates
+        );
+
+        result.matchQuality = matchQuality;
+        result.inatCVScore = null; // Not using iNat CV
+
+        // ✅ UPDATED: Use adaptive confidence calculation
+        result.confidence = calculateAdaptiveConfidence({
+          visionScore: result.visionScore,
+          plantNetScore: result.plantNetScore,
+          iNatScore: result.iNatScore,
+          inatCVScore: null,
+          matchQuality: matchQuality,
+          hasObservations: false, // Will be updated in processSuccessfulMatch
+          taxonRank: result.rank,
+          observationCount: 0
+        }, qualityCheck.details); // Pass quality check details
+
+        console.log(`✅ Adaptive confidence: ${result.confidence}%`);
+
+        // STEP 9: Cache the successful result (only if it's verified)
+        if (result.source !== 'vision_fallback') {
+          console.log('💾 Step 9/9: Caching result...');
+          cacheManager.set(result.name, result, {
+            alternateKeys: result.commonName ? [result.commonName] : [],
+            persist: false
+          });
+        }
+
+        // STEP 10: Process successful match (will enhance confidence further)
+        setProcessingStage(PROCESSING_STAGES.LOADING_DETAILS);
+        await processSuccessfulMatch(result, photoUri, navigation, onGuestPostScan);
+      };
+
+      // Start the analysis after quality check
+      await proceedWithAnalysis();
 
     } catch (error) {
       console.error('❌ Error analyzing image:', error);
@@ -319,14 +600,8 @@ const useImageProcessing = () => {
       setProcessingStage('');
       isProcessingRef.current = false;
     }
-  }, [processSuccessfulMatch, recordFeedback]);
+  }, [processSuccessfulMatch, recordFeedback, getUserLocation]);
 
-  /**
-   * Handle camera image capture and processing
-   * @param {Object} photo - Photo object from camera
-   * @param {Function} navigation - Navigation object
-   * @param {Function} onGuestPostScan - Callback for guest users
-   */
   const handleCameraCapture = useCallback(async (photo, navigation, onGuestPostScan) => {
     if (!photo || !photo.uri) {
       Alert.alert('Error', 'Invalid photo data');
@@ -348,12 +623,6 @@ const useImageProcessing = () => {
     }
   }, [analyzeImage]);
 
-  /**
-   * Handle gallery image selection and processing
-   * @param {Object} asset - Image asset from gallery
-   * @param {Function} navigation - Navigation object
-   * @param {Function} onGuestPostScan - Callback for guest users
-   */
   const handleGalleryImage = useCallback(async (asset, navigation, onGuestPostScan) => {
     if (!asset || !asset.uri) {
       Alert.alert('Error', 'Invalid image data');
@@ -375,9 +644,6 @@ const useImageProcessing = () => {
     }
   }, [analyzeImage]);
 
-  /**
-   * Cancel current processing
-   */
   const cancelProcessing = useCallback(() => {
     setIsProcessing(false);
     setProcessingStage('');
@@ -385,35 +651,25 @@ const useImageProcessing = () => {
     console.log('🛑 Processing cancelled');
   }, []);
 
-  /**
-   * Get cache statistics
-   */
   const getCacheStats = useCallback(() => {
     return cacheManager.getStats();
   }, []);
 
-  /**
-   * Clear cache
-   */
   const clearCache = useCallback(async () => {
     await cacheManager.clear();
     console.log('🧹 Cache cleared');
   }, []);
 
   return {
-    // State
     isProcessing,
     processingStage,
-
-    // Actions
     initializeCache,
     analyzeImage,
     handleCameraCapture,
     handleGalleryImage,
     cancelProcessing,
     recordFeedback,
-    
-    // Cache utilities
+    setDecrementScanCount,
     getCacheStats,
     clearCache,
   };

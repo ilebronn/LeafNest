@@ -1,4 +1,4 @@
-// firestoreService/manualPaymentService.js - Manual QR Payment System
+// services/payment/manualPaymentService.js - FIXED FOR RESUBSCRIPTION
 import { 
   db, 
   collection, 
@@ -10,10 +10,12 @@ import {
   where,
   orderBy,
   serverTimestamp,
+  updateDoc,
   storage,
   ref,
   uploadBytes,
   getDownloadURL,
+  deleteDoc,
 } from '@config/firebase';
 import { auth } from '@config/firebase';
 
@@ -21,9 +23,6 @@ const PREMIUM_PRICE = 99;
 
 /**
  * Submit payment proof for manual verification
- * @param {string} userId 
- * @param {string} proofImageUri - Screenshot of GCash payment
- * @param {Object} paymentDetails - { referenceNumber, amount, paymentDate }
  */
 export const submitPaymentProof = async (userId, proofImageUri, paymentDetails) => {
   try {
@@ -78,7 +77,6 @@ export const submitPaymentProof = async (userId, proofImageUri, paymentDetails) 
 
 /**
  * Check payment submission status
- * @param {string} userId 
  */
 export const checkPaymentStatus = async (userId) => {
   try {
@@ -125,7 +123,6 @@ export const checkPaymentStatus = async (userId) => {
 
 /**
  * Get user's payment history
- * @param {string} userId 
  */
 export const getPaymentHistory = async (userId) => {
   try {
@@ -165,66 +162,127 @@ export const getPaymentHistory = async (userId) => {
 };
 
 /**
- * ADMIN FUNCTION: Approve payment and activate premium
- * Call this from Firebase Console or a simple admin screen
- * @param {string} submissionId 
+ * ✅ FIXED: Approve payment and activate premium
+ * Now properly handles resubscriptions
  */
 export const approvePayment = async (submissionId) => {
   try {
+    console.log('━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━');
+    console.log('🔍 Starting payment approval process');
+    console.log('📋 Submission ID:', submissionId);
+    console.log('━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━');
+    
+    // Step 1: Get payment submission
     const submissionRef = doc(db, 'paymentSubmissions', submissionId);
     const submissionDoc = await getDoc(submissionRef);
 
     if (!submissionDoc.exists()) {
+      console.error('❌ Submission document not found');
       return { success: false, error: 'Submission not found' };
     }
 
     const data = submissionDoc.data();
+    const userId = data.userId;
 
-    // Update submission status
-    await setDoc(submissionRef, {
-      ...data,
+    console.log('✅ Step 1: Payment submission found');
+    console.log('👤 User ID:', userId);
+    console.log('💰 Amount:', data.amount);
+    console.log('📧 Email:', data.userEmail);
+
+    // Step 2: Update submission status to approved
+    console.log('⏳ Step 2: Updating submission status...');
+    await updateDoc(submissionRef, {
       status: 'approved',
       approvedAt: serverTimestamp(),
     });
+    console.log('✅ Step 2: Payment submission marked as approved');
 
-    // Activate premium subscription
-    const userId = data.userId;
+    // Step 3: Activate premium subscription
+    console.log('⏳ Step 3: Activating premium subscription...');
+    
+    // ✅ CRITICAL FIX: Inline subscription activation to avoid circular dependency
     const now = Date.now();
     const expiryDate = now + (30 * 24 * 60 * 60 * 1000); // 30 days
 
+    console.log('🗑️ Cleaning up old subscription documents...');
+    
+    // Delete ALL old subscription documents
+    try {
+      const subscriptionCollectionRef = collection(db, 'users', userId, 'subscription');
+      const oldDocsSnapshot = await getDocs(subscriptionCollectionRef);
+      
+      console.log(`📋 Found ${oldDocsSnapshot.size} old subscription documents`);
+      
+      const deletePromises = oldDocsSnapshot.docs.map(doc => deleteDoc(doc.ref));
+      await Promise.all(deletePromises);
+      
+      console.log('✅ Deleted all old subscription documents');
+    } catch (cleanupError) {
+      console.warn('⚠️ Could not clean old docs:', cleanupError);
+    }
+
+    // Create fresh subscription data
     const subData = {
-      tier: 'premium',
-      expiryDate: new Date(expiryDate),
+      isPremium: true,
+      premiumType: 'monthly',
       startDate: new Date(now),
+      endDate: new Date(expiryDate),
+      status: 'active',
       paymentMethod: 'gcash_manual',
       transactionId: submissionId,
-      amount: data.amount,
-      status: 'active',
-      autoRenew: false,
+      amount: data.amount || PREMIUM_PRICE,
       createdAt: serverTimestamp(),
       lastUpdated: serverTimestamp(),
+      activatedAt: serverTimestamp(),
     };
 
-    await setDoc(doc(db, 'users', userId, 'subscription', 'current'), subData);
+    console.log('📦 Creating new subscription document...');
 
-    console.log('✅ Payment approved and premium activated');
+    // Create new subscription document
+    const subscriptionRef = doc(db, 'users', userId, 'subscription', 'current_subscription');
+    await setDoc(subscriptionRef, subData, { merge: false });
+    
+    console.log('✅ Premium subscription document created');
+
+    const activationResult = {
+      success: true,
+      expiryDate: expiryDate,
+      daysRemaining: 30,
+    };
+
+    if (!activationResult.success) {
+      console.error('❌ Step 3 FAILED: Subscription activation failed');
+      return { 
+        success: false, 
+        error: 'Payment approved but activation failed'
+      };
+    }
+
+    console.log('✅ Step 3: Premium subscription activated');
+    console.log('📅 Expiry date:', new Date(activationResult.expiryDate).toLocaleDateString());
+    console.log('━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━');
+    console.log('🎉 PAYMENT APPROVAL COMPLETED SUCCESSFULLY');
+    console.log('━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━');
 
     return { 
       success: true, 
       message: 'Payment approved and premium activated',
       userId: userId,
-      expiryDate: expiryDate,
+      expiryDate: activationResult.expiryDate,
     };
   } catch (error) {
-    console.error('❌ Error approving payment:', error);
+    console.error('━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━');
+    console.error('❌ CRITICAL ERROR IN PAYMENT APPROVAL');
+    console.error('━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━');
+    console.error('Error message:', error.message);
+    console.error('Error stack:', error.stack);
+    console.error('━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━');
     return { success: false, error: error.message };
   }
 };
 
 /**
- * ADMIN FUNCTION: Reject payment
- * @param {string} submissionId 
- * @param {string} reason 
+ * Reject payment
  */
 export const rejectPayment = async (submissionId, reason) => {
   try {
@@ -237,8 +295,7 @@ export const rejectPayment = async (submissionId, reason) => {
 
     const data = submissionDoc.data();
 
-    await setDoc(submissionRef, {
-      ...data,
+    await updateDoc(submissionRef, {
       status: 'rejected',
       rejectedAt: serverTimestamp(),
       rejectionReason: reason,

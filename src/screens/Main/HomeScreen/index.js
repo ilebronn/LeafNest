@@ -1,5 +1,5 @@
 ﻿// src/screens/Main/HomeScreen/index.js
-import React, { useRef, useState, useEffect, useCallback } from 'react';
+import React, { useRef, useState, useEffect, useCallback, useMemo } from 'react';
 import {
   View,
   Text,
@@ -19,15 +19,20 @@ import { SafeAreaProvider, SafeAreaView } from 'react-native-safe-area-context';
 import { LinearGradient } from 'expo-linear-gradient';
 import { auth } from '@config/firebase';
 import { likePost, getPostStats } from '@services/notifications/postInteractionsService';
-import { CommentsModal } from '@components/modals';
+import { CommentsModal, PremiumGate } from '@components/modals';
 import { useFocusEffect } from '@react-navigation/native';
 import { createDownloadNotification, getUnreadNotificationCount } from '@services/notifications/notificationService';
 import axios from 'axios';
 import useHomeFeed from '@hooks/useHomeFeed';
 import FeedPost from '@components/common/Card/FeedPost';
 import TrendingCard from '@components/common/Card/TrendingCard';
+import { isGuestUser } from '@utils/guest';
+import { 
+  canDownload, 
+  decrementDownloadCount,
+  getUsageLimits 
+} from '@services/subscription/subscriptionService';
 
-// ✅ Move to config file later
 const API_URLS = {
   PDF_GENERATOR: 'https://us-central1-leafnest-98408.cloudfunctions.net/generatePdfAndEmail'
 };
@@ -41,6 +46,10 @@ export default function HomeScreen({ route, navigation }) {
   const [likeAnimations, setLikeAnimations] = useState({});
   const [downloadingPosts, setDownloadingPosts] = useState({});
   const [unreadNotifCount, setUnreadNotifCount] = useState(0);
+  const [showPremiumGate, setShowPremiumGate] = useState(false);
+  const [usageLimits, setUsageLimits] = useState(null);
+  
+  const hasLoadedInitially = useRef(false);
   const fadeAnim = useRef(new Animated.Value(0)).current;
 
   const currentUser = auth.currentUser;
@@ -48,7 +57,9 @@ export default function HomeScreen({ route, navigation }) {
   const fallbackUsername = t('home.feed.unknownUser');
   const currentUsername = currentUser?.displayName || currentUser?.email?.split('@')[0] || fallbackUsername;
 
-  // ✅ Use custom hook for data management
+  const scanButtonRef = route?.params?.scanButtonRef;
+  const notificationButtonRef = route?.params?.notificationButtonRef;
+
   const {
     publicScans,
     trendingSpecies,
@@ -68,7 +79,6 @@ export default function HomeScreen({ route, navigation }) {
     setIsGuest(userIsGuest);
   }, [route?.params?.guest]);
 
-  // ✅ Notification count management
   const loadUnreadCount = useCallback(async () => {
     if (!currentUserId) {
       setUnreadNotifCount(0);
@@ -90,19 +100,22 @@ export default function HomeScreen({ route, navigation }) {
       if (currentUserId) {
         loadUnreadCount();
       }
-      loadPublicScans();
-      loadTrendingSpecies();
+
+      if (!hasLoadedInitially.current) {
+        loadPublicScans();
+        loadTrendingSpecies();
+        hasLoadedInitially.current = true;
+      }
     }, [currentUserId, loadUnreadCount, loadPublicScans, loadTrendingSpecies])
   );
 
-  // ✅ Increased to 60 seconds (was 30)
   useEffect(() => {
     if (!currentUserId) return;
 
     loadUnreadCount();
     const intervalId = setInterval(() => {
       loadUnreadCount();
-    }, 60000); // 60 seconds
+    }, 60000);
 
     return () => clearInterval(intervalId);
   }, [currentUserId, loadUnreadCount]);
@@ -119,7 +132,6 @@ export default function HomeScreen({ route, navigation }) {
     await onRefresh(loadUnreadCount);
   }, [onRefresh, loadUnreadCount]);
 
-  // ✅ Memoized formatter functions
   const formatDate = useCallback((timestamp) => {
     const date = new Date(timestamp);
     const now = new Date();
@@ -152,13 +164,47 @@ export default function HomeScreen({ route, navigation }) {
     return t('home.feed.viewComments', { count });
   }, [t]);
 
-  const handleDownloadPDF = async (item) => {
+  const handleDownloadPDF = useCallback(async (item) => {
     if (!currentUser || !currentUser.email) {
       Alert.alert(
         t('home.alerts.authRequiredTitle'),
         t('home.alerts.authRequiredBody'),
         [{ text: t('common.ok') }]
       );
+      return;
+    }
+
+    if (isGuestUser(currentUser)) {
+      Alert.alert(
+        "📥 Downloads Unavailable",
+        "Please sign up for a free account to download species information!",
+        [{ text: "OK" }]
+      );
+      return;
+    }
+
+    try {
+      const limits = await getUsageLimits(currentUser.uid);
+      setUsageLimits(limits);
+
+      const downloadCheck = await canDownload(currentUser.uid);
+
+      if (!downloadCheck.success) {
+        Alert.alert("Error", "Failed to check download limit. Please try again.");
+        return;
+      }
+
+      if (!downloadCheck.unlimited && !downloadCheck.canDownload) {
+        console.log('❌ Download limit reached');
+        setShowPremiumGate(true);
+        return;
+      }
+
+      console.log(`✅ Download allowed (${downloadCheck.downloadsRemaining || '∞'} remaining)`);
+
+    } catch (error) {
+      console.error('❌ Error checking download limit:', error);
+      Alert.alert("Error", "Failed to check download limit. Please try again.");
       return;
     }
 
@@ -189,6 +235,53 @@ export default function HomeScreen({ route, navigation }) {
       });
 
       if (response.status === 200) {
+        const limits = await getUsageLimits(currentUser.uid);
+        
+        if (!limits.unlimited) {
+          const decrementResult = await decrementDownloadCount(currentUser.uid);
+          
+          if (decrementResult.success) {
+            console.log(`✅ Download count decremented (${decrementResult.downloadsRemaining} remaining)`);
+            
+            setUsageLimits({
+              ...limits,
+              downloadsRemaining: decrementResult.downloadsRemaining,
+            });
+
+            if (decrementResult.downloadsRemaining === 1) {
+              Alert.alert(
+                t('home.alerts.pdfSuccessTitle'),
+                `${t('home.alerts.pdfSuccessBody')}\n\n⚠️ You have 1 download remaining. Resets in ${decrementResult.hoursUntilReset} hours.`,
+                [{ text: t('common.ok') }]
+              );
+            } else if (decrementResult.downloadsRemaining === 0) {
+              Alert.alert(
+                t('home.alerts.pdfSuccessTitle'),
+                `${t('home.alerts.pdfSuccessBody')}\n\n⚠️ You've used all your downloads. Resets in ${decrementResult.hoursUntilReset} hours.`,
+                [{ text: t('common.ok') }]
+              );
+            } else {
+              Alert.alert(
+                t('home.alerts.pdfSuccessTitle'),
+                t('home.alerts.pdfSuccessBody'),
+                [{ text: t('common.ok') }]
+              );
+            }
+          } else {
+            Alert.alert(
+              t('home.alerts.pdfSuccessTitle'),
+              t('home.alerts.pdfSuccessBody'),
+              [{ text: t('common.ok') }]
+            );
+          }
+        } else {
+          Alert.alert(
+            t('home.alerts.pdfSuccessTitle'),
+            t('home.alerts.pdfSuccessBody'),
+            [{ text: t('common.ok') }]
+          );
+        }
+
         try {
           const downloaderUsername = currentUser.displayName || currentUser.email?.split('@')[0] || fallbackUsername;
           await createDownloadNotification(
@@ -198,20 +291,16 @@ export default function HomeScreen({ route, navigation }) {
             downloaderUsername,
             item
           );
+          console.log('✅ Download notification created');
         } catch (notifError) {
-          console.warn('Failed to create download notification:', notifError);
+          console.warn('⚠️ Failed to create download notification:', notifError);
         }
 
-        Alert.alert(
-          t('home.alerts.pdfSuccessTitle'),
-          t('home.alerts.pdfSuccessBody'),
-          [{ text: t('common.ok') }]
-        );
       } else {
         throw new Error(t('home.alerts.pdfErrorBody'));
       }
     } catch (error) {
-      console.error('PDF generation error:', error);
+      console.error('❌ PDF generation error:', error);
       Alert.alert(
         t('home.alerts.pdfErrorTitle'),
         t('home.alerts.pdfErrorBody'),
@@ -224,9 +313,9 @@ export default function HomeScreen({ route, navigation }) {
         return newState;
       });
     }
-  };
+  }, [currentUser, isGuest, t, currentUserId, fallbackUsername]);
 
-  const handleLikePress = async (postId) => {
+  const handleLikePress = useCallback(async (postId) => {
     if (!currentUserId) {
       Alert.alert(
         t('home.alerts.signInRequiredTitle'),
@@ -250,9 +339,9 @@ export default function HomeScreen({ route, navigation }) {
       console.error('Error liking post:', error);
       Alert.alert(t('common.error'), t('home.feed.likeError'));
     }
-  };
+  }, [currentUserId, postStats, updatePostStats, t]);
 
-  const handleDoubleTap = async (postId) => {
+  const handleDoubleTap = useCallback(async (postId) => {
     if (!currentUserId) return;
 
     const stats = postStats[postId] || { likes: [] };
@@ -294,9 +383,9 @@ export default function HomeScreen({ route, navigation }) {
         console.error('Error liking post:', error);
       }
     }
-  };
+  }, [currentUserId, postStats, updatePostStats]);
 
-  const handleCommentPress = (postId) => {
+  const handleCommentPress = useCallback((postId) => {
     if (!currentUserId) {
       Alert.alert(
         t('home.alerts.signInRequiredTitle'),
@@ -308,9 +397,9 @@ export default function HomeScreen({ route, navigation }) {
     
     setSelectedPostId(postId);
     setCommentsModalVisible(true);
-  };
+  }, [currentUserId, t]);
 
-  const handleCommentsModalClose = async () => {
+  const handleCommentsModalClose = useCallback(async () => {
     setCommentsModalVisible(false);
     
     if (selectedPostId) {
@@ -323,35 +412,38 @@ export default function HomeScreen({ route, navigation }) {
     }
     
     setSelectedPostId(null);
-  };
+  }, [selectedPostId, updatePostStats]);
 
-  const togglePostExpansion = (postId) => {
+  const togglePostExpansion = useCallback((postId) => {
     setExpandedPosts(prev => ({
       ...prev,
       [postId]: !prev[postId]
     }));
-  };
+  }, []);
 
-  const renderTrendingItem = ({ item, index }) => (
+  const handleTrendingPress = useCallback((item) => {
+    navigation.navigate('SpeciesGalleryScreen', {
+      species: {
+        name: item.commonName || item.name,
+        scientificName: item.scientificName || null,
+        taxonId: item.taxonId,
+        iconicTaxon: item.iconicTaxon,
+        count: item.count,
+      },
+    });
+  }, [navigation]);
+
+  // ✅ PERFORMANCE: Memoized render functions
+  const renderTrendingItem = useCallback(({ item, index }) => (
     <TrendingCard
       item={item}
       index={index}
-      onPress={() => {
-        navigation.navigate('SpeciesGalleryScreen', {
-          species: {
-            name: item.commonName || item.name,
-            scientificName: item.scientificName || null,
-            taxonId: item.taxonId,
-            iconicTaxon: item.iconicTaxon,
-            count: item.count,
-          },
-        });
-      }}
+      onPress={() => handleTrendingPress(item)}
       t={t}
     />
-  );
+  ), [handleTrendingPress, t]);
 
-  const renderFeedItem = ({ item }) => {
+  const renderFeedItem = useCallback(({ item }) => {
     const stats = postStats[item.id] || { likesCount: 0, commentsCount: 0, likes: [] };
     const isLiked = stats.likes.includes(currentUserId);
     const likeAnim = likeAnimations[item.id];
@@ -378,33 +470,72 @@ export default function HomeScreen({ route, navigation }) {
         t={t}
       />
     );
-  };
+  }, [
+    postStats,
+    currentUserId,
+    likeAnimations,
+    downloadingPosts,
+    expandedPosts,
+    handleLikePress,
+    handleCommentPress,
+    handleDownloadPDF,
+    handleDoubleTap,
+    togglePostExpansion,
+    formatDate,
+    getLikesLabel,
+    getCommentsLabel,
+    t
+  ]);
 
-  const renderHeader = () => (
-    <View>
-      {trendingSpecies.length > 0 && (
-        <View style={styles.trendingSection}>
-          <View style={styles.trendingHeader}>
-            <View style={styles.trendingHeaderLeft}>
-              <Ionicons name="flame" size={20} color="#EF4444" />
-              <Text style={styles.trendingTitle}>{t('home.trending.title')}</Text>
-            </View>
-            <Text style={styles.trendingSubtitle}>{t('home.trending.subtitle')}</Text>
+  // ✅ PERFORMANCE: Memoized header
+  const renderHeader = useMemo(() => {
+    if (trendingSpecies.length === 0) return null;
+    
+    return (
+      <View style={styles.trendingSection}>
+        <View style={styles.trendingHeader}>
+          <View style={styles.trendingHeaderLeft}>
+            <Ionicons name="flame" size={20} color="#EF4444" />
+            <Text style={styles.trendingTitle}>{t('home.trending.title')}</Text>
           </View>
-          <FlatList
-            horizontal
-            data={trendingSpecies}
-            keyExtractor={(item, index) => `trending-${item.taxonId || item.name}-${index}`}
-            renderItem={renderTrendingItem}
-            showsHorizontalScrollIndicator={false}
-            contentContainerStyle={styles.trendingList}
-            snapToInterval={180}
-            decelerationRate="fast"
-          />
         </View>
-      )}
+        <FlatList
+          horizontal
+          data={trendingSpecies}
+          keyExtractor={(item, index) => `trending-${item.taxonId || item.name}-${index}`}
+          renderItem={renderTrendingItem}
+          showsHorizontalScrollIndicator={false}
+          contentContainerStyle={styles.trendingList}
+          snapToInterval={180}
+          decelerationRate="fast"
+          removeClippedSubviews={true}
+          maxToRenderPerBatch={5}
+          windowSize={7}
+          initialNumToRender={3}
+        />
+      </View>
+    );
+  }, [trendingSpecies, renderTrendingItem, t]);
+
+  // ✅ PERFORMANCE: Memoized key extractor
+  const keyExtractor = useCallback((item) => item.id, []);
+
+  // ✅ PERFORMANCE: Memoized empty component
+  const renderEmptyComponent = useMemo(() => (
+    <View style={styles.emptyContainer}>
+      <Ionicons name="telescope-outline" size={80} color="#c7c7c7" />
+      <Text style={styles.emptyTitle}>{t('home.emptyState.title')}</Text>
+      <Text style={styles.emptyDescription}>
+        {t('home.emptyState.subtitle')}
+      </Text>
+      <TouchableOpacity
+        style={styles.emptyButton}
+        onPress={() => navigation.navigate('ScanScreen')}
+      >
+        <Text style={styles.emptyButtonText}>{t('home.emptyState.cta')}</Text>
+      </TouchableOpacity>
     </View>
-  );
+  ), [t, navigation]);
 
   return (
     <SafeAreaProvider>
@@ -413,12 +544,14 @@ export default function HomeScreen({ route, navigation }) {
         
         <SafeAreaView edges={['top']} style={styles.headerContainer}>
           <View style={styles.header}>
-            <TouchableOpacity 
-              style={styles.headerIcon}
-              onPress={() => navigation.navigate('ScanScreen')}
-            >
-              <Ionicons name="scan-outline" size={28} color="#fff" />
-            </TouchableOpacity>
+           <TouchableOpacity 
+            ref={scanButtonRef}
+            collapsable={false}
+            style={styles.headerIcon}
+            onPress={() => navigation.navigate('ScanScreen')}
+          >
+            <Ionicons name="scan-outline" size={28} color="#fff" />
+          </TouchableOpacity>
             
             <Image
               source={require('@assets/images/logos/logo.png')}
@@ -427,6 +560,8 @@ export default function HomeScreen({ route, navigation }) {
             />
             
             <TouchableOpacity
+            ref={notificationButtonRef} // ✅ ADD THIS
+            collapsable={false} 
               style={styles.headerIcon}
               onPress={() => navigation.navigate('NotificationScreen')}
             >
@@ -463,23 +598,11 @@ export default function HomeScreen({ route, navigation }) {
             <ActivityIndicator size="large" color="#5E936C" />
           </View>
         ) : publicScans.length === 0 ? (
-          <View style={styles.emptyContainer}>
-            <Ionicons name="telescope-outline" size={80} color="#c7c7c7" />
-            <Text style={styles.emptyTitle}>{t('home.emptyState.title')}</Text>
-            <Text style={styles.emptyDescription}>
-              {t('home.emptyState.subtitle')}
-            </Text>
-            <TouchableOpacity
-              style={styles.emptyButton}
-              onPress={() => navigation.navigate('ScanScreen')}
-            >
-              <Text style={styles.emptyButtonText}>{t('home.emptyState.cta')}</Text>
-            </TouchableOpacity>
-          </View>
+          renderEmptyComponent
         ) : (
           <FlatList
             data={publicScans}
-            keyExtractor={(item) => item.id}
+            keyExtractor={keyExtractor}
             renderItem={renderFeedItem}
             ListHeaderComponent={renderHeader}
             refreshControl={
@@ -491,6 +614,16 @@ export default function HomeScreen({ route, navigation }) {
             }
             showsVerticalScrollIndicator={false}
             contentContainerStyle={styles.feedContent}
+            removeClippedSubviews={true}
+            maxToRenderPerBatch={10}
+            windowSize={11}
+            initialNumToRender={5}
+            updateCellsBatchingPeriod={50}
+            getItemLayout={(data, index) => ({
+              length: 500,
+              offset: 500 * index,
+              index,
+            })}
           />
         )}
 
@@ -504,6 +637,19 @@ export default function HomeScreen({ route, navigation }) {
             currentUserProfileImage={currentUser?.photoURL || null}
           />
         )}
+
+        <PremiumGate
+          visible={showPremiumGate}
+          onClose={() => setShowPremiumGate(false)}
+          onUpgrade={() => {
+            setShowPremiumGate(false);
+            navigation.navigate('PlanScreen');
+          }}
+          limitType="download"
+          hoursUntilReset={usageLimits?.hoursUntilReset || 0}
+          scansRemaining={usageLimits?.scansRemaining || 0}
+          downloadsRemaining={usageLimits?.downloadsRemaining || 0}
+        />
       </View>
     </SafeAreaProvider>
   );

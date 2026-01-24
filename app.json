@@ -8,10 +8,21 @@
     "userInterfaceStyle": "light",
     "newArchEnabled": true,
     "scheme": "leafnest",
+    "splash": {
+      "image": "src/assets/images/splash.png",
+      "resizeMode": "contain",
+      "backgroundColor": "#10B981"
+    },
     "ios": {
       "supportsTablet": true,
       "infoPlist": {
-        "UILaunchStoryboardName": ""
+        "UILaunchStoryboardName": "",
+        "NSLocationWhenInUseUsageDescription": "We use your location to suggest species commonly found in your area and improve identification accuracy."
+      },
+      "splash": {
+        "image": "src/assets/images/splash.png",
+        "resizeMode": "contain",
+        "backgroundColor": "#10B981"
       }
     },
     "android": {
@@ -20,7 +31,16 @@
         "foregroundImage": "src/assets/images/logos/icon.png",
         "backgroundColor": "#ffffff"
       },
-      "edgeToEdgeEnabled": true
+      "splash": {
+        "image": "src/assets/images/splash.png",
+        "resizeMode": "contain",
+        "backgroundColor": "#10B981"
+      },
+      "edgeToEdgeEnabled": true,
+      "permissions": [
+        "ACCESS_COARSE_LOCATION",
+        "ACCESS_FINE_LOCATION"
+      ]
     },
     "web": {
       "favicon": "./assets/favicon.png"
@@ -32,7 +52,22 @@
     },
     "plugins": [
       "expo-web-browser",
-      "expo-mail-composer"
+      "expo-mail-composer",
+      "expo-font",
+      [
+        "expo-notifications",
+        {
+          "icon": "./src/assets/images/logos/icon.png",
+          "color": "#5E936C",
+          "sounds": []
+        }
+      ],
+      [
+        "expo-location",
+        {
+          "locationAlwaysAndWhenInUsePermission": "Allow $(PRODUCT_NAME) to use your location to suggest species commonly found in your area."
+        }
+      ]
     ]
   }
 }

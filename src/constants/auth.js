@@ -3,6 +3,9 @@ export const OTP_LENGTH = 6;
 export const MIN_PASSWORD_LENGTH = 6;
 export const OTP_EXPIRY_MINUTES = 10;
 export const OTP_EXPIRY_SECONDS = OTP_EXPIRY_MINUTES * 60;
+export const MAX_OTP_ATTEMPTS = 5;
+export const RESEND_COOLDOWN_SECONDS = 60;
+
 
 // Error messages
 export const AUTH_ERRORS = {
@@ -16,6 +19,11 @@ export const AUTH_ERRORS = {
   SEND_OTP_FAILED: 'Failed to send verification code. Please try again.',
   VERIFY_OTP_FAILED: 'Invalid OTP. Please try again.',
   RESET_PASSWORD_FAILED: 'Failed to reset password. Please try again.',
+  SEND_VERIFICATION_FAILED: 'Failed to send verification code',
+  VERIFY_CODE_FAILED: 'Failed to verify code',
+  CODE_EXPIRED: 'Verification code has expired',
+  CODE_INVALID: 'Invalid verification code',
+  MAX_ATTEMPTS_REACHED: 'Too many failed attempts',
 };
 
 // Success messages

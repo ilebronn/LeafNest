@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { View, Text, StyleSheet, TouchableOpacity, Image } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import { LinearGradient } from 'expo-linear-gradient';
@@ -10,6 +10,34 @@ export default function FavoriteCard({
   onPress, 
   onLongPress 
 }) {
+  const [imageError, setImageError] = useState(false);
+
+  // ✅ FIX: Validate image URL - only use if it's a valid remote URL
+  const isValidImageUrl = (url) => {
+    if (!url) return false;
+    // Check if it's a valid HTTP/HTTPS URL (not a local file:// URI)
+    return url.startsWith('http://') || url.startsWith('https://');
+  };
+
+  // Determine which image source to use
+  const getImageSource = () => {
+    // Priority 1: Use imageUrl if it's a valid remote URL
+    if (isValidImageUrl(item.imageUrl)) {
+      return item.imageUrl;
+    }
+    
+    // Priority 2: Use imageUri if it's a valid remote URL (fallback)
+    if (isValidImageUrl(item.imageUri)) {
+      return item.imageUri;
+    }
+    
+    // No valid image URL found
+    return null;
+  };
+
+  const imageSource = getImageSource();
+  const shouldShowImage = imageSource && !imageError;
+
   return (
     <TouchableOpacity 
       style={[styles.card, isSelected && styles.cardSelected]} 
@@ -27,8 +55,19 @@ export default function FavoriteCard({
         </View>
       )}
 
-      {item.imageUrl ? (
-        <Image source={{ uri: item.imageUrl }} style={styles.image} />
+      {shouldShowImage ? (
+        <Image 
+          source={{ uri: imageSource }} 
+          style={styles.image}
+          onError={(error) => {
+            console.error('❌ Failed to load image:', imageSource);
+            console.error('Error details:', error.nativeEvent.error);
+            setImageError(true);
+          }}
+          onLoad={() => {
+            console.log('✅ Image loaded successfully:', imageSource);
+          }}
+        />
       ) : (
         <LinearGradient
           colors={['#E8F5E9', '#C8E6C9']}
@@ -39,7 +78,9 @@ export default function FavoriteCard({
       )}
       
       <View style={styles.cardContent}>
-        <Text numberOfLines={2} style={styles.name}>{item.name}</Text>
+        <Text numberOfLines={2} style={styles.name}>
+          {item.name || item.commonName || 'Unknown Species'}
+        </Text>
         {item.scientificName && item.scientificName !== item.name && (
           <Text numberOfLines={1} style={styles.scientificName}>
             {item.scientificName}

@@ -36,3 +36,8 @@ yarn-error.*
 
 # typescript
 *.tsbuildinfo
+
+# Service Account Keys
+*-firebase-adminsdk-*.json
+leafnest-98408-*.json
+credentials/

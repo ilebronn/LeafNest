@@ -252,9 +252,6 @@ export default function PostDetailScreen({ route, navigation }) {
           <Ionicons name="arrow-back" size={28} color="#111" />
         </TouchableOpacity>
         <Text style={styles.headerTitle}>Post</Text>
-        <TouchableOpacity style={styles.backButton}>
-          <Ionicons name="ellipsis-horizontal" size={24} color="#111" />
-        </TouchableOpacity>
       </View>
 
       <ScrollView 
