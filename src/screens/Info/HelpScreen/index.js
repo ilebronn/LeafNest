@@ -12,7 +12,7 @@ import {
 import { Ionicons } from '@expo/vector-icons';
 import { useTranslation } from 'react-i18next';
 
-const SUPPORT_EMAIL = 'leafnest.dev@gmail.com';
+const SUPPORT_EMAIL = 'leafnest.capstone@gmail.com';
 
 const HelpScreen = ({ navigation }) => {
   const { t } = useTranslation();

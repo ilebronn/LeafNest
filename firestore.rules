@@ -1,0 +1,337 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+
+    // ============================================
+    // HELPER FUNCTIONS
+    // ============================================
+    function isAuthenticated() {
+      return request.auth != null;
+    }
+
+    function isOwner(userId) {
+      return isAuthenticated() && request.auth.uid == userId;
+    }
+
+    function isCloudFunction() {
+      return request.auth == null;
+    }
+
+    // ============================================
+    // USER PROFILES
+    // ============================================
+    match /users/{userId} {
+      // Users can read any user profile (for public features)
+      allow read: if isAuthenticated();
+
+      // Users can create only their own profile
+      allow create: if isOwner(userId);
+
+      // Users can update only their own profile
+      allow update: if isOwner(userId);
+
+      // Users cannot delete profiles
+      allow delete: if false;
+
+      // Allow Cloud Functions to read/write user data
+      allow read, write: if isCloudFunction();
+
+      // ------------------------------
+      // User Profile Borders (legacy)
+      // ------------------------------
+      match /profile/borders {
+        allow read, write: if isOwner(userId);
+        allow read, write: if isCloudFunction();
+      }
+
+      // ------------------------------
+      // User Profile Rewards (private)
+      // ------------------------------
+      match /profile/rewards {
+        allow read, write: if isOwner(userId);
+        allow read, write: if isCloudFunction();
+      }
+
+      // ------------------------------
+      // User Public Rewards (active border/badge for feed)
+      // ------------------------------
+      match /profile/publicRewards {
+        allow read: if isAuthenticated();
+        allow write: if isOwner(userId);
+        allow read, write: if isCloudFunction();
+      }
+
+      // ------------------------------
+      // User Verification Documents
+      // ------------------------------
+      match /verification/{verificationDoc} {
+        allow read: if isOwner(userId);
+        allow create, update: if isOwner(userId);
+        allow delete: if false;
+        allow read, write: if isCloudFunction();
+      }
+
+      // ------------------------------
+      // User Settings
+      // ------------------------------
+      match /settings/{settingId} {
+        allow read, write: if isOwner(userId);
+        allow read: if isAuthenticated();
+        allow read: if isCloudFunction();
+      }
+
+      // ------------------------------
+      // User Push Token (for notifications)
+      // ------------------------------
+      match /settings/pushToken {
+        allow read, write: if isOwner(userId);
+        allow read: if isCloudFunction();
+      }
+
+      // ------------------------------
+      // User Notification Settings
+      // ------------------------------
+      match /settings/notifications {
+        allow read, write: if isOwner(userId);
+        allow read: if isCloudFunction();
+      }
+
+      // ------------------------------
+      // User Progress (achievements, badges)
+      // ------------------------------
+      match /progress/{progressId} {
+        allow read, write: if isOwner(userId);
+        allow write: if isAuthenticated();
+        allow read, write: if isCloudFunction();
+      }
+
+      // ------------------------------
+      // Premium Subscription Document
+      // ------------------------------
+      match /subscription/{docId} {
+        allow read: if isOwner(userId);
+        allow write: if false;
+        allow read, write: if isCloudFunction();
+      }
+
+      // ------------------------------
+      // Legacy Subscriptions
+      // ------------------------------
+      match /subscriptions/{subscriptionId} {
+        allow read, write: if isOwner(userId);
+        allow read, write: if isCloudFunction();
+      }
+
+      // ------------------------------
+      // User History
+      // ------------------------------
+      match /history/{historyId} {
+        allow read, write: if isOwner(userId);
+        allow read: if resource.data.isPublic == true;
+        allow read, write: if isCloudFunction();
+      }
+
+      // ------------------------------
+      // User Favorites
+      // ------------------------------
+      match /favorites/{favoriteId} {
+        allow read, write: if isOwner(userId);
+        allow read: if isCloudFunction();
+      }
+
+      // ------------------------------
+      // User Scans
+      // ------------------------------
+      match /scans/{scanId} {
+        allow read, write: if isOwner(userId);
+        allow read: if isCloudFunction();
+      }
+
+      // ------------------------------
+      // User Stats
+      // ------------------------------
+      match /stats/{statsId} {
+        allow read, write: if isOwner(userId);
+        allow read, write: if isCloudFunction();
+      }
+
+      // ------------------------------
+      // User Usage Limits
+      // ------------------------------
+      match /usageLimits/{limitId} {
+        allow read: if isOwner(userId);
+        allow write: if false;
+        allow read, write: if isCloudFunction();
+      }
+
+      // ------------------------------
+      // User Offline Cache
+      // ------------------------------
+      match /offlineCache/{cacheId} {
+        allow read, write: if isOwner(userId);
+        allow read, write: if isCloudFunction();
+      }
+    }
+
+    // ============================================
+    // PAYMENT SUBMISSIONS
+    // ============================================
+    match /paymentSubmissions/{submissionId} {
+      allow create: if isAuthenticated()
+        && request.resource.data.userId == request.auth.uid;
+
+      allow read: if isAuthenticated()
+        && resource.data.userId == request.auth.uid;
+
+      allow update, delete: if false;
+      allow read, write: if isCloudFunction();
+    }
+
+    // ============================================
+    // GLOBAL OBSERVATIONS
+    // ============================================
+    match /globalObservations/{observationId} {
+      allow read: if true;
+      allow create, update: if isAuthenticated();
+      allow delete: if false;
+      allow read, write: if isCloudFunction();
+    }
+
+    // ============================================
+    // SPECIES OBSERVATIONS
+    // ============================================
+    match /speciesObservations/{docId} {
+      allow read: if true;
+      allow create, update: if isAuthenticated();
+      allow delete: if false;
+      allow read, write: if isCloudFunction();
+    }
+
+    // ============================================
+    // PUBLIC SCANS
+    // ============================================
+    match /publicScans/{scanId} {
+      allow read: if true;
+
+      allow create: if isAuthenticated() &&
+        request.resource.data.userId == request.auth.uid;
+
+      allow update: if isAuthenticated() && (
+        resource.data.userId == request.auth.uid ||
+        request.resource.data.diff(resource.data).affectedKeys()
+          .hasOnly(['likes', 'likesCount']) ||
+        request.resource.data.diff(resource.data).affectedKeys()
+          .hasOnly(['commentsCount'])
+      );
+
+      allow delete: if isAuthenticated() &&
+        resource.data.userId == request.auth.uid;
+
+      allow read, write: if isCloudFunction();
+
+      // Comments subcollection
+      match /comments/{commentId} {
+        allow read: if true;
+
+        allow create: if isAuthenticated() &&
+          request.resource.data.userId == request.auth.uid;
+
+        allow update: if isAuthenticated() && (
+          resource.data.userId == request.auth.uid ||
+          request.resource.data.diff(resource.data).affectedKeys()
+            .hasOnly(['likes', 'likesCount'])
+        );
+
+        allow delete: if isAuthenticated() &&
+          resource.data.userId == request.auth.uid;
+
+        allow read, write: if isCloudFunction();
+      }
+    }
+
+    // ============================================
+    // NOTIFICATIONS
+    // ============================================
+    match /notifications/{notificationId} {
+      allow create: if isAuthenticated() || isCloudFunction();
+
+      allow read: if isAuthenticated() &&
+        resource.data.recipientId == request.auth.uid;
+
+      allow list: if isAuthenticated();
+
+      allow update: if isAuthenticated() &&
+        resource.data.recipientId == request.auth.uid;
+
+      allow delete: if isAuthenticated() &&
+        resource.data.recipientId == request.auth.uid;
+
+      allow read, write: if isCloudFunction();
+    }
+
+    // ============================================
+    // OTPs
+    // ============================================
+    match /otps/{email} {
+      allow read, write: if isCloudFunction();
+      allow read: if isAuthenticated();
+    }
+
+    // ============================================
+    // ADMIN DASHBOARD
+    // ============================================
+    match /adminStats/{statId} {
+      allow read: if false;
+      allow write: if false;
+      allow read, write: if isCloudFunction();
+    }
+
+    // ============================================
+    // FEATURED SPECIES
+    // ============================================
+    match /featuredSpecies/{speciesId} {
+      allow read: if true;
+      allow write: if false;
+      allow read, write: if isCloudFunction();
+    }
+
+    // ============================================
+    // APP ANALYTICS
+    // ============================================
+    match /analytics/{analyticsId} {
+      allow read: if false;
+      allow create: if isAuthenticated();
+      allow update, delete: if false;
+      allow read, write: if isCloudFunction();
+    }
+
+    // ============================================
+    // REPORTS
+    // ============================================
+    match /reports/{reportId} {
+      allow create: if isAuthenticated() &&
+        request.resource.data.reporterId == request.auth.uid;
+
+      allow read: if isAuthenticated() &&
+        resource.data.reporterId == request.auth.uid;
+
+      allow update, delete: if false;
+      allow read, write: if isCloudFunction();
+    }
+
+    // ============================================
+    // BLOCKED USERS
+    // ============================================
+    match /blockedUsers/{userId}/blocked/{blockedUserId} {
+      allow read, write: if isOwner(userId);
+      allow read, write: if isCloudFunction();
+    }
+
+    // ============================================
+    // DEFAULT DENY ALL
+    // ============================================
+    match /{document=**} {
+      allow read, write: if false;
+    }
+  }
+}

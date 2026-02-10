@@ -21,10 +21,11 @@ import { signInWithEmailAndPassword } from 'firebase/auth';
 import { auth } from '@/config/firebase';
 import { clearAllUserData } from '@/utils/auth';
 import { CommonActions } from '@react-navigation/native';
-import { resetGuestScanCount } from '@/utils/guest';
+import { resetGuestScanCount, preserveDeviceLockBeforeLogin } from '@/utils/guest';
 import { LinearGradient } from 'expo-linear-gradient';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import * as Haptics from 'expo-haptics';
+import { checkVerificationStatus } from '@/services/auth/verificationService';
 
 export default function SignInScreen({ navigation }) {
   const { t } = useTranslation();
@@ -120,6 +121,10 @@ export default function SignInScreen({ navigation }) {
     setIsLoading(true);
 
     try {
+      // ✅ CRITICAL: Preserve device lock BEFORE login
+      await preserveDeviceLockBeforeLogin();
+      console.log('✅ Device lock preserved before login');
+
       const userCredential = await signInWithEmailAndPassword(
         auth, 
         email.trim().toLowerCase(), 
@@ -127,15 +132,36 @@ export default function SignInScreen({ navigation }) {
       );
       const user = userCredential.user;
 
-      try {
-        await resetGuestScanCount();
-        console.log('✅ Guest scan count reset');
-      } catch (resetError) {
-        console.warn('⚠️ Could not reset guest scan count:', resetError);
-        // Continue anyway - not critical
-      }
+      // ❌ DO NOT reset guest scan count on LOGIN
+      // The device lock should persist when logging into an EXISTING account
+      // Only signup (new accounts) should clear the device lock
 
       console.log('✅ User signed in successfully');
+
+      // Gate unverified accounts to the verification screen
+      let verified = false;
+      try {
+        const verificationResult = await checkVerificationStatus(user.uid);
+        verified = verificationResult.isVerified === true;
+      } catch (verificationError) {
+        console.warn('Verification check failed during sign-in:', verificationError?.message);
+        verified = user.emailVerified === true;
+      }
+
+      if (!verified) {
+        navigation.dispatch(
+          CommonActions.reset({
+            index: 0,
+            routes: [
+              {
+                name: 'VerificationScreen',
+                params: { email: user.email },
+              },
+            ],
+          })
+        );
+        return;
+      }
 
       navigation.dispatch(
         CommonActions.reset({

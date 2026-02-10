@@ -1,4 +1,4 @@
-﻿{
+{
   "common": {
     "welcome": "Bienvenido",
     "guest": "Invitado",
@@ -135,7 +135,10 @@
       "pdfErrorBody": "No se pudo generar el PDF. Inténtalo de nuevo.",
       "signInRequiredTitle": "Necesitas iniciar sesión",
       "signInLikeBody": "Inicia sesión para indicar que te gusta la publicación.",
-      "signInCommentBody": "Inicia sesión para comentar."
+      "signInCommentBody": "Inicia sesión para comentar.",
+      "downloadsUnavailableTitle": "Descargas no disponibles",
+      "downloadsUnavailableBody": "Crea una cuenta gratuita para descargar información de especies.",
+      "downloadLimitCheckErrorBody": "No se pudo verificar el límite de descargas. Inténtalo de nuevo."
     },
     "pdf": {
       "defaultCommon": "Desconocido",
@@ -659,15 +662,19 @@
     "includeDiagnostics": "Incluir diagnósticos",
     "diagnosticsHint": "Nos ayuda a depurar problemas (solo plataforma y sistema operativo).",
     "submit": "Enviar comentarios",
-    "submitting": "Abriendo correo…",
+    "submitting": "Enviando...",
     "footerText": "O envíenos directamente a {{email}}",
     "alerts": {
       "missingInfoTitle": "información faltante",
       "missingInfoMessage": "Por favor agregue un asunto y un mensaje.",
-      "noEmailAppTitle": "No se puede abrir la aplicación de correo electrónico",
-      "noEmailAppMessage": "Envíanos un correo a {{email}} con tus comentarios.",
-      "genericErrorTitle": "algo salió mal",
-      "genericErrorMessage": "Envíanos un correo a {{email}} con tus comentarios."
+      "invalidEmailTitle": "Correo inválido",
+      "invalidEmailMessage": "Ingresa un correo valido o deja el campo vacio.",
+      "noEmailAppTitle": "No se puede enviar comentarios",
+      "noEmailAppMessage": "Intentalo de nuevo mas tarde o escribenos a {{email}}.",
+      "successTitle": "Comentarios enviados",
+      "successMessage": "Gracias por tus comentarios. Los revisaremos pronto.",
+      "genericErrorTitle": "Algo salio mal",
+      "genericErrorMessage": "Intentalo de nuevo mas tarde o escribenos a {{email}}."
     }
   },
   "postDetail": {
@@ -713,6 +720,73 @@
     "delete": "Eliminar",
     "deleteAll": "Eliminar todo"
   },
+  "commentsModal": {
+    "title": "Comentarios",
+    "inputPlaceholder": "Añade un comentario...",
+    "empty": {
+      "title": "Aún no hay comentarios",
+      "subtitle": "¡Sé el primero en comentar!"
+    },
+    "actions": {
+      "cancel": "Cancelar",
+      "delete": "Eliminar"
+    },
+    "alerts": {
+      "loadErrorTitle": "Error",
+      "loadErrorBody": "No se pudieron cargar los comentarios.",
+      "loginRequiredTitle": "Se requiere iniciar sesión",
+      "loginRequiredCommentBody": "Debes iniciar sesión para comentar.",
+      "loginRequiredLikeBody": "Debes iniciar sesión para indicar que te gusta un comentario.",
+      "addErrorTitle": "Error",
+      "addErrorBody": "No se pudo añadir el comentario.",
+      "likeErrorTitle": "Error",
+      "likeErrorBody": "No se pudo indicar que te gusta el comentario.",
+      "deleteTitle": "Eliminar comentario",
+      "deleteConfirmBody": "¿Seguro que quieres eliminar este comentario?",
+      "deleteErrorTitle": "Error",
+      "deleteErrorBody": "No se pudo eliminar el comentario."
+    }
+  },
+  "premiumGate": {
+    "offline": {
+      "title": "Se requiere acceso sin conexión",
+      "historySubtitle": "Suscríbete para acceder al historial sin conexión",
+      "historyDescription": "El acceso sin conexión a tu historial de escaneos es una función premium. Mejora para ver tu historial en cualquier momento y lugar.",
+      "favoritesSubtitle": "Suscríbete para acceder a favoritos sin conexión",
+      "favoritesDescription": "El acceso sin conexión a tus favoritos es una función premium. Mejora para ver tus favoritos en cualquier momento y lugar."
+    },
+    "limits": {
+      "scanTitle": "Límite de escaneos alcanzado",
+      "scanSubtitle": "Has usado los {{limit}} escaneos",
+      "scanDescription": "¡Actualiza a Premium para escaneos ilimitados y más funciones!",
+      "downloadTitle": "Límite de descargas alcanzado",
+      "downloadSubtitle": "Has usado las {{limit}} descargas",
+      "downloadDescription": "¡Actualiza a Premium para descargas ilimitadas!"
+    },
+    "timer": {
+      "resetsInHours": "Se reinicia en {{count}} hora",
+      "resetsInHours_plural": "Se reinicia en {{count}} horas"
+    },
+    "usage": {
+      "scans": "Escaneos:",
+      "downloads": "Descargas:"
+    },
+    "features": {
+      "title": "Beneficios Premium:",
+      "offlineHistory": "Acceso al historial sin conexión",
+      "offlineFavorites": "Acceso a favoritos sin conexión",
+      "unlimitedScans": "Escaneos ilimitados",
+      "unlimitedDownloads": "Descargas ilimitadas"
+    },
+    "pricing": {
+      "amount": "{{amount}}",
+      "period": "por {{days}} días"
+    },
+    "actions": {
+      "upgrade": "Mejorar a Premium",
+      "later": "Quizás después"
+    }
+  },
   "manageNotifications": {
     "title": "Administrar notificaciones",
     "pushNotifications": "Notificaciones push",
@@ -726,6 +800,87 @@
   },
   "history": {
     "title": "Historial",
+    "loading": "Cargando historial...",
+    "loadingMore": "Cargando más...",
+    "signInRequiredTitle": "Se requiere iniciar sesión",
+    "signInRequiredBody": "Crea una cuenta o inicia sesión para ver tu historial de escaneos.",
+    "selection": {
+      "selectedCount": "{{count}} seleccionado",
+      "selectedCount_plural": "{{count}} seleccionados",
+      "deleteButton": "Eliminar {{count}} registro",
+      "deleteButton_plural": "Eliminar {{count}} registros"
+    },
+    "offlineBanner": {
+      "premium": "Modo sin conexión (Premium)",
+      "locked": "El modo sin conexión requiere Premium"
+    },
+    "search": {
+      "placeholder": "Buscar por nombre..."
+    },
+    "filters": {
+      "all": "Todos",
+      "plants": "Plantas",
+      "animals": "Animales"
+    },
+    "empty": {
+      "noHistoryTitle": "Aún no hay historial",
+      "noHistoryBody": "Tu historial de escaneos aparecerá aquí cuando empieces a identificar plantas y animales.",
+      "noResultsTitle": "No se encontraron resultados",
+      "noResultsBody": "Ningún registro coincide con tu búsqueda o filtros. Intenta ajustar tus filtros."
+    },
+    "actions": {
+      "signIn": "Iniciar sesión",
+      "delete": "Eliminar",
+      "clearAll": "Borrar todo",
+      "clearFilters": "Borrar filtros"
+    },
+    "alerts": {
+      "visibilityNow": "El escaneo ahora es {{status}}",
+      "visibilityUpdateFailed": "No se pudo actualizar la visibilidad.",
+      "visibilityNeedsSync": "Este escaneo necesita sincronizarse primero. Inténtalo de nuevo en un momento.",
+      "visibilityOffline": "No puedes cambiar la visibilidad sin conexión. Verifica tu conexión.",
+      "visibilityNotSynced": "Este escaneo aún no se ha sincronizado con la nube. Espera a que se complete la sincronización e inténtalo de nuevo.",
+      "visibilityPermissionDenied": "No tienes permiso para modificar este escaneo.",
+      "visibilityNetworkError": "Error de red. Verifica tu conexión e inténtalo de nuevo.",
+      "errorWithMessage": "Error: {{message}}",
+      "deleteRecordTitle": "Eliminar registro",
+      "deleteRecordMessage": "¿Eliminar \"{{name}}\" del historial?",
+      "deleteRecordSuccess": "Registro eliminado.",
+      "deleteRecordError": "No se pudo eliminar el registro.",
+      "deleteSelectedTitle": "Eliminar seleccionados",
+      "deleteSelectedMessage": "¿Eliminar {{count}} registro del historial?",
+      "deleteSelectedMessage_plural": "¿Eliminar {{count}} registros del historial?",
+      "deleteSelectedSuccess": "{{count}} registro eliminado.",
+      "deleteSelectedSuccess_plural": "{{count}} registros eliminados.",
+      "deleteSelectedError": "No se pudieron eliminar los registros seleccionados.",
+      "clearAllTitle": "Borrar todo el historial",
+      "clearAllMessage": "¿Seguro que quieres eliminar todos los registros del historial? Esta acción no se puede deshacer.",
+      "clearAllSuccess": "Se borró todo el historial.",
+      "clearAllError": "No se pudo borrar el historial."
+    },
+    "visibility": {
+      "public": "público",
+      "private": "privado"
+    },
+    "unknownSpecies": "Especie desconocida",
+    "details": {
+      "commonName": "Nombre común",
+      "scientificName": "Nombre científico",
+      "taxonomicRank": "Rango taxonómico",
+      "type": "Tipo",
+      "conservationStatus": "Estado de conservación",
+      "timesScanned": "Veces escaneado",
+      "timeCount": "{{count}} vez",
+      "timeCount_plural": "{{count}} veces",
+      "globalAppScans": "Escaneos globales en la app",
+      "scanCount": "{{count}} escaneo",
+      "scanCount_plural": "{{count}} escaneos",
+      "scannedOn": "Escaneado el"
+    },
+    "premiumGate": {
+      "title": "Suscríbete para acceder al modo sin conexión",
+      "message": "El acceso sin conexión a tu historial es una función premium. Suscríbete para ver tu historial de escaneos cuando estés sin conexión."
+    },
     "noHistory": "Sin historial aún",
     "startScanning": "Comienza a escanear para construir tu historial",
     "delete": "Eliminar",
@@ -733,6 +888,18 @@
     "deleteConfirm": "¿Estás seguro de que deseas eliminar este elemento?",
     "deleteAllConfirm": "¿Estás seguro de que deseas eliminar todo el historial?",
     "scannedOn": "Escaneado el {{date}}"
+  },
+  "postDetail": {
+    "title": "Publicación",
+    "aboutLabel": "Acerca de",
+    "emptyTitle": "Publicación no encontrada",
+    "alerts": {
+      "postNotFoundTitle": "Error",
+      "postNotFoundBody": "Publicación no encontrada.",
+      "loadErrorTitle": "Error",
+      "loadErrorBody": "No se pudo cargar la publicación.",
+      "likeErrorBody": "No se pudo indicar que te gusta la publicación."
+    }
   },
   "speciesGallery": {
     "title": "Galería",
@@ -781,3 +948,4 @@
     "noData": "Sin datos de escaneo disponibles aún"
   }
 }
+

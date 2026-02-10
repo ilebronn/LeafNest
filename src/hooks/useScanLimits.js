@@ -3,7 +3,8 @@ import { auth } from '@config/firebase';
 import {
   isGuestUser,
   incrementGuestScanCount,
-  getGuestRemainingScans
+  getGuestRemainingScans,
+  markGuestScanAsUsed
 } from '@utils/guest';
 import { 
   decrementScanCount, 
@@ -17,6 +18,8 @@ import {
  * @returns {Object} - Scan limit state and functions
  */
 const useScanLimits = () => {
+  // ✅ SEPARATE STATES: Guest modal vs Premium gate
+  const [showGuestBlockModal, setShowGuestBlockModal] = useState(false);
   const [showPremiumGate, setShowPremiumGate] = useState(false);
   const [usageLimits, setUsageLimits] = useState(null);
   const [isCheckingLimit, setIsCheckingLimit] = useState(false);
@@ -31,7 +34,6 @@ const useScanLimits = () => {
   const checkScanLimit = useCallback(async () => {
     const user = auth.currentUser;
 
-    // If no user, allow scan (shouldn't happen, but fail-safe)
     if (!user) {
       console.warn('⚠️ No user found, allowing scan');
       return true;
@@ -40,37 +42,35 @@ const useScanLimits = () => {
     setIsCheckingLimit(true);
 
     try {
-      // Handle guest users
+      // ✅ Handle guest users - Show GUEST BLOCK MODAL
       if (isGuestUser(user)) {
         const remaining = await getGuestRemainingScans();
         
         if (remaining <= 0) {
-          console.log('❌ Guest user scan limit reached');
-          setShowPremiumGate(true);
+          console.log('❌ Guest user scan limit reached - PERMANENTLY BLOCKED');
+          setShowGuestBlockModal(true); // ✅ Guest-specific modal
           setIsCheckingLimit(false);
           return false;
         }
 
-        console.log(`✅ Guest scan allowed (${remaining} remaining)`);
+        console.log(`✅ Guest scan allowed (${remaining} remaining - LAST CHANCE)`);
         setIsCheckingLimit(false);
         return true;
       }
 
-      // Handle authenticated users
+      // ✅ Handle authenticated users - Show PREMIUM GATE
       const limits = await getUsageLimits(user.uid);
       setUsageLimits(limits);
 
-      // Check if user has unlimited scans
       if (limits.unlimited) {
         console.log('✅ Unlimited scans available');
         setIsCheckingLimit(false);
         return true;
       }
 
-      // Check if user has scans remaining
       if (limits.scansRemaining <= 0) {
         console.log('❌ Scan limit reached');
-        setShowPremiumGate(true);
+        setShowPremiumGate(true); // ✅ Premium gate for normal users
         setIsCheckingLimit(false);
         return false;
       }
@@ -81,7 +81,6 @@ const useScanLimits = () => {
       return true;
     } catch (error) {
       console.error('❌ Error checking scan limit:', error);
-      // Fail-safe: allow scan if check fails
       setIsCheckingLimit(false);
       return true;
     }
@@ -97,7 +96,7 @@ const useScanLimits = () => {
     const user = auth.currentUser;
 
     if (!user || isGuestUser(user)) {
-      return false; // Only for authenticated users
+      return false;
     }
 
     try {
@@ -113,8 +112,9 @@ const useScanLimits = () => {
   }, []);
 
   /**
-   * Handle post-scan logic for guest users
-   * Increments guest scan count and shows upgrade prompt if needed
+   * ✅ Handle post-scan logic for guest users
+   * IMMEDIATELY locks the device permanently after first scan
+   * Then shows upgrade prompt after a delay
    * 
    * @param {Function} navigation - Navigation object
    */
@@ -122,35 +122,38 @@ const useScanLimits = () => {
     const user = auth.currentUser;
 
     if (!isGuestUser(user)) {
-      return; // Not a guest user
+      return;
     }
 
     try {
-      await incrementGuestScanCount();
+      console.log('🔒 Permanently locking device for guest scans...');
+      await markGuestScanAsUsed();
+      
       const remaining = await getGuestRemainingScans();
+      console.log(`📊 Guest scans remaining after lock: ${remaining}`);
 
-      console.log(`📊 Guest scans remaining: ${remaining}`);
-
-      if (remaining === 0) {
-        // Show upgrade prompt after a delay
-        setTimeout(() => {
-          if (navigation && navigation.navigate) {
-            // Use Alert instead of direct navigation for better UX
-            const { Alert } = require('react-native');
-            Alert.alert(
-              "🎉 You've Reached Your Free Scan Limit",
-              "Want unlimited scans? Sign up now to unlock premium features!",
-              [
-                { text: "Maybe Later", style: "cancel" },
-                { 
-                  text: "Sign Up Now", 
-                  onPress: () => navigation.navigate('SignUp') 
+      setTimeout(() => {
+        if (navigation && navigation.navigate) {
+          const { Alert } = require('react-native');
+          Alert.alert(
+            "🎉 You've Used Your Free Scan!",
+            "This device has now used its one-time free scan. Sign up now to unlock unlimited scans!",
+            [
+              { 
+                text: "Maybe Later", 
+                style: "cancel",
+                onPress: () => {
+                  console.log('⚠️ User declined signup - device remains locked');
                 }
-              ]
-            );
-          }
-        }, 2000);
-      }
+              },
+              { 
+                text: "Sign Up Now", 
+                onPress: () => navigation.navigate('SignUp') 
+              }
+            ]
+          );
+        }
+      }, 2000);
     } catch (error) {
       console.error('❌ Error in guest post-scan:', error);
     }
@@ -158,7 +161,6 @@ const useScanLimits = () => {
 
   /**
    * Refresh usage limits from server
-   * Useful after a scan or subscription change
    */
   const refreshUsageLimits = useCallback(async () => {
     const user = auth.currentUser;
@@ -177,21 +179,35 @@ const useScanLimits = () => {
   }, []);
 
   /**
-   * Close premium gate modal
+   * ✅ Close guest block modal
+   */
+  const closeGuestBlockModal = useCallback(() => {
+    setShowGuestBlockModal(false);
+  }, []);
+
+  /**
+   * ✅ Close premium gate modal
    */
   const closePremiumGate = useCallback(() => {
     setShowPremiumGate(false);
   }, []);
 
   /**
-   * Open premium gate modal manually
+   * ✅ Open guest block modal manually
+   */
+  const openGuestBlockModal = useCallback(() => {
+    setShowGuestBlockModal(true);
+  }, []);
+
+  /**
+   * ✅ Open premium gate modal manually
    */
   const openPremiumGate = useCallback(() => {
     setShowPremiumGate(true);
   }, []);
 
   /**
-   * Handle upgrade button press in premium gate
+   * Handle upgrade button press
    * @param {Function} navigation - Navigation object
    */
   const handleUpgrade = useCallback((navigation) => {
@@ -203,8 +219,19 @@ const useScanLimits = () => {
   }, []);
 
   /**
+   * ✅ Handle sign up from guest block modal
+   * @param {Function} navigation - Navigation object
+   */
+  const handleGuestSignUp = useCallback((navigation) => {
+    setShowGuestBlockModal(false);
+    
+    if (navigation && navigation.navigate) {
+      navigation.navigate('SignUp');
+    }
+  }, []);
+
+  /**
    * Get formatted scan limit info for display
-   * @returns {Object} - { hasLimit, scansRemaining, unlimited, message }
    */
   const getScanLimitInfo = useCallback(() => {
     const user = auth.currentUser;
@@ -219,10 +246,9 @@ const useScanLimits = () => {
     }
 
     if (isGuestUser(user)) {
-      // This would need to be async in real usage
       return {
         hasLimit: true,
-        scansRemaining: 0, // Should fetch from getGuestRemainingScans
+        scansRemaining: 0,
         unlimited: false,
         message: 'Guest user - limited scans'
       };
@@ -256,8 +282,6 @@ const useScanLimits = () => {
 
   /**
    * Check if user is approaching scan limit
-   * @param {number} threshold - Threshold to check (default: 5)
-   * @returns {boolean} - True if approaching limit
    */
   const isApproachingLimit = useCallback((threshold = 5) => {
     if (!usageLimits || usageLimits.unlimited) {
@@ -268,7 +292,8 @@ const useScanLimits = () => {
   }, [usageLimits]);
 
   return {
-    // State
+    // ✅ SEPARATE STATES
+    showGuestBlockModal,
     showPremiumGate,
     usageLimits,
     isCheckingLimit,
@@ -278,15 +303,25 @@ const useScanLimits = () => {
     decrementScanCountPostScan,
     handleGuestPostScan,
     refreshUsageLimits,
+    
+    // ✅ SEPARATE CLOSE FUNCTIONS
+    closeGuestBlockModal,
     closePremiumGate,
+    
+    // ✅ SEPARATE OPEN FUNCTIONS
+    openGuestBlockModal,
     openPremiumGate,
+    
+    // ✅ SEPARATE HANDLERS
     handleUpgrade,
+    handleGuestSignUp,
 
     // Getters
     getScanLimitInfo,
     isApproachingLimit,
 
-    // Setters (for manual control if needed)
+    // Setters
+    setShowGuestBlockModal,
     setShowPremiumGate,
     setUsageLimits,
   };

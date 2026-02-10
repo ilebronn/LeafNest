@@ -143,7 +143,7 @@ async function sendBatchPushNotifications(notifications) {
 function getChannelId(type) {
   const channels = {
     like: 'likes',
-    comment: 'likes',
+    comment: 'comments',
     download: 'likes',
     achievement: 'achievements',
     weekly_report: 'default',

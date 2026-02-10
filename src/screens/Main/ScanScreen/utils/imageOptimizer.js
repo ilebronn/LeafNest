@@ -7,38 +7,30 @@ import {
 } from './constants';
 
 /**
- * 🎯 ENHANCED: Analyze image lighting and quality
- * Detects brightness, contrast, blur, and noise
+ * 🎯 FIXED: Removed faulty brightness detection
+ * The previous bytesPerPixel method was unreliable and flagged well-lit images as dark
  */
 const analyzeImageQuality = async (uri) => {
   try {
     // Get basic image info
     const info = await FileSystem.getInfoAsync(uri);
     
-    // Load image to analyze (we'll use a smaller version for speed)
+    // Load image to analyze
     const analyzed = await ImageManipulator.manipulateAsync(
       uri,
       [{ resize: { width: 300 } }],
       { format: ImageManipulator.SaveFormat.JPEG, base64: true }
     );
 
-    // Simple brightness estimation from base64 length and image dimensions
-    // (More sophisticated analysis would require native modules)
-    const pixelCount = analyzed.width * analyzed.height;
-    const fileSize = info.size || 0;
-    const bytesPerPixel = fileSize / pixelCount;
-
-    // Estimate quality metrics
-    const estimatedBrightness = Math.min((bytesPerPixel / 3) * 100, 100);
-    const isTooDark = estimatedBrightness < 30;
-    const isTooBright = estimatedBrightness > 85;
-    const needsAdjustment = isTooDark || isTooBright;
+    // ✅ FIXED: Don't make assumptions about brightness from file size
+    // Without native image processing, we can't reliably detect brightness
+    // Removed faulty brightness estimation that was causing false positives
 
     return {
-      brightness: estimatedBrightness,
-      isTooDark,
-      isTooBright,
-      needsAdjustment,
+      brightness: 50, // Neutral default - we can't reliably detect this
+      isTooDark: false, // Disabled - was causing false positives
+      isTooBright: false, // Disabled - was causing false positives
+      needsAdjustment: false, // Only adjust if we can reliably detect issues
       width: analyzed.width,
       height: analyzed.height
     };
@@ -54,76 +46,50 @@ const analyzeImageQuality = async (uri) => {
 };
 
 /**
- * 🌟 ENHANCED: Auto-adjust image for optimal recognition
- * Normalizes brightness, contrast, and sharpness
+ * 🌟 SIMPLIFIED: Basic image optimization without brightness adjustments
+ * Removed auto-brightness adjustment since we can't reliably detect brightness
  */
 const autoAdjustImage = async (uri, qualityAnalysis) => {
   try {
-    console.log('🎨 Auto-adjusting image...');
+    console.log('🎨 Optimizing image...');
     const manipulations = [];
 
-    // Brightness adjustment
-    if (qualityAnalysis.isTooDark) {
-      console.log('  💡 Boosting brightness (dark image)');
-      // Increase brightness significantly for dark images
-      manipulations.push({ 
-        resize: { width: IMAGE_MAX_WIDTH } 
-      });
-    } else if (qualityAnalysis.isTooBright) {
-      console.log('  🔆 Reducing brightness (overexposed image)');
-      // We'll rely on compression to handle bright images
-      manipulations.push({ 
-        resize: { width: IMAGE_MAX_WIDTH } 
-      });
-    } else {
-      // Normal brightness
-      manipulations.push({ 
-        resize: { width: IMAGE_MAX_WIDTH } 
-      });
-    }
-
-    // Apply manipulations with appropriate settings
-    let compressionQuality = IMAGE_QUALITY;
-    
-    // Adjust compression based on lighting
-    if (qualityAnalysis.isTooDark) {
-      compressionQuality = 0.85; // Higher quality for dark images
-    } else if (qualityAnalysis.isTooBright) {
-      compressionQuality = 0.65; // Lower quality to reduce overexposure
-    }
+    // Standard resize - no brightness adjustments
+    manipulations.push({ 
+      resize: { width: IMAGE_MAX_WIDTH } 
+    });
 
     const result = await ImageManipulator.manipulateAsync(
       uri,
       manipulations,
       {
-        compress: compressionQuality,
+        compress: IMAGE_QUALITY,
         format: ImageManipulator.SaveFormat.JPEG,
         base64: true
       }
     );
 
-    console.log('✅ Auto-adjustment complete');
+    console.log('✅ Optimization complete');
     return result;
 
   } catch (error) {
-    console.error('❌ Auto-adjustment failed:', error);
+    console.error('❌ Optimization failed:', error);
     throw error;
   }
 };
 
 /**
  * 🔍 ENHANCED: Detect blur in image
- * Uses Laplacian variance estimation
+ * Uses file size heuristic
  */
 const detectBlur = async (uri) => {
   try {
-    // For a more accurate blur detection, you'd need native code
-    // This is a simplified estimation based on file size
     const info = await FileSystem.getInfoAsync(uri);
     const sizeKB = (info.size || 0) / 1024;
     
     // Very small files might indicate blur/compression
-    const isBlurry = sizeKB < 50;
+    // ✅ Made threshold more conservative to reduce false positives
+    const isBlurry = sizeKB < 30;
     
     return {
       isBlurry,
@@ -135,7 +101,7 @@ const detectBlur = async (uri) => {
 };
 
 /**
- * 🎯 NEW: Advanced sharpness detection using edge detection estimation
+ * 🎯 Sharpness detection using edge detection estimation
  */
 const detectSharpness = async (uri) => {
   try {
@@ -148,24 +114,26 @@ const detectSharpness = async (uri) => {
 
     // Estimate edge sharpness from base64 length
     const base64Length = thumbnail.base64.length;
-    const expectedLength = thumbnail.width * thumbnail.height * 0.75; // Expected for sharp images
+    const expectedLength = thumbnail.width * thumbnail.height * 0.75;
     
     const sharpnessRatio = base64Length / expectedLength;
-    const isSharp = sharpnessRatio > 0.85;
+    
+    // ✅ Made thresholds more lenient to reduce false positives
+    const isSharp = sharpnessRatio > 0.75; // Was 0.85
     
     return {
       isSharp,
       sharpnessScore: Math.min(sharpnessRatio, 1.0),
-      confidence: isSharp ? 'high' : (sharpnessRatio > 0.70 ? 'medium' : 'low')
+      confidence: isSharp ? 'high' : (sharpnessRatio > 0.60 ? 'medium' : 'low')
     };
   } catch (error) {
     console.warn('⚠️ Sharpness detection failed:', error.message);
-    return { isSharp: true, sharpnessScore: 0.8, confidence: 'medium' };
+    return { isSharp: true, sharpnessScore: 0.8, confidence: 'high' };
   }
 };
 
 /**
- * 🎯 NEW: Detect if image is too zoomed in/out
+ * 🎯 Detect if image is too zoomed in/out
  */
 const detectComposition = async (uri) => {
   try {
@@ -176,14 +144,13 @@ const detectComposition = async (uri) => {
       { format: ImageManipulator.SaveFormat.JPEG }
     );
 
-    // Simple heuristic: very small file = too zoomed in (single color/blur)
-    // Very large file = too much detail/noise
     const fileSize = info.size || 0;
     const sizeMB = fileSize / (1024 * 1024);
     
-    const isTooClose = sizeMB < 0.05;
-    const isTooFar = thumbnail.width < 200 || thumbnail.height < 200;
-    const isGoodComposition = !isTooClose && !isTooFar && sizeMB > 0.1 && sizeMB < 8;
+    // ✅ Made thresholds more lenient
+    const isTooClose = sizeMB < 0.03; // Was 0.05
+    const isTooFar = thumbnail.width < 150 || thumbnail.height < 150; // Was 200
+    const isGoodComposition = !isTooClose && !isTooFar && sizeMB > 0.05 && sizeMB < 10;
 
     return {
       isGoodComposition,
@@ -206,35 +173,19 @@ const detectComposition = async (uri) => {
 };
 
 /**
- * 🎯 ENHANCED: Adaptive brightness adjustment based on quality metrics
+ * 🎯 REMOVED: Adaptive brightness adjustment
+ * This was causing issues with false brightness detection
  */
 const adaptiveBrightnessAdjustment = async (uri, qualityAnalysis) => {
   try {
-    let manipulations = [];
-    let compressionQuality = IMAGE_QUALITY;
-
-    // Calculate brightness adjustment factor
-    const brightnessFactor = qualityAnalysis.brightness / 50; // Normalized to 50% target
-    
-    if (qualityAnalysis.isTooDark) {
-      // Boost very dark images more aggressively
-      const boostLevel = brightnessFactor < 0.4 ? 'high' : 'medium';
-      console.log(`  💡 Applying ${boostLevel} brightness boost`);
-      compressionQuality = 0.88; // Higher quality for dark images
-    } else if (qualityAnalysis.isTooBright) {
-      // Reduce overexposed images
-      console.log('  🔆 Reducing overexposure');
-      compressionQuality = 0.62; // Lower quality helps reduce brightness
-    }
-
-    // Standard resize
-    manipulations.push({ resize: { width: IMAGE_MAX_WIDTH } });
+    // ✅ FIXED: Just do standard optimization without brightness adjustment
+    const manipulations = [{ resize: { width: IMAGE_MAX_WIDTH } }];
 
     const result = await ImageManipulator.manipulateAsync(
       uri,
       manipulations,
       {
-        compress: compressionQuality,
+        compress: IMAGE_QUALITY,
         format: ImageManipulator.SaveFormat.JPEG,
         base64: true
       }
@@ -242,7 +193,7 @@ const adaptiveBrightnessAdjustment = async (uri, qualityAnalysis) => {
 
     return result;
   } catch (error) {
-    console.error('❌ Adaptive adjustment failed:', error);
+    console.error('❌ Image optimization failed:', error);
     throw error;
   }
 };
@@ -259,22 +210,15 @@ export const optimizeImage = async (uri, options = {}) => {
     maxWidth = IMAGE_MAX_WIDTH,
     quality = IMAGE_QUALITY,
     format = IMAGE_FORMAT,
-    autoAdjust = true // NEW: Enable auto-adjustment
+    autoAdjust = true
   } = options;
 
   try {
-    console.log('🖼️ Optimizing image with auto-adjustments...');
+    console.log('🖼️ Optimizing image...');
     const startTime = Date.now();
 
-    // STEP 1: Analyze image quality
+    // STEP 1: Analyze image quality (but don't act on brightness)
     const qualityAnalysis = await analyzeImageQuality(uri);
-    console.log(`📊 Image analysis: brightness=${qualityAnalysis.brightness.toFixed(1)}%`);
-
-    if (qualityAnalysis.isTooDark) {
-      console.log('  ⚠️ Image is too dark - will boost');
-    } else if (qualityAnalysis.isTooBright) {
-      console.log('  ⚠️ Image is too bright - will adjust');
-    }
 
     // STEP 2: Check for blur
     const blurAnalysis = await detectBlur(uri);
@@ -286,25 +230,18 @@ export const optimizeImage = async (uri, options = {}) => {
     const imageInfo = await FileSystem.getInfoAsync(uri);
     const originalSize = imageInfo.size || 0;
 
-    // STEP 3: Apply auto-adjustments if needed
-    let processedImage;
-    if (autoAdjust && qualityAnalysis.needsAdjustment) {
-      // UPDATED: Use adaptive brightness adjustment instead of autoAdjustImage
-      processedImage = await adaptiveBrightnessAdjustment(uri, qualityAnalysis);
-    } else {
-      // Standard optimization without adjustments
-      processedImage = await ImageManipulator.manipulateAsync(
-        uri,
-        [{ resize: { width: maxWidth } }],
-        {
-          compress: quality,
-          format: format === 'jpeg' 
-            ? ImageManipulator.SaveFormat.JPEG 
-            : ImageManipulator.SaveFormat.PNG,
-          base64: true
-        }
-      );
-    }
+    // STEP 3: Standard optimization (no brightness adjustment)
+    const processedImage = await ImageManipulator.manipulateAsync(
+      uri,
+      [{ resize: { width: maxWidth } }],
+      {
+        compress: quality,
+        format: format === 'jpeg' 
+          ? ImageManipulator.SaveFormat.JPEG 
+          : ImageManipulator.SaveFormat.PNG,
+        base64: true
+      }
+    );
 
     const optimizedInfo = await FileSystem.getInfoAsync(processedImage.uri);
     const optimizedSize = optimizedInfo.size || 0;
@@ -330,7 +267,7 @@ export const optimizeImage = async (uri, options = {}) => {
       qualityMetrics: {
         ...qualityAnalysis,
         ...blurAnalysis,
-        wasAdjusted: autoAdjust && qualityAnalysis.needsAdjustment
+        wasAdjusted: false // No longer doing brightness adjustments
       }
     };
   } catch (error) {
@@ -340,7 +277,8 @@ export const optimizeImage = async (uri, options = {}) => {
 };
 
 /**
- * 🎯 NEW: Comprehensive pre-scan quality check
+ * 🎯 FIXED: More conservative pre-scan quality check
+ * Reduced false positives by making detection more lenient
  */
 export const performPreScanQualityCheck = async (uri) => {
   console.log('🔍 Performing pre-scan quality check...');
@@ -357,47 +295,45 @@ export const performPreScanQualityCheck = async (uri) => {
     const warnings = [];
     let overallScore = 100;
 
-    // Check brightness
-    if (quality.isTooDark) {
-      issues.push('Image is too dark - use more lighting');
-      overallScore -= 30;
-    } else if (quality.isTooBright) {
-      issues.push('Image is overexposed - reduce lighting');
-      overallScore -= 25;
-    }
+    // ✅ REMOVED: Brightness checks (were causing false positives)
+    // We can't reliably detect brightness without native code
 
-    // Check blur
+    // Check blur - but only flag severe cases
     if (blur.isBlurry) {
-      issues.push('Image appears blurry - hold camera steady');
-      overallScore -= 35;
+      warnings.push('Image may be slightly blurry - try holding camera steady');
+      overallScore -= 20; // Was 35
     }
 
-    // Check sharpness
-    if (!sharpness.isSharp) {
-      if (sharpness.confidence === 'low') {
-        issues.push('Image lacks detail - focus on subject');
-        overallScore -= 30;
-      } else {
-        warnings.push('Image could be sharper');
-        overallScore -= 10;
-      }
+    // Check sharpness - only flag severe cases
+    if (!sharpness.isSharp && sharpness.confidence === 'low') {
+      warnings.push('Image could be sharper - try focusing on subject');
+      overallScore -= 15; // Was 30
     }
 
-    // Check composition
+    // Check composition - only warn, don't block
     if (!composition.isGoodComposition) {
       warnings.push(composition.recommendation);
-      overallScore -= 15;
+      overallScore -= 10; // Was 15
     }
 
-    const shouldProceed = overallScore >= 50; // Minimum quality threshold
-    const needsWarning = overallScore < 70 && overallScore >= 50;
+    // ✅ MUCH more lenient threshold - only block truly bad images
+    const shouldProceed = overallScore >= 30; // Was 50
+    const needsWarning = overallScore < 70 && overallScore >= 30;
+
+    console.log(`   Quality score: ${overallScore}/100`);
+    if (issues.length > 0) {
+      console.log(`   Issues: ${issues.join(', ')}`);
+    }
+    if (warnings.length > 0) {
+      console.log(`   Warnings: ${warnings.join(', ')}`);
+    }
 
     return {
       shouldProceed,
       needsWarning,
       overallScore,
-      issues,
-      warnings,
+      issues, // Will mostly be empty now
+      warnings, // Moved most issues to warnings
       details: {
         quality,
         blur,
@@ -407,10 +343,11 @@ export const performPreScanQualityCheck = async (uri) => {
     };
   } catch (error) {
     console.error('❌ Pre-scan quality check failed:', error);
+    // Default to allowing the scan if check fails
     return {
       shouldProceed: true,
       needsWarning: false,
-      overallScore: 75,
+      overallScore: 80,
       issues: [],
       warnings: [],
       details: null
@@ -425,12 +362,12 @@ export const normalizeImage = async (uri, source = 'camera') => {
   console.log(`🔄 Normalizing ${source} image for consistent processing...`);
   
   try {
-    // Step 1: Analyze quality
+    // Step 1: Analyze quality (but don't block on it)
     const quality = await analyzeImageQuality(uri);
     
     // Step 2: Apply same optimization regardless of source
     const optimized = await optimizeImage(uri, {
-      autoAdjust: true, // Always auto-adjust
+      autoAdjust: false, // ✅ FIXED: Disabled auto-adjust (it was unreliable)
       maxWidth: IMAGE_MAX_WIDTH,
       quality: IMAGE_QUALITY
     });
@@ -564,7 +501,7 @@ export const validateImage = async (uri, options = {}) => {
         };
       }
 
-      // Check quality
+      // Check quality (but don't block on brightness)
       const quality = await analyzeImageQuality(uri);
       const blur = await detectBlur(uri);
 
@@ -577,7 +514,7 @@ export const validateImage = async (uri, options = {}) => {
           sizeMB: sizeMB.toFixed(2),
           quality: {
             brightness: quality.brightness,
-            needsAdjustment: quality.needsAdjustment,
+            needsAdjustment: false, // Never block on this
             isBlurry: blur.isBlurry
           }
         }

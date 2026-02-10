@@ -11,6 +11,7 @@ import {
 } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import { LinearGradient } from 'expo-linear-gradient';
+import { useTranslation } from 'react-i18next';
 
 const { width } = Dimensions.get('window');
 
@@ -26,6 +27,7 @@ export default function PremiumGate({
   message = null, // ✅ NEW: Custom message
   feature = null, // ✅ NEW: Feature type for customization
 }) {
+  const { t } = useTranslation();
   const getMessage = () => {
     // ✅ Handle custom title/message (for offline access)
     if (title && message) {
@@ -40,18 +42,18 @@ export default function PremiumGate({
     // ✅ Offline-specific messages
     if (limitType === 'offline_history' || feature === 'offline_history') {
       return {
-        title: '🔒 Offline Access Required',
-        subtitle: 'Subscribe to access History offline',
-        description: 'Offline access to your scan history is a premium feature. Upgrade to view your history anytime, anywhere.',
+        title: t('premiumGate.offline.title'),
+        subtitle: t('premiumGate.offline.historySubtitle'),
+        description: t('premiumGate.offline.historyDescription'),
         icon: 'cloud-offline-outline',
       };
     }
 
     if (limitType === 'offline_favorites' || feature === 'offline_favorites') {
       return {
-        title: '🔒 Offline Access Required',
-        subtitle: 'Subscribe to access Favorites offline',
-        description: 'Offline access to your favorites is a premium feature. Upgrade to view your favorites anytime, anywhere.',
+        title: t('premiumGate.offline.title'),
+        subtitle: t('premiumGate.offline.favoritesSubtitle'),
+        description: t('premiumGate.offline.favoritesDescription'),
         icon: 'cloud-offline-outline',
       };
     }
@@ -59,16 +61,16 @@ export default function PremiumGate({
     // Existing messages for scan/download limits
     if (limitType === 'scan') {
       return {
-        title: '🔒 Scan Limit Reached',
-        subtitle: `You've used all 5 scans`,
-        description: `Upgrade to Premium for unlimited scans and more features!`,
+        title: t('premiumGate.limits.scanTitle'),
+        subtitle: t('premiumGate.limits.scanSubtitle', { limit: 5 }),
+        description: t('premiumGate.limits.scanDescription'),
         icon: 'scan',
       };
     } else {
       return {
-        title: '🔒 Download Limit Reached',
-        subtitle: `You've used all 5 downloads`,
-        description: `Upgrade to Premium for unlimited downloads!`,
+        title: t('premiumGate.limits.downloadTitle'),
+        subtitle: t('premiumGate.limits.downloadSubtitle', { limit: 5 }),
+        description: t('premiumGate.limits.downloadDescription'),
         icon: 'download',
       };
     }
@@ -124,7 +126,7 @@ export default function PremiumGate({
               <View style={styles.timerCard}>
                 <Ionicons name="time-outline" size={20} color="#5E936C" />
                 <Text style={styles.timerText}>
-                  Resets in {hoursUntilReset} hours
+                  {t('premiumGate.timer.resetsInHours', { count: hoursUntilReset })}
                 </Text>
               </View>
             )}
@@ -134,12 +136,12 @@ export default function PremiumGate({
               <View style={styles.usageCard}>
                 <View style={styles.usageRow}>
                   <Ionicons name="scan-outline" size={20} color="#666" />
-                  <Text style={styles.usageLabel}>Scans:</Text>
+                  <Text style={styles.usageLabel}>{t('premiumGate.usage.scans')}</Text>
                   <Text style={styles.usageValue}>{scansRemaining}/5</Text>
                 </View>
                 <View style={styles.usageRow}>
                   <Ionicons name="download-outline" size={20} color="#666" />
-                  <Text style={styles.usageLabel}>Downloads:</Text>
+                  <Text style={styles.usageLabel}>{t('premiumGate.usage.downloads')}</Text>
                   <Text style={styles.usageValue}>{downloadsRemaining}/5</Text>
                 </View>
               </View>
@@ -150,7 +152,7 @@ export default function PremiumGate({
 
             {/* Premium Features */}
             <View style={styles.featuresContainer}>
-              <Text style={styles.featuresTitle}>Premium Benefits:</Text>
+              <Text style={styles.featuresTitle}>{t('premiumGate.features.title')}</Text>
               
               {isOfflineFeature && (
                 <>
@@ -158,14 +160,14 @@ export default function PremiumGate({
                     <View style={styles.checkCircle}>
                       <Ionicons name="checkmark" size={16} color="#fff" />
                     </View>
-                    <Text style={styles.featureText}>Offline History access</Text>
+                    <Text style={styles.featureText}>{t('premiumGate.features.offlineHistory')}</Text>
                   </View>
 
                   <View style={styles.feature}>
                     <View style={styles.checkCircle}>
                       <Ionicons name="checkmark" size={16} color="#fff" />
                     </View>
-                    <Text style={styles.featureText}>Offline Favorites access</Text>
+                    <Text style={styles.featureText}>{t('premiumGate.features.offlineFavorites')}</Text>
                   </View>
                 </>
               )}
@@ -174,14 +176,14 @@ export default function PremiumGate({
                 <View style={styles.checkCircle}>
                   <Ionicons name="checkmark" size={16} color="#fff" />
                 </View>
-                <Text style={styles.featureText}>Unlimited scans</Text>
+                <Text style={styles.featureText}>{t('premiumGate.features.unlimitedScans')}</Text>
               </View>
 
               <View style={styles.feature}>
                 <View style={styles.checkCircle}>
                   <Ionicons name="checkmark" size={16} color="#fff" />
                 </View>
-                <Text style={styles.featureText}>Unlimited downloads</Text>
+                <Text style={styles.featureText}>{t('premiumGate.features.unlimitedDownloads')}</Text>
               </View>
 
               {!isOfflineFeature && (
@@ -190,14 +192,14 @@ export default function PremiumGate({
                     <View style={styles.checkCircle}>
                       <Ionicons name="checkmark" size={16} color="#fff" />
                     </View>
-                    <Text style={styles.featureText}>Offline favorites access</Text>
+                    <Text style={styles.featureText}>{t('premiumGate.features.offlineFavorites')}</Text>
                   </View>
 
                   <View style={styles.feature}>
                     <View style={styles.checkCircle}>
                       <Ionicons name="checkmark" size={16} color="#fff" />
                     </View>
-                    <Text style={styles.featureText}>Offline history access</Text>
+                    <Text style={styles.featureText}>{t('premiumGate.features.offlineHistory')}</Text>
                   </View>
                 </>
               )}
@@ -208,8 +210,12 @@ export default function PremiumGate({
 
             {/* Pricing */}
             <View style={styles.pricingCard}>
-              <Text style={styles.pricingAmount}>₱99</Text>
-              <Text style={styles.pricingPeriod}>for 30 days</Text>
+              <Text style={styles.pricingAmount}>
+                {t('premiumGate.pricing.amount', { amount: '₱99' })}
+              </Text>
+              <Text style={styles.pricingPeriod}>
+                {t('premiumGate.pricing.period', { days: 30 })}
+              </Text>
             </View>
 
             {/* Upgrade Button */}
@@ -225,7 +231,7 @@ export default function PremiumGate({
                 end={{ x: 1, y: 0 }}
               >
                 <Ionicons name="rocket" size={24} color="#fff" />
-                <Text style={styles.upgradeText}>Upgrade to Premium</Text>
+                <Text style={styles.upgradeText}>{t('premiumGate.actions.upgrade')}</Text>
               </LinearGradient>
             </TouchableOpacity>
 
@@ -234,7 +240,7 @@ export default function PremiumGate({
               style={styles.laterButton}
               onPress={onClose}
             >
-              <Text style={styles.laterText}>Maybe Later</Text>
+              <Text style={styles.laterText}>{t('premiumGate.actions.later')}</Text>
             </TouchableOpacity>
 
             <View style={{ height: 20 }} />
@@ -445,3 +451,4 @@ const styles = StyleSheet.create({
     color: '#9CA3AF',
   },
 });
+

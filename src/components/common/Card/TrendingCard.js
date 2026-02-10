@@ -4,6 +4,7 @@ import { View, Text, StyleSheet, TouchableOpacity, Image } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import { LinearGradient } from 'expo-linear-gradient';
 import { getIconForTaxon, getGradientForTaxon } from '../../../utils/auth/taxonHelpers';
+import { pickSpeciesName } from '@utils/text/speciesName';
 
 export default function TrendingCard({ item, index, onPress, t }) {
   const gradient = getGradientForTaxon(item.iconicTaxon);
@@ -49,7 +50,8 @@ export default function TrendingCard({ item, index, onPress, t }) {
 
         <View style={styles.trendingInfo}>
           <Text style={styles.trendingName} numberOfLines={2}>
-            {item.commonName || item.name || item.scientificName || t('home.feed.unknownSpecies')}
+            {pickSpeciesName(item.commonName, item.name, item.scientificName) ||
+              t('home.feed.unknownSpecies')}
           </Text>
           <View style={styles.trendingStats}>
             <View style={styles.trendingStat}>

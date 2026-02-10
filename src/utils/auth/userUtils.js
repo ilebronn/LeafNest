@@ -113,29 +113,51 @@ export const migrateLegacyFavoritesIfNeeded = async (uid) => {
   }
 };
 
+/**
+ * ✅ FIXED: Clear user data but PRESERVE device lock and favorites
+ * This is called on login/logout to clean up user-specific data
+ * 
+ * CRITICAL: Never clear these keys:
+ * - @guest_scan_used_PERMANENT_DEVICE (device lock)
+ * - @guest_first_scan_timestamp_PERMANENT_DEVICE (when device was locked)
+ * - favorites_user_* (user favorites)
+ */
 export const clearAllUserData = async () => {
   try {
     // Clear username from AsyncStorage
     await clearUsername();
     
-    // Clear any other user-related data from AsyncStorage, but preserve favorites
+    // Get all keys
     const keys = await AsyncStorage.getAllKeys();
-    const userKeys = keys.filter(key => 
-      (key.includes('user') || 
-       key.includes('profile') || 
-       key.includes('username') ||
-       key.includes('@username')) &&
-      !key.startsWith('favorites_user_') // Preserve user favorites
-    );
+    
+    // ✅ CRITICAL: Filter out keys to clear, but PRESERVE:
+    // 1. Guest scan device lock (PERMANENT)
+    // 2. User favorites
+    const userKeys = keys.filter(key => {
+      // ✅ NEVER clear guest scan keys - these are PERMANENT device locks
+      if (key === '@guest_scan_used_PERMANENT_DEVICE') return false;
+      if (key === '@guest_first_scan_timestamp_PERMANENT_DEVICE') return false;
+      
+      // ✅ Preserve user favorites
+      if (key.startsWith('favorites_user_')) return false;
+      
+      // Clear everything else that looks like user data
+      return (
+        key.includes('user') || 
+        key.includes('profile') || 
+        key.includes('username') ||
+        key.includes('@username')
+      );
+    });
     
     if (userKeys.length > 0) {
       await AsyncStorage.multiRemove(userKeys);
+      console.log('✅ User data cleared, device lock preserved');
     }
     
-    console.log('All user data cleared successfully, favorites preserved');
     return true;
   } catch (error) {
-    console.error('Error clearing user data:', error);
+    console.error('❌ Error clearing user data:', error);
     return false;
   }
 };

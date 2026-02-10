@@ -1,4 +1,4 @@
-﻿{
+{
   "common": {
     "welcome": "Welcome",
     "guest": "Guest",
@@ -76,7 +76,10 @@
       "pdfErrorBody": "Failed to generate PDF. Please try again.",
       "signInRequiredTitle": "Sign in required",
       "signInLikeBody": "Please sign in to like posts.",
-      "signInCommentBody": "Please sign in to comment."
+      "signInCommentBody": "Please sign in to comment.",
+      "downloadsUnavailableTitle": "Downloads Unavailable",
+      "downloadsUnavailableBody": "Please sign up for a free account to download species information.",
+      "downloadLimitCheckErrorBody": "Failed to check download limit. Please try again."
     },
     "pdf": {
       "defaultCommon": "Unknown",
@@ -595,15 +598,19 @@
     "includeDiagnostics": "Include diagnostics",
     "diagnosticsHint": "Helps us debug issues (platform & OS only).",
     "submit": "Send Feedback",
-    "submitting": "Opening Mail…",
+    "submitting": "Sending...",
     "footerText": "Or email us directly at {{email}}",
     "alerts": {
       "missingInfoTitle": "Missing info",
       "missingInfoMessage": "Please add a subject and message.",
-      "noEmailAppTitle": "Cannot open email app",
-      "noEmailAppMessage": "Please email us at {{email}} with your feedback.",
+      "invalidEmailTitle": "Invalid email",
+      "invalidEmailMessage": "Please enter a valid email address or leave it blank.",
+      "noEmailAppTitle": "Cannot send feedback",
+      "noEmailAppMessage": "Please try again later or email us at {{email}}.",
+      "successTitle": "Feedback sent",
+      "successMessage": "Thanks for your feedback! We'll review it soon.",
       "genericErrorTitle": "Something went wrong",
-      "genericErrorMessage": "Please email us at {{email}} with your feedback."
+      "genericErrorMessage": "Please try again later or email us at {{email}}."
     }
   },
   "postDetail": {
@@ -649,6 +656,73 @@
     "delete": "Delete",
     "deleteAll": "Delete all"
   },
+  "commentsModal": {
+    "title": "Comments",
+    "inputPlaceholder": "Add a comment...",
+    "empty": {
+      "title": "No comments yet",
+      "subtitle": "Be the first to comment!"
+    },
+    "actions": {
+      "cancel": "Cancel",
+      "delete": "Delete"
+    },
+    "alerts": {
+      "loadErrorTitle": "Error",
+      "loadErrorBody": "Failed to load comments.",
+      "loginRequiredTitle": "Login required",
+      "loginRequiredCommentBody": "You must be logged in to comment.",
+      "loginRequiredLikeBody": "You must be logged in to like comments.",
+      "addErrorTitle": "Error",
+      "addErrorBody": "Failed to add comment.",
+      "likeErrorTitle": "Error",
+      "likeErrorBody": "Failed to like comment.",
+      "deleteTitle": "Delete comment",
+      "deleteConfirmBody": "Are you sure you want to delete this comment?",
+      "deleteErrorTitle": "Error",
+      "deleteErrorBody": "Failed to delete comment."
+    }
+  },
+  "premiumGate": {
+    "offline": {
+      "title": "Offline access required",
+      "historySubtitle": "Subscribe to access history offline",
+      "historyDescription": "Offline access to your scan history is a premium feature. Upgrade to view your history anytime, anywhere.",
+      "favoritesSubtitle": "Subscribe to access favorites offline",
+      "favoritesDescription": "Offline access to your favorites is a premium feature. Upgrade to view your favorites anytime, anywhere."
+    },
+    "limits": {
+      "scanTitle": "Scan limit reached",
+      "scanSubtitle": "You've used all {{limit}} scans",
+      "scanDescription": "Upgrade to Premium for unlimited scans and more features!",
+      "downloadTitle": "Download limit reached",
+      "downloadSubtitle": "You've used all {{limit}} downloads",
+      "downloadDescription": "Upgrade to Premium for unlimited downloads!"
+    },
+    "timer": {
+      "resetsInHours": "Resets in {{count}} hour",
+      "resetsInHours_plural": "Resets in {{count}} hours"
+    },
+    "usage": {
+      "scans": "Scans:",
+      "downloads": "Downloads:"
+    },
+    "features": {
+      "title": "Premium benefits:",
+      "offlineHistory": "Offline history access",
+      "offlineFavorites": "Offline favorites access",
+      "unlimitedScans": "Unlimited scans",
+      "unlimitedDownloads": "Unlimited downloads"
+    },
+    "pricing": {
+      "amount": "{{amount}}",
+      "period": "for {{days}} days"
+    },
+    "actions": {
+      "upgrade": "Upgrade to Premium",
+      "later": "Maybe later"
+    }
+  },
   "manageNotifications": {
     "title": "Manage Notifications",
     "pushNotifications": "Push Notifications",
@@ -662,6 +736,86 @@
   },
   "history": {
     "title": "History",
+    "loading": "Loading history...",
+    "loadingMore": "Loading more...",
+    "signInRequiredTitle": "Sign in required",
+    "signInRequiredBody": "Create an account or sign in to view your scan history.",
+    "selection": {
+      "selectedCount": "{{count}} selected",
+      "deleteButton": "Delete {{count}} record",
+      "deleteButton_plural": "Delete {{count}} records"
+    },
+    "offlineBanner": {
+      "premium": "Offline mode (Premium)",
+      "locked": "Offline mode requires Premium"
+    },
+    "search": {
+      "placeholder": "Search by name..."
+    },
+    "filters": {
+      "all": "All",
+      "plants": "Plants",
+      "animals": "Animals"
+    },
+    "empty": {
+      "noHistoryTitle": "No history yet",
+      "noHistoryBody": "Your species scan history will appear here once you start identifying plants and animals.",
+      "noResultsTitle": "No results found",
+      "noResultsBody": "No records match your search or filter criteria. Try adjusting your filters."
+    },
+    "actions": {
+      "signIn": "Sign in",
+      "delete": "Delete",
+      "clearAll": "Clear all",
+      "clearFilters": "Clear filters"
+    },
+    "alerts": {
+      "visibilityNow": "Scan is now {{status}}",
+      "visibilityUpdateFailed": "Failed to update visibility.",
+      "visibilityNeedsSync": "This scan needs to sync first. Please try again in a moment.",
+      "visibilityOffline": "Cannot change visibility while offline. Please check your connection.",
+      "visibilityNotSynced": "This scan hasn't been synced to the cloud yet. Please wait for sync to complete and try again.",
+      "visibilityPermissionDenied": "You don't have permission to modify this scan.",
+      "visibilityNetworkError": "Network error. Please check your connection and try again.",
+      "errorWithMessage": "Error: {{message}}",
+      "deleteRecordTitle": "Delete record",
+      "deleteRecordMessage": "Delete \"{{name}}\" from history?",
+      "deleteRecordSuccess": "Record deleted.",
+      "deleteRecordError": "Failed to delete record.",
+      "deleteSelectedTitle": "Delete selected",
+      "deleteSelectedMessage": "Delete {{count}} record from history?",
+      "deleteSelectedMessage_plural": "Delete {{count}} records from history?",
+      "deleteSelectedSuccess": "{{count}} record deleted.",
+      "deleteSelectedSuccess_plural": "{{count}} records deleted.",
+      "deleteSelectedError": "Failed to delete selected records.",
+      "clearAllTitle": "Clear all history",
+      "clearAllMessage": "Are you sure you want to delete all history records? This action cannot be undone.",
+      "clearAllSuccess": "All history cleared.",
+      "clearAllError": "Failed to clear history."
+    },
+    "visibility": {
+      "public": "public",
+      "private": "private"
+    },
+    "unknownSpecies": "Unknown species",
+    "details": {
+      "commonName": "Common name",
+      "scientificName": "Scientific name",
+      "taxonomicRank": "Taxonomic rank",
+      "type": "Type",
+      "conservationStatus": "Conservation status",
+      "timesScanned": "Times scanned",
+      "timeCount": "{{count}} time",
+      "timeCount_plural": "{{count}} times",
+      "globalAppScans": "Global app scans",
+      "scanCount": "{{count}} scan",
+      "scanCount_plural": "{{count}} scans",
+      "scannedOn": "Scanned on"
+    },
+    "premiumGate": {
+      "title": "Subscribe to access offline mode",
+      "message": "Offline access to your history is a premium feature. Subscribe to view your scan history when you're offline."
+    },
     "noHistory": "No history yet",
     "startScanning": "Start scanning to build your history",
     "delete": "Delete",
@@ -669,6 +823,18 @@
     "deleteConfirm": "Are you sure you want to delete this item?",
     "deleteAllConfirm": "Are you sure you want to delete all history?",
     "scannedOn": "Scanned on {{date}}"
+  },
+  "postDetail": {
+    "title": "Post",
+    "aboutLabel": "About",
+    "emptyTitle": "Post not found",
+    "alerts": {
+      "postNotFoundTitle": "Error",
+      "postNotFoundBody": "Post not found.",
+      "loadErrorTitle": "Error",
+      "loadErrorBody": "Failed to load post.",
+      "likeErrorBody": "Failed to like post."
+    }
   },
   "speciesGallery": {
     "title": "Gallery",

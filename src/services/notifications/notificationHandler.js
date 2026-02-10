@@ -1,7 +1,6 @@
 // notificationHandler.js - Handle incoming push notifications
 import * as Notifications from 'expo-notifications';
 import { useEffect, useRef } from 'react';
-import { useNavigation } from '@react-navigation/native';
 import { Platform } from 'react-native';
 
 /**
@@ -13,47 +12,80 @@ Notifications.setNotificationHandler({
     console.log('📬 Notification received:', notification);
     
     return {
+      // Expo SDK 54 prefers banner/list flags; keep alert for compatibility
+      shouldShowAlert: true,
       shouldShowBanner: true,
       shouldShowList: true,
       shouldPlaySound: true,
       shouldSetBadge: true,
-      priority: Notifications.AndroidNotificationPriority.HIGH,
+      priority: Notifications.AndroidNotificationPriority.MAX,
     };
   },
 });
 
 /**
  * Configure notification channel for Android
+ * ✅ CRITICAL: This must be called BEFORE any notifications are received
  */
 export const setupNotificationChannel = async () => {
   if (Platform.OS === 'android') {
-    await Notifications.setNotificationChannelAsync('default', {
-      name: 'Default',
-      importance: Notifications.AndroidImportance.MAX,
-      vibrationPattern: [0, 250, 250, 250],
-      lightColor: '#5E936C',
-      sound: 'default',
-      enableVibrate: true,
-      showBadge: true,
-    });
+    try {
+      // Default channel - HIGH priority for banners
+      await Notifications.setNotificationChannelAsync('default', {
+        name: 'Default Notifications',
+        importance: Notifications.AndroidImportance.MAX, // ✅ MAX for heads-up
+        vibrationPattern: [0, 250, 250, 250],
+        lightColor: '#5E936C',
+        sound: 'default',
+        enableVibrate: true,
+        showBadge: true,
+        enableLights: true,
+        lockscreenVisibility: Notifications.AndroidNotificationVisibility.PUBLIC, // ✅ Show on lockscreen
+      });
 
-    await Notifications.setNotificationChannelAsync('likes', {
-      name: 'Likes & Interactions',
-      importance: Notifications.AndroidImportance.DEFAULT,
-      vibrationPattern: [0, 250, 250, 250],
-      lightColor: '#FF3B30',
-      sound: 'default',
-    });
+      // Likes & Interactions channel
+      await Notifications.setNotificationChannelAsync('likes', {
+        name: 'Likes & Interactions',
+        importance: Notifications.AndroidImportance.HIGH, // ✅ HIGH for banner
+        vibrationPattern: [0, 250, 250, 250],
+        lightColor: '#FF3B30',
+        sound: 'default',
+        enableVibrate: true,
+        showBadge: true,
+        enableLights: true,
+        lockscreenVisibility: Notifications.AndroidNotificationVisibility.PUBLIC,
+      });
 
-    await Notifications.setNotificationChannelAsync('achievements', {
-      name: 'Achievements',
-      importance: Notifications.AndroidImportance.HIGH,
-      vibrationPattern: [0, 250, 250, 250],
-      lightColor: '#FFD700',
-      sound: 'default',
-    });
+      // Achievements channel - MAX priority for celebrations
+      await Notifications.setNotificationChannelAsync('achievements', {
+        name: 'Achievements',
+        importance: Notifications.AndroidImportance.MAX, // ✅ MAX for heads-up
+        vibrationPattern: [0, 250, 250, 250],
+        lightColor: '#FFD700',
+        sound: 'default',
+        enableVibrate: true,
+        showBadge: true,
+        enableLights: true,
+        lockscreenVisibility: Notifications.AndroidNotificationVisibility.PUBLIC,
+      });
 
-    console.log('✅ Android notification channels configured');
+      // Comments channel
+      await Notifications.setNotificationChannelAsync('comments', {
+        name: 'Comments',
+        importance: Notifications.AndroidImportance.HIGH,
+        vibrationPattern: [0, 250, 250, 250],
+        lightColor: '#007AFF',
+        sound: 'default',
+        enableVibrate: true,
+        showBadge: true,
+        enableLights: true,
+        lockscreenVisibility: Notifications.AndroidNotificationVisibility.PUBLIC,
+      });
+
+      console.log('✅ Android notification channels configured with MAX priority');
+    } catch (error) {
+      console.error('❌ Error setting up notification channels:', error);
+    }
   }
 };
 
@@ -61,12 +93,10 @@ export const setupNotificationChannel = async () => {
  * Hook to handle notification events
  */
 export const useNotificationHandler = () => {
-  const navigation = useNavigation();
   const notificationListener = useRef();
-  const responseListener = useRef();
 
   useEffect(() => {
-    // Setup notification channels
+    // ✅ Setup notification channels IMMEDIATELY
     setupNotificationChannel();
 
     // Listen for notifications received while app is foregrounded
@@ -78,102 +108,36 @@ export const useNotificationHandler = () => {
       }
     );
 
-    // Listen for user tapping on notification
-    responseListener.current = Notifications.addNotificationResponseReceivedListener(
-      (response) => {
-        console.log('👆 Notification tapped:', response);
-        const data = response.notification.request.content.data;
-        handleNotificationNavigation(data, navigation);
-      }
-    );
-
-    // ✅ FIXED: Cleanup listeners on unmount
+    // Cleanup listeners on unmount
     return () => {
       if (notificationListener.current) {
-        notificationListener.current.remove(); // ✅ CHANGED FROM removeNotificationSubscription
-      }
-      if (responseListener.current) {
-        responseListener.current.remove(); // ✅ CHANGED FROM removeNotificationSubscription
+        notificationListener.current.remove();
       }
     };
-  }, [navigation]);
-};
-
-/**
- * Handle navigation based on notification type
- */
-const handleNotificationNavigation = (data, navigation) => {
-  try {
-    console.log('📱 Navigating based on notification data:', data);
-
-    // Navigate to post detail if postId exists
-    if (data.postId) {
-      navigation.navigate('PostDetailScreen', { postId: data.postId });
-      return;
-    }
-
-    // Navigate based on notification type
-    switch (data.type) {
-      case 'like':
-      case 'comment':
-      case 'download':
-        if (data.postId) {
-          navigation.navigate('PostDetailScreen', { postId: data.postId });
-        } else {
-          navigation.navigate('NotificationScreen');
-        }
-        break;
-
-      case 'achievement':
-        navigation.navigate('ScanStats');
-        break;
-
-      case 'weekly_report':
-        navigation.navigate('ScanStats');
-        break;
-
-      case 'tip':
-        navigation.navigate('NotificationScreen');
-        break;
-
-      case 'system':
-        navigation.navigate('NotificationScreen');
-        break;
-
-      case 'follow':
-        if (data.userId) {
-          navigation.navigate('Profile', { userId: data.userId });
-        } else {
-          navigation.navigate('NotificationScreen');
-        }
-        break;
-
-      default:
-        navigation.navigate('NotificationScreen');
-        break;
-    }
-  } catch (error) {
-    console.error('❌ Error navigating from notification:', error);
-    navigation.navigate('NotificationScreen');
-  }
+  }, []);
 };
 
 /**
  * Schedule a local notification (for testing or offline notifications)
+ * ✅ FIXED: Added proper Android channel and priority
  */
 export const scheduleLocalNotification = async (title, body, data = {}, seconds = 1) => {
   try {
+    const channelId = getChannelId(data.type);
+    
     const notificationId = await Notifications.scheduleNotificationAsync({
       content: {
         title: title,
         body: body,
         data: data,
         sound: 'default',
-        priority: Notifications.AndroidNotificationPriority.HIGH,
+        priority: Notifications.AndroidNotificationPriority.MAX, // ✅ MAX priority
         vibrate: [0, 250, 250, 250],
+        categoryIdentifier: channelId, // ✅ Use proper channel
       },
       trigger: {
         seconds: seconds,
+        channelId: channelId, // ✅ Specify channel for Android
       },
     });
 
@@ -183,6 +147,23 @@ export const scheduleLocalNotification = async (title, body, data = {}, seconds 
     console.error('❌ Error scheduling local notification:', error);
     return { success: false, error: error.message };
   }
+};
+
+/**
+ * Get notification channel ID based on type
+ */
+const getChannelId = (type) => {
+  const channels = {
+    like: 'likes',
+    comment: 'comments',
+    download: 'likes',
+    achievement: 'achievements',
+    weekly_report: 'default',
+    tip: 'default',
+    system: 'default',
+  };
+
+  return channels[type] || 'default';
 };
 
 /**

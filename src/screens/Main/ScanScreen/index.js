@@ -1,15 +1,17 @@
-import React, { useRef, useEffect, useCallback } from 'react';
+import React, { useRef, useEffect, useCallback, useState } from 'react';
 import { View, Text, TouchableOpacity, Alert, ActivityIndicator } from 'react-native';
 import { CameraView, useCameraPermissions } from 'expo-camera';
 import { Ionicons } from '@expo/vector-icons';
 import { GestureHandlerRootView, PinchGestureHandler } from 'react-native-gesture-handler';
+import { useFocusEffect } from '@react-navigation/native';
 import * as ImagePicker from 'expo-image-picker';
-import * as FileSystem from 'expo-file-system/legacy'; // Use legacy API
+import * as FileSystem from 'expo-file-system/legacy';
 import { auth } from '@config/firebase';
-import { isGuestUser } from '@utils/guest';
+import { isGuestUser, hasGuestReachedLimit } from '@utils/guest';
 
 // Components
 import { PremiumGate } from '@components/modals';
+import GuestBlockModal from '@components/modals/GuestBlockModal'; // ✅ NEW
 
 // Hooks
 import useCameraControls from '@hooks/useCameraControls';
@@ -22,16 +24,10 @@ import styles from './ScanScreen.styles';
 /**
  * ScanScreen Component
  * Main screen for scanning and identifying plant/animal species
- * 
- * Features:
- * - Camera capture with zoom, flash, and autofocus controls
- * - Gallery image selection
- * - Species identification using Vision API, PlantNet, and iNaturalist
- * - Caching for faster results
- * - Usage limits and premium gate for subscriptions
  */
 export default function ScanScreen({ navigation }) {
   const cameraRef = useRef(null);
+  const [isGuestBlocked, setIsGuestBlocked] = useState(false);
 
   // Camera permissions
   const [permission, requestPermission] = useCameraPermissions();
@@ -53,13 +49,21 @@ export default function ScanScreen({ navigation }) {
   } = useCameraControls();
 
   const {
+    // ✅ SEPARATE STATES
+    showGuestBlockModal,
     showPremiumGate,
     usageLimits,
     checkScanLimit,
     decrementScanCountPostScan,
     handleGuestPostScan,
+    // ✅ SEPARATE CLOSE FUNCTIONS
+    closeGuestBlockModal,
     closePremiumGate,
+    // ✅ SEPARATE HANDLERS
     handleUpgrade,
+    handleGuestSignUp,
+    // Setters
+    setShowGuestBlockModal,
   } = useScanLimits();
 
   const {
@@ -68,30 +72,65 @@ export default function ScanScreen({ navigation }) {
     initializeCache,
     handleCameraCapture,
     handleGalleryImage,
-    setDecrementScanCount, // ✅ NEW: Get the setter function
+    setDecrementScanCount,
   } = useImageProcessing();
 
-  // ✅ NEW: Pass the decrement function to useImageProcessing on mount
   useEffect(() => {
     if (decrementScanCountPostScan) {
       setDecrementScanCount(decrementScanCountPostScan);
     }
   }, [decrementScanCountPostScan, setDecrementScanCount]);
 
-  // Initialize cache on mount
   useEffect(() => {
     initializeCache();
   }, [initializeCache]);
 
   /**
-   * Handle camera capture button press
+   * ✅ Check guest limit EVERY TIME screen is focused
+   */
+  useFocusEffect(
+    useCallback(() => {
+      const checkGuestStatus = async () => {
+        const user = auth.currentUser;
+        
+        if (isGuestUser(user)) {
+          const isBlocked = await hasGuestReachedLimit();
+          
+          if (isBlocked) {
+            console.log('🚫 Guest user is PERMANENTLY BLOCKED');
+            setIsGuestBlocked(true);
+            setShowGuestBlockModal(true); // ✅ Show guest modal
+          } else {
+            setIsGuestBlocked(false);
+          }
+        } else {
+          setIsGuestBlocked(false);
+        }
+      };
+
+      checkGuestStatus();
+    }, [setShowGuestBlockModal])
+  );
+
+  /**
+   * Handle camera capture
    */
   const onCapturePress = async () => {
     if (!isCameraReady || !cameraRef.current || isProcessing) {
       return;
     }
 
-    // ✅ Check scan limits BEFORE scanning
+    // ✅ Double-check guest block
+    const user = auth.currentUser;
+    if (isGuestUser(user)) {
+      const isBlocked = await hasGuestReachedLimit();
+      if (isBlocked) {
+        console.log('🚫 Scan blocked - guest already used free scan');
+        setShowGuestBlockModal(true);
+        return;
+      }
+    }
+
     const canScan = await checkScanLimit();
     if (!canScan) {
       return;
@@ -105,7 +144,6 @@ export default function ScanScreen({ navigation }) {
         exif: true,
       });
 
-      // ✅ The decrement will happen automatically in useImageProcessing after success
       await handleCameraCapture(
         photo,
         navigation,
@@ -118,15 +156,25 @@ export default function ScanScreen({ navigation }) {
   };
 
   /**
-   * Handle gallery image picker
+   * Handle gallery picker
    */
   const onGalleryPress = async () => {
     if (isProcessing) {
       return;
     }
 
+    // ✅ Double-check guest block
+    const user = auth.currentUser;
+    if (isGuestUser(user)) {
+      const isBlocked = await hasGuestReachedLimit();
+      if (isBlocked) {
+        console.log('🚫 Gallery blocked - guest already used free scan');
+        setShowGuestBlockModal(true);
+        return;
+      }
+    }
+
     try {
-      // Request permissions
       const { status } = await ImagePicker.requestMediaLibraryPermissionsAsync();
 
       if (status !== 'granted') {
@@ -138,7 +186,6 @@ export default function ScanScreen({ navigation }) {
         return;
       }
 
-      // Launch image picker
       const result = await ImagePicker.launchImageLibraryAsync({
         mediaTypes: ImagePicker.MediaTypeOptions.Images,
         allowsEditing: true,
@@ -153,7 +200,6 @@ export default function ScanScreen({ navigation }) {
 
       const selectedImage = result.assets[0];
 
-      // Get base64 if not provided
       if (!selectedImage.base64) {
         const base64 = await FileSystem.readAsStringAsync(selectedImage.uri, {
           encoding: FileSystem.EncodingType.Base64,
@@ -161,13 +207,11 @@ export default function ScanScreen({ navigation }) {
         selectedImage.base64 = base64;
       }
 
-      // ✅ Check scan limits BEFORE scanning
       const canScan = await checkScanLimit();
       if (!canScan) {
         return;
       }
 
-      // ✅ The decrement will happen automatically in useImageProcessing after success
       await handleGalleryImage(
         selectedImage,
         navigation,
@@ -179,15 +223,12 @@ export default function ScanScreen({ navigation }) {
     }
   };
 
-  /**
-   * Handle back button press
-   */
   const onBackPress = () => {
     navigation.navigate('MainTabs', { screen: 'Home' });
   };
 
   // ===========================
-  // RENDER: LOADING STATE
+  // RENDER: LOADING
   // ===========================
   if (!permission) {
     return (
@@ -237,7 +278,6 @@ export default function ScanScreen({ navigation }) {
     <GestureHandlerRootView style={{ flex: 1 }}>
       <PinchGestureHandler onGestureEvent={handlePinchGesture}>
         <View style={styles.container}>
-          {/* Camera View */}
           <CameraView
             style={styles.camera}
             facing="back"
@@ -248,21 +288,16 @@ export default function ScanScreen({ navigation }) {
             autofocus={autofocus}
           />
 
-          {/* Back Button */}
           <TouchableOpacity style={styles.backButton} onPress={onBackPress}>
             <Ionicons name="arrow-back" size={28} color="#fff" />
           </TouchableOpacity>
 
-          {/* Right Controls (Flash & Autofocus) */}
           <View style={styles.rightControls}>
             <TouchableOpacity style={styles.controlButton} onPress={toggleFlash}>
               <Ionicons name={getFlashIcon()} size={24} color="#fff" />
             </TouchableOpacity>
-
-            
           </View>
 
-          {/* Zoom Controls */}
           <View style={styles.zoomContainer}>
             <TouchableOpacity style={styles.zoomButton} onPress={handleZoomOut}>
               <Ionicons name="remove" size={20} color="#fff" />
@@ -277,7 +312,6 @@ export default function ScanScreen({ navigation }) {
             </TouchableOpacity>
           </View>
 
-          {/* Scan Frame */}
           <View style={styles.scanFrame}>
             <View style={[styles.corner, styles.topLeft]} />
             <View style={[styles.corner, styles.topRight]} />
@@ -294,14 +328,18 @@ export default function ScanScreen({ navigation }) {
                 <ActivityIndicator size="large" color="#5E936C" />
                 <Text style={styles.processingText}>Analyzing...</Text>
                 <Text style={styles.processingSubtext}>{processingStage}</Text>
-                {processingStage.includes('database') && (
-                  <Text style={styles.processingHint}>Using optimized search...</Text>
-                )}
               </View>
             </View>
           )}
 
-          {/* Premium Gate Modal */}
+          {/* ✅ GUEST BLOCK MODAL - For guest users only */}
+          <GuestBlockModal
+            visible={showGuestBlockModal}
+            onClose={closeGuestBlockModal}
+            onSignUp={() => handleGuestSignUp(navigation)}
+          />
+
+          {/* ✅ PREMIUM GATE - For normal users who ran out of scans */}
           <PremiumGate
             visible={showPremiumGate}
             onClose={closePremiumGate}
@@ -312,25 +350,26 @@ export default function ScanScreen({ navigation }) {
             downloadsRemaining={usageLimits?.downloadsRemaining || 0}
           />
 
-          {/* Bottom Action Buttons */}
+          {/* Bottom Buttons */}
           <View style={styles.buttonContainer}>
-            {/* Gallery Button */}
             <TouchableOpacity
-              style={[styles.galleryButton, isProcessing && styles.buttonDisabled]}
+              style={[
+                styles.galleryButton,
+                (isProcessing || isGuestBlocked) && styles.buttonDisabled
+              ]}
               onPress={onGalleryPress}
-              disabled={isProcessing}
+              disabled={isProcessing || isGuestBlocked}
             >
               <Ionicons name="images" size={26} color="#fff" />
             </TouchableOpacity>
 
-            {/* Capture Button */}
             <TouchableOpacity
               style={[
                 styles.button,
-                (!isCameraReady || isProcessing) && styles.buttonDisabled,
+                (!isCameraReady || isProcessing || isGuestBlocked) && styles.buttonDisabled,
               ]}
               onPress={onCapturePress}
-              disabled={!isCameraReady || isProcessing}
+              disabled={!isCameraReady || isProcessing || isGuestBlocked}
             >
               {isProcessing ? (
                 <ActivityIndicator size={32} color="#666" />
@@ -338,12 +377,11 @@ export default function ScanScreen({ navigation }) {
                 <Ionicons
                   name="camera"
                   size={32}
-                  color={isCameraReady ? '#000' : '#666'}
+                  color={isCameraReady && !isGuestBlocked ? '#000' : '#666'}
                 />
               )}
             </TouchableOpacity>
 
-            {/* Placeholder for symmetry */}
             <View style={styles.placeholderButton} />
           </View>
         </View>

@@ -6,6 +6,14 @@ import {
   CACHE_STORAGE_KEY
 } from './constants';
 
+// Candidate scores can be 0-1 or 0-100 depending on source; normalize to percent.
+const toPercentScore = (score) => {
+  const n = Number(score);
+  if (!Number.isFinite(n) || n <= 0) return 0;
+  if (n <= 1.5) return Math.min(n * 100, 100);
+  return Math.min(n, 100);
+};
+
 /**
  * SpeciesCache - Manages in-memory and persistent caching of species data
  * Features:
@@ -155,7 +163,7 @@ class SpeciesCache {
         // Return cached data with updated confidence from current scan
         return {
           ...cached,
-          confidence: Math.round(candidate.score),
+          confidence: Math.round(toPercentScore(candidate.score)),
           source: 'cache'
         };
       }

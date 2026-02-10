@@ -12,6 +12,16 @@ import {
   MAX_CONFIDENCE_DISPLAY
 } from '@screens/Main/ScanScreen/utils/constants';
 
+// Scores may come in as 0-1 (unit) or 0-100 (percent). Normalize defensively.
+const toUnitScore = (score) => {
+  const n = Number(score);
+  if (!Number.isFinite(n) || n <= 0) return 0;
+  if (n > 1) return Math.min(n / 100, 1);
+  return Math.min(n, 1);
+};
+
+const toPercentScore = (score) => Math.round(toUnitScore(score) * 1000) / 10;
+
 /**
  * 📊 Get species suggestions based on location and date
  * Useful for showing "commonly seen in your area" suggestions
@@ -172,7 +182,7 @@ export const calculateEnhancedConfidence = (sources) => {
 
   // 1. Vision API Score
   if (visionScore !== null && visionScore !== undefined) {
-    const normalizedScore = visionScore * 100;
+    const normalizedScore = toPercentScore(visionScore);
     totalScore += normalizedScore * weights.vision;
     totalWeight += weights.vision;
     sourceCount++;
@@ -181,7 +191,7 @@ export const calculateEnhancedConfidence = (sources) => {
 
   // 2. PlantNet Score
   if (plantNetScore !== null && plantNetScore !== undefined) {
-    const normalizedScore = plantNetScore * 100;
+    const normalizedScore = toPercentScore(plantNetScore);
     totalScore += normalizedScore * weights.plantnet;
     totalWeight += weights.plantnet;
     sourceCount++;
@@ -190,7 +200,7 @@ export const calculateEnhancedConfidence = (sources) => {
 
   // 3. iNaturalist Search Score
   if (iNatScore !== null && iNatScore !== undefined) {
-    const normalizedScore = iNatScore > 1 ? iNatScore : iNatScore * 100;
+    const normalizedScore = iNatScore > 1 ? Math.min(Number(iNatScore) || 0, 100) : toPercentScore(iNatScore);
     totalScore += normalizedScore * weights.inat;
     totalWeight += weights.inat;
     sourceCount++;

@@ -39,8 +39,10 @@
       "edgeToEdgeEnabled": true,
       "permissions": [
         "ACCESS_COARSE_LOCATION",
-        "ACCESS_FINE_LOCATION"
-      ]
+        "ACCESS_FINE_LOCATION",
+        "POST_NOTIFICATIONS"
+      ],
+      "googleServicesFile": "./google-services.json"
     },
     "web": {
       "favicon": "./assets/favicon.png"
@@ -59,7 +61,10 @@
         {
           "icon": "./src/assets/images/logos/icon.png",
           "color": "#5E936C",
-          "sounds": []
+          "sounds": [],
+          "mode": "production",
+          "androidMode": "default",
+          "androidCollapsedTitle": "#{unread_notifications} new notifications"
         }
       ],
       [
@@ -68,6 +73,12 @@
           "locationAlwaysAndWhenInUsePermission": "Allow $(PRODUCT_NAME) to use your location to suggest species commonly found in your area."
         }
       ]
-    ]
+    ],
+    "notification": {
+      "icon": "./src/assets/images/logos/icon.png",
+      "color": "#5E936C",
+      "androidMode": "default",
+      "androidCollapsedTitle": "#{unread_notifications} new interactions"
+    }
   }
 }

@@ -5,6 +5,23 @@ import { db, doc, setDoc, getDoc } from '@config/firebase';
 // Storage keys
 const CLAIMED_BORDERS_KEY = (uid) => `claimed_borders_${uid}`;
 const ACTIVE_BORDER_KEY = (uid) => `active_border_${uid}`;
+const PUBLIC_REWARDS_DOC = (uid) => doc(db, 'users', uid, 'profile', 'publicRewards');
+
+const updatePublicRewards = async (userId, patch) => {
+  try {
+    if (!userId || userId === 'guest') return;
+    await setDoc(
+      PUBLIC_REWARDS_DOC(userId),
+      {
+        ...patch,
+        updatedAt: new Date().toISOString(),
+      },
+      { merge: true }
+    );
+  } catch (error) {
+    console.warn('Failed to update public rewards:', error?.message);
+  }
+};
 
 // ==================== ENHANCED BORDER DEFINITIONS ====================
 
@@ -292,10 +309,36 @@ export const syncBordersFromFirestore = async (userId) => {
         } else {
           await AsyncStorage.removeItem(activeKey);
         }
+
+        await updatePublicRewards(userId, { activeBorder: data.activeBorder || null });
       }
 
       console.log('✅ Borders synced from Firestore');
       return { success: true };
+    }
+
+    // No Firestore data yet: push local data up so other devices can see it
+    const claimedKey = CLAIMED_BORDERS_KEY(userId);
+    const activeKey = ACTIVE_BORDER_KEY(userId);
+    const localClaimedRaw = await AsyncStorage.getItem(claimedKey);
+    const localActiveRaw = await AsyncStorage.getItem(activeKey);
+    const localClaimedBorders = localClaimedRaw ? JSON.parse(localClaimedRaw) : [];
+    const localActiveBorder = localActiveRaw || null;
+
+    if (localClaimedBorders.length > 0 || localActiveBorder) {
+      await setDoc(
+        borderDataRef,
+        {
+          claimedBorders: localClaimedBorders,
+          activeBorder: localActiveBorder,
+          lastUpdated: new Date().toISOString(),
+        },
+        { merge: true }
+      );
+
+      await updatePublicRewards(userId, { activeBorder: localActiveBorder || null });
+      console.log('Borders synced from local storage');
+      return { success: true, source: 'local' };
     }
 
     return { success: false, error: 'No border data found' };

@@ -1,4 +1,4 @@
-﻿// screens/User/ProfileScreen/index.js - WITH BADGE DISPLAY
+﻿// screens/User/ProfileScreen/index.js - WITH BADGE DISPLAY & DEVICE LOCK RESTORATION
 import React, { useEffect, useState } from 'react';
 import { 
   View, 
@@ -21,9 +21,10 @@ import { useTranslation } from 'react-i18next';
 import { getScanStats, syncPendingScans } from '@services/scanning/scanStatsService';
 import { getUserSubscription } from '@services/subscription/subscriptionService';
 import ProfileBorder from '@components/common/ProfileBorder/ProfileBorder';
-import { getActiveBorder } from '@services/rewards/borderRewardService';
-import ProfileBadge from '@components/common/ProfileBadge/ProfileBadge'; // ✅ NEW
-import { getActiveBadge } from '@services/rewards/badgeRewardService'; // ✅ NEW
+import { getActiveBorder, syncBordersFromFirestore } from '@services/rewards/borderRewardService';
+import ProfileBadge from '@components/common/ProfileBadge/ProfileBadge';
+import { getActiveBadge, syncBadgesFromFirestore } from '@services/rewards/badgeRewardService';
+import { restoreDeviceLockAfterLogout } from '@utils/guest'; // ✅ NEW
 
 const { width } = Dimensions.get('window');
 
@@ -51,7 +52,7 @@ export default function ProfileScreen({ route, navigation }) {
   
   // Border & Badge state
   const [activeBorder, setActiveBorder] = useState(null);
-  const [activeBadge, setActiveBadge] = useState(null); // ✅ NEW
+  const [activeBadge, setActiveBadge] = useState(null);
 
   useEffect(() => {
     const user = auth.currentUser;
@@ -82,7 +83,7 @@ export default function ProfileScreen({ route, navigation }) {
         setStats({ totalScans: 0, weekScans: 0, uniqueSpecies: 0 });
         setSubscription(null);
         setActiveBorder(null);
-        setActiveBadge(null); // ✅ Clear badge for guest
+        setActiveBadge(null);
       } else if (user) {
         setUsername(user.displayName || t('common.welcome'));
         setEmail(user.email || t('common.loading'));
@@ -92,7 +93,7 @@ export default function ProfileScreen({ route, navigation }) {
         await loadStats(user.uid);
         await loadSubscription(user.uid);
         await loadActiveBorder(user.uid);
-        await loadActiveBadge(user.uid); // ✅ Load active badge
+        await loadActiveBadge(user.uid);
       }
     };
     
@@ -106,7 +107,7 @@ export default function ProfileScreen({ route, navigation }) {
       if (user && !isGuest) {
         await loadSubscription(user.uid);
         await loadActiveBorder(user.uid);
-        await loadActiveBadge(user.uid); // ✅ Reload badge
+        await loadActiveBadge(user.uid);
       }
     });
 
@@ -115,6 +116,7 @@ export default function ProfileScreen({ route, navigation }) {
 
   const loadActiveBorder = async (userId) => {
     try {
+      await syncBordersFromFirestore(userId);
       const result = await getActiveBorder(userId);
       if (result.success && result.border) {
         setActiveBorder(result.border);
@@ -128,9 +130,9 @@ export default function ProfileScreen({ route, navigation }) {
     }
   };
 
-  // ✅ NEW: Load active badge
   const loadActiveBadge = async (userId) => {
     try {
+      await syncBadgesFromFirestore(userId);
       const result = await getActiveBadge(userId);
       if (result.success && result.badge) {
         setActiveBadge(result.badge);
@@ -270,14 +272,27 @@ export default function ProfileScreen({ route, navigation }) {
           style: 'destructive',
           onPress: async () => {
             try {
+              console.log('🔓 Logging out user...');
+              
+              // Sign out from Firebase
               await signOut(auth);
+              
+              // ✅ CRITICAL: Restore device lock AFTER logout
+              await restoreDeviceLockAfterLogout();
+              console.log('✅ Device lock restored after logout');
+              
+              // Clear user data
               await clearAllUserData();
+              
+              console.log('✅ Logout successful');
+              
+              // Navigate to login screen
               navigation.reset({
                 index: 0,
                 routes: [{ name: 'Login' }],
               });
             } catch (error) {
-              console.error('Sign out error:', error);
+              console.error('❌ Sign out error:', error);
               Alert.alert(t('common.error'), t('profile.alerts.signOutError'));
             }
           },
@@ -324,36 +339,35 @@ export default function ProfileScreen({ route, navigation }) {
         </View>
 
         {/* Profile Avatar Section with Border & Badge */}
-       <View style={styles.profileHeader}>
-  <View style={styles.avatarContainer}>
-    {activeBorder ? (
-      <ProfileBorder border={activeBorder} size={100}>
-        {profilePicture ? (
-          <Image source={{ uri: profilePicture }} style={styles.avatar} />
-        ) : (
-          <View style={styles.avatarPlaceholder}>
-            <Text style={styles.avatarText}>
-              {username ? username.charAt(0).toUpperCase() : 'G'}
-            </Text>
+        <View style={styles.profileHeader}>
+          <View style={styles.avatarContainer}>
+            {activeBorder ? (
+              <ProfileBorder border={activeBorder} size={100}>
+                {profilePicture ? (
+                  <Image source={{ uri: profilePicture }} style={styles.avatar} />
+                ) : (
+                  <View style={styles.avatarPlaceholder}>
+                    <Text style={styles.avatarText}>
+                      {username ? username.charAt(0).toUpperCase() : 'G'}
+                    </Text>
+                  </View>
+                )}
+              </ProfileBorder>
+            ) : (
+              // No border - simple white circle
+              <View style={styles.simpleAvatarWrapper}>
+                {profilePicture ? (
+                  <Image source={{ uri: profilePicture }} style={styles.avatar} />
+                ) : (
+                  <View style={styles.avatarPlaceholder}>
+                    <Text style={styles.avatarText}>
+                      {username ? username.charAt(0).toUpperCase() : 'G'}
+                    </Text>
+                  </View>
+                )}
+              </View>
+            )}
           </View>
-        )}
-      </ProfileBorder>
-    ) : (
-      // No border - simple white circle
-      <View style={styles.simpleAvatarWrapper}>
-        {profilePicture ? (
-          <Image source={{ uri: profilePicture }} style={styles.avatar} />
-        ) : (
-          <View style={styles.avatarPlaceholder}>
-            <Text style={styles.avatarText}>
-              {username ? username.charAt(0).toUpperCase() : 'G'}
-            </Text>
-          </View>
-        )}
-      </View>
-    )}
-  </View>
-    
           
           <View style={styles.userInfo}>
             {isEditing ? (
@@ -399,7 +413,7 @@ export default function ProfileScreen({ route, navigation }) {
                   )}
                 </View>
                 
-                {/* ✅ NEW: Display Active Badge */}
+                {/* Display Active Badge */}
                 {activeBadge && !isGuest && (
                   <View style={styles.badgeContainer}>
                     <ProfileBadge badge={activeBadge} size="medium" showName={true} />
@@ -615,11 +629,17 @@ const styles = StyleSheet.create({
     position: 'relative',
     marginBottom: 15,
   },
+  simpleAvatarWrapper: {
+    width: 100,
+    height: 100,
+    borderRadius: 50,
+    overflow: 'hidden',
+  },
   avatar: {
     width: 100,
     height: 100,
     borderRadius: 50,
-    overflow: 'hidden', // Ensures image is clipped
+    overflow: 'hidden',
   },
   avatarPlaceholder: {
     width: 100,
@@ -628,14 +648,14 @@ const styles = StyleSheet.create({
     backgroundColor: '#fff',
     justifyContent: 'center',
     alignItems: 'center',
-    overflow: 'hidden', // Critical: clips the container to circle
+    overflow: 'hidden',
   },
   avatarText: {
     fontSize: 42,
     fontWeight: '700',
     color: '#5E936C',
-    includeFontPadding: false, // Android: removes extra padding
-    textAlignVertical: 'center', // Android: centers text
+    includeFontPadding: false,
+    textAlignVertical: 'center',
   },
   userInfo: {
     alignItems: 'center',
@@ -659,7 +679,6 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center',
   },
-  // ✅ NEW: Badge display styles
   badgeContainer: {
     marginTop: 8,
     marginBottom: 4,

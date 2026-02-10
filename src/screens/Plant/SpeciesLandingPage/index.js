@@ -400,6 +400,9 @@ export default function SpeciesLandingPage({ route, navigation }) {
 
   const scrollY = useRef(new Animated.Value(0)).current;
   const scaleAnim = useRef(new Animated.Value(0)).current;
+  const speechQueueRef = useRef([]);
+  const isStoppingSpeechRef = useRef(false);
+  const isMountedRef = useRef(true);
 
   const DESCRIPTION_PREVIEW_LENGTH = 500;
 
@@ -411,11 +414,23 @@ export default function SpeciesLandingPage({ route, navigation }) {
       useNativeDriver: true,
     }).start();
 
-    saveToHistory();
+    if (!route?.params?.skipHistorySave) {
+      saveToHistory();
+    } else {
+      console.log('Skipping history save (already saved in flow)');
+    }
+
     checkIfFavorited();
     
     // ✅ OFFLINE LOGIC: Check if offline and handle accordingly
     handleDataLoading();
+  }, []);
+
+  useEffect(() => {
+    return () => {
+      isMountedRef.current = false;
+      Speech.stop();
+    };
   }, []);
 
   // ✅ NEW: Handle data loading (online or offline)
@@ -820,21 +835,159 @@ export default function SpeciesLandingPage({ route, navigation }) {
     }
   };
 
+  const isMeaningfulInfo = (value, notAvailableText) =>
+    !!value && value !== notAvailableText;
+
+  const buildSpeechText = () => {
+    const parts = [];
+    const nameParts = [commonName, scientificName].filter(Boolean);
+    const uniqueNames = nameParts.filter(
+      (name, index) => nameParts.findIndex(n => n.toLowerCase() === name.toLowerCase()) === index
+    );
+
+    if (uniqueNames.length > 0) {
+      parts.push(uniqueNames.join('. '));
+    }
+
+    const descriptionBase = fullDescription || cleanAboutText;
+    if (descriptionBase) {
+      parts.push(descriptionBase);
+    }
+
+    if (isMeaningfulInfo(additionalInfo.habitat, 'Habitat information not available')) {
+      parts.push(`Habitat: ${additionalInfo.habitat}`);
+    }
+
+    if (isMeaningfulInfo(additionalInfo.distribution, 'Distribution information not available')) {
+      parts.push(`Distribution: ${additionalInfo.distribution}`);
+    }
+
+    if (isMeaningfulInfo(additionalInfo.behavior, 'Behavior information not available')) {
+      parts.push(`Behavior: ${additionalInfo.behavior}`);
+    }
+
+    if (conservation) {
+      parts.push(`Conservation status: ${conservation}`);
+    }
+
+    if (isMeaningfulInfo(additionalInfo.uses, 'Usage information not available')) {
+      parts.push(`Uses: ${additionalInfo.uses}`);
+    }
+
+    return stripHtmlTags(parts.join('. ')).replace(/\s+/g, ' ').trim();
+  };
+
+  const splitTextForSpeech = (text, maxLength = 900) => {
+    if (!text) return [];
+    const sentences = text.match(/[^.!?]+[.!?]+|[^.!?]+$/g) || [text];
+    const chunks = [];
+    let current = '';
+
+    for (const sentence of sentences) {
+      const trimmed = sentence.trim();
+      if (!trimmed) continue;
+
+      const nextCandidate = current ? `${current} ${trimmed}` : trimmed;
+      if (nextCandidate.length <= maxLength) {
+        current = nextCandidate;
+        continue;
+      }
+
+      if (current) {
+        chunks.push(current.trim());
+        current = '';
+      }
+
+      if (trimmed.length <= maxLength) {
+        current = trimmed;
+        continue;
+      }
+
+      let remaining = trimmed;
+      while (remaining.length > maxLength) {
+        const slice = remaining.slice(0, maxLength);
+        let cutIndex = slice.lastIndexOf(' ');
+        if (cutIndex < maxLength * 0.4) {
+          cutIndex = maxLength;
+        }
+        chunks.push(remaining.slice(0, cutIndex).trim());
+        remaining = remaining.slice(cutIndex).trim();
+      }
+      current = remaining;
+    }
+
+    if (current) {
+      chunks.push(current.trim());
+    }
+
+    return chunks;
+  };
+
+  const speakNextChunk = () => {
+    if (!isMountedRef.current || isStoppingSpeechRef.current) return;
+
+    const nextChunk = speechQueueRef.current.shift();
+    if (!nextChunk) {
+      setIsSpeaking(false);
+      return;
+    }
+
+    Speech.speak(nextChunk, {
+      language: 'en',
+      pitch: 1,
+      rate: 0.85,
+      onDone: () => {
+        if (!isStoppingSpeechRef.current) {
+          speakNextChunk();
+        }
+      },
+      onStopped: () => {
+        if (isMountedRef.current) {
+          setIsSpeaking(false);
+        }
+      },
+      onError: (error) => {
+        console.warn('Speech error:', error);
+        speechQueueRef.current = [];
+        if (isMountedRef.current) {
+          setIsSpeaking(false);
+        }
+      },
+    });
+  };
+
+  const stopSpeech = () => {
+    isStoppingSpeechRef.current = true;
+    speechQueueRef.current = [];
+    Speech.stop();
+    if (isMountedRef.current) {
+      setIsSpeaking(false);
+    }
+  };
+
   const handleSpeech = () => {
     if (isSpeaking) {
-      Speech.stop();
-    } else {
-      const fullText = `${commonName || scientificName}. ${fullDescription}. 
-        Habitat: ${additionalInfo.habitat}. 
-        Distribution: ${additionalInfo.distribution}.`;
-      
-      Speech.speak(fullText, {
-        language: 'en',
-        pitch: 1,
-        rate: 0.75,
-      });
+      stopSpeech();
+      return;
     }
-    setIsSpeaking(!isSpeaking);
+
+    const speechText = buildSpeechText();
+    if (!speechText) {
+      Alert.alert('No Text Available', 'Please wait for the description to load.');
+      return;
+    }
+
+    Speech.stop();
+    isStoppingSpeechRef.current = false;
+    speechQueueRef.current = splitTextForSpeech(speechText);
+
+    if (speechQueueRef.current.length === 0) {
+      Alert.alert('No Text Available', 'Please wait for the description to load.');
+      return;
+    }
+
+    setIsSpeaking(true);
+    speakNextChunk();
   };
 
   const toggleFavorite = async () => {
@@ -888,6 +1041,7 @@ export default function SpeciesLandingPage({ route, navigation }) {
           rank: rank,
           iconicTaxon: iconicTaxon,
           taxonId: taxonId,
+          imageUri: photoUri,
           imageUrl: displayImageUri,
           type: 'species',
         };
@@ -911,7 +1065,7 @@ export default function SpeciesLandingPage({ route, navigation }) {
   };
 
   const handleBackPress = () => {
-    Speech.stop();
+    stopSpeech();
     navigation.goBack();
   };
 

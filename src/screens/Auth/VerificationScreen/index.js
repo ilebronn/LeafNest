@@ -18,7 +18,7 @@ import { useTranslation } from 'react-i18next';
 import { LinearGradient } from 'expo-linear-gradient';
 import { CommonActions } from '@react-navigation/native';
 import { useEmailVerification } from '@hooks/useEmailVerification';
-import { auth } from '@config/firebase';
+import { auth, signOut } from '@config/firebase';
 
 const { width, height } = Dimensions.get('window');
 
@@ -32,6 +32,7 @@ export default function VerificationScreen({ navigation, route }) {
   
   const currentUser = auth.currentUser;
   const userId = currentUser?.uid;
+  const effectiveEmail = email || currentUser?.email || '';
 
   const {
     code,
@@ -46,9 +47,31 @@ export default function VerificationScreen({ navigation, route }) {
     formatTime,
     handleVerify,
     handleResend,
-  } = useEmailVerification(userId, email);
+  } = useEmailVerification(userId, effectiveEmail);
 
   const [codeFocused, setCodeFocused] = useState(false);
+
+  const handleBackPress = async () => {
+    if (navigation.canGoBack()) {
+      navigation.goBack();
+      return;
+    }
+
+    try {
+      if (auth.currentUser) {
+        await signOut(auth);
+      }
+    } catch (error) {
+      console.warn('Sign out on back failed:', error?.message);
+    } finally {
+      navigation.dispatch(
+        CommonActions.reset({
+          index: 0,
+          routes: [{ name: 'Login' }],
+        })
+      );
+    }
+  };
 
   // Navigate to main app when verified
   useEffect(() => {
@@ -127,7 +150,7 @@ export default function VerificationScreen({ navigation, route }) {
           >
             <TouchableOpacity
               style={styles.backButton}
-              onPress={() => navigation.goBack()}
+              onPress={handleBackPress}
             >
               <View style={styles.backButtonInner}>
                 <Ionicons name="arrow-back" size={moderateScale(24)} color="white" />
@@ -145,7 +168,7 @@ export default function VerificationScreen({ navigation, route }) {
               </View>
               <Text style={styles.title}>Verify Your Email</Text>
               <Text style={styles.subtitle}>We've sent a 6-digit code to</Text>
-              <Text style={styles.emailText}>{email}</Text>
+              <Text style={styles.emailText}>{effectiveEmail}</Text>
             </View>
 
             <View style={styles.formContainer}>

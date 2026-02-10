@@ -46,30 +46,44 @@ export default function SignUpScreen({ navigation }) {
     setIsLoading(true);
 
     try {
+      console.log('📝 Creating new account...');
+      
       await clearAllUserData();
+      
+      // Create user account
       const userCredential = await createUserWithEmailAndPassword(auth, email, password);
       const user = userCredential.user;
+      
+      // Update profile with username
       await updateProfile(user, { displayName: username });
       
+      // Create Firestore profile
       const profileResult = await createUserProfile(user.uid, email, username);
       if (!profileResult.success) {
         console.warn('Failed to create user profile in Firestore:', profileResult.error);
       }
 
-      // 🆕 SEND VERIFICATION CODE (ADDITIVE)
+      // Send verification code
       const verificationResult = await sendVerificationCode(user.uid, email);
       if (!verificationResult.success) {
         console.warn('Failed to send verification code:', verificationResult.error);
       }
 
+      // Send email verification
       await sendEmailVerification(user);
-      await resetGuestScanCount();
+      
+      // ✅ CRITICAL: Clear device lock after successful signup
+      // Set username
       await setUsername(username);
       
-      // 🆕 NAVIGATE TO VERIFICATION SCREEN INSTEAD OF MAIN TABS
+      console.log('✅ Signup successful');
+      
+      // Navigate to verification screen
       navigation.navigate('VerificationScreen', { email });
       
     } catch (error) {
+      console.error('❌ Signup error:', error);
+      
       if (error.code === 'auth/email-already-in-use') {
         Alert.alert(t('common.error'), t('signup.emailAlreadyInUse'));
       } else if (error.code === 'auth/invalid-email') {

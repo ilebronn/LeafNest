@@ -6,6 +6,16 @@
 import { getWithRetry, inaturalistRateLimiter } from './apiHelpers';
 import { searchINaturalistByNames, identifyWithPlantNet } from './speciesIdentification';
 
+// Scores may come in as 0-1 (unit) or 0-100 (percent). Normalize defensively.
+const toUnitScore = (score) => {
+  const n = Number(score);
+  if (!Number.isFinite(n) || n <= 0) return 0;
+  if (n > 1) return Math.min(n / 100, 1);
+  return Math.min(n, 1);
+};
+
+const toPercentScore = (score) => Math.round(toUnitScore(score) * 1000) / 10;
+
 /**
  * 🧬 IMPROVED: Detect if image contains a human with stricter criteria
  */
@@ -14,70 +24,100 @@ export const detectHuman = (visionCandidates) => {
     return null;
   }
 
-  // ✅ STRICTER: More specific human keywords that won't match animals
-  const humanKeywords = [
-    'selfie', 'portrait', 'person', 'people', 'human', 'man', 'woman', 
-    'child', 'boy', 'girl', 'face', 'head',
-    'chin', 'cheek', 'forehead', 'smile', 'beard', 'mustache',
-    'hand', 'arm', 'finger', 'leg', 'foot', 'body',
-    'clothing', 'shirt', 'dress', 'pants', 'shoes', 'glasses'
+  // Stricter: require strong + supporting human signals
+  const strongHumanKeywords = [
+    'person', 'people', 'human', 'man', 'woman', 'child', 'boy', 'girl'
   ];
 
-  // ❌ EXCLUDE: Animal-related keywords that might contain "face" or "head"
+  const supportingHumanKeywords = [
+    'selfie', 'portrait', 'face', 'head', 'chin', 'cheek', 'forehead', 'smile',
+    'beard', 'mustache', 'eye', 'eyes', 'nose', 'mouth', 'lips', 'ear', 'teeth',
+    'hair'
+  ];
+
+  // Animal indicators (disqualifiers)
   const animalKeywords = [
     'cat', 'dog', 'bird', 'fish', 'animal', 'pet', 'wildlife',
-    'feline', 'canine', 'fur', 'whiskers', 'paw', 'tail', 'beak',
-    'feather', 'scale', 'claw', 'snout', 'muzzle', 'wing'
+    'feline', 'canine', 'fur', 'whisker', 'whiskers', 'paw', 'tail', 'beak',
+    'feather', 'scale', 'claw', 'snout', 'muzzle', 'wing', 'hoof', 'antler'
   ];
 
-  // Get top 5 candidates
-  const topCandidates = visionCandidates.slice(0, 5);
-  
-  // Count human vs animal matches
-  let humanScore = 0;
+  // Object indicators (avoid false positives on furniture/tools/footwear)
+  const objectKeywords = [
+    'chair', 'table', 'desk', 'sofa', 'couch', 'furniture',
+    'scale', 'tool', 'device', 'machine', 'appliance',
+    'instrument', 'equipment', 'gadget', 'clock', 'meter', 'gauge', 'dial',
+    'shoe', 'shoes', 'sneaker', 'sneakers', 'footwear', 'boot', 'boots',
+    'sock', 'socks', 'lace', 'laces', 'shoelace', 'shoelaces',
+    'sole', 'insole', 'insoles', 'tread'
+  ];
+
+  const topCandidates = visionCandidates.slice(0, 7);
+
+  let strongScore = 0;
+  let supportingScore = 0;
+  let strongHits = 0;
+  let supportingHits = 0;
   let animalScore = 0;
+  let objectScore = 0;
 
   topCandidates.forEach(candidate => {
     const text = (candidate.name || '').toLowerCase();
-    const score = candidate.score || 0;
+    const score = toUnitScore(candidate.score);
 
-    // Check for human keywords
-    const humanMatches = humanKeywords.filter(keyword => text.includes(keyword));
-    if (humanMatches.length > 0) {
-      humanScore += score * humanMatches.length;
+    const hasStrongHuman = strongHumanKeywords.some(keyword => text.includes(keyword));
+    if (hasStrongHuman && score >= 0.55) {
+      strongScore += score;
+      strongHits += 1;
     }
 
-    // Check for animal keywords (disqualifiers)
-    const animalMatches = animalKeywords.filter(keyword => text.includes(keyword));
-    if (animalMatches.length > 0) {
-      animalScore += score * animalMatches.length * 2; // Weight animal matches higher
+    const hasSupportingHuman = supportingHumanKeywords.some(keyword => text.includes(keyword));
+    if (hasSupportingHuman && score >= 0.35) {
+      supportingScore += score;
+      supportingHits += 1;
+    }
+
+    if (animalKeywords.some(keyword => text.includes(keyword))) {
+      animalScore += score * 2;
+    }
+
+    if (objectKeywords.some(keyword => text.includes(keyword))) {
+      objectScore += score * 2;
     }
   });
 
-  // ✅ IMPROVED LOGIC: Only detect human if:
-  // 1. Human score is significant (> 0.3)
-  // 2. Animal score is minimal (< 0.2)
-  // 3. Human score is clearly higher than animal score
-  const isHumanDetected = humanScore > 0.3 && animalScore < 0.2 && humanScore > animalScore * 2;
+  const hasStrongHumanSignal =
+    strongHits >= 1 &&
+    supportingHits >= 1 &&
+    (strongScore + supportingScore) >= 1.1;
+
+  const isHumanDetected = hasStrongHumanSignal && animalScore < 0.25 && objectScore < 0.3;
 
   if (isHumanDetected) {
-    console.log('👤 Human detected!');
-    console.log(`   Human score: ${humanScore.toFixed(2)}, Animal score: ${animalScore.toFixed(2)}`);
-    
+    console.log('Human detected');
+    console.log(
+      `   strong=${strongScore.toFixed(2)}, supporting=${supportingScore.toFixed(2)}, ` +
+      `animal=${animalScore.toFixed(2)}, object=${objectScore.toFixed(2)}`
+    );
+
     return {
       taxonId: 43584, // iNaturalist taxon ID for Homo sapiens
       name: 'Homo sapiens',
       commonName: 'Human',
-      confidence: 95,
+      confidence: 90,
       source: 'human_detection',
       rank: 'species',
-      visionScore: visionCandidates[0]?.score || 0.95,
+      // Keep raw score shape, normalization happens downstream.
+      visionScore: visionCandidates[0]?.score ?? 90,
       plantNetScore: null,
       iNatScore: null
     };
   }
 
-  console.log(`🐾 Not a human (Human: ${humanScore.toFixed(2)}, Animal: ${animalScore.toFixed(2)})`);
+  console.log(
+    `Not a human (strong=${strongScore.toFixed(2)}, supporting=${supportingScore.toFixed(2)}, ` +
+    `animal=${animalScore.toFixed(2)}, object=${objectScore.toFixed(2)})`
+  );
   return null;
 };
 
@@ -222,7 +262,7 @@ export const calculateEnhancedConfidence = (sources) => {
 
   // 1. Vision API Score
   if (visionScore !== null && visionScore !== undefined) {
-    const normalizedScore = visionScore * 100;
+    const normalizedScore = toPercentScore(visionScore);
     totalScore += normalizedScore * weights.vision;
     totalWeight += weights.vision;
     sourceCount++;
@@ -231,7 +271,7 @@ export const calculateEnhancedConfidence = (sources) => {
 
   // 2. PlantNet Score
   if (plantNetScore !== null && plantNetScore !== undefined) {
-    const normalizedScore = plantNetScore * 100;
+    const normalizedScore = toPercentScore(plantNetScore);
     totalScore += normalizedScore * weights.plantnet;
     totalWeight += weights.plantnet;
     sourceCount++;
@@ -240,7 +280,7 @@ export const calculateEnhancedConfidence = (sources) => {
 
   // 3. iNaturalist Search Score
   if (iNatScore !== null && iNatScore !== undefined) {
-    const normalizedScore = iNatScore > 1 ? iNatScore : iNatScore * 100;
+    const normalizedScore = iNatScore > 1 ? Math.min(Number(iNatScore) || 0, 100) : toPercentScore(iNatScore);
     totalScore += normalizedScore * weights.inat;
     totalWeight += weights.inat;
     sourceCount++;
@@ -338,7 +378,7 @@ export const calculateAdaptiveConfidence = (sources, imageQuality = null) => {
 
   // 1. Vision API Score
   if (visionScore !== null && visionScore !== undefined) {
-    const normalizedScore = visionScore * 100;
+    const normalizedScore = toPercentScore(visionScore);
     totalScore += normalizedScore * weights.vision;
     totalWeight += weights.vision;
     sourceCount++;
@@ -348,7 +388,7 @@ export const calculateAdaptiveConfidence = (sources, imageQuality = null) => {
 
   // 2. PlantNet Score
   if (plantNetScore !== null && plantNetScore !== undefined) {
-    const normalizedScore = plantNetScore * 100;
+    const normalizedScore = toPercentScore(plantNetScore);
     totalScore += normalizedScore * weights.plantnet;
     totalWeight += weights.plantnet;
     sourceCount++;
@@ -358,7 +398,7 @@ export const calculateAdaptiveConfidence = (sources, imageQuality = null) => {
 
   // 3. iNaturalist Search Score
   if (iNatScore !== null && iNatScore !== undefined) {
-    const normalizedScore = iNatScore > 1 ? iNatScore : iNatScore * 100;
+    const normalizedScore = iNatScore > 1 ? Math.min(Number(iNatScore) || 0, 100) : toPercentScore(iNatScore);
     totalScore += normalizedScore * weights.inat;
     totalWeight += weights.inat;
     sourceCount++;
@@ -368,7 +408,7 @@ export const calculateAdaptiveConfidence = (sources, imageQuality = null) => {
 
   // 4. iNaturalist CV Score (if available)
   if (inatCVScore !== null && inatCVScore !== undefined) {
-    const normalizedScore = inatCVScore * 100;
+    const normalizedScore = toPercentScore(inatCVScore);
     totalScore += normalizedScore * weights.inatCV;
     totalWeight += weights.inatCV;
     sourceCount++;
@@ -471,3 +511,5 @@ export default {
   calculateAdaptiveConfidence,
   detectHuman
 };
+
+

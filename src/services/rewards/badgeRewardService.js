@@ -1,9 +1,29 @@
 // services/rewards/badgeRewardService.js
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import { db, doc, setDoc, getDoc } from '@config/firebase';
 
 const STORAGE_KEYS = {
   CLAIMED_BADGES: '@leafnest_claimed_badges_',
   ACTIVE_BADGE: '@leafnest_active_badge_',
+};
+
+const PRIVATE_REWARDS_DOC = (uid) => doc(db, 'users', uid, 'profile', 'rewards');
+const PUBLIC_REWARDS_DOC = (uid) => doc(db, 'users', uid, 'profile', 'publicRewards');
+
+const updatePublicRewards = async (userId, patch) => {
+  try {
+    if (!userId || userId === 'guest') return;
+    await setDoc(
+      PUBLIC_REWARDS_DOC(userId),
+      {
+        ...patch,
+        updatedAt: new Date().toISOString(),
+      },
+      { merge: true }
+    );
+  } catch (error) {
+    console.warn('Failed to update public rewards (badge):', error?.message);
+  }
 };
 
 // Define available badges tied to achievements
@@ -128,6 +148,19 @@ export const claimBadge = async (userId, badgeId) => {
     // Add to claimed badges
     claimedBadges.push(badgeId);
     await AsyncStorage.setItem(key, JSON.stringify(claimedBadges));
+
+    try {
+      await setDoc(
+        PRIVATE_REWARDS_DOC(userId),
+        {
+          claimedBadges,
+          lastUpdated: new Date().toISOString(),
+        },
+        { merge: true }
+      );
+    } catch (syncError) {
+      console.warn('Firestore badge sync failed (claim):', syncError?.message);
+    }
     
     console.log(`✅ Badge claimed: ${badgeId} for user ${userId}`);
     
@@ -160,6 +193,21 @@ export const setActiveBadge = async (userId, badgeId) => {
     
     const key = `${STORAGE_KEYS.ACTIVE_BADGE}${userId}`;
     await AsyncStorage.setItem(key, JSON.stringify(badgeId));
+
+    try {
+      await setDoc(
+        PRIVATE_REWARDS_DOC(userId),
+        {
+          activeBadge: badgeId,
+          lastUpdated: new Date().toISOString(),
+        },
+        { merge: true }
+      );
+    } catch (syncError) {
+      console.warn('Firestore badge sync failed (active):', syncError?.message);
+    }
+
+    await updatePublicRewards(userId, { activeBadge: badgeId });
     
     console.log(`✅ Active badge set: ${badgeId} for user ${userId}`);
     
@@ -183,6 +231,21 @@ export const removeActiveBadge = async (userId) => {
   try {
     const key = `${STORAGE_KEYS.ACTIVE_BADGE}${userId}`;
     await AsyncStorage.removeItem(key);
+
+    try {
+      await setDoc(
+        PRIVATE_REWARDS_DOC(userId),
+        {
+          activeBadge: null,
+          lastUpdated: new Date().toISOString(),
+        },
+        { merge: true }
+      );
+    } catch (syncError) {
+      console.warn('Firestore badge sync failed (remove):', syncError?.message);
+    }
+
+    await updatePublicRewards(userId, { activeBadge: null });
     
     console.log(`✅ Active badge removed for user ${userId}`);
     
@@ -195,6 +258,70 @@ export const removeActiveBadge = async (userId) => {
       success: false,
       error: error.message,
     };
+  }
+};
+
+/**
+ * Sync badge rewards from Firestore into local storage
+ */
+export const syncBadgesFromFirestore = async (userId) => {
+  try {
+    if (!userId || userId === 'guest') {
+      return { success: false };
+    }
+
+    const rewardsDoc = await getDoc(PRIVATE_REWARDS_DOC(userId));
+    if (!rewardsDoc.exists()) {
+      // No Firestore data yet: push local data up for cross-device sync
+      const claimedKey = `${STORAGE_KEYS.CLAIMED_BADGES}${userId}`;
+      const activeKey = `${STORAGE_KEYS.ACTIVE_BADGE}${userId}`;
+      const localClaimedRaw = await AsyncStorage.getItem(claimedKey);
+      const localActiveRaw = await AsyncStorage.getItem(activeKey);
+      const localClaimedBadges = localClaimedRaw ? JSON.parse(localClaimedRaw) : [];
+      const localActiveBadge = localActiveRaw ? JSON.parse(localActiveRaw) : null;
+
+      if (localClaimedBadges.length > 0 || localActiveBadge) {
+        await setDoc(
+          PRIVATE_REWARDS_DOC(userId),
+          {
+            claimedBadges: localClaimedBadges,
+            activeBadge: localActiveBadge,
+            lastUpdated: new Date().toISOString(),
+          },
+          { merge: true }
+        );
+
+        await updatePublicRewards(userId, { activeBadge: localActiveBadge || null });
+        console.log('Badge rewards synced from local storage');
+        return { success: true, source: 'local' };
+      }
+
+      return { success: false, error: 'No rewards data found' };
+    }
+
+    const data = rewardsDoc.data() || {};
+
+    if (Array.isArray(data.claimedBadges)) {
+      const claimedKey = `${STORAGE_KEYS.CLAIMED_BADGES}${userId}`;
+      await AsyncStorage.setItem(claimedKey, JSON.stringify(data.claimedBadges));
+    }
+
+    if (data.activeBadge !== undefined) {
+      const activeKey = `${STORAGE_KEYS.ACTIVE_BADGE}${userId}`;
+      if (data.activeBadge) {
+        await AsyncStorage.setItem(activeKey, JSON.stringify(data.activeBadge));
+      } else {
+        await AsyncStorage.removeItem(activeKey);
+      }
+
+      await updatePublicRewards(userId, { activeBadge: data.activeBadge || null });
+    }
+
+    console.log('Badge rewards synced from Firestore');
+    return { success: true };
+  } catch (error) {
+    console.error('Error syncing badges from Firestore:', error);
+    return { success: false, error: error.message };
   }
 };
 

@@ -18,6 +18,7 @@ import { LinearGradient } from 'expo-linear-gradient';
 import { SafeAreaView, useSafeAreaInsets } from 'react-native-safe-area-context';
 import { useTranslation } from 'react-i18next';
 import * as Haptics from 'expo-haptics';
+import Constants from 'expo-constants';
 
 const AboutScreen = ({ navigation }) => {
   const { t } = useTranslation();
@@ -96,12 +97,45 @@ const AboutScreen = ({ navigation }) => {
     }
     
     try {
+      const appLinks = Constants.expoConfig?.extra?.appLinks;
+      const androidPackage = Constants.expoConfig?.android?.package;
+
+      const androidUrl = appLinks?.android || (androidPackage ? `https://play.google.com/store/apps/details?id=${androidPackage}` : null);
+      const iosUrl = appLinks?.ios || null;
+      const webUrl = appLinks?.web || null;
+
+      const shareUrl = Platform.OS === 'ios'
+        ? (iosUrl || webUrl || androidUrl)
+        : Platform.OS === 'android'
+          ? (androidUrl || webUrl || iosUrl)
+          : (webUrl || androidUrl || iosUrl);
+
+      const shareMessage = t('about.shareMessage', {
+        defaultValue: 'Check out LeafNest - Your plant identification companion!'
+      });
+      const shareTitle = t('about.shareTitle', { defaultValue: 'LeafNest' });
+      const messageWithLink = shareUrl ? `${shareMessage}\n${shareUrl}` : shareMessage;
+
+      if (Platform.OS === 'web' && typeof navigator !== 'undefined' && navigator.share) {
+        await navigator.share({
+          title: shareTitle,
+          text: shareMessage,
+          url: shareUrl || undefined,
+        });
+        return;
+      }
+
       await Share.share({
-        message: t('about.shareMessage') || 'Check out LeafNest - Your plant identification companion!',
-        title: 'LeafNest'
+        message: messageWithLink,
+        title: shareTitle,
+        ...(Platform.OS === 'ios' && shareUrl ? { url: shareUrl } : {}),
       });
     } catch (error) {
       console.error('Share error:', error);
+      Alert.alert(
+        t('common.error', { defaultValue: 'Error' }),
+        t('about.shareError', { defaultValue: 'Unable to open the share sheet. Please try again.' })
+      );
     }
   };
 
@@ -132,6 +166,13 @@ const AboutScreen = ({ navigation }) => {
         t('about.emailError') || 'Could not open email client'
       );
     }
+  };
+
+  const handleTestPress = () => {
+    if (Platform.OS === 'ios') {
+      Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
+    }
+    navigation.navigate('MainTabs', { startTour: Date.now() });
   };
 
   // Scroll to top
@@ -584,6 +625,18 @@ const AboutScreen = ({ navigation }) => {
               accessibilityHint="Send us an email">
               <Ionicons name="mail" size={clamp(scale(18), 16, 20)} color="#2D5A3F" />
               <Text style={styles.linkText}>Contact Support</Text>
+            </TouchableOpacity>
+
+            <TouchableOpacity 
+              style={styles.linkButton}
+              onPress={handleTestPress}
+              activeOpacity={0.7}
+              accessible={true}
+              accessibilityRole="button"
+              accessibilityLabel="Start Tour"
+              accessibilityHint="Starts the in-app tour">
+              <Ionicons name="navigate" size={clamp(scale(18), 16, 20)} color="#2D5A3F" />
+              <Text style={styles.linkText}>Start Tour</Text>
             </TouchableOpacity>
             
             <View style={styles.divider} />

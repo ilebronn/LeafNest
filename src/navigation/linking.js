@@ -6,9 +6,10 @@ export const linking = {
   prefixes: ['leafnest://', 'https://leafnest.app'],
   config: {
     screens: {
-      // Main navigation
+      // ✅ FIX: Remove empty path from MainTabs
+      // Let App.js handle initial navigation based on auth state
       MainTabs: {
-        path: '',
+        path: 'home', // ← Changed from '' to 'home'
         screens: {
           Home: 'home',
           Favorites: 'favorites',
@@ -16,6 +17,12 @@ export const linking = {
           Profile: 'profile',
         },
       },
+      
+      // Auth screens - these should be accessible without deep links
+      Login: 'login',
+      SignIn: 'signin',
+      SignUp: 'signup',
+      ForgotPassword: 'forgot-password',
       
       // Notification screens
       NotificationScreen: 'notifications',
@@ -68,11 +75,6 @@ export const linking = {
       // Payment
       ManualPayment: 'payment/manual',
       
-      // Auth
-      SignIn: 'signin',
-      SignUp: 'signup',
-      ForgotPassword: 'forgot-password',
-      
       // Info
       AboutScreen: 'about',
       HelpScreen: 'help',
@@ -89,18 +91,22 @@ export const linking = {
    */
   async getInitialURL() {
     try {
-      // Check if app was opened by a deep link
+      // ✅ FIX 1: Check if app was opened by a deep link FIRST
       const url = await Linking.getInitialURL();
       
       if (url != null) {
+        console.log('🔗 App opened with deep link:', url);
         return url;
       }
       
-      // Check if app was opened by a notification
+      // ✅ FIX 2: Check if app was opened by tapping a notification
       const response = await Notifications.getLastNotificationResponseAsync();
       
-      if (response?.notification) {
+      // ✅ FIX 3: Only navigate if there's actual notification data
+      if (response?.notification?.request?.content?.data) {
         const data = response.notification.request.content.data;
+        
+        console.log('🔔 App opened from notification:', data);
         
         // Build URL based on notification data
         if (data.postId) {
@@ -111,12 +117,19 @@ export const linking = {
           return 'leafnest://stats';
         }
         
-        return 'leafnest://notifications';
+        // Only navigate to notifications if it's a real notification tap
+        if (data.type) {
+          return 'leafnest://notifications';
+        }
       }
       
+      // ✅ FIX 4: Return null for fresh app starts
+      // This lets App.js handle navigation based on auth state
+      console.log('✨ Fresh app start - no deep link or notification');
       return null;
+      
     } catch (error) {
-      console.error('Error getting initial URL:', error);
+      console.error('❌ Error getting initial URL:', error);
       return null;
     }
   },
@@ -128,13 +141,22 @@ export const linking = {
     try {
       // Listen to incoming deep links
       const linkingSubscription = Linking.addEventListener('url', ({ url }) => {
+        console.log('🔗 Deep link received while app open:', url);
         listener(url);
       });
       
-      // Listen to notifications
+      // ✅ FIX 5: Only navigate on notification tap, not on permission grant
       const notificationSubscription = Notifications.addNotificationResponseReceivedListener(
         (response) => {
           const data = response.notification.request.content.data;
+          
+          // ✅ Only navigate if there's actual data in the notification
+          if (!data || !data.type) {
+            console.log('⚠️ Notification response without data - ignoring');
+            return;
+          }
+          
+          console.log('🔔 Notification tapped:', data);
           
           let url = 'leafnest://notifications';
           
@@ -153,7 +175,7 @@ export const linking = {
         notificationSubscription.remove();
       };
     } catch (error) {
-      console.error('Error subscribing to linking:', error);
+      console.error('❌ Error subscribing to linking:', error);
       return () => {};
     }
   },

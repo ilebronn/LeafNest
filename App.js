@@ -7,7 +7,7 @@ import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import { Ionicons } from '@expo/vector-icons';
 import { useTranslation } from 'react-i18next';
 import { onAuthStateChanged } from 'firebase/auth';
-import { auth } from '@config/firebase';
+import { auth, db, doc, onSnapshot } from '@config/firebase';
 import * as NavigationBar from 'expo-navigation-bar';
 import { CameraCaptureScreen } from '@screens/Main';
 import { LogBox } from 'react-native';
@@ -19,9 +19,10 @@ LogBox.ignoreLogs([
   'expo-notifications: Android Push notifications',
   'expo-notifications functionality is not fully supported',
   'Push notifications only work on physical devices',
-  'reading dataString is deprecated',  // Add this
-  'shouldShowAlert is deprecated',     // Add this
+  'reading dataString is deprecated',
+  'shouldShowAlert is deprecated',
 ]);
+
 // Import i18n configuration
 import './src/i18n';
 
@@ -30,7 +31,16 @@ import { LanguageProvider } from '@contexts';
 import { NotificationProvider } from '@contexts/NotificationContext';
 
 // Import notification handler
-import { useNotificationHandler } from '@services/notifications/notificationHandler';
+import { 
+  useNotificationHandler, 
+  setupNotificationChannel 
+} from '@services/notifications/notificationHandler';
+
+// ✅ Import push token registration
+import { registerForPushNotifications } from '@services/notifications/pushTokenService';
+import { syncBordersFromFirestore } from '@services/rewards/borderRewardService';
+import { syncBadgesFromFirestore } from '@services/rewards/badgeRewardService';
+import { checkVerificationStatus } from '@services/auth/verificationService';
 
 // Import linking configuration
 import linking from '@navigation/linking';
@@ -68,14 +78,12 @@ import { ManualPaymentScreen } from '@screens/Payment';
 import { SpeciesLandingPage } from '@screens/Plant';
 import { SpeciesGalleryScreen } from '@screens/Plant';
 import { PostDetailScreen } from '@screens/Plant';
-
-// 🆕 Import Verification Screen
 import VerificationScreen from '@screens/Auth/VerificationScreen';
 
 const Stack = createNativeStackNavigator();
 const Tab = createBottomTabNavigator();
 
-function MainTabs({ route }) {
+function MainTabs({ route, navigation }) {
   const { guest, displayName } = route?.params || { guest: true, displayName: 'Guest' };
   const { t } = useTranslation();
 
@@ -89,14 +97,13 @@ function MainTabs({ route }) {
   const historyTabRef = useRef(null);
   const profileTabRef = useRef(null);
   const scanButtonRef = useRef(null);
-  const notificationButtonRef = useRef(null); // ✅ ADD THIS
+  const notificationButtonRef = useRef(null);
 
   // Check if user has seen tour on mount
   useEffect(() => {
     const checkTourStatus = async () => {
       const hasCompleted = await tourStorage.hasCompletedTour();
       if (!hasCompleted && !guest) {
-        // Only show tour for authenticated users
         setShowTour(true);
       }
       setTourChecked(true);
@@ -110,6 +117,14 @@ function MainTabs({ route }) {
     await tourStorage.markTourCompleted();
     setShowTour(false);
   };
+
+  useEffect(() => {
+    if (route?.params?.startTour) {
+      setShowTour(true);
+      setTourChecked(true);
+      navigation.setParams({ startTour: undefined });
+    }
+  }, [route?.params?.startTour, navigation]);
 
   // Create target refs object for TourManager
   const targetRefs = {
@@ -186,8 +201,8 @@ function MainTabs({ route }) {
 
             return (
               <View
-                ref={ref} // Attach ref for tour highlighting
-                collapsable={false} // Important for Android
+                ref={ref}
+                collapsable={false}
                 style={{
                   alignItems: 'center',
                   justifyContent: 'center',
@@ -218,7 +233,7 @@ function MainTabs({ route }) {
           {props => (
             <HomeScreen
               {...props}
-              route={{ ...props.route, params: { guest, displayName, scanButtonRef, notificationButtonRef  } }}
+              route={{ ...props.route, params: { guest, displayName, scanButtonRef, notificationButtonRef } }}
             />
           )}
         </Tab.Screen>
@@ -234,7 +249,6 @@ function MainTabs({ route }) {
         </Tab.Screen>
       </Tab.Navigator>
 
-      {/* Tour Manager Overlay */}
       {tourChecked && (
         <TourManager
           visible={showTour}
@@ -250,29 +264,128 @@ function AppContent() {
   const [showCustomSplash, setShowCustomSplash] = useState(true);
   const [initializing, setInitializing] = useState(true);
   const [user, setUser] = useState(null);
+  const [isVerified, setIsVerified] = useState(false);
+  const [verificationLoading, setVerificationLoading] = useState(true);
+  const verificationUnsubRef = useRef(null);
+  const pushSetupRef = useRef(false);
 
-  // Initialize notification handler
+  // ✅ Initialize notification handler
   useNotificationHandler();
 
   useEffect(() => {
-    // Configure navigation bar for Android
-    if (Platform.OS === 'android') {
-      NavigationBar.setVisibilityAsync('hidden');
-    }
+    // ✅ CRITICAL: Setup notification channels FIRST
+    const initializeApp = async () => {
+      try {
+        console.log('🚀 Initializing app...');
+        
+        // Configure navigation bar for Android
+        if (Platform.OS === 'android') {
+          await NavigationBar.setVisibilityAsync('hidden');
+        }
 
-    const unsubscribe = onAuthStateChanged(auth, (currentUser) => {
+        // ✅ Setup notification channels BEFORE anything else
+        await setupNotificationChannel();
+        console.log('✅ Notification channels initialized');
+
+      } catch (error) {
+        console.error('❌ Error initializing app:', error);
+      }
+    };
+
+    initializeApp();
+
+        // Listen for auth state changes
+    const unsubscribe = onAuthStateChanged(auth, async (currentUser) => {
+      setInitializing(true);
+      setVerificationLoading(true);
+
+      if (verificationUnsubRef.current) {
+        verificationUnsubRef.current();
+        verificationUnsubRef.current = null;
+      }
+
+      if (!currentUser) {
+        setUser(null);
+        setIsVerified(false);
+        pushSetupRef.current = false;
+        setVerificationLoading(false);
+        setInitializing(false);
+        return;
+      }
+
       setUser(currentUser);
-      setInitializing(false);
+      pushSetupRef.current = false;
+
+      const runPostVerificationSetup = async () => {
+        if (pushSetupRef.current || !currentUser) {
+          return;
+        }
+
+        pushSetupRef.current = true;
+
+        try {
+          const result = await registerForPushNotifications();
+          if (!result.success) {
+            console.warn('Push notification registration failed:', result.error);
+          }
+
+          await Promise.all([
+            syncBordersFromFirestore(currentUser.uid),
+            syncBadgesFromFirestore(currentUser.uid),
+          ]);
+        } catch (error) {
+          console.error('Error during post-verification setup:', error);
+        }
+      };
+
+      try {
+        const verificationResult = await checkVerificationStatus(currentUser.uid);
+        const initialVerified = verificationResult.isVerified === true || currentUser.emailVerified === true;
+        setIsVerified(initialVerified);
+        if (initialVerified) {
+          await runPostVerificationSetup();
+        }
+      } catch (error) {
+        console.warn('Initial verification check failed:', error?.message);
+        setIsVerified(currentUser.emailVerified === true);
+      }
+
+      verificationUnsubRef.current = onSnapshot(
+        doc(db, 'users', currentUser.uid),
+        async (snapshot) => {
+          const docVerified = snapshot.data()?.isVerified === true;
+          const verified = docVerified || currentUser.emailVerified === true;
+          setIsVerified(verified);
+          setVerificationLoading(false);
+          setInitializing(false);
+
+          if (verified) {
+            await runPostVerificationSetup();
+          }
+        },
+        (error) => {
+          console.warn('Verification listener error:', error?.message);
+          setIsVerified(currentUser.emailVerified === true);
+          setVerificationLoading(false);
+          setInitializing(false);
+        }
+      );
     });
 
-    return unsubscribe;
+    return () => {
+      unsubscribe();
+      if (verificationUnsubRef.current) {
+        verificationUnsubRef.current();
+        verificationUnsubRef.current = null;
+      }
+    };
   }, []);
 
   if (showCustomSplash) {
     return <SplashScreen onFinish={() => setShowCustomSplash(false)} />;
   }
 
-  if (initializing) {
+  if (initializing || verificationLoading) {
     return (
       <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center', backgroundColor: '#bff6dc' }}>
         <ActivityIndicator size="large" color="#5E936C" />
@@ -280,11 +393,36 @@ function AppContent() {
     );
   }
 
+  const initialRouteName = !user
+    ? 'Login'
+    : isVerified
+      ? 'MainTabs'
+      : 'VerificationScreen';
+
+  const MainTabsGate = (props) => {
+    if (isVerified) {
+      return <MainTabs {...props} />;
+    }
+
+    const gateRoute = {
+      ...props.route,
+      params: {
+        ...(props.route?.params || {}),
+        email: user?.email,
+      },
+    };
+
+    return <VerificationScreen {...props} route={gateRoute} />;
+  };
+
   return (
     <>
       <StatusBar translucent backgroundColor="transparent" barStyle="dark-content" />
-      <Stack.Navigator screenOptions={{ headerShown: false }}>
-        {user ? (
+      <Stack.Navigator 
+        screenOptions={{ headerShown: false }}
+        initialRouteName={initialRouteName}
+      >
+        {user && isVerified ? (
           <React.Fragment>
             <Stack.Screen 
               name="MainTabs" 
@@ -292,6 +430,18 @@ function AppContent() {
               initialParams={{
                 guest: false,
                 displayName: user.displayName || user.email
+              }}
+            />
+            <Stack.Screen name="Login" component={LoginScreen} />
+          </React.Fragment>
+        ) : user && !isVerified ? (
+          <React.Fragment>
+            <Stack.Screen
+              name="MainTabs"
+              component={MainTabsGate}
+              initialParams={{
+                guest: false,
+                displayName: user.displayName || user.email,
               }}
             />
             <Stack.Screen name="Login" component={LoginScreen} />
@@ -304,17 +454,14 @@ function AppContent() {
         )}
         <Stack.Screen name="SignIn" component={SignInScreen} />
         <Stack.Screen name="SignUp" component={SignUpScreen} />
-        
-        {/* 🆕 Add Verification Screen */}
         <Stack.Screen 
           name="VerificationScreen" 
           component={VerificationScreen}
           options={{ 
             headerShown: false,
-            gestureEnabled: false, // Prevent swipe back
+            gestureEnabled: false,
           }}
         />
-        
         <Stack.Screen name="ForgotPassword" component={ForgotPasswordScreen} />
         <Stack.Screen name="Settings" component={SettingsScreen} />
         <Stack.Screen name="NotificationScreen" component={NotificationScreen} />
@@ -380,3 +527,5 @@ export default function App() {
     </LanguageProvider>
   );
 }
+
+

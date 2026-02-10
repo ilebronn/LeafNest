@@ -21,6 +21,7 @@ export default function FavoritesScreen({ navigation }) {
   const [selectionMode, setSelectionMode] = useState(false);
   const [selectedItems, setSelectedItems] = useState(new Set());
   const [detailsModalVisible, setDetailsModalVisible] = useState(false);
+  const [detailsModalExpanded, setDetailsModalExpanded] = useState(true);
   const [selectedSpecies, setSelectedSpecies] = useState(null);
   const [modalImageError, setModalImageError] = useState(false);
   
@@ -37,21 +38,35 @@ export default function FavoritesScreen({ navigation }) {
 
   useFocusEffect(useCallback(() => { loadFavorites(); }, [loadFavorites]));
 
-  // ✅ FIX: Validate image URL - only use if it's a valid remote URL
-  const isValidImageUrl = (url) => {
-    if (!url) return false;
+  // ✅ FIX: Support both remote and local image URIs
+  const isRemoteImageUrl = (url) => {
+    if (!url || typeof url !== 'string') return false;
     return url.startsWith('http://') || url.startsWith('https://');
   };
 
-  // ✅ FIX: Get the best available image URL
-  const getImageSource = (item) => {
-    if (isValidImageUrl(item?.imageUrl)) {
-      return item.imageUrl;
-    }
-    if (isValidImageUrl(item?.imageUri)) {
-      return item.imageUri;
-    }
-    return null;
+  const isLocalImageUri = (url) => {
+    if (!url || typeof url !== 'string') return false;
+    return (
+      url.startsWith('file://') ||
+      url.startsWith('content://') ||
+      url.startsWith('ph://') ||
+      url.startsWith('assets-library://') ||
+      url.startsWith('asset:/') ||
+      url.startsWith('data:')
+    );
+  };
+
+  // ✅ FIX: Get the best available image URLs
+  const getImageSources = (item) => {
+    const remoteImage =
+      (isRemoteImageUrl(item?.imageUrl) && item.imageUrl) ||
+      (isRemoteImageUrl(item?.imageUri) && item.imageUri) ||
+      null;
+    const localImage =
+      (isLocalImageUri(item?.imageUri) && item.imageUri) ||
+      (isLocalImageUri(item?.imageUrl) && item.imageUrl) ||
+      null;
+    return { remoteImage, localImage };
   };
 
   const toggleSelectionMode = () => {
@@ -99,6 +114,7 @@ export default function FavoritesScreen({ navigation }) {
 
     setSelectedSpecies(item);
     setModalImageError(false); // Reset error state when opening new modal
+    setDetailsModalExpanded(true);
     setDetailsModalVisible(true);
   };
 
@@ -106,7 +122,12 @@ export default function FavoritesScreen({ navigation }) {
     setDetailsModalVisible(false);
     setSelectedSpecies(null);
     setModalImageError(false);
+    setDetailsModalExpanded(false);
   };
+
+  const toggleModalSize = useCallback(() => {
+    setDetailsModalExpanded(prev => !prev);
+  }, []);
 
   const formatDate = (timestamp) => {
     const date = new Date(timestamp);
@@ -139,8 +160,11 @@ export default function FavoritesScreen({ navigation }) {
   const SpeciesDetailsModal = () => {
     if (!selectedSpecies || !detailsModalVisible) return null;
 
-    const modalImageSource = getImageSource(selectedSpecies);
-    const shouldShowModalImage = modalImageSource && !modalImageError;
+    const { remoteImage, localImage } = getImageSources(selectedSpecies);
+    const modalImageSource = modalImageError
+      ? (localImage && localImage !== remoteImage ? localImage : null)
+      : (remoteImage || localImage);
+    const shouldShowModalImage = !!modalImageSource;
 
     return (
       <Modal
@@ -157,9 +181,20 @@ export default function FavoritesScreen({ navigation }) {
             onPress={closeModal}
           />
           
-          <View style={styles.modalContainer}>
+          <View
+            style={[
+              styles.modalContainer,
+              detailsModalExpanded ? styles.modalContainerExpanded : styles.modalContainerCollapsed,
+            ]}
+          >
             <View style={styles.modalHeader}>
-              <View style={styles.modalHandle} />
+              <TouchableOpacity
+                style={styles.modalHandleHit}
+                activeOpacity={0.7}
+                onPress={toggleModalSize}
+              >
+                <View style={styles.modalHandle} />
+              </TouchableOpacity>
               <TouchableOpacity 
                 style={styles.closeButton}
                 onPress={closeModal}
@@ -322,7 +357,8 @@ export default function FavoritesScreen({ navigation }) {
                     }
                   }
                   
-                  const validImageSource = getImageSource(selectedSpecies);
+                  const { remoteImage, localImage } = getImageSources(selectedSpecies);
+                  const validImageSource = remoteImage || localImage;
                   navigation.navigate('SpeciesLandingPage', {
                   photoUri: validImageSource || selectedSpecies.imageUri || selectedSpecies.imageUrl,
                   speciesData: selectedSpecies.originalData || {
@@ -347,6 +383,7 @@ export default function FavoritesScreen({ navigation }) {
                   iNatObsCount: selectedSpecies.iNatObsCount || 0,
                   confidence: selectedSpecies.confidence || null, // ✅ ADD THIS LINE
                   offlineCacheId: selectedSpecies.taxonId || selectedSpecies.scientificName || selectedSpecies.name,
+                  skipHistorySave: true,
                 });
                 }}
                 activeOpacity={0.8}
@@ -748,13 +785,19 @@ const styles = StyleSheet.create({
     backgroundColor: '#ffffff',
     borderTopLeftRadius: 28,
     borderTopRightRadius: 28,
-    maxHeight: '85%',
-    minHeight: '50%',
     shadowColor: '#000',
     shadowOffset: { width: 0, height: -4 },
     shadowOpacity: 0.25,
     shadowRadius: 20,
     elevation: 20,
+  },
+  modalContainerExpanded: {
+    maxHeight: '95%',
+    minHeight: '85%',
+  },
+  modalContainerCollapsed: {
+    maxHeight: '70%',
+    minHeight: '50%',
   },
   modalHeader: {
     alignItems: 'center',
@@ -764,6 +807,10 @@ const styles = StyleSheet.create({
     position: 'relative',
     borderBottomWidth: 0.5,
     borderBottomColor: '#E5E7EB',
+  },
+  modalHandleHit: {
+    paddingVertical: 6,
+    paddingHorizontal: 20,
   },
   modalHandle: {
     width: 36,

@@ -105,27 +105,51 @@ export const PLANT_KEYWORDS = [
   'plant', 'flower', 'tree', 'leaf', 'grass', 'herb', 'shrub', 
   'vegetation', 'flora', 'botanical', 'foliage', 'petal', 'stem',
   'root', 'blossom', 'bloom', 'vine', 'bush', 'fern', 'moss',
-  'seedling', 'sprout', 'branch', 'twig'
+  'seedling', 'sprout', 'branch', 'twig',
+  // Fungi terms (treated as plant-like for scan validation)
+  'fungus', 'fungi', 'mushroom', 'lichen', 'mold'
 ];
 
 export const ANIMAL_KEYWORDS = [
   'animal', 'bird', 'insect', 'fish', 'mammal', 'reptile',
-  'amphibian', 'wildlife', 'fauna', 'creature', 'pet', 'wing',
-  'feather', 'fur', 'scale', 'beak', 'claw', 'tail', 'fin',
-  'face', 'head', 'eye', 'eyes', 'nose', 'mouth', 'lips', 'chin',
-  'cheek', 'eyebrow', 'forehead', 'hair', 'skin', 'body', 'hand',
-  'arm', 'leg', 'foot', 'ear', 'teeth', 'smile', 'selfie', 'portrait',
-  'human', 'person', 'people', 'man', 'woman', 'child', 'boy', 'girl'
+  'amphibian', 'wildlife', 'fauna', 'creature', 'pet',
+  'wing', 'feather', 'fur', 'beak', 'claw', 'tail', 'fin',
+  'paw', 'whisker', 'whiskers', 'snout', 'muzzle', 'hoof', 'antler'
+];
+
+// Human-specific keywords (handled separately from general animal detection)
+export const HUMAN_KEYWORDS = [
+  'person', 'people', 'human', 'man', 'woman', 'child', 'boy', 'girl',
+  'selfie', 'portrait', 'face', 'head', 'chin', 'cheek', 'forehead', 'smile',
+  'beard', 'mustache', 'eye', 'eyes', 'nose', 'mouth', 'lips', 'ear', 'teeth',
+  'hair'
+];
+
+// Weak animal signals that require stronger context
+export const WEAK_ANIMAL_KEYWORDS = [
+  'scale'
 ];
 
 // ===========================
 // IRRELEVANT KEYWORDS (not plants/animals)
 // ===========================
 export const IRRELEVANT_KEYWORDS = [
-  'building', 'architecture', 'car', 'vehicle', 'furniture', 
-  'food', 'dish', 'meal', 'object', 'tool', 'device', 'machine', 
-  'electronics', 'clothing', 'indoor', 'room', 'text', 'sign',
-  'street', 'road', 'sky', 'water', 'rock', 'stone'
+  'building', 'architecture', 'car', 'vehicle', 'furniture',
+  'food', 'dish', 'meal', 'object', 'tool', 'device', 'machine',
+  'electronics', 'indoor', 'room', 'text', 'sign',
+  'street', 'road', 'sky', 'water', 'rock', 'stone',
+  // Common non-biological objects
+  'chair', 'table', 'desk', 'seat', 'stool', 'sofa', 'couch',
+  'appliance', 'instrument', 'equipment', 'gadget',
+  'screen', 'monitor', 'keyboard', 'mouse', 'phone',
+  'clock', 'gauge', 'meter', 'dial', 'weighing',
+  'floor', 'wall', 'ceiling',
+  // Clothing/footwear and accessories
+  'clothes', 'clothing', 'apparel', 'garment',
+  'shoe', 'shoes', 'sneaker', 'sneakers', 'footwear', 'boot', 'boots',
+  'sock', 'socks', 'lace', 'laces', 'shoelace', 'shoelaces',
+  'sole', 'insole', 'insoles', 'tread',
+  'leather', 'fabric', 'rubber'
 ];
 
 // ===========================
@@ -251,6 +275,8 @@ export default {
   GENERIC_TERMS,
   PLANT_KEYWORDS,
   ANIMAL_KEYWORDS,
+  HUMAN_KEYWORDS,
+  WEAK_ANIMAL_KEYWORDS,
   IRRELEVANT_KEYWORDS,
   SCORE_WEIGHTS,
   RELEVANCE_THRESHOLD,

@@ -5,13 +5,11 @@ import {
   TouchableOpacity,
   Modal,
   StyleSheet,
-  Dimensions,
   Animated,
-  Platform,
+  useWindowDimensions,
 } from 'react-native';
 import { TOUR_STEPS, ALL_FEATURES } from '@constants/tourSteps';
-
-const { width: SCREEN_WIDTH, height: SCREEN_HEIGHT } = Dimensions.get('window');
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 /**
  * TourManager Component
@@ -25,7 +23,17 @@ export default function TourManager({ visible, onComplete, targetRefs }) {
   const [currentStep, setCurrentStep] = useState(0);
   const [highlightAllMode, setHighlightAllMode] = useState(false);
   const [targetLayout, setTargetLayout] = useState(null);
+  const [tooltipHeight, setTooltipHeight] = useState(0);
   const fadeAnim = useRef(new Animated.Value(0)).current;
+  const { width: windowWidth, height: windowHeight } = useWindowDimensions();
+  const insets = useSafeAreaInsets();
+  const isSmallWidth = windowWidth < 360;
+  const isCompactHeight = windowHeight < 700;
+  const isCompactScreen = isSmallWidth || isCompactHeight;
+  const tooltipMaxWidth = Math.min(420, windowWidth - 24);
+  const tooltipSidePadding = Math.max(12, Math.floor((windowWidth - tooltipMaxWidth) / 2));
+  const tooltipPadding = isCompactScreen ? 16 : 20;
+  const tooltipMaxHeight = Math.max(200, windowHeight - insets.top - insets.bottom - 24);
 
   // Animate in when visible
   useEffect(() => {
@@ -53,7 +61,7 @@ export default function TourManager({ visible, onComplete, targetRefs }) {
         });
       }, 150);
     }
-  }, [currentStep, visible, highlightAllMode, targetRefs]);
+  }, [currentStep, visible, highlightAllMode, targetRefs, windowWidth, windowHeight, insets.top, insets.bottom]);
 
   // Handlers
   const handleNext = () => {
@@ -84,6 +92,7 @@ export default function TourManager({ visible, onComplete, targetRefs }) {
 
   const step = TOUR_STEPS[currentStep];
   const isLastStep = currentStep === TOUR_STEPS.length - 1;
+  const highlightPadding = step.highlightPadding ?? 8;
 
   // Render Highlight All Mode
   if (highlightAllMode) {
@@ -108,9 +117,21 @@ export default function TourManager({ visible, onComplete, targetRefs }) {
           })}
 
           {/* Close button */}
-          <View style={styles.highlightAllCloseContainer}>
+          <View
+            style={[
+              styles.highlightAllCloseContainer,
+              {
+                bottom: Math.max(20, insets.bottom + 12),
+                left: Math.max(16, tooltipSidePadding),
+                right: Math.max(16, tooltipSidePadding),
+              },
+            ]}
+          >
             <TouchableOpacity
-              style={styles.highlightAllCloseButton}
+              style={[
+                styles.highlightAllCloseButton,
+                { maxWidth: Math.min(windowWidth - 32, 320) },
+              ]}
               onPress={handleCloseHighlightAll}
             >
               <Text style={styles.highlightAllCloseText}>Got it!</Text>
@@ -138,10 +159,10 @@ export default function TourManager({ visible, onComplete, targetRefs }) {
             style={[
               styles.spotlight,
               {
-                left: targetLayout.x - (step.highlightPadding || 8),
-                top: targetLayout.y - (step.highlightPadding || 8),
-                width: targetLayout.width + (step.highlightPadding || 8) * 2,
-                height: targetLayout.height + (step.highlightPadding || 8) * 2,
+                left: targetLayout.x - highlightPadding,
+                top: targetLayout.y - highlightPadding,
+                width: targetLayout.width + highlightPadding * 2,
+                height: targetLayout.height + highlightPadding * 2,
               },
             ]}
           />
@@ -152,46 +173,94 @@ export default function TourManager({ visible, onComplete, targetRefs }) {
           <View
             style={[
               styles.tooltip,
-              getTooltipPosition(targetLayout, step)
+              getTooltipPosition(targetLayout, step, {
+                windowHeight,
+                windowWidth,
+                insets,
+                sidePadding: tooltipSidePadding,
+                tooltipHeight,
+                isCompact: isCompactScreen,
+              }),
+              {
+                maxWidth: tooltipMaxWidth,
+                maxHeight: tooltipMaxHeight,
+                padding: tooltipPadding,
+              },
             ]}
+            onLayout={(event) => {
+              const { height } = event.nativeEvent.layout;
+              if (height !== tooltipHeight) {
+                setTooltipHeight(height);
+              }
+            }}
           >
-            <Text style={styles.tooltipTitle}>{step.title}</Text>
-            <Text style={styles.tooltipDescription}>{step.description}</Text>
+            <Text style={[styles.tooltipTitle, isCompactScreen && styles.tooltipTitleSmall]}>
+              {step.title}
+            </Text>
+            <Text
+              style={[
+                styles.tooltipDescription,
+                isCompactScreen && styles.tooltipDescriptionSmall,
+              ]}
+            >
+              {step.description}
+            </Text>
 
             {/* Progress indicator */}
-            <View style={styles.progressContainer}>
+            <View style={[styles.progressContainer, isCompactScreen && styles.progressContainerSmall]}>
               {TOUR_STEPS.map((_, index) => (
                 <View
                   key={index}
                   style={[
                     styles.progressDot,
+                    isCompactScreen && styles.progressDotSmall,
                     index === currentStep && styles.progressDotActive,
+                    isCompactScreen && index === currentStep && styles.progressDotActiveSmall,
                   ]}
                 />
               ))}
             </View>
 
             {/* Buttons */}
-            <View style={styles.buttonContainer}>
+            <View style={[styles.buttonContainer, isSmallWidth && styles.buttonContainerStacked]}>
               <TouchableOpacity
-                style={[styles.secondaryButton, styles.buttonFlex1]}
+                style={[
+                  styles.secondaryButton,
+                  styles.buttonFlex1,
+                  isCompactScreen && styles.buttonCompact,
+                  isSmallWidth && styles.buttonFullWidth,
+                ]}
                 onPress={handleSkip}
               >
-                <Text style={styles.secondaryButtonText}>Skip</Text>
+                <Text style={[styles.secondaryButtonText, isCompactScreen && styles.secondaryButtonTextCompact]}>
+                  Skip
+                </Text>
               </TouchableOpacity>
 
               <TouchableOpacity
-                style={[styles.secondaryButton, styles.buttonFlex1]}
+                style={[
+                  styles.secondaryButton,
+                  styles.buttonFlex1,
+                  isCompactScreen && styles.buttonCompact,
+                  isSmallWidth && styles.buttonFullWidth,
+                ]}
                 onPress={handleHighlightAll}
               >
-                <Text style={styles.secondaryButtonText}>Highlight{'\n'}All</Text>
+                <Text style={[styles.secondaryButtonText, isCompactScreen && styles.secondaryButtonTextCompact]}>
+                  Highlight{'\n'}All
+                </Text>
               </TouchableOpacity>
 
               <TouchableOpacity
-                style={[styles.primaryButton, styles.buttonFlex1]}
+                style={[
+                  styles.primaryButton,
+                  styles.buttonFlex1,
+                  isCompactScreen && styles.buttonCompact,
+                  isSmallWidth && styles.buttonFullWidth,
+                ]}
                 onPress={isLastStep ? handleFinish : handleNext}
               >
-                <Text style={styles.primaryButtonText}>
+                <Text style={[styles.primaryButtonText, isCompactScreen && styles.primaryButtonTextCompact]}>
                   {isLastStep ? 'Finish' : 'Next'}
                 </Text>
               </TouchableOpacity>
@@ -206,31 +275,48 @@ export default function TourManager({ visible, onComplete, targetRefs }) {
 /**
  * Calculate tooltip position based on target location and screen space
  */
-function getTooltipPosition(targetLayout, step) {
-  const TOOLTIP_MARGIN = 16;
+function getTooltipPosition(targetLayout, step, metrics) {
+  const { windowHeight, insets, sidePadding, tooltipHeight, isCompact } = metrics;
+  const TOOLTIP_MARGIN = sidePadding;
   const TOOLTIP_OFFSET = 16;
-  
-  // For header items (scan button), show tooltip below
-  if (targetLayout.y < 200) {
-    return {
-      top: targetLayout.y + targetLayout.height + TOOLTIP_OFFSET,
-      left: TOOLTIP_MARGIN,
-      right: TOOLTIP_MARGIN,
-    };
+  const EDGE_PADDING = 8;
+  const estimatedHeight = tooltipHeight || (isCompact ? 240 : 280);
+  const safeTop = insets.top + EDGE_PADDING;
+  const safeBottom = windowHeight - insets.bottom - EDGE_PADDING;
+  const spaceAbove = targetLayout.y - insets.top;
+  const spaceBelow = windowHeight - insets.bottom - (targetLayout.y + targetLayout.height);
+  const preferBelow = step?.position === 'bottom';
+  const canBelow = spaceBelow >= estimatedHeight + TOOLTIP_OFFSET;
+  const canAbove = spaceAbove >= estimatedHeight + TOOLTIP_OFFSET;
+
+  let top;
+
+  if (preferBelow) {
+    if (canBelow) {
+      top = targetLayout.y + targetLayout.height + TOOLTIP_OFFSET;
+    } else if (canAbove) {
+      top = targetLayout.y - estimatedHeight - TOOLTIP_OFFSET;
+    }
+  } else {
+    if (canAbove) {
+      top = targetLayout.y - estimatedHeight - TOOLTIP_OFFSET;
+    } else if (canBelow) {
+      top = targetLayout.y + targetLayout.height + TOOLTIP_OFFSET;
+    }
   }
-  
-  // For bottom tab bar items, always show tooltip above
-  if (targetLayout.y > SCREEN_HEIGHT - 200) {
-    return {
-      bottom: SCREEN_HEIGHT - targetLayout.y + TOOLTIP_OFFSET,
-      left: TOOLTIP_MARGIN,
-      right: TOOLTIP_MARGIN,
-    };
+
+  if (top === undefined) {
+    top =
+      spaceBelow >= spaceAbove
+        ? targetLayout.y + targetLayout.height + TOOLTIP_OFFSET
+        : targetLayout.y - estimatedHeight - TOOLTIP_OFFSET;
   }
-  
-  // Default: center of screen
+
+  const maxTop = Math.max(safeTop, safeBottom - estimatedHeight);
+  top = Math.max(safeTop, Math.min(top, maxTop));
+
   return {
-    top: SCREEN_HEIGHT / 2 - 150,
+    top,
     left: TOOLTIP_MARGIN,
     right: TOOLTIP_MARGIN,
   };
@@ -242,6 +328,8 @@ function getTooltipPosition(targetLayout, step) {
  */
 function HighlightFeature({ targetRef, label }) {
   const [layout, setLayout] = useState(null);
+  const { width: windowWidth, height: windowHeight } = useWindowDimensions();
+  const insets = useSafeAreaInsets();
 
   useEffect(() => {
     if (targetRef?.current) {
@@ -251,7 +339,7 @@ function HighlightFeature({ targetRef, label }) {
         });
       }, 150);
     }
-  }, [targetRef]);
+  }, [targetRef, windowWidth, windowHeight]);
 
   if (!layout) return null;
 
@@ -272,8 +360,11 @@ function HighlightFeature({ targetRef, label }) {
         style={[
           styles.featureLabel,
           {
-            left: Math.max(10, Math.min(SCREEN_WIDTH - 90, layout.x + layout.width / 2 - 40)),
-            top: layout.y - 40,
+            left: Math.max(10, Math.min(windowWidth - 90, layout.x + layout.width / 2 - 40)),
+            top: Math.max(
+              insets.top + 8,
+              Math.min(windowHeight - insets.bottom - 28, layout.y - 40)
+            ),
           },
         ]}
       >
@@ -314,7 +405,6 @@ const styles = StyleSheet.create({
     backgroundColor: '#FFFFFF',
     borderRadius: 24,
     padding: 20,
-    marginHorizontal: 16,
     shadowColor: '#000',
     shadowOffset: { width: 0, height: 8 },
     shadowOpacity: 0.25,
@@ -328,12 +418,20 @@ const styles = StyleSheet.create({
     marginBottom: 8,
     textAlign: 'center',
   },
+  tooltipTitleSmall: {
+    fontSize: 18,
+  },
   tooltipDescription: {
     fontSize: 14,
     color: '#666',
     lineHeight: 20,
     marginBottom: 16,
     textAlign: 'center',
+  },
+  tooltipDescriptionSmall: {
+    fontSize: 13,
+    lineHeight: 18,
+    marginBottom: 12,
   },
   progressContainer: {
     flexDirection: 'row',
@@ -342,15 +440,27 @@ const styles = StyleSheet.create({
     marginBottom: 16,
     gap: 6,
   },
+  progressContainerSmall: {
+    marginBottom: 12,
+    gap: 4,
+  },
   progressDot: {
     width: 8,
     height: 8,
     borderRadius: 4,
     backgroundColor: '#D0D0D0',
   },
+  progressDotSmall: {
+    width: 7,
+    height: 7,
+    borderRadius: 3.5,
+  },
   progressDotActive: {
     width: 24,
     backgroundColor: '#5E936C',
+  },
+  progressDotActiveSmall: {
+    width: 20,
   },
   buttonContainer: {
     flexDirection: 'row',
@@ -358,9 +468,18 @@ const styles = StyleSheet.create({
     alignItems: 'stretch',
     gap: 8,
   },
+  buttonContainerStacked: {
+    flexDirection: 'column',
+  },
   buttonFlex1: {
     flex: 1,
     minWidth: 0, // Allow flex shrinking
+  },
+  buttonFullWidth: {
+    width: '100%',
+  },
+  buttonCompact: {
+    paddingVertical: 10,
   },
   primaryButton: {
     backgroundColor: '#5E936C',
@@ -381,6 +500,9 @@ const styles = StyleSheet.create({
     fontWeight: '700',
     textAlign: 'center',
   },
+  primaryButtonTextCompact: {
+    fontSize: 14,
+  },
   secondaryButton: {
     backgroundColor: '#F5F5F5',
     paddingVertical: 12,
@@ -397,6 +519,10 @@ const styles = StyleSheet.create({
     fontWeight: '600',
     textAlign: 'center',
     lineHeight: 16,
+  },
+  secondaryButtonTextCompact: {
+    fontSize: 12,
+    lineHeight: 14,
   },
   // Highlight All Mode Styles
   highlightBox: {
@@ -432,7 +558,7 @@ const styles = StyleSheet.create({
   },
   highlightAllCloseContainer: {
     position: 'absolute',
-    bottom: 50,
+    bottom: 20,
     left: 20,
     right: 20,
     alignItems: 'center',
@@ -449,12 +575,10 @@ const styles = StyleSheet.create({
     elevation: 12,
     minWidth: 180,
     alignItems: 'center',
-    bottom: 100,
   },
   highlightAllCloseText: {
     color: '#FFFFFF',
     fontSize: 18,
     fontWeight: 'bold',
-    bottom: 1,
   },
 });

@@ -25,8 +25,8 @@ import {
 } from "@services/payment/manualPaymentService";
 
 // ⚠️ REPLACE THESE WITH YOUR ACTUAL GCASH DETAILS
-const GCASH_QR_CODE = "https://firebasestorage.googleapis.com/v0/b/leafnest-98408.firebasestorage.app/o/payment_qr.png?alt=media&token=45ea8141-ece4-4be9-981e-75730133c8c6";
-const GCASH_NUMBER = "0916-346-4373";
+const GCASH_QR_CODE = "https://firebasestorage.googleapis.com/v0/b/leafnest-98408.firebasestorage.app/o/payment_qr.png?alt=media&token=ad101c8c-f1e8-4be7-af94-00d96edf0ac5";
+const GCASH_NUMBER = "0963-741-9835";
 const GCASH_NAME = "LeafNest";
 const PRICE = PREMIUM_PRICE || 99; // Fallback to 99 if import fails
 
@@ -162,26 +162,7 @@ export default function ManualPaymentScreen({ navigation }) {
     );
   };
 
-  const openGCash = () => {
-    Alert.alert(
-      "Open GCash?",
-      "This will open the GCash app if you have it installed.",
-      [
-        { text: "Cancel", style: "cancel" },
-        {
-          text: "Open",
-          onPress: () => {
-            Linking.openURL("gcash://").catch(() => {
-              Alert.alert(
-                "GCash Not Found",
-                "Please install the GCash app or pay manually."
-              );
-            });
-          },
-        },
-      ]
-    );
-  };
+  
 
   if (checkingStatus) {
     return (
@@ -406,14 +387,6 @@ export default function ManualPaymentScreen({ navigation }) {
                 <Text style={styles.infoText}>₱{PRICE}.00</Text>
               </View>
             </View>
-
-            <TouchableOpacity
-              style={styles.gcashButton}
-              onPress={openGCash}
-            >
-              <Ionicons name="logo-google" size={20} color="#fff" />
-              <Text style={styles.gcashButtonText}>Open GCash App</Text>
-            </TouchableOpacity>
           </View>
 
           {/* Upload Proof */}

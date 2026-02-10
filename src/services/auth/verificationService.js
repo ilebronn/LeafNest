@@ -1,4 +1,4 @@
-import { db, doc, setDoc, getDoc, updateDoc, serverTimestamp, Timestamp } from '@config/firebase';
+import { db, doc, setDoc, getDoc, updateDoc, serverTimestamp, Timestamp, auth } from '@config/firebase';
 import { httpsCallable, functions } from '@config/firebase';
 
 const VERIFICATION_EXPIRY_MINUTES = 10;
@@ -20,7 +20,13 @@ const generateVerificationCode = () => {
  */
 export const sendVerificationCode = async (userId, email) => {
   try {
-    console.log('📧 Sending verification code to:', email);
+    const effectiveEmail = email || auth.currentUser?.email || null;
+
+    if (!effectiveEmail) {
+      return { success: false, error: 'Missing email for verification code.' };
+    }
+
+    console.log('Sending verification code to:', effectiveEmail);
 
     // Generate code
     const code = generateVerificationCode();
@@ -30,7 +36,7 @@ export const sendVerificationCode = async (userId, email) => {
     const verificationRef = doc(db, 'users', userId, 'verification', 'current');
     await setDoc(verificationRef, {
       code: code,
-      email: email,
+      email: effectiveEmail,
       createdAt: serverTimestamp(),
       expiresAt: Timestamp.fromDate(expiresAt),
       attempts: 0,
@@ -41,15 +47,15 @@ export const sendVerificationCode = async (userId, email) => {
     // Send email via Cloud Function
     const sendVerificationEmail = httpsCallable(functions, 'sendVerificationEmail');
     const result = await sendVerificationEmail({
-      email: email,
+      email: effectiveEmail,
       code: code,
       userId: userId,
     });
 
-    console.log('✅ Verification code sent successfully');
+    console.log('Verification code sent successfully');
     return { success: true, data: result.data };
   } catch (error) {
-    console.error('❌ Error sending verification code:', error);
+    console.error('Error sending verification code:', error);
     return { success: false, error: error.message || 'Failed to send verification code' };
   }
 };
@@ -110,12 +116,17 @@ export const verifyEmailCode = async (userId, code) => {
       verifiedAt: serverTimestamp(),
     });
 
-    // Update main user document
+    // Update (or create) main user document
     const userRef = doc(db, 'users', userId);
-    await updateDoc(userRef, {
-      isVerified: true,
-      verifiedAt: serverTimestamp(),
-    });
+    await setDoc(
+      userRef,
+      {
+        isVerified: true,
+        verifiedAt: serverTimestamp(),
+        lastLogin: serverTimestamp(),
+      },
+      { merge: true }
+    );
 
     console.log('✅ Email verified successfully');
     return { success: true, message: 'Email verified successfully!' };
@@ -133,32 +144,38 @@ export const verifyEmailCode = async (userId, code) => {
  */
 export const resendVerificationCode = async (userId, email) => {
   try {
-    console.log('🔄 Resending verification code');
+    console.log('Resending verification code');
 
     const verificationRef = doc(db, 'users', userId, 'verification', 'current');
     const verificationDoc = await getDoc(verificationRef);
+    const docEmail = verificationDoc.exists() ? verificationDoc.data()?.email : null;
+    const effectiveEmail = email || docEmail || auth.currentUser?.email || null;
+
+    if (!effectiveEmail) {
+      return { success: false, error: 'Missing email for verification code.' };
+    }
 
     if (verificationDoc.exists()) {
       const data = verificationDoc.data();
-      
+
       // Check rate limiting
       const lastResendAt = data.lastResendAt?.toDate();
       if (lastResendAt) {
         const secondsSinceLastResend = (Date.now() - lastResendAt.getTime()) / 1000;
         if (secondsSinceLastResend < RESEND_COOLDOWN_SECONDS) {
           const waitTime = Math.ceil(RESEND_COOLDOWN_SECONDS - secondsSinceLastResend);
-          return { 
-            success: false, 
-            error: `Please wait ${waitTime} seconds before requesting a new code.` 
+          return {
+            success: false,
+            error: `Please wait ${waitTime} seconds before requesting a new code.`,
           };
         }
       }
     }
 
     // Generate and send new code
-    return await sendVerificationCode(userId, email);
+    return await sendVerificationCode(userId, effectiveEmail);
   } catch (error) {
-    console.error('❌ Error resending code:', error);
+    console.error('Error resending code:', error);
     return { success: false, error: error.message || 'Failed to resend code' };
   }
 };

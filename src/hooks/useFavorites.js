@@ -3,6 +3,7 @@ import { Alert } from 'react-native';
 import { auth } from '@config/firebase';
 import { onAuthStateChanged } from 'firebase/auth';
 import { getFavorites, removeFromFavorites } from '@services/firebase';
+import * as FileSystem from 'expo-file-system/legacy';
 
 // ✅ FIX: Helper to safely get timestamp value
 const getTimestampValue = (timestamp) => {
@@ -31,36 +32,53 @@ export default function useFavorites() {
   const [refreshing, setRefreshing] = useState(false);
   const [uid, setUid] = useState(auth.currentUser?.uid ?? null);
 
-  // ✅ FIX: Validate image URL - only use if it's a valid remote URL
-  const isValidImageUrl = (url) => {
-    if (!url) return false;
-    // Check if it's a valid HTTP/HTTPS URL (not a local file:// URI)
+  // ✅ FIX: Support both remote and local image URIs
+  const isRemoteImageUrl = (url) => {
+    if (!url || typeof url !== 'string') return false;
     return url.startsWith('http://') || url.startsWith('https://');
   };
 
-  // ✅ FIX: Get valid image URL from item data
-  const getValidImageUrl = (item) => {
-    // Try imageUrl first
-    if (isValidImageUrl(item.imageUrl)) {
-      return item.imageUrl;
+  const isLocalImageUri = (url) => {
+    if (!url || typeof url !== 'string') return false;
+    return (
+      url.startsWith('file://') ||
+      url.startsWith('content://') ||
+      url.startsWith('ph://') ||
+      url.startsWith('assets-library://') ||
+      url.startsWith('asset:/') ||
+      url.startsWith('data:')
+    );
+  };
+
+  const getImageSources = (item) => {
+    const candidates = [item.imageUrl, item.imageUri, item.image, item.photoUrl];
+    const remoteUrl = candidates.find(isRemoteImageUrl) || null;
+    const localUri = candidates.find(isLocalImageUri) || null;
+    const bestUri = remoteUrl || localUri || null;
+    return { remoteUrl, localUri, bestUri };
+  };
+
+  const fileExists = async (uri) => {
+    if (!uri || typeof uri !== 'string') return false;
+    if (!uri.startsWith('file://')) return true; // Cannot reliably verify non-file URIs
+    try {
+      const info = await FileSystem.getInfoAsync(uri);
+      return info.exists;
+    } catch (error) {
+      console.warn('⚠️ Failed to verify local image:', uri, error?.message);
+      return false;
     }
-    
-    // Try imageUri as fallback
-    if (isValidImageUrl(item.imageUri)) {
-      return item.imageUri;
-    }
-    
-    // Try other possible image fields
-    if (isValidImageUrl(item.image)) {
-      return item.image;
-    }
-    
-    if (isValidImageUrl(item.photoUrl)) {
-      return item.photoUrl;
-    }
-    
-    // No valid URL found
-    return null;
+  };
+
+  const getGenusKey = (name) => {
+    if (!name || typeof name !== 'string') return null;
+    const trimmed = name.trim();
+    if (!trimmed) return null;
+    const parts = trimmed.split(/\s+/);
+    if (parts.length < 2) return null;
+    const genus = parts[0].toLowerCase();
+    if (!genus || genus === 'unknown') return null;
+    return genus;
   };
 
   const loadFavorites = useCallback(async () => {
@@ -75,8 +93,8 @@ export default function useFavorites() {
       
       if (result.success) {
         const normalized = result.data.map((it, idx) => {
-          // ✅ FIX: Get valid image URL, filtering out file:// URIs
-          const validImageUrl = getValidImageUrl(it);
+          // ✅ FIX: Prefer remote URLs, but keep local URIs for offline display
+          const { remoteUrl, localUri } = getImageSources(it);
           
           // ✅ FIX: Use getTimestampValue instead of .toMillis()
           const createdAtValue = getTimestampValue(it.addedAt || it.createdAt);
@@ -92,27 +110,59 @@ export default function useFavorites() {
             conservation: it.conservation || null,
             about: it.about || it.description || null,
             iNatObsCount: it.iNatObsCount || 0,
-            // ✅ FIX: Only store valid remote URLs
-            imageUrl: validImageUrl,
-            imageUri: validImageUrl, // Keep both for compatibility
+            // ✅ FIX: Store remote + local separately
+            imageUrl: remoteUrl,
+            imageUri: localUri || remoteUrl || null,
             type: it.type || 'favorite',
             createdAt: createdAtValue, // ✅ FIX: Already a number
             originalData: it.originalData || null,
+            genusKey: it.genusKey || getGenusKey(it.scientificName || it.name) || null,
           };
         });
-        
+        const sanitized = await Promise.all(
+          normalized.map(async (item) => {
+            if (item.imageUrl) return item;
+            if (item.imageUri && item.imageUri.startsWith('file://')) {
+              const exists = await fileExists(item.imageUri);
+              if (!exists) {
+                console.warn('⚠️ Favorite image missing, using placeholder:', item.name);
+                return { ...item, imageUri: null };
+              }
+            }
+            return item;
+          })
+        );
+
         // ✅ FIX: Sort using numbers (no .toMillis needed)
-        normalized.sort((a, b) => (b.createdAt ?? 0) - (a.createdAt ?? 0));
+        sanitized.sort((a, b) => (b.createdAt ?? 0) - (a.createdAt ?? 0));
+
+        // ✅ De-dup favorites by stable identifier
+        const seen = new Set();
+        const deduped = [];
+        for (const item of sanitized) {
+          const key = item.taxonId
+            ? `taxon_${item.taxonId}`
+            : (item.scientificName || item.name || item.commonName || '').toLowerCase().trim();
+          const groupKey = item.genusKey
+            ? `${(item.iconicTaxon || '').toLowerCase()}:${item.genusKey}`
+            : null;
+          if (!key && !groupKey) continue;
+          if (key && seen.has(key)) continue;
+          if (groupKey && seen.has(groupKey)) continue;
+          if (key) seen.add(key);
+          if (groupKey) seen.add(groupKey);
+          deduped.push(item);
+        }
         
         // ✅ Log items with invalid images for debugging
-        const itemsWithoutImages = normalized.filter(item => !item.imageUrl);
+        const itemsWithoutImages = sanitized.filter(item => !item.imageUrl && !item.imageUri);
         if (itemsWithoutImages.length > 0) {
           console.warn(`⚠️ ${itemsWithoutImages.length} favorites have no valid image URL:`, 
             itemsWithoutImages.map(i => i.name)
           );
         }
         
-        setItems(normalized);
+        setItems(deduped);
       } else {
         console.warn('Failed to load favorites:', result.error);
         setItems([]);

@@ -34,7 +34,9 @@ export const registerForPushNotifications = async () => {
     console.log('✅ Permission granted for push notifications');
 
     // Get push token
-    const projectId = Constants.expoConfig?.extra?.eas?.projectId;
+    const projectId =
+      Constants.expoConfig?.extra?.eas?.projectId ??
+      Constants.easConfig?.projectId;
     
     if (!projectId) {
       console.error('❌ EAS project ID not found');

@@ -15,6 +15,7 @@ import {
 } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import { LinearGradient } from 'expo-linear-gradient';
+import { useTranslation } from 'react-i18next';
 import { auth } from '@config/firebase';
 import { doc, getDoc } from 'firebase/firestore';
 import { db } from '@config/firebase';
@@ -25,6 +26,7 @@ const { width } = Dimensions.get('window');
 
 export default function PostDetailScreen({ route, navigation }) {
   const { postId } = route.params;
+  const { t, i18n } = useTranslation();
   
   const [post, setPost] = useState(null);
   const [loading, setLoading] = useState(true);
@@ -35,7 +37,7 @@ export default function PostDetailScreen({ route, navigation }) {
 
   const currentUser = auth.currentUser;
   const currentUserId = currentUser?.uid || null;
-  const currentUsername = currentUser?.displayName || currentUser?.email?.split('@')[0] || 'Anonymous';
+  const currentUsername = currentUser?.displayName || currentUser?.email?.split('@')[0] || t('home.feed.unknownUser');
 
   useEffect(() => {
     loadPost();
@@ -50,7 +52,10 @@ export default function PostDetailScreen({ route, navigation }) {
       const postDoc = await getDoc(postRef);
       
       if (!postDoc.exists()) {
-        Alert.alert('Error', 'Post not found');
+        Alert.alert(
+          t('postDetail.alerts.postNotFoundTitle'),
+          t('postDetail.alerts.postNotFoundBody')
+        );
         navigation.goBack();
         return;
       }
@@ -69,7 +74,10 @@ export default function PostDetailScreen({ route, navigation }) {
 
     } catch (error) {
       console.error('Error loading post:', error);
-      Alert.alert('Error', 'Failed to load post');
+      Alert.alert(
+        t('postDetail.alerts.loadErrorTitle'),
+        t('postDetail.alerts.loadErrorBody')
+      );
       navigation.goBack();
     } finally {
       setLoading(false);
@@ -78,7 +86,7 @@ export default function PostDetailScreen({ route, navigation }) {
 
   const handleLikePress = async () => {
     if (!currentUserId) {
-      Alert.alert('Sign in required', 'Please sign in to like posts');
+      Alert.alert(t('home.alerts.signInRequiredTitle'), t('home.alerts.signInLikeBody'));
       return;
     }
 
@@ -94,7 +102,7 @@ export default function PostDetailScreen({ route, navigation }) {
       }));
     } catch (error) {
       console.error('Error liking post:', error);
-      Alert.alert('Error', 'Failed to like post');
+      Alert.alert(t('common.error'), t('postDetail.alerts.likeErrorBody'));
     }
   };
 
@@ -141,7 +149,7 @@ export default function PostDetailScreen({ route, navigation }) {
 
   const handleCommentPress = () => {
     if (!currentUserId) {
-      Alert.alert('Sign in required', 'Please sign in to comment');
+      Alert.alert(t('home.alerts.signInRequiredTitle'), t('home.alerts.signInCommentBody'));
       return;
     }
     
@@ -164,11 +172,12 @@ export default function PostDetailScreen({ route, navigation }) {
     const now = new Date();
     const diffInSeconds = (now - date) / 1000;
     
-    if (diffInSeconds < 60) return 'Just now';
-    if (diffInSeconds < 3600) return `${Math.floor(diffInSeconds / 60)}m ago`;
-    if (diffInSeconds < 86400) return `${Math.floor(diffInSeconds / 3600)}h ago`;
-    if (diffInSeconds < 604800) return `${Math.floor(diffInSeconds / 86400)}d ago`;
-    return date.toLocaleDateString([], { month: 'short', day: 'numeric', year: 'numeric' });
+    if (diffInSeconds < 60) return t('home.relativeTime.justNow');
+    if (diffInSeconds < 3600) return t('home.relativeTime.minutes', { count: Math.floor(diffInSeconds / 60) });
+    if (diffInSeconds < 86400) return t('home.relativeTime.hours', { count: Math.floor(diffInSeconds / 3600) });
+    if (diffInSeconds < 604800) return t('home.relativeTime.days', { count: Math.floor(diffInSeconds / 86400) });
+    const locale = i18n?.language && i18n.language !== 'en' ? i18n.language : undefined;
+    return date.toLocaleDateString(locale, { month: 'short', day: 'numeric', year: 'numeric' });
   };
 
   const getGradientForTaxon = (iconicTaxon) => {
@@ -213,7 +222,7 @@ export default function PostDetailScreen({ route, navigation }) {
           >
             <Ionicons name="arrow-back" size={28} color="#111" />
           </TouchableOpacity>
-          <Text style={styles.headerTitle}>Post</Text>
+          <Text style={styles.headerTitle}>{t('postDetail.title')}</Text>
           <View style={{ width: 28 }} />
         </View>
         <View style={styles.loadingContainer}>
@@ -229,7 +238,7 @@ export default function PostDetailScreen({ route, navigation }) {
         <StatusBar barStyle="dark-content" backgroundColor="#fff" />
         <View style={styles.emptyContainer}>
           <Ionicons name="alert-circle-outline" size={80} color="#E0E0E0" />
-          <Text style={styles.emptyTitle}>Post not found</Text>
+          <Text style={styles.emptyTitle}>{t('postDetail.emptyTitle')}</Text>
         </View>
       </View>
     );
@@ -238,6 +247,13 @@ export default function PostDetailScreen({ route, navigation }) {
   const gradient = getGradientForTaxon(post.iconicTaxon);
   const isLiked = postStats.likes.includes(currentUserId);
   const shouldShowMore = post.about && post.about.length > 150;
+  const unknownUserLabel = t('home.feed.unknownUser');
+  const userNameLabel = post.userName || unknownUserLabel;
+  const avatarInitial = (userNameLabel[0] || 'A').toUpperCase();
+  const likesLabel = postStats.likesCount > 0
+    ? t('home.feed.likesCount', { count: postStats.likesCount })
+    : t('home.feed.beFirst');
+  const viewCommentsLabel = t('home.feed.viewComments', { count: postStats.commentsCount });
 
   return (
     <View style={styles.container}>
@@ -251,7 +267,7 @@ export default function PostDetailScreen({ route, navigation }) {
         >
           <Ionicons name="arrow-back" size={28} color="#111" />
         </TouchableOpacity>
-        <Text style={styles.headerTitle}>Post</Text>
+        <Text style={styles.headerTitle}>{t('postDetail.title')}</Text>
       </View>
 
       <ScrollView 
@@ -269,12 +285,12 @@ export default function PostDetailScreen({ route, navigation }) {
             >
               <View style={styles.postAvatarInner}>
                 <Text style={styles.postAvatarText}>
-                  {(post.userName || 'A')[0].toUpperCase()}
+                  {avatarInitial}
                 </Text>
               </View>
             </LinearGradient>
             <View style={styles.postUserInfo}>
-              <Text style={styles.postUsername}>{post.userName || 'Anonymous'}</Text>
+              <Text style={styles.postUsername}>{userNameLabel}</Text>
               {post.iconicTaxon && (
                 <Text style={styles.postLocation}>{post.iconicTaxon}</Text>
               )}
@@ -351,14 +367,10 @@ export default function PostDetailScreen({ route, navigation }) {
 
         {/* Content */}
         <View style={styles.postContent}>
-          <Text style={styles.postLikes}>
-            {postStats.likesCount > 0 
-              ? `${postStats.likesCount} ${postStats.likesCount === 1 ? 'like' : 'likes'}` 
-              : 'Be the first to like this'}
-          </Text>
+          <Text style={styles.postLikes}>{likesLabel}</Text>
           
           <View style={styles.speciesInfo}>
-            <Text style={styles.speciesName}>{post.name || 'Unknown Species'}</Text>
+            <Text style={styles.speciesName}>{post.name || t('home.feed.unknownSpecies')}</Text>
             {post.scientificName && post.scientificName !== post.name && (
               <Text style={styles.scientificName}>{post.scientificName}</Text>
             )}
@@ -366,7 +378,7 @@ export default function PostDetailScreen({ route, navigation }) {
 
           {post.about && (
             <View style={styles.aboutSection}>
-              <Text style={styles.aboutLabel}>About</Text>
+              <Text style={styles.aboutLabel}>{t('postDetail.aboutLabel')}</Text>
               <Text 
                 style={styles.aboutText} 
                 numberOfLines={expandedAbout ? undefined : 3}
@@ -379,7 +391,7 @@ export default function PostDetailScreen({ route, navigation }) {
                   style={styles.showMoreButton}
                 >
                   <Text style={styles.showMoreText}>
-                    {expandedAbout ? 'Show less' : 'Show more'}
+                    {expandedAbout ? t('home.feed.showLess') : t('home.feed.showMore')}
                   </Text>
                 </TouchableOpacity>
               )}
@@ -388,9 +400,7 @@ export default function PostDetailScreen({ route, navigation }) {
 
           {postStats.commentsCount > 0 && (
             <TouchableOpacity onPress={handleCommentPress}>
-              <Text style={styles.viewCommentsText}>
-                View all {postStats.commentsCount} {postStats.commentsCount === 1 ? 'comment' : 'comments'}
-              </Text>
+              <Text style={styles.viewCommentsText}>{viewCommentsLabel}</Text>
             </TouchableOpacity>
           )}
         </View>

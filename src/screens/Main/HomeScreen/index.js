@@ -37,6 +37,49 @@ const API_URLS = {
   PDF_GENERATOR: 'https://us-central1-leafnest-98408.cloudfunctions.net/generatePdfAndEmail'
 };
 
+// Coerce common timestamp shapes into a valid Date (or null if invalid).
+// Examples:
+// coerceToDate(1700000000000)
+// coerceToDate("2024-01-01T00:00:00Z")
+// coerceToDate({ seconds: 1700000000, nanoseconds: 0 })
+const coerceToDate = (input) => {
+  if (!input) return null;
+
+  if (input instanceof Date) {
+    return Number.isNaN(input.getTime()) ? null : input;
+  }
+
+  if (typeof input === 'number') {
+    const date = new Date(input);
+    return Number.isNaN(date.getTime()) ? null : date;
+  }
+
+  if (typeof input === 'string') {
+    const date = new Date(input);
+    return Number.isNaN(date.getTime()) ? null : date;
+  }
+
+  if (typeof input === 'object') {
+    if (typeof input.toDate === 'function') {
+      const date = input.toDate();
+      return date instanceof Date && !Number.isNaN(date.getTime()) ? date : null;
+    }
+
+    if (typeof input.toMillis === 'function') {
+      const date = new Date(input.toMillis());
+      return Number.isNaN(date.getTime()) ? null : date;
+    }
+
+    if (typeof input.seconds === 'number') {
+      const nanos = typeof input.nanoseconds === 'number' ? input.nanoseconds : 0;
+      const date = new Date((input.seconds * 1000) + (nanos / 1e6));
+      return Number.isNaN(date.getTime()) ? null : date;
+    }
+  }
+
+  return null;
+};
+
 export default function HomeScreen({ route, navigation }) {
   const { t, i18n } = useTranslation();
   const [isGuest, setIsGuest] = useState(true);
@@ -51,6 +94,7 @@ export default function HomeScreen({ route, navigation }) {
   
   const hasLoadedInitially = useRef(false);
   const fadeAnim = useRef(new Animated.Value(0)).current;
+  const downloadingPostIdsRef = useRef(new Set());
 
   const currentUser = auth.currentUser;
   const currentUserId = currentUser?.uid || null;
@@ -133,9 +177,10 @@ export default function HomeScreen({ route, navigation }) {
   }, [onRefresh, loadUnreadCount]);
 
   const formatDate = useCallback((timestamp) => {
-    const date = new Date(timestamp);
+    const date = coerceToDate(timestamp);
+    if (!date) return ''; // Safeguard against invalid/missing timestamps
     const now = new Date();
-    const diffInSeconds = (now - date) / 1000;
+    const diffInSeconds = Math.max(0, (now - date) / 1000);
 
     if (diffInSeconds < 60) return t('home.relativeTime.justNow');
     if (diffInSeconds < 3600) {
@@ -165,52 +210,57 @@ export default function HomeScreen({ route, navigation }) {
   }, [t]);
 
   const handleDownloadPDF = useCallback(async (item) => {
-    if (!currentUser || !currentUser.email) {
-      Alert.alert(
-        t('home.alerts.authRequiredTitle'),
-        t('home.alerts.authRequiredBody'),
-        [{ text: t('common.ok') }]
-      );
-      return;
-    }
+    const postId = item?.id;
+    if (!postId) return;
 
-    if (isGuestUser(currentUser)) {
-      Alert.alert(
-        "📥 Downloads Unavailable",
-        "Please sign up for a free account to download species information!",
-        [{ text: "OK" }]
-      );
-      return;
-    }
+    // Guard early to prevent rapid-tap double starts.
+    if (downloadingPostIdsRef.current.has(postId)) return;
+    downloadingPostIdsRef.current.add(postId);
+    setDownloadingPosts(prev => ({ ...prev, [postId]: true }));
 
     try {
-      const limits = await getUsageLimits(currentUser.uid);
-      setUsageLimits(limits);
-
-      const downloadCheck = await canDownload(currentUser.uid);
-
-      if (!downloadCheck.success) {
-        Alert.alert("Error", "Failed to check download limit. Please try again.");
+      if (!currentUser || !currentUser.email) {
+        Alert.alert(
+          t('home.alerts.authRequiredTitle'),
+          t('home.alerts.authRequiredBody'),
+          [{ text: t('common.ok') }]
+        );
         return;
       }
 
-      if (!downloadCheck.unlimited && !downloadCheck.canDownload) {
-        console.log('❌ Download limit reached');
-        setShowPremiumGate(true);
+      if (isGuestUser(currentUser)) {
+        Alert.alert(
+          t('home.alerts.downloadsUnavailableTitle'),
+          t('home.alerts.downloadsUnavailableBody'),
+          [{ text: t('common.ok') }]
+        );
         return;
       }
 
-      console.log(`✅ Download allowed (${downloadCheck.downloadsRemaining || '∞'} remaining)`);
+      try {
+        const limits = await getUsageLimits(currentUser.uid);
+        setUsageLimits(limits);
 
-    } catch (error) {
-      console.error('❌ Error checking download limit:', error);
-      Alert.alert("Error", "Failed to check download limit. Please try again.");
-      return;
-    }
+        const downloadCheck = await canDownload(currentUser.uid);
 
-    setDownloadingPosts(prev => ({ ...prev, [item.id]: true }));
+        if (!downloadCheck.success) {
+          Alert.alert(t('common.error'), t('home.alerts.downloadLimitCheckErrorBody'));
+          return;
+        }
 
-    try {
+        if (!downloadCheck.unlimited && !downloadCheck.canDownload) {
+          console.log('❌ Download limit reached');
+          setShowPremiumGate(true);
+          return;
+        }
+
+        console.log(`✅ Download allowed (${downloadCheck.downloadsRemaining || '∞'} remaining)`);
+      } catch (error) {
+        console.error('❌ Error checking download limit:', error);
+        Alert.alert(t('common.error'), t('home.alerts.downloadLimitCheckErrorBody'));
+        return;
+      }
+
       const pdfData = {
         email: currentUser.email,
         speciesData: {
@@ -307,13 +357,14 @@ export default function HomeScreen({ route, navigation }) {
         [{ text: t('common.ok') }]
       );
     } finally {
+      downloadingPostIdsRef.current.delete(postId);
       setDownloadingPosts(prev => {
         const newState = { ...prev };
-        delete newState[item.id];
+        delete newState[postId];
         return newState;
       });
     }
-  }, [currentUser, isGuest, t, currentUserId, fallbackUsername]);
+  }, [currentUser, t, currentUserId, fallbackUsername]);
 
   const handleLikePress = useCallback(async (postId) => {
     if (!currentUserId) {
@@ -619,11 +670,6 @@ export default function HomeScreen({ route, navigation }) {
             windowSize={11}
             initialNumToRender={5}
             updateCellsBatchingPeriod={50}
-            getItemLayout={(data, index) => ({
-              length: 500,
-              offset: 500 * index,
-              index,
-            })}
           />
         )}
 

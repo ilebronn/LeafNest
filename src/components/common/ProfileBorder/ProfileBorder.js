@@ -6,11 +6,18 @@ import { View, StyleSheet, Animated, Image } from 'react-native';
  * ProfileBorder - Border overlays ON TOP of avatar (avatar is background)
  * The border image has transparent center - avatar shows through
  */
-export default function ProfileBorder({ border, size = 100, children }) {
+export default function ProfileBorder({
+  border,
+  size = 100,
+  children,
+  showGlow = true,
+  borderScale = 1.4,
+  glowPadding = 40,
+}) {
   const [glowAnim] = useState(new Animated.Value(0));
 
   useEffect(() => {
-    if (!border) return;
+    if (!border || !showGlow) return;
 
     const glowAnimation = Animated.loop(
       Animated.sequence([
@@ -29,15 +36,15 @@ export default function ProfileBorder({ border, size = 100, children }) {
 
     glowAnimation.start();
     return () => glowAnimation.stop();
-  }, [border]);
+  }, [border, showGlow]);
 
   if (!border || !border.image) {
     return <>{children}</>;
   }
 
   // Border is larger than avatar to create frame effect
-  const borderSize = size * 1.4; // Border is 40% larger
-  const glowSize = borderSize + 40;
+  const borderSize = size * borderScale;
+  const glowSize = borderSize + glowPadding;
 
   const glowOpacity = glowAnim.interpolate({
     inputRange: [0, 1],
@@ -51,20 +58,21 @@ export default function ProfileBorder({ border, size = 100, children }) {
 
   return (
     <View style={styles.container}>
-      {/* Outer glow effect */}
-      <Animated.View
-        style={[
-          styles.glowLayer,
-          {
-            width: glowSize,
-            height: glowSize,
-            borderRadius: glowSize / 2,
-            backgroundColor: border.glowColor || 'rgba(94, 147, 108, 0.3)',
-            opacity: glowOpacity,
-            transform: [{ scale: glowScale }],
-          },
-        ]}
-      />
+      {showGlow && (
+        <Animated.View
+          style={[
+            styles.glowLayer,
+            {
+              width: glowSize,
+              height: glowSize,
+              borderRadius: glowSize / 2,
+              backgroundColor: border.glowColor || 'rgba(94, 147, 108, 0.3)',
+              opacity: glowOpacity,
+              transform: [{ scale: glowScale }],
+            },
+          ]}
+        />
+      )}
 
       {/* Avatar (renders FIRST - bottom layer) */}
       <View

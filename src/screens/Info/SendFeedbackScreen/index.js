@@ -10,10 +10,10 @@ import {
   Alert,
   Platform,
   Switch,
-  Linking,
 } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import { useTranslation } from 'react-i18next';
+import { functions, httpsCallable } from '@config/firebase';
 
 const SUPPORT_EMAIL = 'leafnest.capstone@gmail.com';
 const TOPIC_KEYS = ['bug', 'idea', 'ux', 'content', 'account', 'other'];
@@ -45,25 +45,25 @@ const SendFeedbackScreen = ({ navigation, route }) => {
   );
   const footerTemplate = t('feedback.footerText', { email: '__EMAIL__' });
   const [footerPrefix = '', footerSuffix = ''] = footerTemplate.split('__EMAIL__');
+  const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
-  const buildMailTo = () => {
-    const topicLabel = topicOptions.find(tItem => tItem.value === topic)?.label ?? t('feedback.topics.other');
+  const buildPayload = () => {
+    const topicLabel =
+      topicOptions.find(tItem => tItem.value === topic)?.label ??
+      t('feedback.topics.other');
 
     const diagnostics = includeDiagnostics
-      ? `\n\n---\nDiagnostics (auto-included)\nPlatform: ${Platform.OS}\nOS Version: ${Platform.Version}\nApp: LeafNest\n---`
+      ? `Platform: ${Platform.OS}\nOS Version: ${Platform.Version}\nApp: LeafNest`
       : '';
 
-    const fromLine = email.trim().length ? `From: ${email.trim()}\n` : '';
-
-    const body =
-      `${fromLine}Topic: ${topicLabel}\n` +
-      `Subject: ${subject.trim()}\n\n` +
-      `${message.trim()}${diagnostics}`;
-
-    const encodedSubject = encodeURIComponent(`[LeafNest] ${topicLabel} - ${subject.trim()}`);
-    const encodedBody = encodeURIComponent(body);
-
-    return `mailto:${SUPPORT_EMAIL}?subject=${encodedSubject}&body=${encodedBody}`;
+    return {
+      topic,
+      topicLabel,
+      subject: subject.trim(),
+      message: message.trim(),
+      email: email.trim(),
+      diagnostics,
+    };
   };
 
   const onSubmit = async () => {
@@ -72,22 +72,44 @@ const SendFeedbackScreen = ({ navigation, route }) => {
       return;
     }
 
+    if (email.trim().length > 0 && !emailRegex.test(email.trim())) {
+      Alert.alert(
+        t('feedback.alerts.invalidEmailTitle'),
+        t('feedback.alerts.invalidEmailMessage')
+      );
+      return;
+    }
+
     try {
       setSubmitting(true);
-      const url = buildMailTo();
-      const canOpen = await Linking.canOpenURL(url);
-      if (!canOpen) {
+      const sendFeedback = httpsCallable(functions, 'sendFeedback');
+      const payload = buildPayload();
+      await sendFeedback(payload);
+      Alert.alert(
+        t('feedback.alerts.successTitle'),
+        t('feedback.alerts.successMessage')
+      );
+      setSubject('');
+      setMessage('');
+      setEmail('');
+      setTopic(prefillTopic);
+    } catch (e) {
+      console.error('Send feedback failed:', e);
+      const errorDetails = e?.code || e?.message || '';
+      const errorCode = e?.code || '';
+      if (errorCode === 'functions/invalid-argument') {
         Alert.alert(
-          t('feedback.alerts.noEmailAppTitle'),
-          t('feedback.alerts.noEmailAppMessage', { email: SUPPORT_EMAIL })
+          t('feedback.alerts.invalidEmailTitle'),
+          t('feedback.alerts.invalidEmailMessage')
         );
         return;
       }
-      await Linking.openURL(url);
-    } catch (e) {
+      const baseMessage = t('feedback.alerts.genericErrorMessage', { email: SUPPORT_EMAIL });
+      const messageBody =
+        __DEV__ && errorDetails ? `${baseMessage}\n(${errorDetails})` : baseMessage;
       Alert.alert(
         t('feedback.alerts.genericErrorTitle'),
-        t('feedback.alerts.genericErrorMessage', { email: SUPPORT_EMAIL })
+        messageBody
       );
     } finally {
       setSubmitting(false);

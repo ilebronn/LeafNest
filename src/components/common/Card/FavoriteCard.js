@@ -12,31 +12,41 @@ export default function FavoriteCard({
 }) {
   const [imageError, setImageError] = useState(false);
 
-  // ✅ FIX: Validate image URL - only use if it's a valid remote URL
-  const isValidImageUrl = (url) => {
-    if (!url) return false;
-    // Check if it's a valid HTTP/HTTPS URL (not a local file:// URI)
+  // ✅ FIX: Support both remote and local image URIs
+  const isRemoteImageUrl = (url) => {
+    if (!url || typeof url !== 'string') return false;
     return url.startsWith('http://') || url.startsWith('https://');
   };
 
-  // Determine which image source to use
-  const getImageSource = () => {
-    // Priority 1: Use imageUrl if it's a valid remote URL
-    if (isValidImageUrl(item.imageUrl)) {
-      return item.imageUrl;
-    }
-    
-    // Priority 2: Use imageUri if it's a valid remote URL (fallback)
-    if (isValidImageUrl(item.imageUri)) {
-      return item.imageUri;
-    }
-    
-    // No valid image URL found
-    return null;
+  const isLocalImageUri = (url) => {
+    if (!url || typeof url !== 'string') return false;
+    return (
+      url.startsWith('file://') ||
+      url.startsWith('content://') ||
+      url.startsWith('ph://') ||
+      url.startsWith('assets-library://') ||
+      url.startsWith('asset:/') ||
+      url.startsWith('data:')
+    );
   };
 
-  const imageSource = getImageSource();
-  const shouldShowImage = imageSource && !imageError;
+  const getImageSources = () => {
+    const remoteImage =
+      (isRemoteImageUrl(item.imageUrl) && item.imageUrl) ||
+      (isRemoteImageUrl(item.imageUri) && item.imageUri) ||
+      null;
+    const localImage =
+      (isLocalImageUri(item.imageUri) && item.imageUri) ||
+      (isLocalImageUri(item.imageUrl) && item.imageUrl) ||
+      null;
+    return { remoteImage, localImage };
+  };
+
+  const { remoteImage, localImage } = getImageSources();
+  const imageSource = imageError
+    ? (localImage && localImage !== remoteImage ? localImage : null)
+    : (remoteImage || localImage);
+  const shouldShowImage = !!imageSource;
 
   return (
     <TouchableOpacity 

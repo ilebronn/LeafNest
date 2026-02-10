@@ -1,10 +1,10 @@
 {
   "common": {
     "welcome": "Bienvenue",
-    "guest": "Invité",
+    "guest": "InvitÃ©",
     "loading": "Chargement...",
     "error": "Erreur",
-    "success": "Succès",
+    "success": "SuccÃ¨s",
     "cancel": "Annuler",
     "ok": "OK",
     "save": "Sauvegarder",
@@ -16,49 +16,49 @@
   "login": {
     "title": "Bienvenue sur LeafNest !",
     "signInWithGoogle": "Se connecter avec Google",
-    "signInAsGuest": "Se connecter en tant qu'invité",
-    "signInFailed": "Échec de la connexion",
+    "signInAsGuest": "Se connecter en tant qu'invitÃ©",
+    "signInFailed": "Ã‰chec de la connexion",
     "googleAuthError": "Erreur d'authentification Google",
     "unexpectedError": "Erreur inattendue",
     "unknownError": "Erreur inconnue",
-    "termsText": "En vous inscrivant, vous indiquez avoir lu et accepté les",
+    "termsText": "En vous inscrivant, vous indiquez avoir lu et acceptÃ© les",
     "termsOfUse": "Conditions d'Utilisation",
-    "privacyPolicy": "Politique de Confidentialité",
+    "privacyPolicy": "Politique de ConfidentialitÃ©",
     "cookiesPolicy": "Politique des Cookies",
     "signIn": "Se Connecter",
     "welcomeTitle": "Bienvenue sur LeafNest",
-    "welcomeSubtitle": "Découvrez la beauté de la nature",
+    "welcomeSubtitle": "DÃ©couvrez la beautÃ© de la nature",
     "signInWithEmailButton": "Connectez-vous avec e-mail",
     "dividerOr": "ou",
-    "continueAsGuest": "Continuer en tant qu'invité",
+    "continueAsGuest": "Continuer en tant qu'invitÃ©",
     "continueAgreement": "En continuant, vous acceptez notre"
   },
   "home": {
-    "welcomeGuest": "Bienvenue, Invité",
+    "welcomeGuest": "Bienvenue, InvitÃ©",
     "welcomeUser": "Bienvenue, {{name}}",
-    "guestModeSubtitle": "Vous êtes en mode invité. Connectez-vous pour débloquer toutes les fonctionnalités.",
+    "guestModeSubtitle": "Vous Ãªtes en mode invitÃ©. Connectez-vous pour dÃ©bloquer toutes les fonctionnalitÃ©s.",
     "welcomeBackSubtitle": "Heureux de vous revoir !",
-    "scanPlantsTitle": "Scanner des Plantes Instantanément",
+    "scanPlantsTitle": "Scanner des Plantes InstantanÃ©ment",
     "scanPlantsSubtitle": "Pointez, capturez et identifiez la flore en quelques secondes.",
-    "scanAnimalsTitle": "Scanner des Animaux Instantanément",
+    "scanAnimalsTitle": "Scanner des Animaux InstantanÃ©ment",
     "scanAnimalsSubtitle": "Identifiez les animaux en quelques secondes.",
     "learnNatureTitle": "Apprendre sur la Nature",
-    "learnNatureSubtitle": "Découvrez plus avec la synthèse vocale et des faits intéressants.",
+    "learnNatureSubtitle": "DÃ©couvrez plus avec la synthÃ¨se vocale et des faits intÃ©ressants.",
     "scanningStats": "Statistiques de Scan",
-    "plantsScanned": "Plantes Scannées",
-    "animalsIdentified": "Animaux Identifiés",
-    "dailyDiscovery": "Découverte Quotidienne",
+    "plantsScanned": "Plantes ScannÃ©es",
+    "animalsIdentified": "Animaux IdentifiÃ©s",
+    "dailyDiscovery": "DÃ©couverte Quotidienne",
     "dailyDiscoverySubtitle": "Apprenez quelque chose de nouveau chaque jour",
     "plantOfTheDay": "Plante du Jour",
     "animalOfTheDay": "Animal du Jour",
     "scientificName": "Nom Scientifique",
     "habitat": "Habitat",
-    "diet": "Régime Alimentaire",
-    "lifespan": "Durée de Vie",
+    "diet": "RÃ©gime Alimentaire",
+    "lifespan": "DurÃ©e de Vie",
     "weight": "Poids",
     "cycle": "Cycle de Vie",
     "watering": "Arrosage",
-    "sunlight": "Lumière Solaire",
+    "sunlight": "LumiÃ¨re Solaire",
     "loadingDaily": "Chargement du contenu quotidien...",
     "errorLoadingDaily": "Impossible de charger le contenu quotidien",
     "pullToRefresh": "Tirer pour actualiser",
@@ -67,75 +67,78 @@
     "newFact": "Nouveau Fait",
     "funFactContent": "Saviez-vous que les plantes peuvent communiquer entre elles par des signaux chimiques ?",
     "animalFacts": [
-      "Les pieuvres ont trois cœurs.",
+      "Les pieuvres ont trois cÅ“urs.",
       "Les paresseux peuvent retenir leur souffle plus longtemps que les dauphins.",
-      "Les éléphants sont les seuls animaux qui ne peuvent pas sauter.",
-      "Les vaches ont des meilleurs amis et sont stressées lorsqu'elles sont séparées.",
+      "Les Ã©lÃ©phants sont les seuls animaux qui ne peuvent pas sauter.",
+      "Les vaches ont des meilleurs amis et sont stressÃ©es lorsqu'elles sont sÃ©parÃ©es.",
       "Un groupe de flamants roses s'appelle une \"flamboyance\".",
       "Les dauphins ont des noms pour s'appeler entre eux en utilisant des sifflements uniques.",
       "Les requins existaient avant que les arbres n'apparaissent sur Terre.",
       "Les manchots font leur demande en mariage avec un caillou.",
-      "Le cœur d'une crevette est dans sa tête.",
-      "Les kangourous ne peuvent pas marcher en arrière.",
+      "Le cÅ“ur d'une crevette est dans sa tÃªte.",
+      "Les kangourous ne peuvent pas marcher en arriÃ¨re.",
       "Les girafes n'ont besoin que de 30 minutes de sommeil par jour.",
-      "Certaines tortues peuvent respirer par leur derrière.",
-      "Les axolotls peuvent régénérer des membres entiers et des parties de leur cerveau.",
-      "Les chouettes peuvent tourner leur tête presque à 270 degrés.",
-      "Un guépard peut accélérer plus vite que la plupart des voitures de sport.",
+      "Certaines tortues peuvent respirer par leur derriÃ¨re.",
+      "Les axolotls peuvent rÃ©gÃ©nÃ©rer des membres entiers et des parties de leur cerveau.",
+      "Les chouettes peuvent tourner leur tÃªte presque Ã  270 degrÃ©s.",
+      "Un guÃ©pard peut accÃ©lÃ©rer plus vite que la plupart des voitures de sport.",
       "Les loutres de mer se tiennent la main pendant qu'elles dorment pour rester ensemble.",
-      "Un groupe de porcs-épics s'appelle un \"prickle\".",
-      "Les grenouilles peuvent geler complètement en hiver et revenir à la vie en se décongelant.",
-      "Les chameaux ont trois paupières pour se protéger du sable.",
+      "Un groupe de porcs-Ã©pics s'appelle un \"prickle\".",
+      "Les grenouilles peuvent geler complÃ¨tement en hiver et revenir Ã  la vie en se dÃ©congelant.",
+      "Les chameaux ont trois paupiÃ¨res pour se protÃ©ger du sable.",
       "Les rats et les souris rient quand on les chatouille.",
-      "Les paresseux peuvent vivre jusqu'à 30 ans.",
-      "Les manchots s'accouplent à vie.",
-      "Les chauves-souris sont les seuls mammifères capables de voler.",
+      "Les paresseux peuvent vivre jusqu'Ã  30 ans.",
+      "Les manchots s'accouplent Ã  vie.",
+      "Les chauves-souris sont les seuls mammifÃ¨res capables de voler.",
       "Les abeilles communiquent entre elles en dansant.",
-      "Les guépards sont les animaux terrestres les plus rapides, capables d'atteindre des vitesses allant jusqu'à 70 mph."
+      "Les guÃ©pards sont les animaux terrestres les plus rapides, capables d'atteindre des vitesses allant jusqu'Ã  70 mph."
     ],
     "plantFacts": [
-      "Le bambou peut pousser jusqu'à 35 pouces en une seule journée !",
-      "Les tournesols se déplacent pour faire face au soleil tout au long de la journée.",
-      "Certaines orchidées peuvent vivre jusqu'à 100 ans !",
+      "Le bambou peut pousser jusqu'Ã  35 pouces en une seule journÃ©e !",
+      "Les tournesols se dÃ©placent pour faire face au soleil tout au long de la journÃ©e.",
+      "Certaines orchidÃ©es peuvent vivre jusqu'Ã  100 ans !",
       "Les bananes sont techniquement des baies, mais pas les fraises.",
-      "Un seul arbre peut fournir de l'oxygène pour jusqu'à quatre personnes par jour.",
-      "La forêt amazonienne produit environ 20 % de l'oxygène mondial.",
-      "Les pissenlits sont entièrement comestibles, de la racine à la fleur.",
-      "Les plantes représentent environ 80 % de la biomasse terrestre.",
+      "Un seul arbre peut fournir de l'oxygÃ¨ne pour jusqu'Ã  quatre personnes par jour.",
+      "La forÃªt amazonienne produit environ 20 % de l'oxygÃ¨ne mondial.",
+      "Les pissenlits sont entiÃ¨rement comestibles, de la racine Ã  la fleur.",
+      "Les plantes reprÃ©sentent environ 80 % de la biomasse terrestre.",
       "La plus grande fleur du monde, la Rafflesia, peut mesurer plus de 3 pieds de large.",
       "Certaines plantes, comme la Mimosa pudica, ferment leurs feuilles lorsqu'on les touche.",
-      "Un tournesol est en fait composé de milliers de petites fleurs.",
-      "La caféine est un pesticide naturel pour des plantes comme le café et le thé.",
-      "Il existe plus de 390 000 espèces de plantes connues de la science.",
-      "Les ananas mettent environ 2 ans à pousser complètement.",
-      "Certaines plantes du désert peuvent vivre plus de 100 ans sans beaucoup d'eau.",
+      "Un tournesol est en fait composÃ© de milliers de petites fleurs.",
+      "La cafÃ©ine est un pesticide naturel pour des plantes comme le cafÃ© et le thÃ©.",
+      "Il existe plus de 390 000 espÃ¨ces de plantes connues de la science.",
+      "Les ananas mettent environ 2 ans Ã  pousser complÃ¨tement.",
+      "Certaines plantes du dÃ©sert peuvent vivre plus de 100 ans sans beaucoup d'eau.",
       "L'aloe vera peut survivre des mois sans sol ni eau.",
-      "Les mousses ont été parmi les premières plantes à vivre sur terre.",
-      "Les séquoias géants peuvent vivre plus de 3 000 ans.",
-      "Les plantes communiquent en utilisant des signaux chimiques à travers leurs racines.",
-      "Les graines de lotus peuvent germer même après 1 000 ans !",
-      "Les nénuphars peuvent survivre des mois dans des étangs gelés.",
-      "Les avocats sont un fruit, pas un légume.",
-      "L'arbre le plus haut du monde est un séquoia nommé Hyperion, mesurant 379 pieds.",
+      "Les mousses ont Ã©tÃ© parmi les premiÃ¨res plantes Ã  vivre sur terre.",
+      "Les sÃ©quoias gÃ©ants peuvent vivre plus de 3 000 ans.",
+      "Les plantes communiquent en utilisant des signaux chimiques Ã  travers leurs racines.",
+      "Les graines de lotus peuvent germer mÃªme aprÃ¨s 1 000 ans !",
+      "Les nÃ©nuphars peuvent survivre des mois dans des Ã©tangs gelÃ©s.",
+      "Les avocats sont un fruit, pas un lÃ©gume.",
+      "L'arbre le plus haut du monde est un sÃ©quoia nommÃ© Hyperion, mesurant 379 pieds.",
       "Il existe des plantes carnivores, comme la plante carnivore de Venus.",
       "Les cocotiers font techniquement partie de la famille des palmiers, pas des arbres.",
-      "Les mangues sont le fruit le plus consommé au monde.",
-      "Les carottes étaient à l'origine violettes, pas orange.",
+      "Les mangues sont le fruit le plus consommÃ© au monde.",
+      "Les carottes Ã©taient Ã  l'origine violettes, pas orange.",
       "Les fraises ne sont pas vraiment des baies, mais les bananes le sont.",
-      "Les plantes peuvent \"entendre\" les sons et répondre aux vibrations."
+      "Les plantes peuvent \"entendre\" les sons et rÃ©pondre aux vibrations."
     ],
     "trendingPlants": "Plantes Tendances",
     "trendingAnimals": "Animaux Tendances",
     "alerts": {
       "authRequiredTitle": "Authentification requise",
-      "authRequiredBody": "Connectez-vous pour télécharger le PDF.",
-      "pdfSuccessTitle": "Succès",
-      "pdfSuccessBody": "Le PDF a été généré et envoyé à votre adresse e-mail.",
+      "authRequiredBody": "Connectez-vous pour tÃ©lÃ©charger le PDF.",
+      "pdfSuccessTitle": "SuccÃ¨s",
+      "pdfSuccessBody": "Le PDF a Ã©tÃ© gÃ©nÃ©rÃ© et envoyÃ© Ã  votre adresse e-mail.",
       "pdfErrorTitle": "Erreur",
-      "pdfErrorBody": "La génération du PDF a échoué. Veuillez réessayer.",
+      "pdfErrorBody": "La gÃ©nÃ©ration du PDF a Ã©chouÃ©. Veuillez rÃ©essayer.",
       "signInRequiredTitle": "Connexion requise",
       "signInLikeBody": "Connectez-vous pour aimer les publications.",
-      "signInCommentBody": "Connectez-vous pour commenter."
+      "signInCommentBody": "Connectez-vous pour commenter.",
+      "downloadsUnavailableTitle": "TÃ©lÃ©chargements indisponibles",
+      "downloadsUnavailableBody": "CrÃ©ez un compte gratuit pour tÃ©lÃ©charger des informations sur les espÃ¨ces.",
+      "downloadLimitCheckErrorBody": "Impossible de vÃ©rifier la limite de tÃ©lÃ©chargements. Veuillez rÃ©essayer."
     },
     "pdf": {
       "defaultCommon": "Inconnu",
@@ -144,57 +147,57 @@
       "defaultTaxon": "Inconnu",
       "noDescription": "Aucune description disponible.",
       "infoUnavailable": "Information non disponible.",
-      "notEvaluated": "Non évalué"
+      "notEvaluated": "Non Ã©valuÃ©"
     },
     "trending": {
-      "title": "Espèces tendance",
-      "subtitle": "Les plus scannées cette semaine"
+      "title": "EspÃ¨ces tendance",
+      "subtitle": "Les plus scannÃ©es cette semaine"
     },
     "emptyState": {
-      "title": "Bienvenue dans la communauté",
-      "subtitle": "Commencez à explorer et à partager vos découvertes de la nature.",
-      "cta": "Scannez votre première espèce"
+      "title": "Bienvenue dans la communautÃ©",
+      "subtitle": "Commencez Ã  explorer et Ã  partager vos dÃ©couvertes de la nature.",
+      "cta": "Scannez votre premiÃ¨re espÃ¨ce"
     },
     "feed": {
-      "likesCount": "{{count}} mention J’aime",
-      "likesCount_plural": "{{count}} mentions J’aime",
-      "beFirst": "Soyez le premier à aimer cette publication",
+      "likesCount": "{{count}} mention Jâ€™aime",
+      "likesCount_plural": "{{count}} mentions Jâ€™aime",
+      "beFirst": "Soyez le premier Ã  aimer cette publication",
       "showMore": "Afficher plus",
       "showLess": "Afficher moins",
       "viewComments": "Voir les {{count}} commentaire",
       "viewComments_plural": "Voir les {{count}} commentaires",
       "unknownUser": "Anonyme",
-      "unknownSpecies": "Espèce inconnue",
-      "likeError": "Impossible d’aimer la publication."
+      "unknownSpecies": "EspÃ¨ce inconnue",
+      "likeError": "Impossible dâ€™aimer la publication."
     },
     "relativeTime": {
-      "justNow": "À l’instant",
+      "justNow": "Ã€ lâ€™instant",
       "minutes": "Il y a {{count}} min",
       "hours": "Il y a {{count}} h",
       "days": "Il y a {{count}} j"
     }
   },
   "settings": {
-    "title": "Paramètres",
+    "title": "ParamÃ¨tres",
     "account": "Compte",
-    "guestMode": "Mode invité",
-    "signedIn": "Connecté",
+    "guestMode": "Mode invitÃ©",
+    "signedIn": "ConnectÃ©",
     "username": "Nom d'utilisateur",
     "editUsername": "Modifier le nom d'utilisateur",
     "currentUsername": "Nom d'utilisateur actuel",
     "newUsername": "Nouveau nom d'utilisateur",
-    "usernameUpdated": "Nom d'utilisateur mis à jour avec succès !",
-    "usernameUpdateError": "Erreur lors de la mise à jour du nom d'utilisateur",
-    "usernameUpdateFailed": "Échec de la mise à jour du nom d'utilisateur",
+    "usernameUpdated": "Nom d'utilisateur mis Ã  jour avec succÃ¨s !",
+    "usernameUpdateError": "Erreur lors de la mise Ã  jour du nom d'utilisateur",
+    "usernameUpdateFailed": "Ã‰chec de la mise Ã  jour du nom d'utilisateur",
     "usernameRequired": "Le nom d'utilisateur est requis",
-    "usernameTooShort": "Le nom d'utilisateur doit contenir au moins 3 caractères",
-    "usernameTooLong": "Le nom d'utilisateur doit contenir 20 caractères ou moins",
+    "usernameTooShort": "Le nom d'utilisateur doit contenir au moins 3 caractÃ¨res",
+    "usernameTooLong": "Le nom d'utilisateur doit contenir 20 caractÃ¨res ou moins",
     "usernameInvalidChars": "Le nom d'utilisateur ne peut contenir que des lettres, chiffres, tirets bas et traits d'union",
     "language": "Langue",
-    "selectLanguage": "Sélectionner la Langue",
-    "logout": "Déconnexion",
-    "logoutError": "Erreur lors de la déconnexion.",
-    "about": "À propos",
+    "selectLanguage": "SÃ©lectionner la Langue",
+    "logout": "DÃ©connexion",
+    "logoutError": "Erreur lors de la dÃ©connexion.",
+    "about": "Ã€ propos",
     "appName": "LeafNest",
     "yourPlan": "Votre Plan",
     "leafNestFree": "LeafNest Gratuit",
@@ -202,98 +205,98 @@
     "sendFeedback": "Envoyer des Commentaires",
     "faq": "FAQ",
     "termsOfUse": "Conditions d'Utilisation",
-    "generalSection": "Général",
+    "generalSection": "GÃ©nÃ©ral",
     "supportSection": "Assistance",
-    "legalSection": "Mentions légales"
+    "legalSection": "Mentions lÃ©gales"
   },
   "profile": {
     "title": "Profil",
     "editUsername": "Modifier le Nom d'Utilisateur",
-    "signOut": "Se Déconnecter",
+    "signOut": "Se DÃ©connecter",
     "leaveAccount": "Quitter votre compte",
     "signIn": "Se Connecter",
-    "accessFullFeatures": "Accéder à toutes les fonctionnalités",
-    "createAccount": "Créer un Compte",
+    "accessFullFeatures": "AccÃ©der Ã  toutes les fonctionnalitÃ©s",
+    "createAccount": "CrÃ©er un Compte",
     "joinLeafNest": "Rejoignez LeafNest",
-    "guestUser": "Utilisateur invité",
+    "guestUser": "Utilisateur invitÃ©",
     "statsTitle": "Statistiques de scan",
     "viewAll": "Tout afficher",
-    "guestPromptTitle": "Suivez vos progrès",
-    "guestPromptText": "Connectez-vous pour suivre vos scans, découvrir des espèces et débloquer des réussites.",
+    "guestPromptTitle": "Suivez vos progrÃ¨s",
+    "guestPromptText": "Connectez-vous pour suivre vos scans, dÃ©couvrir des espÃ¨ces et dÃ©bloquer des rÃ©ussites.",
     "badgeNew": "Nouveau",
-    "editPlaceholder": "Entrez un nom d’utilisateur",
+    "editPlaceholder": "Entrez un nom dâ€™utilisateur",
     "stats": {
       "total": "Scans totaux",
       "week": "Cette semaine",
-      "species": "Espèces"
+      "species": "EspÃ¨ces"
     },
     "sections": {
-      "account": "Paramètres du compte"
+      "account": "ParamÃ¨tres du compte"
     },
     "menu": {
       "planTitle": "Votre abonnement",
       "planSubtitle": "LeafNest Free",
       "notificationsTitle": "Notifications",
-      "notificationsSubtitle": "Gérez vos notifications",
-      "passwordTitle": "Mot de passe oublié",
-      "passwordSubtitle": "Réinitialisez votre mot de passe",
-      "signOutTitle": "Se déconnecter",
-      "signOutSubtitle": "Déconnectez-vous de votre compte",
+      "notificationsSubtitle": "GÃ©rez vos notifications",
+      "passwordTitle": "Mot de passe oubliÃ©",
+      "passwordSubtitle": "RÃ©initialisez votre mot de passe",
+      "signOutTitle": "Se dÃ©connecter",
+      "signOutSubtitle": "DÃ©connectez-vous de votre compte",
       "signInTitle": "Se connecter",
-      "signInSubtitle": "Accédez à toutes les fonctionnalités",
-      "createAccountTitle": "Créer un compte",
-      "createAccountSubtitle": "Rejoignez LeafNest dès aujourd’hui"
+      "signInSubtitle": "AccÃ©dez Ã  toutes les fonctionnalitÃ©s",
+      "createAccountTitle": "CrÃ©er un compte",
+      "createAccountSubtitle": "Rejoignez LeafNest dÃ¨s aujourdâ€™hui"
     },
     "alerts": {
-      "syncSuccess": "{{count}} scan en attente synchronisé",
-      "syncSuccess_plural": "{{count}} scans en attente synchronisés",
-      "usernameUpdated": "Nom d’utilisateur mis à jour avec succès.",
-      "usernameUpdateError": "La mise à jour du nom d’utilisateur a échoué.",
-      "signOutTitle": "Se déconnecter",
-      "signOutMessage": "Voulez-vous vraiment vous déconnecter ?",
-      "signOutConfirm": "Se déconnecter",
-      "signOutError": "Échec de la déconnexion. Veuillez réessayer."
+      "syncSuccess": "{{count}} scan en attente synchronisÃ©",
+      "syncSuccess_plural": "{{count}} scans en attente synchronisÃ©s",
+      "usernameUpdated": "Nom dâ€™utilisateur mis Ã  jour avec succÃ¨s.",
+      "usernameUpdateError": "La mise Ã  jour du nom dâ€™utilisateur a Ã©chouÃ©.",
+      "signOutTitle": "Se dÃ©connecter",
+      "signOutMessage": "Voulez-vous vraiment vous dÃ©connecter ?",
+      "signOutConfirm": "Se dÃ©connecter",
+      "signOutError": "Ã‰chec de la dÃ©connexion. Veuillez rÃ©essayer."
     }
   },
   "languages": {
     "en": "English",
-    "es": "Español",
-    "fr": "Français"
+    "es": "EspaÃ±ol",
+    "fr": "FranÃ§ais"
   },
   "tabs": {
     "home": "Accueil",
     "scan": "Scanner",
     "history": "Historique",
-    "settings": "Paramètres"
+    "settings": "ParamÃ¨tres"
   },
   "animals": {
     "title": "Animaux du Jour",
     "lion": {
       "name": "Lion",
       "scientificName": "Panthera leo",
-      "description": "Le lion est un grand félin du genre Panthera originaire d'Afrique et d'Inde. Il a un corps musclé et large, une tête ronde, des oreilles rondes et une queue touffue à l'extrémité.",
-      "habitat": "Savanes, prairies et forêts ouvertes",
-      "diet": "Carnivore - principalement de grands mammifères comme les zèbres, gnous et buffles",
-      "lifespan": "10-14 ans dans la nature, jusqu'à 20 ans en captivité",
-      "conservationStatus": "Vulnérable"
+      "description": "Le lion est un grand fÃ©lin du genre Panthera originaire d'Afrique et d'Inde. Il a un corps musclÃ© et large, une tÃªte ronde, des oreilles rondes et une queue touffue Ã  l'extrÃ©mitÃ©.",
+      "habitat": "Savanes, prairies et forÃªts ouvertes",
+      "diet": "Carnivore - principalement de grands mammifÃ¨res comme les zÃ¨bres, gnous et buffles",
+      "lifespan": "10-14 ans dans la nature, jusqu'Ã  20 ans en captivitÃ©",
+      "conservationStatus": "VulnÃ©rable"
     },
     "elephant": {
-      "name": "Éléphant",
+      "name": "Ã‰lÃ©phant",
       "scientificName": "Elephantidae",
-      "description": "Les éléphants sont les plus grands animaux terrestres existants, caractérisés par leur longue trompe, leurs pattes en colonnes et leurs énormes têtes avec des glandes temporales et de grandes oreilles plates.",
-      "habitat": "Savanes, forêts, déserts et marais",
-      "diet": "Herbivore - herbes, feuilles, écorces, fruits et terre",
+      "description": "Les Ã©lÃ©phants sont les plus grands animaux terrestres existants, caractÃ©risÃ©s par leur longue trompe, leurs pattes en colonnes et leurs Ã©normes tÃªtes avec des glandes temporales et de grandes oreilles plates.",
+      "habitat": "Savanes, forÃªts, dÃ©serts et marais",
+      "diet": "Herbivore - herbes, feuilles, Ã©corces, fruits et terre",
       "lifespan": "60-70 ans",
       "conservationStatus": "En danger"
     },
     "panda": {
-      "name": "Panda Géant",
+      "name": "Panda GÃ©ant",
       "scientificName": "Ailuropoda melanoleuca",
-      "description": "Le panda géant est un ours originaire du centre-sud de la Chine. Il est caractérisé par son pelage blanc et noir distinctif et son corps rond.",
-      "habitat": "Chaînes de montagnes du centre de la Chine avec des forêts denses de bambou",
-      "diet": "Principalement du bambou (99% du régime), occasionnellement de petits animaux",
-      "lifespan": "20 ans dans la nature, jusqu'à 30 ans en captivité",
-      "conservationStatus": "Vulnérable"
+      "description": "Le panda gÃ©ant est un ours originaire du centre-sud de la Chine. Il est caractÃ©risÃ© par son pelage blanc et noir distinctif et son corps rond.",
+      "habitat": "ChaÃ®nes de montagnes du centre de la Chine avec des forÃªts denses de bambou",
+      "diet": "Principalement du bambou (99% du rÃ©gime), occasionnellement de petits animaux",
+      "lifespan": "20 ans dans la nature, jusqu'Ã  30 ans en captivitÃ©",
+      "conservationStatus": "VulnÃ©rable"
     },
     "loading": "Chargement des animaux...",
     "errorLoading": "Erreur lors du chargement des animaux",
@@ -303,22 +306,22 @@
     "share": "Partager l'animal"
   },
   "signup": {
-    "title": "Créer un compte",
+    "title": "CrÃ©er un compte",
     "username": "Nom d'utilisateur",
     "email": "E-mail",
     "password": "Mot de passe",
     "confirmPassword": "Confirmer le mot de passe",
     "register": "S'inscrire",
-    "alreadyHaveAccount": "Vous avez déjà un compte ? Se connecter",
+    "alreadyHaveAccount": "Vous avez dÃ©jÃ  un compte ? Se connecter",
     "passwordsDontMatch": "Les mots de passe ne correspondent pas !",
     "fillAllFields": "Veuillez remplir tous les champs.",
-    "verificationEmailSent": "Un e-mail de vérification a été envoyé à votre adresse e-mail.",
-    "emailAlreadyInUse": "L'adresse e-mail est déjà utilisée.",
+    "verificationEmailSent": "Un e-mail de vÃ©rification a Ã©tÃ© envoyÃ© Ã  votre adresse e-mail.",
+    "emailAlreadyInUse": "L'adresse e-mail est dÃ©jÃ  utilisÃ©e.",
     "invalidEmail": "L'adresse e-mail n'est pas valide.",
     "subtitle": "Rejoignez-nous pour explorer la nature",
     "processing": "Traitement...",
     "dividerOr": "ou",
-    "alreadyMember": "Déjà membre ?",
+    "alreadyMember": "DÃ©jÃ  membre ?",
     "signInLink": "Se connecter"
   },
   "signin": {
@@ -329,22 +332,22 @@
     "signInWithGoogle": "Se connecter avec Google",
     "dontHaveAccount": "Vous n'avez pas de compte ? S'inscrire",
     "fillAllFields": "Veuillez remplir tous les champs.",
-    "signInSuccessful": "Connexion réussie",
+    "signInSuccessful": "Connexion rÃ©ussie",
     "welcomeBack": "Content de te revoir",
-    "userNotFound": "Aucun utilisateur trouvé avec cet e-mail.",
+    "userNotFound": "Aucun utilisateur trouvÃ© avec cet e-mail.",
     "wrongPassword": "Mot de passe incorrect.",
     "invalidEmail": "Adresse e-mail invalide.",
     "subtitle": "Connectez-vous pour continuer votre voyage",
-    "forgotPasswordLink": "Mot de passe oublié ?",
+    "forgotPasswordLink": "Mot de passe oubliÃ© ?",
     "dividerOr": "ou",
     "noAccountPrompt": "Vous n'avez pas de compte ?",
     "signUpLink": "S'inscrire"
   },
   "scan": {
-    "loadingCamera": "Chargement de la caméra...",
-    "needPermission": "Nous avons besoin de votre permission pour afficher la caméra",
+    "loadingCamera": "Chargement de la camÃ©ra...",
+    "needPermission": "Nous avons besoin de votre permission pour afficher la camÃ©ra",
     "grantPermission": "Accorder la Permission",
-    "preparingCamera": "Préparation de la caméra..."
+    "preparingCamera": "PrÃ©paration de la camÃ©ra..."
   },
   "favorites": {
     "title": "Favoris",
@@ -354,14 +357,14 @@
     "removeFavorite": "Supprimer le Favori",
     "remove": "Supprimer",
     "cancel": "Annuler",
-    "removed": "Supprimé",
-    "removedMessage": "a été supprimé de vos favoris.",
+    "removed": "SupprimÃ©",
+    "removedMessage": "a Ã©tÃ© supprimÃ© de vos favoris.",
     "error": "Erreur",
-    "failedToRemove": "Échec de la suppression des favoris.",
+    "failedToRemove": "Ã‰chec de la suppression des favoris.",
     "clearFavorites": "Effacer les Favoris",
     "removeAllFavorites": "Supprimer tous les favoris ?",
     "removeAll": "Supprimer tout",
-    "failedToClear": "Échec de l'effacement des favoris.",
+    "failedToClear": "Ã‰chec de l'effacement des favoris.",
     "plant": "Plante",
     "animal": "Animal",
     "noFavoritesYet": "Pas encore de favoris",
@@ -369,16 +372,97 @@
   },
   "history": {
     "title": "Historique",
+    "loading": "Chargement de l'historique...",
+    "loadingMore": "Chargement...",
+    "signInRequiredTitle": "Connexion requise",
+    "signInRequiredBody": "CrÃ©ez un compte ou connectez-vous pour voir votre historique de scans.",
+    "selection": {
+      "selectedCount": "{{count}} sÃ©lectionnÃ©",
+      "selectedCount_plural": "{{count}} sÃ©lectionnÃ©s",
+      "deleteButton": "Supprimer {{count}} enregistrement",
+      "deleteButton_plural": "Supprimer {{count}} enregistrements"
+    },
+    "offlineBanner": {
+      "premium": "Mode hors ligne (Premium)",
+      "locked": "Le mode hors ligne nÃ©cessite Premium"
+    },
+    "search": {
+      "placeholder": "Rechercher par nom..."
+    },
+    "filters": {
+      "all": "Tous",
+      "plants": "Plantes",
+      "animals": "Animaux"
+    },
+    "empty": {
+      "noHistoryTitle": "Pas encore d'historique",
+      "noHistoryBody": "Votre historique de scans apparaÃ®tra ici lorsque vous commencerez Ã  identifier des plantes et des animaux.",
+      "noResultsTitle": "Aucun rÃ©sultat",
+      "noResultsBody": "Aucun enregistrement ne correspond Ã  votre recherche ou Ã  vos filtres. Essayez d'ajuster vos filtres."
+    },
+    "actions": {
+      "signIn": "Se connecter",
+      "delete": "Supprimer",
+      "clearAll": "Tout effacer",
+      "clearFilters": "Effacer les filtres"
+    },
+    "alerts": {
+      "visibilityNow": "Le scan est maintenant {{status}}",
+      "visibilityUpdateFailed": "Impossible de mettre Ã  jour la visibilitÃ©.",
+      "visibilityNeedsSync": "Ce scan doit d'abord se synchroniser. RÃ©essayez dans un instant.",
+      "visibilityOffline": "Impossible de changer la visibilitÃ© hors ligne. VÃ©rifiez votre connexion.",
+      "visibilityNotSynced": "Ce scan n'a pas encore Ã©tÃ© synchronisÃ© avec le cloud. Attendez la synchronisation puis rÃ©essayez.",
+      "visibilityPermissionDenied": "Vous n'avez pas la permission de modifier ce scan.",
+      "visibilityNetworkError": "Erreur rÃ©seau. VÃ©rifiez votre connexion et rÃ©essayez.",
+      "errorWithMessage": "Erreur : {{message}}",
+      "deleteRecordTitle": "Supprimer l'enregistrement",
+      "deleteRecordMessage": "Supprimer \"{{name}}\" de l'historique ?",
+      "deleteRecordSuccess": "Enregistrement supprimÃ©.",
+      "deleteRecordError": "Impossible de supprimer l'enregistrement.",
+      "deleteSelectedTitle": "Supprimer la sÃ©lection",
+      "deleteSelectedMessage": "Supprimer {{count}} enregistrement de l'historique ?",
+      "deleteSelectedMessage_plural": "Supprimer {{count}} enregistrements de l'historique ?",
+      "deleteSelectedSuccess": "{{count}} enregistrement supprimÃ©.",
+      "deleteSelectedSuccess_plural": "{{count}} enregistrements supprimÃ©s.",
+      "deleteSelectedError": "Impossible de supprimer les enregistrements sÃ©lectionnÃ©s.",
+      "clearAllTitle": "Tout effacer l'historique",
+      "clearAllMessage": "Voulez-vous vraiment supprimer tout l'historique ? Cette action est irrÃ©versible.",
+      "clearAllSuccess": "Historique effacÃ©.",
+      "clearAllError": "Impossible d'effacer l'historique."
+    },
+    "visibility": {
+      "public": "public",
+      "private": "privÃ©"
+    },
+    "unknownSpecies": "EspÃ¨ce inconnue",
+    "details": {
+      "commonName": "Nom commun",
+      "scientificName": "Nom scientifique",
+      "taxonomicRank": "Rang taxonomique",
+      "type": "Type",
+      "conservationStatus": "Statut de conservation",
+      "timesScanned": "Nombre de scans",
+      "timeCount": "{{count}} fois",
+      "timeCount_plural": "{{count}} fois",
+      "globalAppScans": "Scans globaux dans l'app",
+      "scanCount": "{{count}} scan",
+      "scanCount_plural": "{{count}} scans",
+      "scannedOn": "ScannÃ© le"
+    },
+    "premiumGate": {
+      "title": "Abonnez-vous pour accÃ©der au mode hors ligne",
+      "message": "L'accÃ¨s hors ligne Ã  votre historique est une fonctionnalitÃ© premium. Abonnez-vous pour voir votre historique de scans lorsque vous Ãªtes hors ligne."
+    },
     "noHistory": "Pas encore d'historique"
   },
   "about": {
-    "title": "À propos",
-    "developedBy": "Développé et conçu par l'équipe LeafNest",
-    "teamTitle": "Équipe LeafNest",
-    "specialThanks": "Remerciements Spéciaux",
+    "title": "Ã€ propos",
+    "developedBy": "DÃ©veloppÃ© et conÃ§u par l'Ã©quipe LeafNest",
+    "teamTitle": "Ã‰quipe LeafNest",
+    "specialThanks": "Remerciements SpÃ©ciaux",
     "mentor": "M. Joshua R. Lasac",
-    "credits": "Créé à l'origine par l'équipe LeafNest avec le soutien de Pinamalayan Maritime Foundation And Technological College INC. (PMFTCI) et de l'École d'Études Informatiques.",
-    "privacyPolicy": "Politique de Confidentialité",
+    "credits": "CrÃ©Ã© Ã  l'origine par l'Ã©quipe LeafNest avec le soutien de Pinamalayan Maritime Foundation And Technological College INC. (PMFTCI) et de l'Ã‰cole d'Ã‰tudes Informatiques.",
+    "privacyPolicy": "Politique de ConfidentialitÃ©",
     "version": "Version 0.0.1 (1)",
     "help": "Pour obtenir de l'aide : help.leafnest.capstone@gmail.com",
     "tagline": "Identification des plantes et des animaux",
@@ -387,172 +471,172 @@
   },
   "plan": {
     "title": "Plans",
-    "upgradeTitle": "Passer à Premium",
-    "upgradeSubtitle": "Débloquez toutes les fonctionnalités et profitez pleinement de notre application.",
+    "upgradeTitle": "Passer Ã  Premium",
+    "upgradeSubtitle": "DÃ©bloquez toutes les fonctionnalitÃ©s et profitez pleinement de notre application.",
     "free": "Gratuit",
-    "freePrice": "₱0 / mois",
-    "freeFeature1": "Scanner des plantes et animaux limités",
-    "freeFeature2": "Découvertes quotidiennes de base",
-    "freeFeature3": "Pas d'accès hors ligne",
-    "freeFeature4": "Publicités incluses",
+    "freePrice": "â‚±0 / mois",
+    "freeFeature1": "Scanner des plantes et animaux limitÃ©s",
+    "freeFeature2": "DÃ©couvertes quotidiennes de base",
+    "freeFeature3": "Pas d'accÃ¨s hors ligne",
+    "freeFeature4": "PublicitÃ©s incluses",
     "premium": "Premium",
-    "premiumPrice": "₱129.00 / mois",
-    "premiumFeature1": "Scans illimités",
-    "premiumFeature2": "Découvertes quotidiennes exclusives",
-    "premiumFeature3": "Accès hors ligne",
-    "premiumFeature4": "Expérience sans publicité",
+    "premiumPrice": "â‚±129.00 / mois",
+    "premiumFeature1": "Scans illimitÃ©s",
+    "premiumFeature2": "DÃ©couvertes quotidiennes exclusives",
+    "premiumFeature3": "AccÃ¨s hors ligne",
+    "premiumFeature4": "ExpÃ©rience sans publicitÃ©",
     "subscribeNow": "S'abonner Maintenant",
-    "selectedPlan": "Vous avez sélectionné le plan {{plan}} !"
+    "selectedPlan": "Vous avez sÃ©lectionnÃ© le plan {{plan}} !"
   },
   "legal": {
     "cookies": {
       "title": "Politique de cookies",
-      "subtitle": "Comment nous utilisons les cookies pour améliorer votre expérience",
-      "effectiveDate": "Date d'entrée en vigueur : 1er juillet 2025",
-      "intro": "Cette politique de cookies explique comment nous utilisons les cookies pour améliorer votre expérience lorsque vous visitez notre application et utilisez ses fonctionnalités. En utilisant cette application, vous consentez à l'utilisation de cookies comme décrit dans cette politique.",
+      "subtitle": "Comment nous utilisons les cookies pour amÃ©liorer votre expÃ©rience",
+      "effectiveDate": "Date d'entrÃ©e en vigueur : 1er juillet 2025",
+      "intro": "Cette politique de cookies explique comment nous utilisons les cookies pour amÃ©liorer votre expÃ©rience lorsque vous visitez notre application et utilisez ses fonctionnalitÃ©s. En utilisant cette application, vous consentez Ã  l'utilisation de cookies comme dÃ©crit dans cette politique.",
       "sections": [
         {
           "title": "Que sont les cookies ?",
-          "content": "Les cookies sont de petits fichiers texte stockés sur votre appareil lorsque vous visitez des sites Web ou utilisez des applications. Ils nous aident à comprendre comment vous interagissez avec notre service et nous permettent de vous offrir une expérience meilleure et plus personnalisée."
+          "content": "Les cookies sont de petits fichiers texte stockÃ©s sur votre appareil lorsque vous visitez des sites Web ou utilisez des applications. Ils nous aident Ã  comprendre comment vous interagissez avec notre service et nous permettent de vous offrir une expÃ©rience meilleure et plus personnalisÃ©e."
         },
         {
           "title": "Comment nous utilisons les cookies",
-          "content": "Nous utilisons des cookies à plusieurs fins essentielles :",
+          "content": "Nous utilisons des cookies Ã  plusieurs fins essentielles :",
           "list": [
-            "Pour personnaliser le contenu et les publicités",
-            "Analyser les modèles de trafic et améliorer l’expérience utilisateur",
-            "Pour activer certaines fonctionnalités et fonctionnalités de notre application",
-            "Pour mémoriser vos préférences et paramètres",
-            "Pour fournir un accès sécurisé à votre compte"
+            "Pour personnaliser le contenu et les publicitÃ©s",
+            "Analyser les modÃ¨les de trafic et amÃ©liorer lâ€™expÃ©rience utilisateur",
+            "Pour activer certaines fonctionnalitÃ©s et fonctionnalitÃ©s de notre application",
+            "Pour mÃ©moriser vos prÃ©fÃ©rences et paramÃ¨tres",
+            "Pour fournir un accÃ¨s sÃ©curisÃ© Ã  votre compte"
           ]
         },
         {
           "title": "Types de cookies que nous utilisons",
-          "content": "Nous utilisons différents types de cookies pour améliorer votre expérience :",
+          "content": "Nous utilisons diffÃ©rents types de cookies pour amÃ©liorer votre expÃ©rience :",
           "list": [
-            "Cookies essentiels : requis pour la fonctionnalité de base de l'application",
-            "Cookies de performance : aidez-nous à comprendre comment vous utilisez l'application",
-            "Cookies fonctionnels : mémorisez vos préférences et vos choix",
-            "Cookies d'analyse : fournissent des informations sur les modèles d'utilisation des applications"
+            "Cookies essentielsÂ : requis pour la fonctionnalitÃ© de base de l'application",
+            "Cookies de performanceÂ :Â aidez-nous Ã  comprendre comment vous utilisez l'application",
+            "Cookies fonctionnelsÂ : mÃ©morisez vos prÃ©fÃ©rences et vos choix",
+            "Cookies d'analyseÂ : fournissent des informations sur les modÃ¨les d'utilisation des applications"
           ]
         },
         {
           "title": "Gestion des cookies",
-          "content": "Vous pouvez contrôler et gérer les cookies via les paramètres de votre appareil. Veuillez toutefois noter que la désactivation de certains cookies peut affecter votre expérience et limiter les fonctionnalités de l'application."
+          "content": "Vous pouvez contrÃ´ler et gÃ©rer les cookies via les paramÃ¨tres de votre appareil. Veuillez toutefois noter que la dÃ©sactivation de certains cookies peut affecter votre expÃ©rience et limiter les fonctionnalitÃ©s de l'application."
         },
         {
-          "title": "Durée des cookies",
-          "content": "Certains cookies sont temporaires (cookies de session) et sont supprimés lorsque vous fermez l'application. D'autres restent sur votre appareil pendant une période définie pour mémoriser vos préférences au fil des sessions."
+          "title": "DurÃ©e des cookies",
+          "content": "Certains cookies sont temporaires (cookies de session) et sont supprimÃ©s lorsque vous fermez l'application. D'autres restent sur votre appareil pendant une pÃ©riode dÃ©finie pour mÃ©moriser vos prÃ©fÃ©rences au fil des sessions."
         },
         {
           "title": "Modifications de cette politique",
-          "content": "Nous pouvons mettre à jour cette politique en matière de cookies de temps à autre pour refléter les changements technologiques ou les exigences légales. Toute modification sera publiée sur cette page avec une date de révision mise à jour."
+          "content": "Nous pouvons mettre Ã  jour cette politique en matiÃ¨re de cookies de temps Ã  autre pour reflÃ©ter les changements technologiques ou les exigences lÃ©gales. Toute modification sera publiÃ©e sur cette page avec une date de rÃ©vision mise Ã  jour."
         },
         {
           "title": "Contactez-nous",
-          "content": "Si vous avez des questions, des préoccupations ou des commentaires concernant cette politique en matière de cookies, veuillez nous contacter à leafnest.capstone@gmail.com."
+          "content": "Si vous avez des questions, des prÃ©occupations ou des commentaires concernant cette politique en matiÃ¨re de cookies, veuillez nous contacter Ã  leafnest.capstone@gmail.com."
         }
       ],
-      "footerTitle": "Votre vie privée est importante",
-      "footerText": "Nous nous engageons à faire preuve de transparence sur la manière dont nous utilisons les cookies. Votre utilisation continue de notre application indique votre acceptation de cette politique.",
-      "copyright": "© 2025 LeafNest. Tous droits réservés.",
-      "lastUpdated": "Dernière mise à jour : 1 juillet 2025"
+      "footerTitle": "Votre vie privÃ©e est importante",
+      "footerText": "Nous nous engageons Ã  faire preuve de transparence sur la maniÃ¨re dont nous utilisons les cookies. Votre utilisation continue de notre application indique votre acceptation de cette politique.",
+      "copyright": "Â© 2025 LeafNest. Tous droits rÃ©servÃ©s.",
+      "lastUpdated": "DerniÃ¨re mise Ã  jour : 1 juillet 2025"
     },
     "privacy": {
-      "title": "politique de confidentialité",
-      "subtitle": "Votre vie privée nous tient à cœur",
-      "effectiveDate": "Date d'entrée en vigueur : 1er juillet 2025",
-      "intro": "Chez LeafNest, nous nous engageons à protéger votre vie privée et à assurer la sécurité de vos informations personnelles.",
+      "title": "politique de confidentialitÃ©",
+      "subtitle": "Votre vie privÃ©e nous tient Ã  cÅ“ur",
+      "effectiveDate": "Date d'entrÃ©e en vigueur : 1er juillet 2025",
+      "intro": "Chez LeafNest, nous nous engageons Ã  protÃ©ger votre vie privÃ©e et Ã  assurer la sÃ©curitÃ© de vos informations personnelles.",
       "sections": [
         {
           "title": "Informations que nous collectons",
-          "content": "Nous collectons les informations que vous nous fournissez directement, par exemple lorsque vous créez un compte, téléchargez des photos ou nous contactez pour obtenir de l'aide. Cela peut inclure votre nom, votre adresse e-mail et toute autre information que vous choisissez de fournir."
+          "content": "Nous collectons les informations que vous nous fournissez directement, par exemple lorsque vous crÃ©ez un compte, tÃ©lÃ©chargez des photos ou nous contactez pour obtenir de l'aide. Cela peut inclure votre nom, votre adresse e-mail et toute autre information que vous choisissez de fournir."
         },
         {
           "title": "Comment nous utilisons vos informations",
-          "content": "Nous utilisons les informations que nous collectons pour fournir, maintenir et améliorer nos services, communiquer avec vous et développer de nouvelles fonctionnalités. Nous ne vendons pas vos informations personnelles à des tiers."
+          "content": "Nous utilisons les informations que nous collectons pour fournir, maintenir et amÃ©liorer nos services, communiquer avec vous et dÃ©velopper de nouvelles fonctionnalitÃ©s. Nous ne vendons pas vos informations personnelles Ã  des tiers."
         },
         {
-          "title": "Sécurité des données",
-          "content": "Nous mettons en œuvre des mesures techniques et organisationnelles appropriées pour protéger vos informations personnelles contre tout accès, altération, divulgation ou destruction non autorisés."
+          "title": "SÃ©curitÃ© des donnÃ©es",
+          "content": "Nous mettons en Å“uvre des mesures techniques et organisationnelles appropriÃ©es pour protÃ©ger vos informations personnelles contre tout accÃ¨s, altÃ©ration, divulgation ou destruction non autorisÃ©s."
         },
         {
           "title": "Vos droits",
-          "content": "Vous avez le droit d'accéder, de mettre à jour ou de supprimer vos informations personnelles. Vous pouvez le faire via les paramètres de votre compte ou en nous contactant directement."
+          "content": "Vous avez le droit d'accÃ©der, de mettre Ã  jour ou de supprimer vos informations personnelles. Vous pouvez le faire via les paramÃ¨tres de votre compte ou en nous contactant directement."
         },
         {
           "title": "Services tiers",
-          "content": "Notre application peut contenir des liens vers des sites Web et des services tiers. Nous ne sommes pas responsables de leurs pratiques de confidentialité. Nous vous encourageons à consulter leurs politiques de confidentialité."
+          "content": "Notre application peut contenir des liens vers des sites Web et des services tiers. Nous ne sommes pas responsables de leurs pratiques de confidentialitÃ©. Nous vous encourageons Ã  consulter leurs politiques de confidentialitÃ©."
         },
         {
-          "title": "Modifications de la politique de confidentialité",
-          "content": "Nous nous réservons le droit de mettre à jour cette politique de confidentialité à tout moment. Les modifications seront publiées sur cette page avec une date d'entrée en vigueur mise à jour. Votre utilisation continue constitue l’acceptation des modifications."
+          "title": "Modifications de la politique de confidentialitÃ©",
+          "content": "Nous nous rÃ©servons le droit de mettre Ã  jour cette politique de confidentialitÃ© Ã  tout moment. Les modifications seront publiÃ©es sur cette page avec une date d'entrÃ©e en vigueur mise Ã  jour. Votre utilisation continue constitue lâ€™acceptation des modifications."
         },
         {
           "title": "Contactez-nous",
-          "content": "Si vous avez des questions sur cette politique de confidentialité ou sur nos pratiques de confidentialité, veuillez nous contacter à l'adresse Privacy@leafnest.com."
+          "content": "Si vous avez des questions sur cette politique de confidentialitÃ© ou sur nos pratiques de confidentialitÃ©, veuillez nous contacter Ã  l'adresse Privacy@leafnest.com."
         }
       ],
       "footerTitle": "Nous nous soucions de vous",
-      "footerText": "Votre confiance est importante pour nous. Nous nous engageons à respecter des pratiques transparentes en matière de données et à respecter votre droit à la vie privée.",
-      "copyright": "© 2025 LeafNest. Tous droits réservés.",
-      "lastUpdated": "Dernière mise à jour : 1 juillet 2025"
+      "footerText": "Votre confiance est importante pour nous. Nous nous engageons Ã  respecter des pratiques transparentes en matiÃ¨re de donnÃ©es et Ã  respecter votre droit Ã  la vie privÃ©e.",
+      "copyright": "Â© 2025 LeafNest. Tous droits rÃ©servÃ©s.",
+      "lastUpdated": "DerniÃ¨re mise Ã  jour : 1 juillet 2025"
     },
     "terms": {
       "title": "Conditions d'utilisation",
       "subtitle": "Veuillez lire attentivement avant d'utiliser",
-      "effectiveDate": "Date d'entrée en vigueur : 1er juillet 2025",
-      "intro": "Ces conditions d'utilisation régissent l'utilisation de l'application et des services LeafNest. En utilisant notre application, vous acceptez ces termes et conditions.",
+      "effectiveDate": "Date d'entrÃ©e en vigueur : 1er juillet 2025",
+      "intro": "Ces conditions d'utilisation rÃ©gissent l'utilisation de l'application et des services LeafNest. En utilisant notre application, vous acceptez ces termes et conditions.",
       "sections": [
         {
           "title": "Acceptation des conditions",
-          "content": "En accédant ou en utilisant l'application LeafNest, vous acceptez d'être lié par ces conditions d'utilisation. Si vous n'acceptez pas ces conditions, vous ne devez pas utiliser l'application."
+          "content": "En accÃ©dant ou en utilisant l'application LeafNest, vous acceptez d'Ãªtre liÃ© par ces conditions d'utilisation. Si vous n'acceptez pas ces conditions, vous ne devez pas utiliser l'application."
         },
         {
-          "title": "Responsabilités des utilisateurs",
-          "content": "Vous acceptez d'utiliser l'application uniquement à des fins licites et d'une manière qui ne porte pas atteinte aux droits d'autrui. Vous êtes responsable du maintien de la confidentialité des informations de votre compte."
+          "title": "ResponsabilitÃ©s des utilisateurs",
+          "content": "Vous acceptez d'utiliser l'application uniquement Ã  des fins licites et d'une maniÃ¨re qui ne porte pas atteinte aux droits d'autrui. Vous Ãªtes responsable du maintien de la confidentialitÃ© des informations de votre compte."
         },
         {
-          "title": "Propriété intellectuelle",
-          "content": "Tout le contenu, les marques déposées, les logos et la propriété intellectuelle de l'application sont la propriété de LeafNest ou nous sont concédés sous licence. L'utilisation non autorisée de notre propriété intellectuelle est strictement interdite."
+          "title": "PropriÃ©tÃ© intellectuelle",
+          "content": "Tout le contenu, les marques dÃ©posÃ©es, les logos et la propriÃ©tÃ© intellectuelle de l'application sont la propriÃ©tÃ© de LeafNest ou nous sont concÃ©dÃ©s sous licence. L'utilisation non autorisÃ©e de notre propriÃ©tÃ© intellectuelle est strictement interdite."
         },
         {
-          "title": "Confidentialité et collecte de données",
-          "content": "Nous collectons et traitons les informations personnelles comme décrit dans notre Politique de confidentialité. En utilisant notre application, vous consentez à nos pratiques de collecte, de stockage et de traitement des données."
+          "title": "ConfidentialitÃ© et collecte de donnÃ©es",
+          "content": "Nous collectons et traitons les informations personnelles comme dÃ©crit dans notre Politique de confidentialitÃ©. En utilisant notre application, vous consentez Ã  nos pratiques de collecte, de stockage et de traitement des donnÃ©es."
         },
         {
-          "title": "Limitation de responsabilité",
-          "content": "LeafNest n'est pas responsable des dommages, pertes ou blessures résultant de l'utilisation de l'application ou de ses services. Vous utilisez l'application à vos propres risques et discrétion."
+          "title": "Limitation de responsabilitÃ©",
+          "content": "LeafNest n'est pas responsable des dommages, pertes ou blessures rÃ©sultant de l'utilisation de l'application ou de ses services. Vous utilisez l'application Ã  vos propres risques et discrÃ©tion."
         },
         {
           "title": "Modifications des conditions",
-          "content": "Nous nous réservons le droit de mettre à jour ces conditions d'utilisation à tout moment. Toute modification sera publiée sur cette page avec une date d’entrée en vigueur mise à jour. L'utilisation continue constitue l'acceptation des modifications."
+          "content": "Nous nous rÃ©servons le droit de mettre Ã  jour ces conditions d'utilisation Ã  tout moment. Toute modification sera publiÃ©e sur cette page avec une date dâ€™entrÃ©e en vigueur mise Ã  jour. L'utilisation continue constitue l'acceptation des modifications."
         },
         {
           "title": "Contactez-nous",
-          "content": "Si vous avez des questions, des préoccupations ou des commentaires concernant ces conditions d'utilisation, veuillez nous contacter à leafnest.capstone@gmail.com."
+          "content": "Si vous avez des questions, des prÃ©occupations ou des commentaires concernant ces conditions d'utilisation, veuillez nous contacter Ã  leafnest.capstone@gmail.com."
         }
       ],
       "footerTitle": "Merci",
-      "footerText": "Merci d'avoir pris le temps de consulter nos conditions d'utilisation. Votre confiance et votre conformité nous aident à créer une meilleure expérience pour chacun.",
-      "copyright": "© 2025 LeafNest. Tous droits réservés.",
-      "lastUpdated": "Dernière mise à jour : 1 juillet 2025"
+      "footerText": "Merci d'avoir pris le temps de consulter nos conditions d'utilisation. Votre confiance et votre conformitÃ© nous aident Ã  crÃ©er une meilleure expÃ©rience pour chacun.",
+      "copyright": "Â© 2025 LeafNest. Tous droits rÃ©servÃ©s.",
+      "lastUpdated": "DerniÃ¨re mise Ã  jour : 1 juillet 2025"
     }
   },
   "faq": {
     "title": "Aide et FAQ",
-    "subtitle": "Trouvez des réponses aux questions courantes",
+    "subtitle": "Trouvez des rÃ©ponses aux questions courantes",
     "categories": [
       {
         "title": "Commencer",
         "items": [
           {
-            "question": "Qu’est-ce que LeafNest ?",
-            "answer": "LeafNest est une application d'identification et d'information sur les plantes qui utilise la technologie de l'IA pour vous aider à identifier les plantes et les animaux afin de fournir des connaissances sur la nature."
+            "question": "Quâ€™est-ce que LeafNestÂ ?",
+            "answer": "LeafNest est une application d'identification et d'information sur les plantes qui utilise la technologie de l'IA pour vous aider Ã  identifier les plantes et les animaux afin de fournir des connaissances sur la nature."
           },
           {
             "question": "Comment puis-je commencer ?",
-            "answer": "Ouvrez l'application, appuyez sur l'icône de numérisation et pointez-la vers n'importe quelle plante ou animal. L'IA l'identifiera et fournira des informations détaillées sur cette espèce."
+            "answer": "Ouvrez l'application, appuyez sur l'icÃ´ne de numÃ©risation et pointez-la vers n'importe quelle plante ou animal. L'IA l'identifiera et fournira des informations dÃ©taillÃ©es sur cette espÃ¨ce."
           }
         ]
       },
@@ -560,29 +644,29 @@
         "title": "Utiliser le scanner",
         "items": [
           {
-            "question": "Comment scanner une espèce ?",
-            "answer": "Appuyez sur l'icône de numérisation sur l'écran d'accueil, pointez votre appareil photo vers l'espèce et prenez une photo claire. L'application l'identifiera automatiquement."
+            "question": "Comment scanner une espÃ¨ce ?",
+            "answer": "Appuyez sur l'icÃ´ne de numÃ©risation sur l'Ã©cran d'accueil, pointez votre appareil photo vers l'espÃ¨ce et prenez une photo claire. L'application l'identifiera automatiquement."
           },
           {
-            "question": "Qu’est-ce qui fait une bonne analyse ?",
-            "answer": "Assurez un bon éclairage, concentrez-vous sur les caractéristiques distinctives et maintenez la caméra stable pour de meilleurs résultats."
+            "question": "Quâ€™est-ce qui fait une bonne analyse ?",
+            "answer": "Assurez un bon Ã©clairage, concentrez-vous sur les caractÃ©ristiques distinctives et maintenez la camÃ©ra stable pour de meilleurs rÃ©sultats."
           },
           {
-            "question": "Puis-je numériser depuis ma galerie de photos ?",
-            "answer": "Oui. Vous pouvez télécharger des photos existantes de votre galerie en sélectionnant l'option Galerie sur l'écran du scanner."
+            "question": "Puis-je numÃ©riser depuis ma galerie de photos ?",
+            "answer": "Oui. Vous pouvez tÃ©lÃ©charger des photos existantes de votre galerie en sÃ©lectionnant l'option Galerie sur l'Ã©cran du scanner."
           }
         ]
       },
       {
-        "title": "Précision et fonctionnalités",
+        "title": "PrÃ©cision et fonctionnalitÃ©s",
         "items": [
           {
-            "question": "Quelle est la précision de l’identification ?",
-            "answer": "LeafNest utilise des modèles avancés d'apprentissage automatique. La précision varie en fonction de l'éclairage et de la qualité de l'image, mais dépasse généralement 90 %."
+            "question": "Quelle est la prÃ©cision de lâ€™identificationÂ ?",
+            "answer": "LeafNest utilise des modÃ¨les avancÃ©s d'apprentissage automatique. La prÃ©cision varie en fonction de l'Ã©clairage et de la qualitÃ© de l'image, mais dÃ©passe gÃ©nÃ©ralement 90 %."
           },
           {
-            "question": "Puis-je sauvegarder mes plantes préférées ?",
-            "answer": "Oui. Appuyez sur l'icône en forme de cœur sur n'importe quelle espèce identifiée pour l'ajouter à vos favoris pour un accès rapide plus tard."
+            "question": "Puis-je sauvegarder mes plantes prÃ©fÃ©rÃ©es ?",
+            "answer": "Oui. Appuyez sur l'icÃ´ne en forme de cÅ“ur sur n'importe quelle espÃ¨ce identifiÃ©e pour l'ajouter Ã  vos favoris pour un accÃ¨s rapide plus tard."
           }
         ]
       },
@@ -591,7 +675,7 @@
         "items": [
           {
             "question": "Comment contacter l'assistance ?",
-            "answer": "Ouvrez le menu Paramètres et sélectionnez Aide et support, ou envoyez-nous un e-mail à leafnest.capstone@gmail.com."
+            "answer": "Ouvrez le menu ParamÃ¨tres et sÃ©lectionnez Aide et support, ou envoyez-nous un e-mail Ã  leafnest.capstone@gmail.com."
           }
         ]
       }
@@ -599,91 +683,95 @@
   },
   "help": {
     "title": "Aide et assistance",
-    "subtitle": "Conseils pour scanner les plantes et les animaux avec l’IA – et où obtenir de l’aide supplémentaire.",
+    "subtitle": "Conseils pour scanner les plantes et les animaux avec lâ€™IA â€“ et oÃ¹ obtenir de lâ€™aide supplÃ©mentaire.",
     "quickStart": {
-      "title": "Démarrage rapide",
+      "title": "DÃ©marrage rapide",
       "bullets": [
-        "Appuyez sur le bouton Numériser depuis l'écran d'accueil.",
+        "Appuyez sur le bouton NumÃ©riser depuis l'Ã©cran d'accueil.",
         "Centrez la plante ou l'animal dans le cadre.",
         "Restez stable, puis prenez une photo claire."
       ],
       "cta": "Ouvrir le scanner"
     },
     "bestResults": {
-      "title": "Comment obtenir de meilleurs résultats",
+      "title": "Comment obtenir de meilleurs rÃ©sultats",
       "bullets": [
-        "Utilisez un bon éclairage et évitez les contre-jours intenses.",
-        "Remplissez le cadre avec le sujet, en vous concentrant sur les détails distinctifs.",
-        "Essayez plusieurs angles tels que les feuilles, les fleurs, l'écorce ou les photos de profil."
+        "Utilisez un bon Ã©clairage et Ã©vitez les contre-jours intenses.",
+        "Remplissez le cadre avec le sujet, en vous concentrant sur les dÃ©tails distinctifs.",
+        "Essayez plusieurs angles tels que les feuilles, les fleurs, l'Ã©corce ou les photos de profil."
       ]
     },
     "troubleshooting": {
-      "title": "Dépannage",
+      "title": "DÃ©pannage",
       "bullets": [
-        "Les faits saillants quotidiens se ressemblent ? Tirez pour actualiser ou rouvrir l'application après minuit (heure des Philippines).",
-        "Pas d'internet ? Vérifiez votre connexion car la reconnaissance d'images nécessite une connexion réseau.",
-        "Faible précision ? Prenez une photo plus claire et plus proche avec un meilleur éclairage."
+        "Les faits saillants quotidiens se ressemblentÂ ? Tirez pour actualiser ou rouvrir l'application aprÃ¨s minuit (heure des Philippines).",
+        "Pas d'internet ? VÃ©rifiez votre connexion car la reconnaissance d'images nÃ©cessite une connexion rÃ©seau.",
+        "Faible prÃ©cision ? Prenez une photo plus claire et plus proche avec un meilleur Ã©clairage."
       ]
     },
     "links": {
       "faq": "FAQ",
       "feedback": "Envoyer des commentaires",
-      "about": "À propos de LeafNest",
-      "privacy": "politique de confidentialité",
+      "about": "Ã€ propos de LeafNest",
+      "privacy": "politique de confidentialitÃ©",
       "terms": "Conditions d'utilisation",
       "contact": "Contacter l'assistance"
     },
     "alerts": {
       "noEmailTitle": "Impossible d'ouvrir l'application de messagerie",
-      "noEmailBody": "Merci de nous écrire à {{email}}."
+      "noEmailBody": "Merci de nous Ã©crire Ã  {{email}}."
     }
   },
   "feedback": {
     "title": "Envoyer des commentaires",
-    "subtitle": "Dites-nous ce qui fonctionne bien ou ce qui pourrait être amélioré. Nous lisons chaque message.",
+    "subtitle": "Dites-nous ce qui fonctionne bien ou ce qui pourrait Ãªtre amÃ©liorÃ©. Nous lisons chaque message.",
     "topicLabel": "Sujet",
     "topics": {
       "bug": "Signaler un bug",
-      "idea": "Demande de fonctionnalité",
+      "idea": "Demande de fonctionnalitÃ©",
       "ux": "Conception/UX",
-      "content": "Espèce / Contenu",
+      "content": "EspÃ¨ce / Contenu",
       "account": "Compte / Connexion",
       "other": "Autre"
     },
     "subjectLabel": "Sujet",
-    "subjectPlaceholder": "Bref résumé (par exemple, le scanner qualifie à tort une feuille d'érable)",
+    "subjectPlaceholder": "Bref rÃ©sumÃ© (par exemple, le scanner qualifie Ã  tort une feuille d'Ã©rable)",
     "messageLabel": "Message",
-    "messagePlaceholder": "Décrivez ce qui s'est passé, les étapes à suivre et les attentes.",
+    "messagePlaceholder": "DÃ©crivez ce qui s'est passÃ©, les Ã©tapes Ã  suivre et les attentes.",
     "emailLabel": "Votre email (facultatif)",
-    "emailPlaceholder": "Nous vous répondrons ici si besoin",
+    "emailPlaceholder": "Nous vous rÃ©pondrons ici si besoin",
     "includeDiagnostics": "Inclure les diagnostics",
-    "diagnosticsHint": "Nous aide à déboguer les problèmes (plateforme et système d'exploitation uniquement).",
+    "diagnosticsHint": "Nous aide Ã  dÃ©boguer les problÃ¨mes (plateforme et systÃ¨me d'exploitation uniquement).",
     "submit": "Envoyer des commentaires",
-    "submitting": "Ouverture du courrier…",
-    "footerText": "Ou envoyez-nous directement un e-mail à {{email}}",
+    "submitting": "Envoi...",
+    "footerText": "Ou envoyez-nous directement un e-mail Ã  {{email}}",
     "alerts": {
       "missingInfoTitle": "Informations manquantes",
       "missingInfoMessage": "Veuillez ajouter un sujet et un message.",
-      "noEmailAppTitle": "Impossible d'ouvrir l'application de messagerie",
-      "noEmailAppMessage": "Merci de nous écrire à {{email}} avec vos commentaires.",
-      "genericErrorTitle": "Quelque chose s'est mal passé",
-      "genericErrorMessage": "Merci de nous écrire à {{email}} avec vos commentaires."
+      "invalidEmailTitle": "Email invalide",
+      "invalidEmailMessage": "Veuillez saisir un email valide ou laisser le champ vide.",
+      "noEmailAppTitle": "Impossible d'envoyer les commentaires",
+      "noEmailAppMessage": "Veuillez reessayer plus tard ou nous ecrire a {{email}}.",
+      "successTitle": "Commentaires envoyes",
+      "successMessage": "Merci pour vos commentaires. Nous allons les examiner.",
+      "genericErrorTitle": "Quelque chose s'est mal passe",
+      "genericErrorMessage": "Veuillez reessayer plus tard ou nous ecrire a {{email}}."
     }
   },
   "postDetail": {
     "title": "Publication",
     "errorTitle": "Erreur",
-    "postNotFound": "Publication non trouvée",
+    "postNotFound": "Publication non trouvÃ©e",
     "failedToLoadPost": "Impossible de charger la publication",
     "signInRequired": "Connexion requise",
     "signInToLike": "Connectez-vous pour aimer les publications",
     "signInToComment": "Connectez-vous pour commenter",
     "failedToLike": "Impossible d'aimer la publication",
-    "unknownSpecies": "Espèce inconnue",
-    "about": "À propos",
+    "unknownSpecies": "EspÃ¨ce inconnue",
+    "about": "Ã€ propos",
     "showMore": "Afficher plus",
     "showLess": "Afficher moins",
-    "beFirstToLike": "Soyez le premier à aimer cette publication",
+    "beFirstToLike": "Soyez le premier Ã  aimer cette publication",
     "like": "mention J'aime",
     "likes": "mentions J'aime",
     "comment": "commentaire",
@@ -693,17 +781,17 @@
   "comments": {
     "title": "Commentaires",
     "noComments": "Pas encore de commentaires",
-    "beFirstToComment": "Soyez le premier à commenter !",
+    "beFirstToComment": "Soyez le premier Ã  commenter !",
     "addComment": "Ajouter un commentaire...",
     "deleteComment": "Supprimer le commentaire",
-    "deleteConfirm": "Êtes-vous sûr de vouloir supprimer ce commentaire ?",
+    "deleteConfirm": "ÃŠtes-vous sÃ»r de vouloir supprimer ce commentaire ?",
     "delete": "Supprimer",
     "failedToDelete": "Impossible de supprimer le commentaire",
     "failedToLike": "Impossible d'aimer le commentaire",
     "loginRequired": "Connexion requise",
-    "loginToComment": "Vous devez être connecté pour commenter",
-    "loginToLike": "Vous devez être connecté pour aimer",
-    "justNow": "À l'instant"
+    "loginToComment": "Vous devez Ãªtre connectÃ© pour commenter",
+    "loginToLike": "Vous devez Ãªtre connectÃ© pour aimer",
+    "justNow": "Ã€ l'instant"
   },
   "notification": {
     "title": "Notifications",
@@ -713,71 +801,233 @@
     "delete": "Supprimer",
     "deleteAll": "Supprimer tout"
   },
+  "commentsModal": {
+    "title": "Commentaires",
+    "inputPlaceholder": "Ajouter un commentaire...",
+    "empty": {
+      "title": "Pas encore de commentaires",
+      "subtitle": "Soyez le premier à commenter !"
+    },
+    "actions": {
+      "cancel": "Annuler",
+      "delete": "Supprimer"
+    },
+    "alerts": {
+      "loadErrorTitle": "Erreur",
+      "loadErrorBody": "Impossible de charger les commentaires.",
+      "loginRequiredTitle": "Connexion requise",
+      "loginRequiredCommentBody": "Vous devez être connecté pour commenter.",
+      "loginRequiredLikeBody": "Vous devez être connecté pour aimer des commentaires.",
+      "addErrorTitle": "Erreur",
+      "addErrorBody": "Impossible d'ajouter le commentaire.",
+      "likeErrorTitle": "Erreur",
+      "likeErrorBody": "Impossible d'aimer le commentaire.",
+      "deleteTitle": "Supprimer le commentaire",
+      "deleteConfirmBody": "Voulez-vous vraiment supprimer ce commentaire ?",
+      "deleteErrorTitle": "Erreur",
+      "deleteErrorBody": "Impossible de supprimer le commentaire."
+    }
+  },
+  "premiumGate": {
+    "offline": {
+      "title": "Accès hors ligne requis",
+      "historySubtitle": "Abonnez-vous pour accéder à l'historique hors ligne",
+      "historyDescription": "L'accès hors ligne à votre historique de scans est une fonctionnalité premium. Passez à Premium pour consulter votre historique partout.",
+      "favoritesSubtitle": "Abonnez-vous pour accéder aux favoris hors ligne",
+      "favoritesDescription": "L'accès hors ligne à vos favoris est une fonctionnalité premium. Passez à Premium pour consulter vos favoris partout."
+    },
+    "limits": {
+      "scanTitle": "Limite de scans atteinte",
+      "scanSubtitle": "Vous avez utilisé les {{limit}} scans",
+      "scanDescription": "Passez à Premium pour des scans illimités et plus de fonctionnalités !",
+      "downloadTitle": "Limite de téléchargements atteinte",
+      "downloadSubtitle": "Vous avez utilisé les {{limit}} téléchargements",
+      "downloadDescription": "Passez à Premium pour des téléchargements illimités !"
+    },
+    "timer": {
+      "resetsInHours": "Réinitialisation dans {{count}} heure",
+      "resetsInHours_plural": "Réinitialisation dans {{count}} heures"
+    },
+    "usage": {
+      "scans": "Scans :",
+      "downloads": "Téléchargements :"
+    },
+    "features": {
+      "title": "Avantages Premium :",
+      "offlineHistory": "Accès à l'historique hors ligne",
+      "offlineFavorites": "Accès aux favoris hors ligne",
+      "unlimitedScans": "Scans illimités",
+      "unlimitedDownloads": "Téléchargements illimités"
+    },
+    "pricing": {
+      "amount": "{{amount}}",
+      "period": "pour {{days}} jours"
+    },
+    "actions": {
+      "upgrade": "Passer à Premium",
+      "later": "Plus tard"
+    }
+  },
   "manageNotifications": {
-    "title": "Gérer les notifications",
+    "title": "GÃ©rer les notifications",
     "pushNotifications": "Notifications push",
     "emailNotifications": "Notifications par e-mail",
     "likeNotifications": "Notifications d'aime",
     "commentNotifications": "Notifications de commentaires",
     "followNotifications": "Notifications de suivi",
-    "enabled": "Activé",
-    "disabled": "Désactivé",
-    "save": "Enregistrer les paramètres"
+    "enabled": "ActivÃ©",
+    "disabled": "DÃ©sactivÃ©",
+    "save": "Enregistrer les paramÃ¨tres"
   },
   "history": {
     "title": "Historique",
     "noHistory": "Pas encore d'historique",
-    "startScanning": "Commencez à scanner pour construire votre historique",
+    "loading": "Chargement de l'historique...",
+    "loadingMore": "Chargement...",
+    "signInRequiredTitle": "Connexion requise",
+    "signInRequiredBody": "Créez un compte ou connectez-vous pour voir votre historique de scans.",
+    "selection": {
+      "selectedCount": "{{count}} sélectionné",
+      "selectedCount_plural": "{{count}} sélectionnés",
+      "deleteButton": "Supprimer {{count}} enregistrement",
+      "deleteButton_plural": "Supprimer {{count}} enregistrements"
+    },
+    "offlineBanner": {
+      "premium": "Mode hors ligne (Premium)",
+      "locked": "Le mode hors ligne nécessite Premium"
+    },
+    "search": {
+      "placeholder": "Rechercher par nom..."
+    },
+    "filters": {
+      "all": "Tous",
+      "plants": "Plantes",
+      "animals": "Animaux"
+    },
+    "empty": {
+      "noHistoryTitle": "Pas encore d'historique",
+      "noHistoryBody": "Votre historique de scans apparaîtra ici lorsque vous commencerez à identifier des plantes et des animaux.",
+      "noResultsTitle": "Aucun résultat",
+      "noResultsBody": "Aucun enregistrement ne correspond à votre recherche ou à vos filtres. Essayez d'ajuster vos filtres."
+    },
+    "actions": {
+      "signIn": "Se connecter",
+      "delete": "Supprimer",
+      "clearAll": "Tout effacer",
+      "clearFilters": "Effacer les filtres"
+    },
+    "alerts": {
+      "visibilityNow": "Le scan est maintenant {{status}}",
+      "visibilityUpdateFailed": "Impossible de mettre à jour la visibilité.",
+      "visibilityNeedsSync": "Ce scan doit d'abord se synchroniser. Réessayez dans un instant.",
+      "visibilityOffline": "Impossible de changer la visibilité hors ligne. Vérifiez votre connexion.",
+      "visibilityNotSynced": "Ce scan n'a pas encore été synchronisé avec le cloud. Attendez la synchronisation puis réessayez.",
+      "visibilityPermissionDenied": "Vous n'avez pas la permission de modifier ce scan.",
+      "visibilityNetworkError": "Erreur réseau. Vérifiez votre connexion et réessayez.",
+      "errorWithMessage": "Erreur : {{message}}",
+      "deleteRecordTitle": "Supprimer l'enregistrement",
+      "deleteRecordMessage": "Supprimer \"{{name}}\" de l'historique ?",
+      "deleteRecordSuccess": "Enregistrement supprimé.",
+      "deleteRecordError": "Impossible de supprimer l'enregistrement.",
+      "deleteSelectedTitle": "Supprimer la sélection",
+      "deleteSelectedMessage": "Supprimer {{count}} enregistrement de l'historique ?",
+      "deleteSelectedMessage_plural": "Supprimer {{count}} enregistrements de l'historique ?",
+      "deleteSelectedSuccess": "{{count}} enregistrement supprimé.",
+      "deleteSelectedSuccess_plural": "{{count}} enregistrements supprimés.",
+      "deleteSelectedError": "Impossible de supprimer les enregistrements sélectionnés.",
+      "clearAllTitle": "Tout effacer l'historique",
+      "clearAllMessage": "Voulez-vous vraiment supprimer tout l'historique ? Cette action est irréversible.",
+      "clearAllSuccess": "Historique effacé.",
+      "clearAllError": "Impossible d'effacer l'historique."
+    },
+    "visibility": {
+      "public": "public",
+      "private": "privé"
+    },
+    "unknownSpecies": "Espèce inconnue",
+    "details": {
+      "commonName": "Nom commun",
+      "scientificName": "Nom scientifique",
+      "taxonomicRank": "Rang taxonomique",
+      "type": "Type",
+      "conservationStatus": "Statut de conservation",
+      "timesScanned": "Nombre de scans",
+      "timeCount": "{{count}} fois",
+      "timeCount_plural": "{{count}} fois",
+      "globalAppScans": "Scans globaux dans l'app",
+      "scanCount": "{{count}} scan",
+      "scanCount_plural": "{{count}} scans",
+      "scannedOn": "Scanné le"
+    },
+    "premiumGate": {
+      "title": "Abonnez-vous pour accéder au mode hors ligne",
+      "message": "L'accès hors ligne à votre historique est une fonctionnalité premium. Abonnez-vous pour voir votre historique de scans lorsque vous êtes hors ligne."
+    },
+    "startScanning": "Commencez Ã  scanner pour construire votre historique",
     "delete": "Supprimer",
     "deleteAll": "Supprimer tout",
-    "deleteConfirm": "Êtes-vous sûr de vouloir supprimer cet élément ?",
-    "deleteAllConfirm": "Êtes-vous sûr de vouloir supprimer tout l'historique ?",
-    "scannedOn": "Scanné le {{date}}"
+    "deleteConfirm": "ÃŠtes-vous sÃ»r de vouloir supprimer cet Ã©lÃ©ment ?",
+    "deleteAllConfirm": "ÃŠtes-vous sÃ»r de vouloir supprimer tout l'historique ?",
+    "scannedOn": "ScannÃ© le {{date}}"
+  },
+  "postDetail": {
+    "title": "Publication",
+    "aboutLabel": "À propos",
+    "emptyTitle": "Publication introuvable",
+    "alerts": {
+      "postNotFoundTitle": "Erreur",
+      "postNotFoundBody": "Publication introuvable.",
+      "loadErrorTitle": "Erreur",
+      "loadErrorBody": "Impossible de charger la publication.",
+      "likeErrorBody": "Impossible d'aimer la publication."
+    }
   },
   "speciesGallery": {
     "title": "Galerie",
-    "noResults": "Aucun résultat trouvé",
+    "noResults": "Aucun rÃ©sultat trouvÃ©",
     "loadMore": "Charger plus",
     "error": "Impossible de charger la galerie"
   },
   "speciesLanding": {
-    "title": "Détails de l'espèce",
+    "title": "DÃ©tails de l'espÃ¨ce",
     "scientificName": "Nom scientifique",
     "commonName": "Nom commun",
     "description": "Description",
     "habitat": "Habitat",
-    "diet": "Régime alimentaire",
-    "lifespan": "Durée de vie",
+    "diet": "RÃ©gime alimentaire",
+    "lifespan": "DurÃ©e de vie",
     "conservationStatus": "Statut de conservation",
     "addToFavorites": "Ajouter aux favoris",
     "removeFromFavorites": "Retirer des favoris",
     "share": "Partager",
     "viewMore": "Voir plus",
-    "error": "Impossible de charger les détails de l'espèce"
+    "error": "Impossible de charger les dÃ©tails de l'espÃ¨ce"
   },
   "manualPayment": {
     "title": "Paiement manuel",
-    "uploadProof": "Télécharger la preuve de paiement",
-    "selectImage": "Sélectionner une image",
+    "uploadProof": "TÃ©lÃ©charger la preuve de paiement",
+    "selectImage": "SÃ©lectionner une image",
     "takePhoto": "Prendre une photo",
     "chooseFromGallery": "Choisir dans la galerie",
-    "uploadImage": "Télécharger une image",
-    "uploading": "Téléchargement...",
+    "uploadImage": "TÃ©lÃ©charger une image",
+    "uploading": "TÃ©lÃ©chargement...",
     "submit": "Soumettre le paiement",
     "submitting": "Soumission...",
-    "successTitle": "Succès",
-    "successMessage": "Paiement soumis avec succès. Nous le vérifierons bientôt.",
+    "successTitle": "SuccÃ¨s",
+    "successMessage": "Paiement soumis avec succÃ¨s. Nous le vÃ©rifierons bientÃ´t.",
     "errorTitle": "Erreur",
-    "errorMessage": "Impossible de soumettre le paiement. Veuillez réessayer.",
-    "selectImageFirst": "Veuillez d'abord sélectionner une image"
+    "errorMessage": "Impossible de soumettre le paiement. Veuillez rÃ©essayer.",
+    "selectImageFirst": "Veuillez d'abord sÃ©lectionner une image"
   },
   "scanStats": {
-    "title": "Statistiques de numérisation",
+    "title": "Statistiques de numÃ©risation",
     "totalScans": "Scans totaux",
     "thisWeek": "Cette semaine",
     "thisMonth": "Ce mois",
     "plants": "Plantes",
     "animals": "Animaux",
-    "noData": "Aucune donnée de numérisation disponible pour le moment"
+    "noData": "Aucune donnÃ©e de numÃ©risation disponible pour le moment"
   }
 }
+
+

@@ -10,9 +10,11 @@ import {
   KeyboardAvoidingView,
   Platform,
   ActivityIndicator,
-  Alert
+  Alert,
+  Keyboard
 } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
+import { useTranslation } from 'react-i18next';
 import { addComment, getComments, likeComment, deleteComment } from '@services/notifications/postInteractionsService';
 
 const CommentsModal = ({ 
@@ -23,6 +25,7 @@ const CommentsModal = ({
   currentUsername,
   currentUserProfileImage 
 }) => {
+  const { t, i18n } = useTranslation();
   const [comments, setComments] = useState([]);
   const [commentText, setCommentText] = useState('');
   const [loading, setLoading] = useState(false);
@@ -41,7 +44,10 @@ const CommentsModal = ({
       setComments(fetchedComments);
     } catch (error) {
       console.error('Error loading comments:', error);
-      Alert.alert('Error', 'Failed to load comments');
+      Alert.alert(
+        t('commentsModal.alerts.loadErrorTitle'),
+        t('commentsModal.alerts.loadErrorBody')
+      );
     } finally {
       setLoading(false);
     }
@@ -52,7 +58,10 @@ const CommentsModal = ({
 
     // ✅ Check if user is logged in
     if (!currentUserId) {
-      Alert.alert('Login Required', 'You must be logged in to comment');
+      Alert.alert(
+        t('commentsModal.alerts.loginRequiredTitle'),
+        t('commentsModal.alerts.loginRequiredCommentBody')
+      );
       return;
     }
 
@@ -69,9 +78,13 @@ const CommentsModal = ({
       // Add new comment to the list
       setComments([result.comment, ...comments]);
       setCommentText('');
+      Keyboard.dismiss(); // ✅ Dismiss keyboard after sending
     } catch (error) {
       console.error('Error adding comment:', error);
-      Alert.alert('Error', error.message || 'Failed to add comment');
+      Alert.alert(
+        t('commentsModal.alerts.addErrorTitle'),
+        error?.message || t('commentsModal.alerts.addErrorBody')
+      );
     } finally {
       setSubmitting(false);
     }
@@ -80,7 +93,10 @@ const CommentsModal = ({
   const handleLikeComment = async (commentId) => {
     // ✅ Check if user is logged in
     if (!currentUserId) {
-      Alert.alert('Login Required', 'You must be logged in to like comments');
+      Alert.alert(
+        t('commentsModal.alerts.loginRequiredTitle'),
+        t('commentsModal.alerts.loginRequiredLikeBody')
+      );
       return;
     }
 
@@ -124,25 +140,31 @@ const CommentsModal = ({
       }));
     } catch (error) {
       console.error('Error liking comment:', error);
-      Alert.alert('Error', 'Failed to like comment');
+      Alert.alert(
+        t('commentsModal.alerts.likeErrorTitle'),
+        t('commentsModal.alerts.likeErrorBody')
+      );
     }
   };
 
   const handleDeleteComment = async (commentId) => {
     Alert.alert(
-      'Delete Comment',
-      'Are you sure you want to delete this comment?',
+      t('commentsModal.alerts.deleteTitle'),
+      t('commentsModal.alerts.deleteConfirmBody'),
       [
-        { text: 'Cancel', style: 'cancel' },
+        { text: t('commentsModal.actions.cancel'), style: 'cancel' },
         {
-          text: 'Delete',
+          text: t('commentsModal.actions.delete'),
           style: 'destructive',
           onPress: async () => {
             try {
               await deleteComment(postId, commentId, currentUserId);
               setComments(comments.filter(c => c.id !== commentId));
             } catch (error) {
-              Alert.alert('Error', 'Failed to delete comment');
+              Alert.alert(
+                t('commentsModal.alerts.deleteErrorTitle'),
+                t('commentsModal.alerts.deleteErrorBody')
+              );
             }
           }
         }
@@ -188,7 +210,7 @@ const CommentsModal = ({
           </TouchableOpacity>
           
           <Text style={styles.commentTime}>
-            {item.createdAt ? formatTime(item.createdAt) : 'Just now'}
+            {item.createdAt ? formatTime(item.createdAt) : t('home.relativeTime.justNow')}
           </Text>
         </View>
       </View>
@@ -203,16 +225,17 @@ const CommentsModal = ({
     const diffInMs = now - date;
     const diffInMins = Math.floor(diffInMs / 60000);
     
-    if (diffInMins < 1) return 'Just now';
-    if (diffInMins < 60) return `${diffInMins}m ago`;
+    if (diffInMins < 1) return t('home.relativeTime.justNow');
+    if (diffInMins < 60) return t('home.relativeTime.minutes', { count: diffInMins });
     
     const diffInHours = Math.floor(diffInMins / 60);
-    if (diffInHours < 24) return `${diffInHours}h ago`;
+    if (diffInHours < 24) return t('home.relativeTime.hours', { count: diffInHours });
     
     const diffInDays = Math.floor(diffInHours / 24);
-    if (diffInDays < 7) return `${diffInDays}d ago`;
-    
-    return date.toLocaleDateString();
+    if (diffInDays < 7) return t('home.relativeTime.days', { count: diffInDays });
+
+    const locale = i18n?.language && i18n.language !== 'en' ? i18n.language : undefined;
+    return date.toLocaleDateString(locale, { month: 'short', day: 'numeric' });
   };
 
   return (
@@ -222,15 +245,16 @@ const CommentsModal = ({
       transparent={true}
       onRequestClose={onClose}
     >
-      <View style={styles.modalOverlay}>
-        <KeyboardAvoidingView
-          behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
-          style={styles.modalContainer}
-        >
+      <KeyboardAvoidingView
+        behavior={Platform.OS === 'ios' ? 'padding' : 'padding'}
+        style={styles.flex1}
+        keyboardVerticalOffset={0}
+      >
+        <View style={styles.modalOverlay}>
           <View style={styles.modalContent}>
             {/* Header */}
             <View style={styles.header}>
-              <Text style={styles.headerTitle}>Comments</Text>
+              <Text style={styles.headerTitle}>{t('commentsModal.title')}</Text>
               <TouchableOpacity onPress={onClose} style={styles.closeButton}>
                 <Ionicons name="close" size={28} color="#333" />
               </TouchableOpacity>
@@ -249,22 +273,25 @@ const CommentsModal = ({
                 contentContainerStyle={styles.commentsList}
                 ListEmptyComponent={
                   <View style={styles.emptyContainer}>
-                    <Text style={styles.emptyText}>No comments yet</Text>
-                    <Text style={styles.emptySubtext}>Be the first to comment!</Text>
+                    <Text style={styles.emptyText}>{t('commentsModal.empty.title')}</Text>
+                    <Text style={styles.emptySubtext}>{t('commentsModal.empty.subtitle')}</Text>
                   </View>
                 }
+                keyboardShouldPersistTaps="handled"
               />
             )}
 
-            {/* Input Area */}
+            {/* Input Area - Fixed to bottom */}
             <View style={styles.inputContainer}>
               <TextInput
                 style={styles.input}
-                placeholder="Add a comment..."
+                placeholder={t('commentsModal.inputPlaceholder')}
                 value={commentText}
                 onChangeText={setCommentText}
                 multiline
                 maxLength={500}
+                returnKeyType="send"
+                onSubmitEditing={handleAddComment}
               />
               <TouchableOpacity
                 style={[
@@ -282,20 +309,19 @@ const CommentsModal = ({
               </TouchableOpacity>
             </View>
           </View>
-        </KeyboardAvoidingView>
-      </View>
+        </View>
+      </KeyboardAvoidingView>
     </Modal>
   );
 };
 
 const styles = StyleSheet.create({
+  flex1: {
+    flex: 1,
+  },
   modalOverlay: {
     flex: 1,
     backgroundColor: 'rgba(0, 0, 0, 0.5)',
-    justifyContent: 'flex-end',
-  },
-  modalContainer: {
-    flex: 1,
     justifyContent: 'flex-end',
   },
   modalContent: {
@@ -325,9 +351,11 @@ const styles = StyleSheet.create({
     flex: 1,
     justifyContent: 'center',
     alignItems: 'center',
+    minHeight: 200,
   },
   commentsList: {
     padding: 16,
+    flexGrow: 1,
   },
   commentItem: {
     marginBottom: 16,
@@ -392,6 +420,7 @@ const styles = StyleSheet.create({
     borderTopColor: '#eee',
     alignItems: 'flex-end',
     gap: 12,
+    backgroundColor: '#fff',
   },
   input: {
     flex: 1,

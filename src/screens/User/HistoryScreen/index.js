@@ -7,6 +7,7 @@ import {
 } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import { useFocusEffect } from '@react-navigation/native';
+import { useTranslation } from 'react-i18next';
 import { auth } from '@config/firebase';
 import { onAuthStateChanged } from 'firebase/auth';
 import { SafeAreaView } from 'react-native-safe-area-context';
@@ -23,12 +24,17 @@ import {
 // ✅ ADD IMPORT for offline access hook
 import { useOfflineAccess } from '@hooks/useOfflineAccess';
 import PremiumGate from '@components/modals/PremiumGate';
+import stripHtmlTags from '@utils/text/stripHtmlTags';
+import { pickSpeciesName } from '@utils/text/speciesName';
+import { emitPublicFeedRemoval } from '@utils/publicFeedEvents';
 
 const { width } = Dimensions.get('window');
 
 // ✅ ADD THIS
 const CARD_HEIGHT = 116; // Card height for performance optimization
 const ITEMS_PER_PAGE = 20; // Pagination constant
+const GLOBAL_COUNTS_MAX_RETRIES = 2;
+const GLOBAL_COUNTS_RETRY_BASE_MS = 1500;
 
 // ✅ FIX: Helper to safely get timestamp value
 const getTimestampValue = (timestamp) => {
@@ -50,6 +56,74 @@ const getTimestampValue = (timestamp) => {
   // Fallback to current time
   return Date.now();
 };
+
+const buildHistoryId = (item, idx) => {
+  if (item?.id) return String(item.id);
+  if (item?.historyId) return String(item.historyId);
+  const rawTimestamp = item?.timestamp || item?.createdAt || item?.addedAt || item?.lastViewed;
+  const timestamp = rawTimestamp ? getTimestampValue(rawTimestamp) : null;
+  const keySource = item?.taxonId
+    ? `taxon_${item.taxonId}`
+    : pickSpeciesName(item?.scientificName, item?.commonName, item?.name, item?.plantName) || 'item';
+  const safeKey = String(keySource).toLowerCase().replace(/\s+/g, '_');
+  const stableStamp = Number.isFinite(timestamp) ? timestamp : idx;
+  return `history:${safeKey}:${stableStamp}`;
+};
+
+const isTempHistoryId = (historyId) => {
+  if (!historyId || typeof historyId !== 'string') return true;
+  return historyId.startsWith('history:') || historyId.startsWith('history_temp_');
+};
+
+const canToggleVisibility = (item) => {
+  if (!item) return false;
+  if (item.synced !== true) return false;
+  return !isTempHistoryId(item.id);
+};
+
+// Helper to normalize confidence into a 0-100 percent scale
+const normalizeConfidence = (value) => {
+  const n = Number(value);
+  if (!Number.isFinite(n)) return null;
+  const percent = n <= 1.5 ? n * 100 : n;
+  const clamped = Math.min(Math.max(percent, 0), 100);
+  return Math.round(clamped);
+};
+
+// Helper to create a stable species key used for de-duplication and counts
+const getSpeciesKey = (item) => {
+  if (item?.taxonId) return `taxon_${item.taxonId}`;
+  const fallback = pickSpeciesName(item?.scientificName, item?.name);
+  const normalized = fallback ? fallback.toLowerCase().trim() : '';
+  return normalized ? normalized.replace(/\s+/g, '_') : null;
+};
+
+const isRemoteImageUrl = (url) => {
+  if (!url || typeof url !== 'string') return false;
+  return url.startsWith('http://') || url.startsWith('https://');
+};
+
+const isLocalImageUri = (url) => {
+  if (!url || typeof url !== 'string') return false;
+  return (
+    url.startsWith('file://') ||
+    url.startsWith('content://') ||
+    url.startsWith('ph://') ||
+    url.startsWith('assets-library://') ||
+    url.startsWith('asset:/') ||
+    url.startsWith('data:')
+  );
+};
+
+const getImageSources = (item) => {
+  const candidates = [item?.imageUrl, item?.imageUri, item?.image, item?.photoUrl];
+  const remoteUrl = candidates.find(isRemoteImageUrl) || null;
+  const localUri = candidates.find(isLocalImageUri) || null;
+  return { remoteUrl, localUri, bestUri: remoteUrl || localUri || null };
+};
+
+// Helper to create a stable doc id key used by global count maps
+const getGlobalCountDocId = (item) => getSpeciesKey(item);
 
 // ========== FIX 1: OPTIMIZED IMAGE COMPONENT ==========
 const OptimizedImage = React.memo(({ uri, style }) => {
@@ -203,13 +277,22 @@ const SwipeableCard = React.memo(({
 
           {/* ✅ USE OPTIMIZED IMAGE */}
           <OptimizedImage 
-            uri={item.imageUrl}
+            uri={item.imageUrl || item.imageUri}
             style={styles.image}
           />
           
           <View style={styles.infoContainer}>
+            {(() => {
+              const primaryName =
+                pickSpeciesName(item.commonName, item.name, item.scientificName) ||
+                item.name;
+              const secondaryName =
+                pickSpeciesName(item.scientificName) ||
+                (item.commonName && item.name && item.name !== item.commonName ? item.name : null);
+              return (
+                <>
             <View style={styles.nameRow}>
-              <Text numberOfLines={1} style={styles.name}>{item.name}</Text>
+              <Text numberOfLines={1} style={styles.name}>{primaryName}</Text>
               <Ionicons 
                 name={item.isPublic ? "eye-outline" : "eye-off-outline"} 
                 size={16} 
@@ -217,9 +300,12 @@ const SwipeableCard = React.memo(({
               />
             </View>
             
-            {item.scientificName && item.scientificName !== item.name && (
-              <Text numberOfLines={1} style={styles.scientificName}>{item.scientificName}</Text>
+            {secondaryName && secondaryName !== primaryName && (
+              <Text numberOfLines={1} style={styles.scientificName}>{secondaryName}</Text>
             )}
+                </>
+              );
+            })()}
             
             <View style={styles.bottomRow}>
               <View style={styles.metadataRow}>
@@ -244,6 +330,11 @@ const SwipeableCard = React.memo(({
   return (
     prevProps.item.id === nextProps.item.id &&
     prevProps.item.isPublic === nextProps.item.isPublic && // ✅ ADD THIS LINE
+    prevProps.item.globalObsCount === nextProps.item.globalObsCount &&
+    prevProps.item.createdAt === nextProps.item.createdAt &&
+    prevProps.item.name === nextProps.item.name &&
+    prevProps.item.scientificName === nextProps.item.scientificName &&
+    prevProps.item.imageUrl === nextProps.item.imageUrl &&
     prevProps.isSelected === nextProps.isSelected &&
     prevProps.selectionMode === nextProps.selectionMode &&
     prevProps.disabled === nextProps.disabled
@@ -251,6 +342,7 @@ const SwipeableCard = React.memo(({
 });
 
 export default function HistoryScreen({ navigation }) {
+  const { t, i18n } = useTranslation();
   const [items, setItems] = useState([]);
   const [refreshing, setRefreshing] = useState(false);
   const [loading, setLoading] = useState(true);
@@ -258,9 +350,15 @@ export default function HistoryScreen({ navigation }) {
   const [selectionMode, setSelectionMode] = useState(false);
   const [selectedItems, setSelectedItems] = useState(new Set());
   const [detailsModalVisible, setDetailsModalVisible] = useState(false);
+  const [detailsModalExpanded, setDetailsModalExpanded] = useState(true);
   const [selectedSpecies, setSelectedSpecies] = useState(null);
   const [filterType, setFilterType] = useState('all');
   const [globalCounts, setGlobalCounts] = useState({});
+  const globalCountsFetchedRef = useRef(false);
+  const globalCountsInFlightRef = useRef(false);
+  const globalCountsRetryRef = useRef(0);
+  const [deletingItemIds, setDeletingItemIds] = useState(new Set());
+  const [togglingItemIds, setTogglingItemIds] = useState(new Set());
   
   // ✅ ADD STATE for premium gate
   const [premiumGateVisible, setPremiumGateVisible] = useState(false);
@@ -285,6 +383,59 @@ export default function HistoryScreen({ navigation }) {
 
   // ✅ ADD REF FOR MODAL SCROLL INSIDE THE COMPONENT
   const modalScrollRef = useRef(null);
+  const modalImageSource = useMemo(() => {
+    if (!selectedSpecies?.imageUrl && !selectedSpecies?.imageUri) return null;
+    return {
+      uri: selectedSpecies.imageUrl || selectedSpecies.imageUri,
+      cache: 'force-cache',
+    };
+  }, [selectedSpecies?.imageUrl, selectedSpecies?.imageUri]);
+
+  const fetchGlobalCounts = useCallback((itemsForCounts) => {
+    if (!itemsForCounts || itemsForCounts.length === 0) return;
+    if (globalCountsInFlightRef.current) return;
+
+    globalCountsInFlightRef.current = true;
+
+    const handleFailure = () => {
+      globalCountsInFlightRef.current = false;
+      globalCountsFetchedRef.current = false;
+      globalCountsRetryRef.current += 1;
+
+      if (globalCountsRetryRef.current <= GLOBAL_COUNTS_MAX_RETRIES) {
+        const delay = GLOBAL_COUNTS_RETRY_BASE_MS * globalCountsRetryRef.current;
+        setTimeout(() => {
+          if (!globalCountsFetchedRef.current && !globalCountsInFlightRef.current && itemsForCounts?.length > 0) {
+            fetchGlobalCounts(itemsForCounts);
+          }
+        }, delay);
+      }
+    };
+
+    getGlobalObservationCounts(itemsForCounts)
+      .then(countsResult => {
+        if (countsResult.success) {
+          globalCountsInFlightRef.current = false;
+          globalCountsFetchedRef.current = true;
+          globalCountsRetryRef.current = 0;
+          setGlobalCounts(countsResult.counts);
+
+          setItems(prevItems => prevItems.map(item => {
+            const docId = item.speciesKey || getGlobalCountDocId(item);
+            return {
+              ...item,
+              globalObsCount: countsResult.counts[docId] || item.globalObsCount || 0
+            };
+          }));
+        } else {
+          handleFailure();
+        }
+      })
+      .catch(err => {
+        console.warn('Count fetch failed:', err);
+        handleFailure();
+      });
+  }, []);
 
   // ========== FIX 2: OPTIMIZED loadHistory ==========
   const loadHistory = useCallback(async () => {
@@ -295,28 +446,42 @@ export default function HistoryScreen({ navigation }) {
     }
 
     try {
-      const result = await getHistory(uid);
+      const result = await getHistory(uid, { dedupeByGenus: true });
       
       if (result.success) {
-        const normalized = result.data.map((it, idx) => ({
-          id: it.id || `history:${it.plantName || it.name || 'item'}:${idx}`,
-          name: it.plantName || it.name || it.commonName || it.scientificName || 'Unknown',
-          scientificName: it.scientificName || null,
-          commonName: it.commonName || null,
-          rank: it.rank || null,
-          iconicTaxon: it.iconicTaxon || null,
-          taxonId: it.taxonId || null,
-          imageUrl: it.imageUrl || null,
-          conservation: it.conservation || null,
-          about: it.about || it.description || null,
-          iNatObsCount: it.iNatObsCount || 0,
-          globalObsCount: it.globalObsCount || 0,
-          type: it.type || 'history',
-          createdAt: getTimestampValue(it.timestamp || it.createdAt),
-          originalData: it.originalData || null,
-          isPublic: it.isPublic === true ? true : false,
-          scanCount: it.scanCount || 1,
-        }));
+        const normalized = result.data.map((it, idx) => {
+          const displayName =
+            pickSpeciesName(it.plantName, it.name, it.commonName, it.scientificName) ||
+            t('history.unknownSpecies');
+          const { remoteUrl, localUri } = getImageSources(it);
+          const normalizedItem = {
+            id: buildHistoryId(it, idx),
+            name: displayName,
+            scientificName: pickSpeciesName(it.scientificName),
+            commonName: pickSpeciesName(it.commonName),
+            rank: it.rank || null,
+            iconicTaxon: it.iconicTaxon || null,
+            genusKey: it.genusKey || null,
+            taxonId: it.taxonId || null,
+            imageUrl: remoteUrl,
+            imageUri: localUri || remoteUrl || null,
+            conservation: it.conservation || null,
+            about: it.about || it.description || null,
+            iNatObsCount: it.iNatObsCount || 0,
+            globalObsCount: it.globalObsCount || 0,
+            confidence: normalizeConfidence(it.confidence),
+            type: it.type || 'history',
+            createdAt: getTimestampValue(it.timestamp || it.createdAt),
+            originalData: it.originalData || null,
+            isPublic: it.isPublic === true ? true : false,
+            synced: it.synced === true,
+            scanCount: it.scanCount || 1,
+          };
+          return {
+            ...normalizedItem,
+            speciesKey: getSpeciesKey(normalizedItem),
+          };
+        });
         
         // Remove duplicates by keeping only the most recent scan of each species
         const uniqueItems = [];
@@ -327,12 +492,12 @@ export default function HistoryScreen({ navigation }) {
         
         // Filter out duplicates based on taxonId or scientificName
         for (const item of normalized) {
-          const identifier = item.taxonId 
-            ? `taxon_${item.taxonId}` 
-            : (item.scientificName || item.name || '').toLowerCase().trim();
-          
-          if (!seenSpecies.has(identifier) && identifier) {
-            seenSpecies.add(identifier);
+          const groupKey = item.genusKey
+            ? `${(item.iconicTaxon || '').toLowerCase()}:${item.genusKey}`
+            : item.speciesKey;
+
+          if (!seenSpecies.has(groupKey) && groupKey) {
+            seenSpecies.add(groupKey);
             uniqueItems.push(item);
           }
         }
@@ -341,25 +506,9 @@ export default function HistoryScreen({ navigation }) {
         setItems(uniqueItems);
         setLoading(false);
 
-        // ✅ Fetch counts ONLY ONCE in background - SKIP if batch deleting
-        if (!isDeletingBatch && Object.keys(globalCounts).length === 0 && uniqueItems.length > 0) {
-          // Don't await - let it run in background
-          getGlobalObservationCounts(uniqueItems).then(countsResult => {
-            if (countsResult.success) {
-              setGlobalCounts(countsResult.counts);
-              
-              setItems(prevItems => prevItems.map(item => {
-                const docId = item.taxonId 
-                  ? `taxon_${item.taxonId}` 
-                  : (item.scientificName || item.name || '').toLowerCase().replace(/\s+/g, '_');
-                
-                return {
-                  ...item,
-                  globalObsCount: countsResult.counts[docId] || item.globalObsCount || 0
-                };
-              }));
-            }
-          }).catch(err => console.warn('⚠️ Count fetch failed:', err));
+        // ✅ Fetch counts in background with retry - SKIP if batch deleting
+        if (!isDeletingBatch && !globalCountsFetchedRef.current && uniqueItems.length > 0) {
+          fetchGlobalCounts(uniqueItems);
         }
       } else {
         console.warn('Failed to load history:', result.error);
@@ -371,7 +520,7 @@ export default function HistoryScreen({ navigation }) {
       setItems([]);
       setLoading(false);
     }
-  }, [uid, isDeletingBatch]); // ✅ Add isDeletingBatch dependency
+  }, [uid, isDeletingBatch, fetchGlobalCounts]); // ✅ Add isDeletingBatch dependency
 
   // ========== FIX 4: DEBOUNCE SEARCH EFFECT ==========
   useEffect(() => {
@@ -392,6 +541,10 @@ export default function HistoryScreen({ navigation }) {
       const newUid = user?.uid ?? null;
       setUid(newUid);
       setLoading(true);
+      globalCountsFetchedRef.current = false;
+      globalCountsInFlightRef.current = false;
+      globalCountsRetryRef.current = 0;
+      setGlobalCounts({});
     });
     return unsub;
   }, []);
@@ -401,12 +554,30 @@ export default function HistoryScreen({ navigation }) {
 
   const onRefresh = async () => {
     setRefreshing(true);
+    globalCountsFetchedRef.current = false;
+    globalCountsInFlightRef.current = false;
+    globalCountsRetryRef.current = 0;
+    setGlobalCounts({});
     await loadHistory();
     setRefreshing(false);
   };
 
   const handleTogglePublic = async (item) => {
-  if (!uid) return;
+  if (!uid || !item?.id) return;
+  if (!canToggleVisibility(item)) {
+    Alert.alert(t('common.error'), t('history.alerts.visibilityNotSynced'));
+    return;
+  }
+
+  if (togglingItemIds.has(item.id)) {
+    return;
+  }
+
+  setTogglingItemIds(prev => {
+    const next = new Set(prev);
+    next.add(item.id);
+    return next;
+  });
 
   try {
     const newStatus = !item.isPublic;
@@ -426,9 +597,14 @@ export default function HistoryScreen({ navigation }) {
     if (result.success) {
       // Show success message (don't close modal)
       Alert.alert(
-        'Success',
-        `Scan is now ${newStatus ? 'public' : 'private'}`
+        t('common.success'),
+        t('history.alerts.visibilityNow', {
+          status: newStatus ? t('history.visibility.public') : t('history.visibility.private'),
+        })
       );
+      if (!newStatus) {
+        emitPublicFeedRemoval(item.id);
+      }
     } else {
       // Revert both states on failure
       setSelectedSpecies(prev => prev ? { ...prev, isPublic: item.isPublic } : null);
@@ -438,16 +614,16 @@ export default function HistoryScreen({ navigation }) {
         )
       );
 
-      let errorMessage = 'Failed to update visibility';
-      if (result.error?.includes('No document to update')) {
-        errorMessage = 'This scan needs to sync first. Please try again in a moment.';
+      let errorMessage = t('history.alerts.visibilityUpdateFailed');
+      if (result.error?.includes('not_synced') || result.error?.includes('No document to update')) {
+        errorMessage = t('history.alerts.visibilityNeedsSync');
       } else if (result.error?.includes('offline')) {
-        errorMessage = 'Cannot change visibility while offline. Please check your connection.';
+        errorMessage = t('history.alerts.visibilityOffline');
       } else if (result.error) {
-        errorMessage = `Error: ${result.error}`;
+        errorMessage = t('history.alerts.errorWithMessage', { message: result.error });
       }
 
-      Alert.alert('Error', errorMessage);
+      Alert.alert(t('common.error'), errorMessage);
     }
   } catch (error) {
     console.error('Error toggling visibility:', error);
@@ -459,18 +635,24 @@ export default function HistoryScreen({ navigation }) {
       )
     );
 
-    let errorMessage = 'Failed to update visibility';
-    if (error.message?.includes('No document to update')) {
-      errorMessage = 'This scan hasn\'t been synced to the cloud yet. Please wait for sync to complete and try again.';
+    let errorMessage = t('history.alerts.visibilityUpdateFailed');
+    if (error.message?.includes('not_synced') || error.message?.includes('No document to update')) {
+      errorMessage = t('history.alerts.visibilityNotSynced');
     } else if (error.message?.includes('permission-denied')) {
-      errorMessage = 'You don\'t have permission to modify this scan.';
+      errorMessage = t('history.alerts.visibilityPermissionDenied');
     } else if (error.message?.includes('network')) {
-      errorMessage = 'Network error. Please check your connection and try again.';
+      errorMessage = t('history.alerts.visibilityNetworkError');
     } else if (error.message) {
-      errorMessage = `Error: ${error.message}`;
+      errorMessage = t('history.alerts.errorWithMessage', { message: error.message });
     }
 
-    Alert.alert('Error', errorMessage);
+    Alert.alert(t('common.error'), errorMessage);
+  } finally {
+    setTogglingItemIds(prev => {
+      const next = new Set(prev);
+      next.delete(item.id);
+      return next;
+    });
   }
 };
 
@@ -504,35 +686,86 @@ export default function HistoryScreen({ navigation }) {
     if (!uid || isDeletingBatch) return; // ✅ Prevent during batch delete
     
     Alert.alert(
-      'Delete Record',
-      `Delete "${item.name}" from history?`,
+      t('history.alerts.deleteRecordTitle'),
+      t('history.alerts.deleteRecordMessage', { name: item.name }),
       [
-        { text: 'Cancel', style: 'cancel' },
+        { text: t('common.cancel'), style: 'cancel' },
         {
-          text: 'Delete',
+          text: t('history.actions.delete'),
           style: 'destructive',
           onPress: async () => {
+            const deletingId = item.id;
+            const docId = getGlobalCountDocId(item);
+            const previousItemsSnapshot = items;
+            const previousSelectedSpecies = selectedSpecies?.id === deletingId ? selectedSpecies : null;
+
+            // Mark only this item as "deleting"
+            setDeletingItemIds(prev => {
+              const next = new Set(prev);
+              next.add(deletingId);
+              return next;
+            });
+
+            // Optimistically remove from UI immediately
+            setItems(prev => prev.filter(i => i.id !== deletingId));
+
+            // If the details modal is open for this item, close it
+            if (selectedSpecies?.id === deletingId) {
+              setDetailsModalVisible(false);
+              setSelectedSpecies(null);
+            }
+
+            // Optimistically clear its global count entry
+            if (docId) {
+              setGlobalCounts(prev => {
+                const next = { ...prev };
+                delete next[docId];
+                return next;
+              });
+            }
+
             try {
               // Delete from service (AsyncStorage + Firestore)
-              const result = await deleteHistoryItem(uid, item.id);
+              const result = await deleteHistoryItem(uid, item);
               
               if (result.success) {
-                // Reload to get fresh AsyncStorage data
-                await loadHistory();
-                
-                Alert.alert('Success', 'Record deleted');
+                Alert.alert(t('common.success'), t('history.alerts.deleteRecordSuccess'));
               } else {
-                Alert.alert('Error', 'Failed to delete record');
+                // Roll back UI if deletion failed
+                setItems(previousItemsSnapshot);
+                if (previousSelectedSpecies) {
+                  setSelectedSpecies(previousSelectedSpecies);
+                  setDetailsModalVisible(true);
+                }
+                Alert.alert(t('common.error'), t('history.alerts.deleteRecordError'));
               }
             } catch (error) {
               console.error('Error deleting item:', error);
-              Alert.alert('Error', 'Failed to delete record');
+              // Roll back UI on error
+              setItems(previousItemsSnapshot);
+              if (previousSelectedSpecies) {
+                setSelectedSpecies(previousSelectedSpecies);
+                setDetailsModalVisible(true);
+              }
+              Alert.alert(t('common.error'), t('history.alerts.deleteRecordError'));
+            } finally {
+              // Clear per-item deleting state
+              setDeletingItemIds(prev => {
+                const next = new Set(prev);
+                next.delete(deletingId);
+                return next;
+              });
+              
+              // Light background refresh to ensure full consistency
+              setTimeout(() => {
+                loadHistory();
+              }, 300);
             }
           },
         },
       ]
     );
-  }, [uid, loadHistory, isDeletingBatch]);
+  }, [uid, loadHistory, isDeletingBatch, selectedSpecies, items]);
 
   // ========== FIXED: deleteSelected function with BATCH DELETE ==========
   const deleteSelected = async () => {
@@ -541,32 +774,43 @@ export default function HistoryScreen({ navigation }) {
     const countToDelete = selectedItems.size;
 
     Alert.alert(
-      'Delete Selected',
-      `Delete ${countToDelete} ${countToDelete === 1 ? 'record' : 'records'} from history?`,
+      t('history.alerts.deleteSelectedTitle'),
+      t('history.alerts.deleteSelectedMessage', { count: countToDelete }),
       [
-        { text: 'Cancel', style: 'cancel' },
+        { text: t('common.cancel'), style: 'cancel' },
         {
-          text: 'Delete',
+          text: t('history.actions.delete'),
           style: 'destructive',
           onPress: async () => {
             setIsDeletingBatch(true); // ✅ Set loading state
             
             try {
               const idsToDelete = Array.from(selectedItems);
-              
+              const itemsToDelete = items.filter(item => selectedItems.has(item.id));
+
               // ✅ USE BATCH DELETE (single operation - prevents race condition)
-              await deleteMultipleHistoryItems(uid, idsToDelete);
+              const result = await deleteMultipleHistoryItems(
+                uid,
+                itemsToDelete.length > 0 ? itemsToDelete : idsToDelete
+              );
+
+              if (!result?.success) {
+                throw new Error(result?.error || 'Batch delete failed');
+              }
 
               // ✅ Reload to get fresh data
               await loadHistory();
-              
+
               setSelectedItems(new Set());
               setSelectionMode(false);
-              
-              Alert.alert('Success', `${countToDelete} ${countToDelete === 1 ? 'record' : 'records'} deleted`);
+
+              Alert.alert(
+                t('common.success'),
+                t('history.alerts.deleteSelectedSuccess', { count: countToDelete })
+              );
             } catch (error) {
               console.error('Error deleting items:', error);
-              Alert.alert('Error', 'Failed to delete selected records');
+              Alert.alert(t('common.error'), t('history.alerts.deleteSelectedError'));
               await loadHistory(); // Reload on error
             } finally {
               setIsDeletingBatch(false); // ✅ Clear loading state
@@ -582,12 +826,12 @@ export default function HistoryScreen({ navigation }) {
     if (items.length === 0 || !uid) return;
     
     Alert.alert(
-      'Clear All History', 
-      'Are you sure you want to delete all history records? This action cannot be undone.', 
+      t('history.alerts.clearAllTitle'), 
+      t('history.alerts.clearAllMessage'), 
       [
-        { text: 'Cancel', style: 'cancel' },
+        { text: t('common.cancel'), style: 'cancel' },
         {
-          text: 'Clear All',
+          text: t('history.actions.clearAll'),
           style: 'destructive',
           onPress: async () => {
             try {
@@ -601,13 +845,13 @@ export default function HistoryScreen({ navigation }) {
                 setSelectionMode(false);
                 setSelectedItems(new Set());
                 
-                Alert.alert('Success', 'All history cleared');
+                Alert.alert(t('common.success'), t('history.alerts.clearAllSuccess'));
               } else {
-                Alert.alert('Error', 'Failed to clear history');
+                Alert.alert(t('common.error'), t('history.alerts.clearAllError'));
               }
             } catch (error) {
               console.error('Error clearing history:', error);
-              Alert.alert('Error', 'Failed to clear history');
+              Alert.alert(t('common.error'), t('history.alerts.clearAllError'));
               await loadHistory(); // Reload on error
             }
           },
@@ -631,13 +875,19 @@ export default function HistoryScreen({ navigation }) {
     }
 
     setSelectedSpecies(item);
+    setDetailsModalExpanded(true);
     setDetailsModalVisible(true);
   }, [selectionMode, isOffline, isPremium, toggleItemSelection]);
 
   const closeModal = () => {
     setDetailsModalVisible(false);
     setSelectedSpecies(null);
+    setDetailsModalExpanded(false);
   };
+
+  const toggleModalSize = useCallback(() => {
+    setDetailsModalExpanded(prev => !prev);
+  }, []);
 
   const formatDate = useCallback((timestamp) => {
     const date = new Date(timestamp);
@@ -645,39 +895,55 @@ export default function HistoryScreen({ navigation }) {
     const diffInHours = (now - date) / (1000 * 60 * 60);
     
     if (diffInHours < 1) {
-      return 'Just now';
+      return t('home.relativeTime.justNow');
     } else if (diffInHours < 24) {
       const hours = Math.floor(diffInHours);
-      return `${hours}h ago`;
+      return t('home.relativeTime.hours', { count: hours });
     } else if (diffInHours < 168) {
       const days = Math.floor(diffInHours / 24);
-      return `${days}d ago`;
+      return t('home.relativeTime.days', { count: days });
     } else {
-      return date.toLocaleDateString([], { month: 'short', day: 'numeric' });
+      const locale = i18n?.language && i18n.language !== 'en' ? i18n.language : undefined;
+      return date.toLocaleDateString(locale, { month: 'short', day: 'numeric' });
     }
-  }, []);
+  }, [t, i18n]);
+
+  // Helpers for category filtering
+  const getIconicTaxonLower = (item) => (item.iconicTaxon || '').toLowerCase();
+  const isPlantItem = (item) => {
+    const iconic = getIconicTaxonLower(item);
+    return iconic.includes('plantae') || iconic.includes('plant');
+  };
+  const isAnimalItem = (item) => {
+    const iconic = getIconicTaxonLower(item);
+    return [
+      'animalia',
+      'aves',
+      'mammalia',
+      'reptilia',
+      'amphibia',
+      'actinopterygii',
+      'insecta',
+      'arachnida',
+      'mollusca',
+      'crustacea',
+    ].includes(iconic) || iconic.includes('animal');
+  };
+
+  const getTypeIconName = useCallback((item) => {
+    if (isPlantItem(item)) return 'leaf-outline';
+    if (isAnimalItem(item)) return 'paw-outline';
+    return 'scan-circle-outline';
+  }, [isPlantItem, isAnimalItem]);
 
   // ========== FIX: UPDATED getFilteredItems with debounced search ==========
   const getFilteredItems = useCallback(() => {
     let filtered = items;
 
     if (filterType === 'plants') {
-      filtered = filtered.filter(item => 
-        item.iconicTaxon?.toLowerCase() === 'plantae' || 
-        item.iconicTaxon?.toLowerCase().includes('plant')
-      );
+      filtered = filtered.filter(isPlantItem);
     } else if (filterType === 'animals') {
-      filtered = filtered.filter(item => 
-        item.iconicTaxon?.toLowerCase() === 'animalia' || 
-        item.iconicTaxon?.toLowerCase() === 'aves' ||
-        item.iconicTaxon?.toLowerCase() === 'mammalia' ||
-        item.iconicTaxon?.toLowerCase() === 'reptilia' ||
-        item.iconicTaxon?.toLowerCase() === 'amphibia' ||
-        item.iconicTaxon?.toLowerCase() === 'actinopterygii' ||
-        item.iconicTaxon?.toLowerCase() === 'insecta' ||
-        item.iconicTaxon?.toLowerCase() === 'arachnida' ||
-        (item.iconicTaxon && !item.iconicTaxon.toLowerCase().includes('plant'))
-      );
+      filtered = filtered.filter(isAnimalItem);
     }
 
     if (debouncedSearch.trim()) {
@@ -712,6 +978,7 @@ export default function HistoryScreen({ navigation }) {
   // ✅ OPTIMIZED renderItem
   const renderItem = useCallback(({ item }) => {
     const isSelected = selectedItems.has(item.id);
+    const isDeletingThisItem = deletingItemIds.has(item.id);
 
     return (
       <SwipeableCard
@@ -721,10 +988,10 @@ export default function HistoryScreen({ navigation }) {
         onPress={() => openItem(item)}
         onDelete={deleteItem}
         formatDate={formatDate}
-        disabled={isDeletingBatch} // ✅ Disable during batch delete
+        disabled={isDeletingBatch || isDeletingThisItem} // ✅ Disable during batch or this item delete
       />
     );
-  }, [selectedItems, selectionMode, openItem, deleteItem, formatDate, isDeletingBatch]);
+  }, [selectedItems, selectionMode, openItem, deleteItem, formatDate, isDeletingBatch, deletingItemIds]);
 
   // ✅ ADD keyExtractor
   const keyExtractor = useCallback((item) => item.id, []);
@@ -754,9 +1021,20 @@ export default function HistoryScreen({ navigation }) {
             onPress={closeModal}
           />
           
-          <View style={styles.modalContainer}>
+          <View
+            style={[
+              styles.modalContainer,
+              detailsModalExpanded ? styles.modalContainerExpanded : styles.modalContainerCollapsed,
+            ]}
+          >
             <View style={styles.modalHeader}>
-              <View style={styles.modalHandle} />
+              <TouchableOpacity
+                style={styles.modalHandleHit}
+                activeOpacity={0.7}
+                onPress={toggleModalSize}
+              >
+                <View style={styles.modalHandle} />
+              </TouchableOpacity>
               <TouchableOpacity 
                 style={styles.closeButton}
                 onPress={closeModal}
@@ -775,14 +1053,12 @@ export default function HistoryScreen({ navigation }) {
               }}
             >
               <View style={styles.modalImageContainer}>
-                {selectedSpecies.imageUrl ? (
+                {modalImageSource ? (
                   <Image 
-                    source={{ 
-                      uri: selectedSpecies.imageUrl,
-                      cache: 'force-cache'
-                    }} 
+                    source={modalImageSource}
                     style={styles.modalImage}
                     resizeMode="cover"
+                    fadeDuration={0}
                   />
                 ) : (
                   <LinearGradient
@@ -803,19 +1079,23 @@ export default function HistoryScreen({ navigation }) {
                     color={selectedSpecies.isPublic ? "#059669" : "#6B7280"} 
                   />
                   <Text style={styles.publicToggleLabel}>
-                    {selectedSpecies.isPublic ? "Public" : "Private"}
+                    {selectedSpecies.isPublic ? t('history.visibility.public') : t('history.visibility.private')}
                   </Text>
                 </View>
                 <Switch
                   value={selectedSpecies.isPublic}
                   onValueChange={() => handleTogglePublic(selectedSpecies)}
+                  disabled={
+                    togglingItemIds.has(selectedSpecies.id) ||
+                    !canToggleVisibility(selectedSpecies)
+                  }
                   trackColor={{ false: "#D1D5DB", true: "#86EFAC" }}
                   thumbColor={selectedSpecies.isPublic ? "#059669" : "#9CA3AF"}
                 />
               </View>
 
               <Text style={styles.modalTitle}>
-                {selectedSpecies.name || 'Unknown Species'}
+                {selectedSpecies.name || t('history.unknownSpecies')}
               </Text>
 
               <View style={styles.detailsContainer}>
@@ -823,7 +1103,7 @@ export default function HistoryScreen({ navigation }) {
                   <View style={styles.detailRow}>
                     <Ionicons name="leaf-outline" size={20} color="#5E936C" style={styles.detailIcon} />
                     <View style={styles.detailTextContainer}>
-                      <Text style={styles.detailLabel}>Common Name</Text>
+                      <Text style={styles.detailLabel}>{t('history.details.commonName')}</Text>
                       <Text style={styles.detailValue}>{selectedSpecies.commonName}</Text>
                     </View>
                   </View>
@@ -833,7 +1113,7 @@ export default function HistoryScreen({ navigation }) {
                   <View style={styles.detailRow}>
                     <Ionicons name="flask-outline" size={20} color="#5E936C" style={styles.detailIcon} />
                     <View style={styles.detailTextContainer}>
-                      <Text style={styles.detailLabel}>Scientific Name</Text>
+                      <Text style={styles.detailLabel}>{t('history.details.scientificName')}</Text>
                       <Text style={[styles.detailValue, styles.italicText]}>
                         {selectedSpecies.scientificName}
                       </Text>
@@ -845,7 +1125,7 @@ export default function HistoryScreen({ navigation }) {
                   <View style={styles.detailRow}>
                     <Ionicons name="git-branch-outline" size={20} color="#5E936C" style={styles.detailIcon} />
                     <View style={styles.detailTextContainer}>
-                      <Text style={styles.detailLabel}>Taxonomic Rank</Text>
+                      <Text style={styles.detailLabel}>{t('history.details.taxonomicRank')}</Text>
                       <Text style={styles.detailValue}>{selectedSpecies.rank}</Text>
                     </View>
                   </View>
@@ -853,9 +1133,14 @@ export default function HistoryScreen({ navigation }) {
                 
                 {selectedSpecies.iconicTaxon && (
                   <View style={styles.detailRow}>
-                    <Ionicons name="scan-circle-outline" size={20} color="#5E936C" style={styles.detailIcon} />
+                    <Ionicons
+                      name={getTypeIconName(selectedSpecies)}
+                      size={20}
+                      color="#5E936C"
+                      style={styles.detailIcon}
+                    />
                     <View style={styles.detailTextContainer}>
-                      <Text style={styles.detailLabel}>Type</Text>
+                      <Text style={styles.detailLabel}>{t('history.details.type')}</Text>
                       <Text style={styles.detailValue}>{selectedSpecies.iconicTaxon}</Text>
                     </View>
                   </View>
@@ -865,7 +1150,7 @@ export default function HistoryScreen({ navigation }) {
                   <View style={styles.detailRow}>
                     <Ionicons name="shield-checkmark-outline" size={20} color="#059669" style={styles.detailIcon} />
                     <View style={styles.detailTextContainer}>
-                      <Text style={styles.detailLabel}>Conservation Status</Text>
+                      <Text style={styles.detailLabel}>{t('history.details.conservationStatus')}</Text>
                       <Text style={[styles.detailValue, styles.conservationText]}>
                         {selectedSpecies.conservation}
                       </Text>
@@ -877,9 +1162,9 @@ export default function HistoryScreen({ navigation }) {
                   <View style={styles.detailRow}>
                     <Ionicons name="analytics-outline" size={20} color="#5E936C" style={styles.detailIcon} />
                     <View style={styles.detailTextContainer}>
-                      <Text style={styles.detailLabel}>Times Scanned</Text>
+                      <Text style={styles.detailLabel}>{t('history.details.timesScanned')}</Text>
                       <Text style={styles.detailValue}>
-                        {selectedSpecies.scanCount} {selectedSpecies.scanCount === 1 ? 'time' : 'times'}
+                        {t('history.details.timeCount', { count: selectedSpecies.scanCount })}
                       </Text>
                     </View>
                   </View>
@@ -889,9 +1174,9 @@ export default function HistoryScreen({ navigation }) {
                   <View style={styles.detailRow}>
                     <Ionicons name="globe-outline" size={20} color="#059669" style={styles.detailIcon} />
                     <View style={styles.detailTextContainer}>
-                      <Text style={styles.detailLabel}>Global App Scans</Text>
+                      <Text style={styles.detailLabel}>{t('history.details.globalAppScans')}</Text>
                       <Text style={[styles.detailValue, styles.globalObsDetailText]}>
-                        {selectedSpecies.globalObsCount.toLocaleString()} {selectedSpecies.globalObsCount === 1 ? 'scan' : 'scans'}
+                        {t('history.details.scanCount', { count: selectedSpecies.globalObsCount })}
                       </Text>
                     </View>
                   </View>
@@ -900,13 +1185,16 @@ export default function HistoryScreen({ navigation }) {
                 <View style={styles.detailRow}>
                   <Ionicons name="calendar-outline" size={20} color="#5E936C" style={styles.detailIcon} />
                   <View style={styles.detailTextContainer}>
-                    <Text style={styles.detailLabel}>Scanned On</Text>
+                    <Text style={styles.detailLabel}>{t('history.details.scannedOn')}</Text>
                     <Text style={styles.detailValue}>
-                      {new Date(selectedSpecies.createdAt).toLocaleDateString([], { 
-                        month: 'long', 
-                        day: 'numeric', 
-                        year: 'numeric' 
-                      })}
+                      {(() => {
+                        const locale = i18n?.language && i18n.language !== 'en' ? i18n.language : undefined;
+                        return new Date(selectedSpecies.createdAt).toLocaleDateString(locale, {
+                          month: 'long',
+                          day: 'numeric',
+                          year: 'numeric',
+                        });
+                      })()}
                     </Text>
                   </View>
                 </View>
@@ -916,7 +1204,7 @@ export default function HistoryScreen({ navigation }) {
                 <View style={styles.descriptionContainer}>
                   <Text style={styles.descriptionTitle}>About</Text>
                   <Text style={styles.descriptionText}>
-                    {selectedSpecies.about}
+                    {stripHtmlTags(selectedSpecies.about)}
                   </Text>
                 </View>
               )}
@@ -965,6 +1253,7 @@ export default function HistoryScreen({ navigation }) {
                     iNatObsCount: selectedSpecies.iNatObsCount || 0,
                     confidence: selectedSpecies.confidence || null,
                     offlineCacheId: selectedSpecies.taxonId || selectedSpecies.scientificName || selectedSpecies.name,
+                    skipHistorySave: true,
                   };
                   
                   // ✅ NAVIGATE FIRST, THEN CLOSE MODAL
@@ -1004,13 +1293,13 @@ export default function HistoryScreen({ navigation }) {
         >
           <SafeAreaView edges={['top']}>
             <View style={styles.headerContent}>
-              <Text style={styles.headerTitle}>History</Text>
+              <Text style={styles.headerTitle}>{t('history.title')}</Text>
             </View>
           </SafeAreaView>
         </LinearGradient>
         <View style={styles.loadingContainer}>
           <ActivityIndicator size="large" color="#5E936C" />
-          <Text style={styles.loadingText}>Loading history...</Text>
+          <Text style={styles.loadingText}>{t('history.loading')}</Text>
         </View>
       </View>
     );
@@ -1025,7 +1314,7 @@ export default function HistoryScreen({ navigation }) {
         >
           <SafeAreaView edges={['top']}>
             <View style={styles.headerContent}>
-              <Text style={styles.headerTitle}>History</Text>
+              <Text style={styles.headerTitle}>{t('history.title')}</Text>
             </View>
           </SafeAreaView>
         </LinearGradient>
@@ -1038,9 +1327,9 @@ export default function HistoryScreen({ navigation }) {
               <Ionicons name="person-outline" size={48} color="#fff" />
             </LinearGradient>
           </View>
-          <Text style={styles.emptyTitle}>Sign in Required</Text>
+          <Text style={styles.emptyTitle}>{t('history.signInRequiredTitle')}</Text>
           <Text style={styles.emptyText}>
-            Create an account or sign in to view your scan history.
+            {t('history.signInRequiredBody')}
           </Text>
           <TouchableOpacity 
             style={styles.signInButton}
@@ -1050,7 +1339,7 @@ export default function HistoryScreen({ navigation }) {
               colors={['#5E936C', '#3E704C']}
               style={styles.signInGradient}
             >
-              <Text style={styles.signInText}>Sign In</Text>
+              <Text style={styles.signInText}>{t('history.actions.signIn')}</Text>
               <Ionicons name="arrow-forward" size={18} color="#fff" />
             </LinearGradient>
           </TouchableOpacity>
@@ -1073,7 +1362,7 @@ export default function HistoryScreen({ navigation }) {
                   <Ionicons name="close" size={24} color="#fff" />
                 </TouchableOpacity>
                 <Text style={styles.selectionTitle}>
-                  {selectedItems.size} Selected
+                  {t('history.selection.selectedCount', { count: selectedItems.size })}
                 </Text>
                 <TouchableOpacity onPress={selectAll} style={styles.headerButton}>
                   <Ionicons 
@@ -1085,7 +1374,7 @@ export default function HistoryScreen({ navigation }) {
               </>
             ) : (
               <>
-                <Text style={styles.headerTitle}>History</Text>
+                <Text style={styles.headerTitle}>{t('history.title')}</Text>
                 {items.length > 0 && (
                   <TouchableOpacity 
                     onPress={toggleSelectionMode} 
@@ -1117,7 +1406,7 @@ export default function HistoryScreen({ navigation }) {
         <View style={styles.offlineBanner}>
           <Ionicons name="cloud-offline-outline" size={16} color="#fff" />
           <Text style={styles.offlineBannerText}>
-            {isPremium ? '✅ Offline Mode (Premium)' : '⚠️ Offline - Subscribe for access'}
+            {isPremium ? t('history.offlineBanner.premium') : t('history.offlineBanner.locked')}
           </Text>
         </View>
       )}
@@ -1128,7 +1417,7 @@ export default function HistoryScreen({ navigation }) {
             <Ionicons name="search" size={20} color="#9CA3AF" style={styles.searchIcon} />
             <TextInput
               style={styles.searchInput}
-              placeholder="Search by name..."
+              placeholder={t('history.search.placeholder')}
               placeholderTextColor="#9CA3AF"
               value={searchText}
               onChangeText={setSearchText}
@@ -1157,7 +1446,7 @@ export default function HistoryScreen({ navigation }) {
                 styles.filterButtonText, 
                 filterType === 'all' && styles.filterButtonTextActive
               ]}>
-                All
+                {t('history.filters.all')}
               </Text>
             </TouchableOpacity>
 
@@ -1179,7 +1468,7 @@ export default function HistoryScreen({ navigation }) {
                 styles.filterButtonText, 
                 filterType === 'plants' && styles.filterButtonTextActive
               ]}>
-                Plants
+                {t('history.filters.plants')}
               </Text>
             </TouchableOpacity>
 
@@ -1201,7 +1490,7 @@ export default function HistoryScreen({ navigation }) {
                 styles.filterButtonText, 
                 filterType === 'animals' && styles.filterButtonTextActive
               ]}>
-                Animals
+                {t('history.filters.animals')}
               </Text>
             </TouchableOpacity>
           </View>
@@ -1218,9 +1507,9 @@ export default function HistoryScreen({ navigation }) {
               <Ionicons name="time-outline" size={48} color="#fff" />
             </LinearGradient>
           </View>
-          <Text style={styles.emptyTitle}>No History Yet</Text>
+          <Text style={styles.emptyTitle}>{t('history.empty.noHistoryTitle')}</Text>
           <Text style={styles.emptyText}>
-            Your species scan history will appear here once you start identifying plants and animals.
+            {t('history.empty.noHistoryBody')}
           </Text>
         </View>
       ) : filteredItems.length === 0 ? (
@@ -1233,9 +1522,9 @@ export default function HistoryScreen({ navigation }) {
               <Ionicons name="search-outline" size={48} color="#fff" />
             </LinearGradient>
           </View>
-          <Text style={styles.emptyTitle}>No Results Found</Text>
+          <Text style={styles.emptyTitle}>{t('history.empty.noResultsTitle')}</Text>
           <Text style={styles.emptyText}>
-            No records match your search or filter criteria. Try adjusting your filters.
+            {t('history.empty.noResultsBody')}
           </Text>
           <TouchableOpacity 
             style={styles.signInButton}
@@ -1248,7 +1537,7 @@ export default function HistoryScreen({ navigation }) {
               colors={['#5E936C', '#3E704C']}
               style={styles.signInGradient}
             >
-              <Text style={styles.signInText}>Clear Filters</Text>
+              <Text style={styles.signInText}>{t('history.actions.clearFilters')}</Text>
             </LinearGradient>
           </TouchableOpacity>
         </View>
@@ -1277,7 +1566,7 @@ export default function HistoryScreen({ navigation }) {
             hasMore ? (
               <View style={styles.loadMoreIndicator}>
                 <ActivityIndicator size="small" color="#5E936C" />
-                <Text style={styles.loadMoreText}>Loading more...</Text>
+                <Text style={styles.loadMoreText}>{t('history.loadingMore')}</Text>
               </View>
             ) : null
           }
@@ -1311,7 +1600,7 @@ export default function HistoryScreen({ navigation }) {
                 <>
                   <Ionicons name="trash-outline" size={22} color="#fff" />
                   <Text style={styles.bottomBarText}>
-                    Delete {selectedItems.size} {selectedItems.size === 1 ? 'record' : 'records'}
+                    {t('history.selection.deleteButton', { count: selectedItems.size })}
                   </Text>
                 </>
               )}
@@ -1335,7 +1624,7 @@ export default function HistoryScreen({ navigation }) {
         </TouchableOpacity>
       )}
 
-      <SpeciesDetailsModal />
+      {SpeciesDetailsModal()}
 
       {/* ✅ OFFLINE PREMIUM GATE */}
       <PremiumGate
@@ -1345,8 +1634,8 @@ export default function HistoryScreen({ navigation }) {
           setPremiumGateVisible(false);
           navigation.navigate('Plan');
         }}
-        title="Subscribe to Access Offline Mode"
-        message="Offline access to your History is a premium feature. Subscribe to view your scan history when you're offline."
+        title={t('history.premiumGate.title')}
+        message={t('history.premiumGate.message')}
         feature="offline_history"
       />
     </View>
@@ -1755,13 +2044,19 @@ const styles = StyleSheet.create({
     backgroundColor: '#ffffff',
     borderTopLeftRadius: 28,
     borderTopRightRadius: 28,
-    maxHeight: '85%',
-    minHeight: '50%',
     shadowColor: '#000',
     shadowOffset: { width: 0, height: -4 },
     shadowOpacity: 0.25,
     shadowRadius: 20,
     elevation: 20,
+  },
+  modalContainerExpanded: {
+    maxHeight: '95%',
+    minHeight: '85%',
+  },
+  modalContainerCollapsed: {
+    maxHeight: '70%',
+    minHeight: '50%',
   },
   modalHeader: {
     alignItems: 'center',
@@ -1771,6 +2066,10 @@ const styles = StyleSheet.create({
     position: 'relative',
     borderBottomWidth: 0.5,
     borderBottomColor: '#E5E7EB',
+  },
+  modalHandleHit: {
+    paddingVertical: 6,
+    paddingHorizontal: 20,
   },
   modalHandle: {
     width: 36,
@@ -1937,3 +2236,4 @@ const styles = StyleSheet.create({
     fontWeight: '500',
   },
 });
+

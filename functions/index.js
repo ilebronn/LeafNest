@@ -12,6 +12,7 @@ const { sendPushNotification, sendBatchPushNotifications } = require("./notifica
 const { NOTIFICATION_TYPES, formatNotificationForPush } = require("./notifications/notificationTypes");
 
 admin.initializeApp();
+const SUPPORT_EMAIL = "leafnest.capstone@gmail.com";
 
 // =========================================================================
 // EMAIL VERIFICATION FUNCTION
@@ -178,6 +179,203 @@ exports.sendVerificationEmail = onCall(
 
       // Generic error
       throw new HttpsError('internal', `Failed to send verification email: ${error.message}`);
+    }
+  }
+);
+
+// =========================================================================
+// SEND FEEDBACK EMAIL (IN-APP)
+// =========================================================================
+exports.sendFeedback = onCall(
+  {
+    secrets: ["EMAIL_USER", "EMAIL_PASS"],
+    timeoutSeconds: 120,
+    memory: "256MiB",
+  },
+  async (request) => {
+    try {
+      const {
+        topic,
+        topicLabel,
+        subject,
+        message,
+        email,
+        diagnostics,
+      } = request.data || {};
+
+      const cleanSubject = String(subject || "").trim();
+      const cleanMessage = String(message || "").trim();
+
+      if (!cleanSubject || !cleanMessage) {
+        throw new HttpsError(
+          "invalid-argument",
+          "Subject and message are required"
+        );
+      }
+
+      const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+      if (email && !emailRegex.test(String(email).trim())) {
+        throw new HttpsError("invalid-argument", "Invalid email format");
+      }
+
+      const gmailUser = process.env.EMAIL_USER;
+      const gmailPass = process.env.EMAIL_PASS;
+
+      if (!gmailUser || !gmailPass) {
+        throw new HttpsError(
+          "failed-precondition",
+          "Email service is not configured properly"
+        );
+      }
+
+      const transporter = nodemailer.createTransport({
+        service: "gmail",
+        auth: {
+          user: gmailUser,
+          pass: gmailPass,
+        },
+      });
+
+      const escapeHtml = (value) =>
+        String(value || "")
+          .replace(/&/g, "&amp;")
+          .replace(/</g, "&lt;")
+          .replace(/>/g, "&gt;")
+          .replace(/"/g, "&quot;")
+          .replace(/'/g, "&#39;");
+
+      const topicText = String(topicLabel || topic || "Other").trim();
+      const fromLine = email ? `From: ${String(email).trim()}` : "From: (not provided)";
+      const userLine = request.auth?.uid
+        ? `User ID: ${request.auth.uid}`
+        : "User ID: (unauthenticated)";
+
+      let diagnosticsBlock = "";
+      if (diagnostics) {
+        const diagnosticsText =
+          typeof diagnostics === "string"
+            ? diagnostics
+            : JSON.stringify(diagnostics, null, 2);
+        diagnosticsBlock = `\n\n---\nDiagnostics\n${diagnosticsText}\n---`;
+      }
+
+      const body =
+        `${fromLine}\n` +
+        `${userLine}\n` +
+        `Topic: ${topicText}\n` +
+        `Subject: ${cleanSubject}\n\n` +
+        `${cleanMessage}${diagnosticsBlock}`;
+
+      const subjectText = `[LeafNest Feedback] ${topicText} - ${cleanSubject}`.slice(
+        0,
+        200
+      );
+
+      const mailOptions = {
+        from: `"LeafNest Feedback" <${gmailUser}>`,
+        to: SUPPORT_EMAIL,
+        subject: subjectText,
+        text: body,
+        html: `
+          <!DOCTYPE html>
+          <html>
+          <head>
+            <meta charset="utf-8">
+            <meta name="viewport" content="width=device-width, initial-scale=1.0">
+          </head>
+          <body style="margin:0;padding:0;background-color:#f5f6f7;font-family:Arial,Helvetica,sans-serif;">
+            <table width="100%" cellpadding="0" cellspacing="0" style="background-color:#f5f6f7;padding:32px 0;">
+              <tr>
+                <td align="center">
+                  <table width="600" cellpadding="0" cellspacing="0" style="background-color:#ffffff;border-radius:16px;box-shadow:0 6px 16px rgba(0,0,0,0.08);overflow:hidden;">
+                    <tr>
+                      <td style="padding:28px 32px;background:linear-gradient(135deg,#5E936C 0%,#4a7757 100%);color:#ffffff;">
+                        <div style="font-size:20px;font-weight:700;letter-spacing:0.2px;">🌿 LeafNest Feedback</div>
+                        <div style="font-size:13px;opacity:0.9;margin-top:6px;">New user feedback received</div>
+                      </td>
+                    </tr>
+                    <tr>
+                      <td style="padding:28px 32px;color:#111827;">
+                        <div style="font-size:14px;margin-bottom:16px;line-height:1.6;">
+                          <div><strong>From:</strong> ${escapeHtml(email || "(not provided)")}</div>
+                          <div><strong>User ID:</strong> ${escapeHtml(request.auth?.uid || "(unauthenticated)")}</div>
+                          <div><strong>Topic:</strong> ${escapeHtml(topicText)}</div>
+                          <div><strong>Subject:</strong> ${escapeHtml(cleanSubject)}</div>
+                        </div>
+
+                        <div style="margin-top:18px;border-top:1px solid #e5e7eb;padding-top:18px;">
+                          <div style="font-size:15px;font-weight:700;margin-bottom:8px;color:#1f2937;">Message</div>
+                          <div style="white-space:pre-wrap;font-size:14px;line-height:1.6;color:#374151;">
+                            ${escapeHtml(cleanMessage)}
+                          </div>
+                        </div>
+
+                        ${
+                          diagnostics
+                            ? `
+                          <div style="margin-top:18px;border-top:1px dashed #e5e7eb;padding-top:18px;">
+                            <div style="font-size:13px;font-weight:700;margin-bottom:6px;color:#6b7280;text-transform:uppercase;letter-spacing:0.6px;">Diagnostics</div>
+                            <div style="white-space:pre-wrap;font-size:13px;line-height:1.5;color:#6b7280;">
+                              ${escapeHtml(
+                                typeof diagnostics === "string"
+                                  ? diagnostics
+                                  : JSON.stringify(diagnostics, null, 2)
+                              )}
+                            </div>
+                          </div>
+                        `
+                            : ""
+                        }
+                      </td>
+                    </tr>
+                    <tr>
+                      <td style="padding:16px 32px;background-color:#f9fafb;color:#9ca3af;font-size:12px;text-align:center;">
+                        © ${new Date().getFullYear()} LeafNest. All rights reserved.
+                      </td>
+                    </tr>
+                  </table>
+                </td>
+              </tr>
+            </table>
+          </body>
+          </html>
+        `,
+      };
+      if (email) {
+        mailOptions.replyTo = String(email).trim();
+      }
+
+      await transporter.sendMail(mailOptions);
+
+      return { success: true };
+    } catch (error) {
+      console.error("=== ERROR IN sendFeedback ===");
+      console.error("Error type:", error.constructor?.name || "Unknown");
+      console.error("Error message:", error.message);
+      console.error("Error code:", error.code);
+
+      if (error instanceof HttpsError) {
+        throw error;
+      }
+
+      if (error.code === "EAUTH") {
+        throw new HttpsError(
+          "unauthenticated",
+          "Email authentication failed. Please check email configuration."
+        );
+      }
+
+      if (error.code === "ECONNECTION") {
+        throw new HttpsError(
+          "unavailable",
+          "Cannot connect to email service. Please try again later."
+        );
+      }
+
+      throw new HttpsError(
+        "internal",
+        `Failed to send feedback: ${error.message}`
+      );
     }
   }
 );

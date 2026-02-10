@@ -145,7 +145,7 @@ function getPriorityForType(type) {
 function getChannelIdForType(type) {
   const channels = {
     [NOTIFICATION_TYPES.LIKE]: 'likes',
-    [NOTIFICATION_TYPES.COMMENT]: 'likes',
+    [NOTIFICATION_TYPES.COMMENT]: 'comments',
     [NOTIFICATION_TYPES.DOWNLOAD]: 'likes',
     [NOTIFICATION_TYPES.ACHIEVEMENT]: 'achievements',
     [NOTIFICATION_TYPES.WEEKLY_REPORT]: 'default',
