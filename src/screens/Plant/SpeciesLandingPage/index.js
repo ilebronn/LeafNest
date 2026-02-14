@@ -1043,6 +1043,7 @@ export default function SpeciesLandingPage({ route, navigation }) {
           taxonId: taxonId,
           imageUri: photoUri,
           imageUrl: displayImageUri,
+          confidence: confidence ?? null,
           type: 'species',
         };
 

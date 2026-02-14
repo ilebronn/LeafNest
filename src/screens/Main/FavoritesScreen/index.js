@@ -381,7 +381,7 @@ export default function FavoritesScreen({ navigation }) {
                     } : null,
                   },
                   iNatObsCount: selectedSpecies.iNatObsCount || 0,
-                  confidence: selectedSpecies.confidence || null, // ✅ ADD THIS LINE
+                  confidence: selectedSpecies.confidence ?? null, // ✅ ADD THIS LINE
                   offlineCacheId: selectedSpecies.taxonId || selectedSpecies.scientificName || selectedSpecies.name,
                   skipHistorySave: true,
                 });

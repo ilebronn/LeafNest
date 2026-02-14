@@ -627,8 +627,19 @@ const AboutScreen = ({ navigation }) => {
               <Text style={styles.linkText}>Contact Support</Text>
             </TouchableOpacity>
 
+            <TouchableOpacity 
+              style={styles.linkButton}
+              onPress={handleTestPress}
+              activeOpacity={0.7}
+              accessible={true}
+              accessibilityRole="button"
+              accessibilityLabel="Start Tour"
+              accessibilityHint="Starts the in-app tour">
+              <Ionicons name="compass" size={clamp(scale(18), 16, 20)} color="#2D5A3F" />
+              <Text style={styles.linkText}>Start Tour</Text>
+            </TouchableOpacity>
+
             <View style={styles.divider} />
-            
             <Text style={styles.version}>{t('about.version')}</Text>
             <Text style={styles.helpText}>{t('about.help')}</Text>
           </View>
@@ -651,3 +662,10 @@ const AboutScreen = ({ navigation }) => {
 };
 
 export default AboutScreen;
+
+
+
+
+
+
+

@@ -26,6 +26,15 @@ const getTimestampValue = (timestamp) => {
   return Date.now();
 };
 
+// ✅ Helper to normalize confidence into a 0-100 percent scale
+const normalizeConfidence = (value) => {
+  const n = Number(value);
+  if (!Number.isFinite(n)) return null;
+  const percent = n <= 1.5 ? n * 100 : n;
+  const clamped = Math.min(Math.max(percent, 0), 100);
+  return Math.round(clamped);
+};
+
 export default function useFavorites() {
   const [items, setItems] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -110,6 +119,7 @@ export default function useFavorites() {
             conservation: it.conservation || null,
             about: it.about || it.description || null,
             iNatObsCount: it.iNatObsCount || 0,
+            confidence: normalizeConfidence(it.confidence),
             // ✅ FIX: Store remote + local separately
             imageUrl: remoteUrl,
             imageUri: localUri || remoteUrl || null,

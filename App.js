@@ -8,6 +8,7 @@ import { Ionicons } from '@expo/vector-icons';
 import { useTranslation } from 'react-i18next';
 import { onAuthStateChanged } from 'firebase/auth';
 import { auth, db, doc, onSnapshot } from '@config/firebase';
+import NetInfo from '@react-native-community/netinfo';
 import * as NavigationBar from 'expo-navigation-bar';
 import { CameraCaptureScreen } from '@screens/Main';
 import { LogBox } from 'react-native';
@@ -21,6 +22,8 @@ LogBox.ignoreLogs([
   'Push notifications only work on physical devices',
   'reading dataString is deprecated',
   'shouldShowAlert is deprecated',
+  'auth/invalid-email',
+  'auth/weak-password',
 ]);
 
 // Import i18n configuration
@@ -40,7 +43,16 @@ import {
 import { registerForPushNotifications } from '@services/notifications/pushTokenService';
 import { syncBordersFromFirestore } from '@services/rewards/borderRewardService';
 import { syncBadgesFromFirestore } from '@services/rewards/badgeRewardService';
-import { checkVerificationStatus } from '@services/auth/verificationService';
+import { 
+  checkVerificationStatus, 
+  getCachedVerificationStatus, 
+  setCachedVerificationStatus 
+} from '@services/auth/verificationService';
+import { 
+  loadOfflineSession, 
+  saveOfflineSession, 
+  clearOfflineSession 
+} from '@utils/auth/offlineSession';
 
 // Import linking configuration
 import linking from '@navigation/linking';
@@ -294,6 +306,42 @@ function AppContent() {
 
     initializeApp();
 
+    const tryRestoreOfflineSession = async () => {
+      try {
+        const netState = await NetInfo.fetch();
+        const online = netState.isConnected && netState.isInternetReachable !== false;
+        if (online) return false;
+
+        const cachedSession = await loadOfflineSession();
+        if (!cachedSession?.uid || cachedSession.isVerified !== true) {
+          return false;
+        }
+
+        setUser({
+          uid: cachedSession.uid,
+          email: cachedSession.email || null,
+          displayName: cachedSession.displayName || null,
+        });
+        setIsVerified(true);
+        setVerificationLoading(false);
+        setInitializing(false);
+        return true;
+      } catch (error) {
+        console.warn('Offline session restore failed:', error?.message);
+        return false;
+      }
+    };
+
+    const persistOfflineSession = async (firebaseUser, verified) => {
+      if (!firebaseUser?.uid || !verified) return;
+      await saveOfflineSession({
+        uid: firebaseUser.uid,
+        email: firebaseUser.email,
+        displayName: firebaseUser.displayName,
+        isVerified: true,
+      });
+    };
+
         // Listen for auth state changes
     const unsubscribe = onAuthStateChanged(auth, async (currentUser) => {
       setInitializing(true);
@@ -305,6 +353,11 @@ function AppContent() {
       }
 
       if (!currentUser) {
+        const restored = await tryRestoreOfflineSession();
+        if (restored) {
+          pushSetupRef.current = false;
+          return;
+        }
         setUser(null);
         setIsVerified(false);
         pushSetupRef.current = false;
@@ -339,15 +392,36 @@ function AppContent() {
       };
 
       try {
+        const cachedVerified = await getCachedVerificationStatus(currentUser.uid);
+        if (cachedVerified !== null) {
+          setIsVerified(cachedVerified || currentUser.emailVerified === true);
+        }
+
         const verificationResult = await checkVerificationStatus(currentUser.uid);
         const initialVerified = verificationResult.isVerified === true || currentUser.emailVerified === true;
         setIsVerified(initialVerified);
+        if (initialVerified && verificationResult?.source !== 'cache') {
+          await setCachedVerificationStatus(currentUser.uid, true);
+        }
+        if (verificationResult?.source === 'cache') {
+          setVerificationLoading(false);
+          setInitializing(false);
+        }
         if (initialVerified) {
+          await persistOfflineSession(currentUser, true);
           await runPostVerificationSetup();
+        } else {
+          await clearOfflineSession();
         }
       } catch (error) {
         console.warn('Initial verification check failed:', error?.message);
-        setIsVerified(currentUser.emailVerified === true);
+        const fallbackVerified = currentUser.emailVerified === true;
+        setIsVerified(fallbackVerified);
+        if (fallbackVerified) {
+          await persistOfflineSession(currentUser, true);
+        } else {
+          await clearOfflineSession();
+        }
       }
 
       verificationUnsubRef.current = onSnapshot(
@@ -356,18 +430,33 @@ function AppContent() {
           const docVerified = snapshot.data()?.isVerified === true;
           const verified = docVerified || currentUser.emailVerified === true;
           setIsVerified(verified);
+          await setCachedVerificationStatus(currentUser.uid, verified);
           setVerificationLoading(false);
           setInitializing(false);
 
           if (verified) {
+            await persistOfflineSession(currentUser, true);
             await runPostVerificationSetup();
+          } else {
+            await clearOfflineSession();
           }
         },
         (error) => {
           console.warn('Verification listener error:', error?.message);
-          setIsVerified(currentUser.emailVerified === true);
-          setVerificationLoading(false);
-          setInitializing(false);
+          (async () => {
+            const cachedVerified = await getCachedVerificationStatus(currentUser.uid);
+            const fallbackVerified = cachedVerified !== null
+              ? cachedVerified
+              : currentUser.emailVerified === true;
+            setIsVerified(fallbackVerified);
+            if (fallbackVerified) {
+              await persistOfflineSession(currentUser, true);
+            } else {
+              await clearOfflineSession();
+            }
+            setVerificationLoading(false);
+            setInitializing(false);
+          })();
         }
       );
     });
@@ -527,5 +616,3 @@ export default function App() {
     </LanguageProvider>
   );
 }
-
-

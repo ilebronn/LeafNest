@@ -2,6 +2,8 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import { auth } from '@config/firebase';
 
 const USERNAME_KEY = '@username';
+const OFFLINE_SESSION_KEY = '@offline_session_v1';
+const VERIFICATION_STATUS_PREFIX = '@verification_status_';
 
 export const getCurrentUsername = async () => {
   try {
@@ -140,6 +142,10 @@ export const clearAllUserData = async () => {
       
       // ✅ Preserve user favorites
       if (key.startsWith('favorites_user_')) return false;
+      
+      // ✅ Clear offline session + verification cache
+      if (key === OFFLINE_SESSION_KEY) return true;
+      if (key.startsWith(VERIFICATION_STATUS_PREFIX)) return true;
       
       // Clear everything else that looks like user data
       return (

@@ -1,9 +1,49 @@
 import { db, doc, setDoc, getDoc, updateDoc, serverTimestamp, Timestamp, auth } from '@config/firebase';
 import { httpsCallable, functions } from '@config/firebase';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 const VERIFICATION_EXPIRY_MINUTES = 10;
 const MAX_VERIFICATION_ATTEMPTS = 5;
 const RESEND_COOLDOWN_SECONDS = 60;
+const VERIFICATION_CACHE_KEY = (userId) => `@verification_status_${userId}`;
+
+export const getCachedVerificationStatus = async (userId) => {
+  if (!userId) return null;
+  try {
+    const raw = await AsyncStorage.getItem(VERIFICATION_CACHE_KEY(userId));
+    if (!raw) return null;
+    const parsed = JSON.parse(raw);
+    return typeof parsed?.isVerified === 'boolean' ? parsed.isVerified : null;
+  } catch (error) {
+    console.warn('Error reading cached verification status:', error);
+    return null;
+  }
+};
+
+export const setCachedVerificationStatus = async (userId, isVerified) => {
+  if (!userId) return false;
+  try {
+    await AsyncStorage.setItem(
+      VERIFICATION_CACHE_KEY(userId),
+      JSON.stringify({ isVerified: Boolean(isVerified), updatedAt: Date.now() })
+    );
+    return true;
+  } catch (error) {
+    console.warn('Error saving cached verification status:', error);
+    return false;
+  }
+};
+
+export const clearCachedVerificationStatus = async (userId) => {
+  if (!userId) return false;
+  try {
+    await AsyncStorage.removeItem(VERIFICATION_CACHE_KEY(userId));
+    return true;
+  } catch (error) {
+    console.warn('Error clearing cached verification status:', error);
+    return false;
+  }
+};
 
 /**
  * Generate 6-digit verification code
@@ -127,6 +167,8 @@ export const verifyEmailCode = async (userId, code) => {
       },
       { merge: true }
     );
+    
+    await setCachedVerificationStatus(userId, true);
 
     console.log('✅ Email verified successfully');
     return { success: true, message: 'Email verified successfully!' };
@@ -191,13 +233,22 @@ export const checkVerificationStatus = async (userId) => {
     const userDoc = await getDoc(userRef);
 
     if (!userDoc.exists()) {
+      const cached = await getCachedVerificationStatus(userId);
+      if (cached !== null) {
+        return { success: false, isVerified: cached, error: 'User not found', source: 'cache' };
+      }
       return { success: false, isVerified: false, error: 'User not found' };
     }
 
     const isVerified = userDoc.data().isVerified || false;
+    await setCachedVerificationStatus(userId, isVerified);
     return { success: true, isVerified };
   } catch (error) {
     console.error('❌ Error checking verification status:', error);
+    const cached = await getCachedVerificationStatus(userId);
+    if (cached !== null) {
+      return { success: false, isVerified: cached, error: error.message, source: 'cache' };
+    }
     return { success: false, isVerified: false, error: error.message };
   }
 };

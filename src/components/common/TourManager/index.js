@@ -34,6 +34,7 @@ export default function TourManager({ visible, onComplete, targetRefs }) {
   const tooltipSidePadding = Math.max(12, Math.floor((windowWidth - tooltipMaxWidth) / 2));
   const tooltipPadding = isCompactScreen ? 16 : 20;
   const tooltipMaxHeight = Math.max(200, windowHeight - insets.top - insets.bottom - 24);
+  const clamp = (val, min, max) => Math.max(min, Math.min(val, max));
 
   // Animate in when visible
   useEffect(() => {
@@ -93,6 +94,7 @@ export default function TourManager({ visible, onComplete, targetRefs }) {
   const step = TOUR_STEPS[currentStep];
   const isLastStep = currentStep === TOUR_STEPS.length - 1;
   const highlightPadding = step.highlightPadding ?? 8;
+  const arrowSize = 12;
 
   // Render Highlight All Mode
   if (highlightAllMode) {
@@ -163,110 +165,135 @@ export default function TourManager({ visible, onComplete, targetRefs }) {
                 top: targetLayout.y - highlightPadding,
                 width: targetLayout.width + highlightPadding * 2,
                 height: targetLayout.height + highlightPadding * 2,
+                borderRadius: Math.max(
+                  (targetLayout.height + highlightPadding * 2) / 2,
+                  12
+                ),
               },
             ]}
           />
         )}
 
         {/* Tooltip - Dynamic positioning */}
-        {targetLayout && (
-          <View
-            style={[
-              styles.tooltip,
-              getTooltipPosition(targetLayout, step, {
-                windowHeight,
-                windowWidth,
-                insets,
-                sidePadding: tooltipSidePadding,
-                tooltipHeight,
-                isCompact: isCompactScreen,
-              }),
-              {
-                maxWidth: tooltipMaxWidth,
-                maxHeight: tooltipMaxHeight,
-                padding: tooltipPadding,
-              },
-            ]}
-            onLayout={(event) => {
-              const { height } = event.nativeEvent.layout;
-              if (height !== tooltipHeight) {
-                setTooltipHeight(height);
-              }
-            }}
-          >
-            <Text style={[styles.tooltipTitle, isCompactScreen && styles.tooltipTitleSmall]}>
-              {step.title}
-            </Text>
-            <Text
+        {targetLayout && (() => {
+          const tooltipPosition = getTooltipPosition(targetLayout, step, {
+            windowHeight,
+            windowWidth,
+            insets,
+            sidePadding: tooltipSidePadding,
+            tooltipHeight,
+            isCompact: isCompactScreen,
+          });
+          const { placement, ...tooltipStyle } = tooltipPosition;
+          const tooltipWidth = windowWidth - tooltipSidePadding * 2;
+          const targetCenterX = targetLayout.x + targetLayout.width / 2;
+          const arrowLeft = clamp(
+            targetCenterX - tooltipSidePadding - arrowSize / 2,
+            16,
+            tooltipWidth - arrowSize - 16
+          );
+
+          return (
+            <View
               style={[
-                styles.tooltipDescription,
-                isCompactScreen && styles.tooltipDescriptionSmall,
+                styles.tooltip,
+                tooltipStyle,
+                {
+                  maxWidth: tooltipMaxWidth,
+                  maxHeight: tooltipMaxHeight,
+                  padding: tooltipPadding,
+                },
               ]}
+              onLayout={(event) => {
+                const { height } = event.nativeEvent.layout;
+                if (height !== tooltipHeight) {
+                  setTooltipHeight(height);
+                }
+              }}
             >
-              {step.description}
-            </Text>
+              <View
+                style={[
+                  styles.tooltipArrow,
+                  placement === 'above'
+                    ? styles.tooltipArrowDown
+                    : styles.tooltipArrowUp,
+                  { left: arrowLeft, width: arrowSize, height: arrowSize },
+                ]}
+              />
+              <Text style={[styles.tooltipTitle, isCompactScreen && styles.tooltipTitleSmall]}>
+                {step.title}
+              </Text>
+              <Text
+                style={[
+                  styles.tooltipDescription,
+                  isCompactScreen && styles.tooltipDescriptionSmall,
+                ]}
+              >
+                {step.description}
+              </Text>
 
-            {/* Progress indicator */}
-            <View style={[styles.progressContainer, isCompactScreen && styles.progressContainerSmall]}>
-              {TOUR_STEPS.map((_, index) => (
-                <View
-                  key={index}
+              {/* Progress indicator */}
+              <View style={[styles.progressContainer, isCompactScreen && styles.progressContainerSmall]}>
+                {TOUR_STEPS.map((_, index) => (
+                  <View
+                    key={index}
+                    style={[
+                      styles.progressDot,
+                      isCompactScreen && styles.progressDotSmall,
+                      index === currentStep && styles.progressDotActive,
+                      isCompactScreen && index === currentStep && styles.progressDotActiveSmall,
+                    ]}
+                  />
+                ))}
+              </View>
+
+              {/* Buttons */}
+              <View style={[styles.buttonContainer, isSmallWidth && styles.buttonContainerStacked]}>
+                <TouchableOpacity
                   style={[
-                    styles.progressDot,
-                    isCompactScreen && styles.progressDotSmall,
-                    index === currentStep && styles.progressDotActive,
-                    isCompactScreen && index === currentStep && styles.progressDotActiveSmall,
+                    styles.secondaryButton,
+                    styles.buttonFlex1,
+                    isCompactScreen && styles.buttonCompact,
+                    isSmallWidth && styles.buttonFullWidth,
                   ]}
-                />
-              ))}
+                  onPress={handleSkip}
+                >
+                  <Text style={[styles.secondaryButtonText, isCompactScreen && styles.secondaryButtonTextCompact]}>
+                    Skip
+                  </Text>
+                </TouchableOpacity>
+
+                <TouchableOpacity
+                  style={[
+                    styles.secondaryButton,
+                    styles.buttonFlex1,
+                    isCompactScreen && styles.buttonCompact,
+                    isSmallWidth && styles.buttonFullWidth,
+                  ]}
+                  onPress={handleHighlightAll}
+                >
+                  <Text style={[styles.secondaryButtonText, isCompactScreen && styles.secondaryButtonTextCompact]}>
+                    Highlight{'\n'}All
+                  </Text>
+                </TouchableOpacity>
+
+                <TouchableOpacity
+                  style={[
+                    styles.primaryButton,
+                    styles.buttonFlex1,
+                    isCompactScreen && styles.buttonCompact,
+                    isSmallWidth && styles.buttonFullWidth,
+                  ]}
+                  onPress={isLastStep ? handleFinish : handleNext}
+                >
+                  <Text style={[styles.primaryButtonText, isCompactScreen && styles.primaryButtonTextCompact]}>
+                    {isLastStep ? 'Finish' : 'Next'}
+                  </Text>
+                </TouchableOpacity>
+              </View>
             </View>
-
-            {/* Buttons */}
-            <View style={[styles.buttonContainer, isSmallWidth && styles.buttonContainerStacked]}>
-              <TouchableOpacity
-                style={[
-                  styles.secondaryButton,
-                  styles.buttonFlex1,
-                  isCompactScreen && styles.buttonCompact,
-                  isSmallWidth && styles.buttonFullWidth,
-                ]}
-                onPress={handleSkip}
-              >
-                <Text style={[styles.secondaryButtonText, isCompactScreen && styles.secondaryButtonTextCompact]}>
-                  Skip
-                </Text>
-              </TouchableOpacity>
-
-              <TouchableOpacity
-                style={[
-                  styles.secondaryButton,
-                  styles.buttonFlex1,
-                  isCompactScreen && styles.buttonCompact,
-                  isSmallWidth && styles.buttonFullWidth,
-                ]}
-                onPress={handleHighlightAll}
-              >
-                <Text style={[styles.secondaryButtonText, isCompactScreen && styles.secondaryButtonTextCompact]}>
-                  Highlight{'\n'}All
-                </Text>
-              </TouchableOpacity>
-
-              <TouchableOpacity
-                style={[
-                  styles.primaryButton,
-                  styles.buttonFlex1,
-                  isCompactScreen && styles.buttonCompact,
-                  isSmallWidth && styles.buttonFullWidth,
-                ]}
-                onPress={isLastStep ? handleFinish : handleNext}
-              >
-                <Text style={[styles.primaryButtonText, isCompactScreen && styles.primaryButtonTextCompact]}>
-                  {isLastStep ? 'Finish' : 'Next'}
-                </Text>
-              </TouchableOpacity>
-            </View>
-          </View>
-        )}
+          );
+        })()}
       </Animated.View>
     </Modal>
   );
@@ -314,11 +341,13 @@ function getTooltipPosition(targetLayout, step, metrics) {
 
   const maxTop = Math.max(safeTop, safeBottom - estimatedHeight);
   top = Math.max(safeTop, Math.min(top, maxTop));
+  const placement = top < targetLayout.y ? 'above' : 'below';
 
   return {
     top,
     left: TOOLTIP_MARGIN,
     right: TOOLTIP_MARGIN,
+    placement,
   };
 }
 
@@ -353,6 +382,7 @@ function HighlightFeature({ targetRef, label }) {
             top: layout.y - 8,
             width: layout.width + 16,
             height: layout.height + 16,
+            borderRadius: Math.max((layout.height + 16) / 2, 12),
           },
         ]}
       />
@@ -410,6 +440,18 @@ const styles = StyleSheet.create({
     shadowOpacity: 0.25,
     shadowRadius: 12,
     elevation: 12,
+    overflow: 'visible',
+  },
+  tooltipArrow: {
+    position: 'absolute',
+    backgroundColor: '#FFFFFF',
+    transform: [{ rotate: '45deg' }],
+  },
+  tooltipArrowUp: {
+    top: -6,
+  },
+  tooltipArrowDown: {
+    bottom: -6,
   },
   tooltipTitle: {
     fontSize: 20,
