@@ -17,6 +17,7 @@ import { Ionicons } from '@expo/vector-icons';
 import { useTranslation } from 'react-i18next';
 import { SafeAreaProvider, SafeAreaView } from 'react-native-safe-area-context';
 import { LinearGradient } from 'expo-linear-gradient';
+import NetInfo from '@react-native-community/netinfo';
 import { auth } from '@config/firebase';
 import { likePost, getPostStats } from '@services/notifications/postInteractionsService';
 import { CommentsModal, PremiumGate } from '@components/modals';
@@ -91,6 +92,7 @@ export default function HomeScreen({ route, navigation }) {
   const [unreadNotifCount, setUnreadNotifCount] = useState(0);
   const [showPremiumGate, setShowPremiumGate] = useState(false);
   const [usageLimits, setUsageLimits] = useState(null);
+  const [isOffline, setIsOffline] = useState(false);
   
   const hasLoadedInitially = useRef(false);
   const fadeAnim = useRef(new Animated.Value(0)).current;
@@ -171,6 +173,22 @@ export default function HomeScreen({ route, navigation }) {
       useNativeDriver: true,
     }).start();
   }, [fadeAnim]);
+
+  useEffect(() => {
+    const syncNetworkStatus = async () => {
+      const state = await NetInfo.fetch();
+      const online = state.isConnected && state.isInternetReachable !== false;
+      setIsOffline(!online);
+    };
+
+    syncNetworkStatus();
+    const unsubscribe = NetInfo.addEventListener((state) => {
+      const online = state.isConnected && state.isInternetReachable !== false;
+      setIsOffline(!online);
+    });
+
+    return () => unsubscribe();
+  }, []);
 
   const handleRefresh = useCallback(async () => {
     await onRefresh(loadUnreadCount);
@@ -574,19 +592,25 @@ export default function HomeScreen({ route, navigation }) {
   // ✅ PERFORMANCE: Memoized empty component
   const renderEmptyComponent = useMemo(() => (
     <View style={styles.emptyContainer}>
-      <Ionicons name="telescope-outline" size={80} color="#c7c7c7" />
-      <Text style={styles.emptyTitle}>{t('home.emptyState.title')}</Text>
-      <Text style={styles.emptyDescription}>
-        {t('home.emptyState.subtitle')}
+      <Ionicons name={isOffline ? 'cloud-offline-outline' : 'telescope-outline'} size={80} color="#c7c7c7" />
+      <Text style={styles.emptyTitle}>
+        {isOffline ? 'You are offline' : t('home.emptyState.title')}
       </Text>
-      <TouchableOpacity
-        style={styles.emptyButton}
-        onPress={() => navigation.navigate('ScanScreen')}
-      >
-        <Text style={styles.emptyButtonText}>{t('home.emptyState.cta')}</Text>
-      </TouchableOpacity>
+      <Text style={styles.emptyDescription}>
+        {isOffline
+          ? "Community feed won't load while you're offline. Connect to the internet and refresh."
+          : t('home.emptyState.subtitle')}
+      </Text>
+      {!isOffline && (
+        <TouchableOpacity
+          style={styles.emptyButton}
+          onPress={() => navigation.navigate('ScanScreen')}
+        >
+          <Text style={styles.emptyButtonText}>{t('home.emptyState.cta')}</Text>
+        </TouchableOpacity>
+      )}
     </View>
-  ), [t, navigation]);
+  ), [t, navigation, isOffline]);
 
   return (
     <SafeAreaProvider>

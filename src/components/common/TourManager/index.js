@@ -1,4 +1,4 @@
-import React, { useState, useRef, useEffect } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import {
   View,
   Text,
@@ -8,334 +8,158 @@ import {
   Animated,
   useWindowDimensions,
 } from 'react-native';
-import { TOUR_STEPS, ALL_FEATURES } from '@constants/tourSteps';
+import { Ionicons } from '@expo/vector-icons';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
+import { TOUR_STEPS } from '@constants/tourSteps';
+
+const STEP_ICON_MAP = {
+  'home-tab': { name: 'home-outline', label: 'Home' },
+  'scan-button': { name: 'scan-outline', label: 'Scan' },
+  'notification-button': { name: 'notifications-outline', label: 'Notifications' },
+  'favorites-tab': { name: 'heart-outline', label: 'Favorites' },
+  'history-tab': { name: 'time-outline', label: 'History' },
+  'profile-tab': { name: 'person-circle-outline', label: 'Profile' },
+};
+
+function getStepIcon(step) {
+  return STEP_ICON_MAP[step?.targetKey] || { name: 'leaf-outline', label: 'Feature' };
+}
 
 /**
  * TourManager Component
- * Displays an interactive guided tour overlay for first-time users
- * 
- * @param {boolean} visible - Controls tour visibility
- * @param {function} onComplete - Callback when tour is completed/skipped
- * @param {object} targetRefs - Object containing refs to UI elements to highlight
+ * Stable responsive tour: fixed bottom sheet only, no target overlays.
  */
-export default function TourManager({ visible, onComplete, targetRefs }) {
+export default function TourManager({ visible, onComplete }) {
   const [currentStep, setCurrentStep] = useState(0);
-  const [highlightAllMode, setHighlightAllMode] = useState(false);
-  const [targetLayout, setTargetLayout] = useState(null);
-  const [tooltipHeight, setTooltipHeight] = useState(0);
   const fadeAnim = useRef(new Animated.Value(0)).current;
   const { width: windowWidth, height: windowHeight } = useWindowDimensions();
   const insets = useSafeAreaInsets();
-  const isSmallWidth = windowWidth < 360;
-  const isCompactHeight = windowHeight < 700;
-  const isCompactScreen = isSmallWidth || isCompactHeight;
-  const tooltipMaxWidth = Math.min(420, windowWidth - 24);
-  const tooltipSidePadding = Math.max(12, Math.floor((windowWidth - tooltipMaxWidth) / 2));
-  const tooltipPadding = isCompactScreen ? 16 : 20;
-  const tooltipMaxHeight = Math.max(200, windowHeight - insets.top - insets.bottom - 24);
-  const clamp = (val, min, max) => Math.max(min, Math.min(val, max));
 
-  // Animate in when visible
+  const isNarrowScreen = windowWidth < 360;
+  const isCompactHeight = windowHeight < 700;
+  const isCompactScreen = isNarrowScreen || isCompactHeight;
+
+  const sheetWidth = Math.min(windowWidth - 24, 480);
+  const sheetLeft = (windowWidth - sheetWidth) / 2;
+  const sheetBottom = Math.max(insets.bottom + 12, 16);
+  const sheetPadding = isCompactScreen ? 16 : 20;
+
   useEffect(() => {
     if (visible) {
+      setCurrentStep(0);
+      fadeAnim.setValue(0);
       Animated.timing(fadeAnim, {
         toValue: 1,
-        duration: 300,
+        duration: 220,
         useNativeDriver: true,
       }).start();
     }
-  }, [visible]);
-
-  // Measure target element position when step changes
-  useEffect(() => {
-    if (!visible || highlightAllMode) return;
-
-    const step = TOUR_STEPS[currentStep];
-    const targetRef = targetRefs[step.targetKey];
-
-    if (targetRef?.current) {
-      // Small delay to ensure layout is ready
-      setTimeout(() => {
-        targetRef.current.measureInWindow((pageX, pageY, width, height) => {
-          setTargetLayout({ x: pageX, y: pageY, width, height });
-        });
-      }, 150);
-    }
-  }, [currentStep, visible, highlightAllMode, targetRefs, windowWidth, windowHeight, insets.top, insets.bottom]);
-
-  // Handlers
-  const handleNext = () => {
-    if (currentStep < TOUR_STEPS.length - 1) {
-      setCurrentStep(currentStep + 1);
-    } else {
-      handleFinish();
-    }
-  };
-
-  const handleSkip = () => {
-    if (onComplete) onComplete();
-  };
-
-  const handleFinish = () => {
-    if (onComplete) onComplete();
-  };
-
-  const handleHighlightAll = () => {
-    setHighlightAllMode(true);
-  };
-
-  const handleCloseHighlightAll = () => {
-    setHighlightAllMode(false);
-  };
+  }, [visible, fadeAnim]);
 
   if (!visible) return null;
 
   const step = TOUR_STEPS[currentStep];
   const isLastStep = currentStep === TOUR_STEPS.length - 1;
-  const arrowSize = 12;
+  const iconHint = getStepIcon(step);
 
-  // Render Highlight All Mode
-  if (highlightAllMode) {
-    return (
-      <Modal transparent visible={visible} animationType="none">
-        <Animated.View style={[styles.container, { opacity: fadeAnim }]}>
-          {/* Semi-transparent overlay */}
-          <View style={styles.overlay} />
+  const handleSkip = () => {
+    if (onComplete) onComplete();
+  };
 
-          {/* Responsive feature panel for "Highlight All" mode */}
-          <View
-            style={[
-              styles.highlightAllPanel,
-              {
-                top: Math.max(insets.top + 20, windowHeight * 0.18),
-                left: Math.max(16, tooltipSidePadding),
-                right: Math.max(16, tooltipSidePadding),
-              },
-            ]}
-          >
-            <Text style={styles.highlightAllTitle}>Available Features</Text>
-            <View style={styles.highlightAllChipWrap}>
-              {ALL_FEATURES.map((feature) => (
-                <View key={feature.key} style={styles.highlightAllChip}>
-                  <Text style={styles.highlightAllChipText}>{feature.label}</Text>
-                </View>
-              ))}
+  const handleNext = () => {
+    if (isLastStep) {
+      if (onComplete) onComplete();
+      return;
+    }
+    setCurrentStep((prev) => prev + 1);
+  };
+
+  return (
+    <Modal transparent visible={visible} animationType="none">
+      <Animated.View style={[styles.container, { opacity: fadeAnim }]}>
+        <TouchableOpacity
+          style={styles.overlay}
+          activeOpacity={1}
+          onPress={() => {}}
+        />
+
+        <View
+          style={[
+            styles.sheet,
+            {
+              width: sheetWidth,
+              left: sheetLeft,
+              bottom: sheetBottom,
+              padding: sheetPadding,
+            },
+          ]}
+        >
+          <View style={styles.iconHintRow}>
+            <View style={styles.iconHintBubble}>
+              <Ionicons name={iconHint.name} size={20} color="#2D5A3F" />
             </View>
+            <Text style={styles.iconHintText}>{iconHint.label}</Text>
           </View>
 
-          {/* Close button */}
+          <Text style={[styles.title, isCompactScreen && styles.titleCompact]}>
+            {step.title}
+          </Text>
+
+          <Text
+            style={[
+              styles.description,
+              isCompactScreen && styles.descriptionCompact,
+            ]}
+          >
+            {step.description}
+          </Text>
+
+          <View style={styles.progressContainer}>
+            {TOUR_STEPS.map((_, index) => (
+              <View
+                key={index}
+                style={[
+                  styles.progressDot,
+                  index === currentStep && styles.progressDotActive,
+                ]}
+              />
+            ))}
+          </View>
+
           <View
             style={[
-              styles.highlightAllCloseContainer,
-              {
-                bottom: Math.max(20, insets.bottom + 12),
-                left: Math.max(16, tooltipSidePadding),
-                right: Math.max(16, tooltipSidePadding),
-              },
+              styles.actionsRow,
+              isNarrowScreen && styles.actionsColumn,
             ]}
           >
             <TouchableOpacity
               style={[
-                styles.highlightAllCloseButton,
-                { maxWidth: Math.min(windowWidth - 32, 320) },
+                styles.secondaryButton,
+                styles.buttonFlex,
+                isNarrowScreen && styles.fullWidthButton,
               ]}
-              onPress={handleCloseHighlightAll}
+              onPress={handleSkip}
             >
-              <Text style={styles.highlightAllCloseText}>Got it!</Text>
+              <Text style={styles.secondaryButtonText}>Skip</Text>
+            </TouchableOpacity>
+
+            <TouchableOpacity
+              style={[
+                styles.primaryButton,
+                styles.buttonFlex,
+                isNarrowScreen && styles.fullWidthButton,
+              ]}
+              onPress={handleNext}
+            >
+              <Text style={styles.primaryButtonText}>
+                {isLastStep ? 'Finish' : 'Next'}
+              </Text>
             </TouchableOpacity>
           </View>
-        </Animated.View>
-      </Modal>
-    );
-  }
-
-  // Render Normal Tour Mode
-  return (
-    <Modal transparent visible={visible} animationType="none">
-      <Animated.View style={[styles.container, { opacity: fadeAnim }]}>
-        {/* Semi-transparent overlay */}
-        <TouchableOpacity 
-          style={styles.overlay} 
-          activeOpacity={1} 
-          onPress={() => {}} // Prevent dismissal on overlay tap
-        />
-
-        {/* Tooltip - Dynamic positioning */}
-        {targetLayout && (() => {
-          const tooltipPosition = getTooltipPosition(targetLayout, step, {
-            windowHeight,
-            windowWidth,
-            insets,
-            sidePadding: tooltipSidePadding,
-            tooltipHeight,
-            isCompact: isCompactScreen,
-          });
-          const { placement, ...tooltipStyle } = tooltipPosition;
-          const tooltipWidth = windowWidth - tooltipSidePadding * 2;
-          const targetCenterX = targetLayout.x + targetLayout.width / 2;
-          const arrowLeft = clamp(
-            targetCenterX - tooltipSidePadding - arrowSize / 2,
-            16,
-            tooltipWidth - arrowSize - 16
-          );
-
-          return (
-            <View
-              style={[
-                styles.tooltip,
-                tooltipStyle,
-                {
-                  maxWidth: tooltipMaxWidth,
-                  maxHeight: tooltipMaxHeight,
-                  padding: tooltipPadding,
-                },
-              ]}
-              onLayout={(event) => {
-                const { height } = event.nativeEvent.layout;
-                if (height !== tooltipHeight) {
-                  setTooltipHeight(height);
-                }
-              }}
-            >
-              <View
-                style={[
-                  styles.tooltipArrow,
-                  placement === 'above'
-                    ? styles.tooltipArrowDown
-                    : styles.tooltipArrowUp,
-                  { left: arrowLeft, width: arrowSize, height: arrowSize },
-                ]}
-              />
-              <Text style={[styles.tooltipTitle, isCompactScreen && styles.tooltipTitleSmall]}>
-                {step.title}
-              </Text>
-              <Text
-                style={[
-                  styles.tooltipDescription,
-                  isCompactScreen && styles.tooltipDescriptionSmall,
-                ]}
-              >
-                {step.description}
-              </Text>
-
-              {/* Progress indicator */}
-              <View style={[styles.progressContainer, isCompactScreen && styles.progressContainerSmall]}>
-                {TOUR_STEPS.map((_, index) => (
-                  <View
-                    key={index}
-                    style={[
-                      styles.progressDot,
-                      isCompactScreen && styles.progressDotSmall,
-                      index === currentStep && styles.progressDotActive,
-                      isCompactScreen && index === currentStep && styles.progressDotActiveSmall,
-                    ]}
-                  />
-                ))}
-              </View>
-
-              {/* Buttons */}
-              <View style={[styles.buttonContainer, isSmallWidth && styles.buttonContainerStacked]}>
-                <TouchableOpacity
-                  style={[
-                    styles.secondaryButton,
-                    styles.buttonFlex1,
-                    isCompactScreen && styles.buttonCompact,
-                    isSmallWidth && styles.buttonFullWidth,
-                  ]}
-                  onPress={handleSkip}
-                >
-                  <Text style={[styles.secondaryButtonText, isCompactScreen && styles.secondaryButtonTextCompact]}>
-                    Skip
-                  </Text>
-                </TouchableOpacity>
-
-                <TouchableOpacity
-                  style={[
-                    styles.secondaryButton,
-                    styles.buttonFlex1,
-                    isCompactScreen && styles.buttonCompact,
-                    isSmallWidth && styles.buttonFullWidth,
-                  ]}
-                  onPress={handleHighlightAll}
-                >
-                  <Text style={[styles.secondaryButtonText, isCompactScreen && styles.secondaryButtonTextCompact]}>
-                    Highlight{'\n'}All
-                  </Text>
-                </TouchableOpacity>
-
-                <TouchableOpacity
-                  style={[
-                    styles.primaryButton,
-                    styles.buttonFlex1,
-                    isCompactScreen && styles.buttonCompact,
-                    isSmallWidth && styles.buttonFullWidth,
-                  ]}
-                  onPress={isLastStep ? handleFinish : handleNext}
-                >
-                  <Text style={[styles.primaryButtonText, isCompactScreen && styles.primaryButtonTextCompact]}>
-                    {isLastStep ? 'Finish' : 'Next'}
-                  </Text>
-                </TouchableOpacity>
-              </View>
-            </View>
-          );
-        })()}
+        </View>
       </Animated.View>
     </Modal>
   );
-}
-
-/**
- * Calculate tooltip position based on target location and screen space
- */
-function getTooltipPosition(targetLayout, step, metrics) {
-  const { windowHeight, insets, sidePadding, tooltipHeight, isCompact } = metrics;
-  const TOOLTIP_MARGIN = sidePadding;
-  const TOOLTIP_OFFSET = 16;
-  const EDGE_PADDING = 8;
-  const estimatedHeight = tooltipHeight || (isCompact ? 240 : 280);
-  const safeTop = insets.top + EDGE_PADDING;
-  const safeBottom = windowHeight - insets.bottom - EDGE_PADDING;
-  const spaceAbove = targetLayout.y - insets.top;
-  const spaceBelow = windowHeight - insets.bottom - (targetLayout.y + targetLayout.height);
-  const preferBelow = step?.position === 'bottom';
-  const canBelow = spaceBelow >= estimatedHeight + TOOLTIP_OFFSET;
-  const canAbove = spaceAbove >= estimatedHeight + TOOLTIP_OFFSET;
-
-  let top;
-
-  if (preferBelow) {
-    if (canBelow) {
-      top = targetLayout.y + targetLayout.height + TOOLTIP_OFFSET;
-    } else if (canAbove) {
-      top = targetLayout.y - estimatedHeight - TOOLTIP_OFFSET;
-    }
-  } else {
-    if (canAbove) {
-      top = targetLayout.y - estimatedHeight - TOOLTIP_OFFSET;
-    } else if (canBelow) {
-      top = targetLayout.y + targetLayout.height + TOOLTIP_OFFSET;
-    }
-  }
-
-  if (top === undefined) {
-    top =
-      spaceBelow >= spaceAbove
-        ? targetLayout.y + targetLayout.height + TOOLTIP_OFFSET
-        : targetLayout.y - estimatedHeight - TOOLTIP_OFFSET;
-  }
-
-  const maxTop = Math.max(safeTop, safeBottom - estimatedHeight);
-  top = Math.max(safeTop, Math.min(top, maxTop));
-  const placement = top < targetLayout.y ? 'above' : 'below';
-
-  return {
-    top,
-    left: TOOLTIP_MARGIN,
-    right: TOOLTIP_MARGIN,
-    placement,
-  };
 }
 
 const styles = StyleSheet.create({
@@ -350,206 +174,122 @@ const styles = StyleSheet.create({
   },
   overlay: {
     ...StyleSheet.absoluteFillObject,
-    backgroundColor: 'rgba(0, 0, 0, 0.75)',
+    backgroundColor: 'rgba(0, 0, 0, 0.72)',
   },
-  tooltip: {
+  sheet: {
     position: 'absolute',
     backgroundColor: '#FFFFFF',
-    borderRadius: 24,
-    padding: 20,
+    borderRadius: 22,
     shadowColor: '#000',
     shadowOffset: { width: 0, height: 8 },
     shadowOpacity: 0.25,
-    shadowRadius: 12,
-    elevation: 12,
-    overflow: 'visible',
+    shadowRadius: 14,
+    elevation: 14,
   },
-  tooltipArrow: {
-    position: 'absolute',
-    backgroundColor: '#FFFFFF',
-    transform: [{ rotate: '45deg' }],
+  iconHintRow: {
+    flexDirection: 'row',
+    justifyContent: 'center',
+    alignItems: 'center',
+    marginBottom: 10,
+    gap: 8,
   },
-  tooltipArrowUp: {
-    top: -6,
+  iconHintBubble: {
+    width: 34,
+    height: 34,
+    borderRadius: 17,
+    backgroundColor: '#E9F3EC',
+    borderWidth: 1,
+    borderColor: '#CDE2D3',
+    alignItems: 'center',
+    justifyContent: 'center',
   },
-  tooltipArrowDown: {
-    bottom: -6,
-  },
-  tooltipTitle: {
-    fontSize: 20,
-    fontWeight: 'bold',
-    color: '#1a1a1a',
-    marginBottom: 8,
-    textAlign: 'center',
-  },
-  tooltipTitleSmall: {
-    fontSize: 18,
-  },
-  tooltipDescription: {
+  iconHintText: {
     fontSize: 14,
-    color: '#666',
-    lineHeight: 20,
-    marginBottom: 16,
-    textAlign: 'center',
+    fontWeight: '700',
+    color: '#2D5A3F',
   },
-  tooltipDescriptionSmall: {
+  title: {
+    fontSize: 24,
+    fontWeight: '700',
+    color: '#1A1A1A',
+    textAlign: 'center',
+    marginBottom: 8,
+  },
+  titleCompact: {
+    fontSize: 21,
+  },
+  description: {
+    fontSize: 14,
+    color: '#5D5D5D',
+    lineHeight: 20,
+    textAlign: 'center',
+    marginBottom: 14,
+  },
+  descriptionCompact: {
     fontSize: 13,
     lineHeight: 18,
     marginBottom: 12,
   },
   progressContainer: {
     flexDirection: 'row',
-    justifyContent: 'center',
     alignItems: 'center',
-    marginBottom: 16,
+    justifyContent: 'center',
     gap: 6,
-  },
-  progressContainerSmall: {
-    marginBottom: 12,
-    gap: 4,
+    marginBottom: 16,
   },
   progressDot: {
     width: 8,
     height: 8,
     borderRadius: 4,
-    backgroundColor: '#D0D0D0',
-  },
-  progressDotSmall: {
-    width: 7,
-    height: 7,
-    borderRadius: 3.5,
+    backgroundColor: '#D6D6D6',
   },
   progressDotActive: {
     width: 24,
     backgroundColor: '#5E936C',
   },
-  progressDotActiveSmall: {
-    width: 20,
-  },
-  buttonContainer: {
+  actionsRow: {
     flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'stretch',
-    gap: 8,
+    alignItems: 'center',
+    gap: 10,
   },
-  buttonContainerStacked: {
+  actionsColumn: {
     flexDirection: 'column',
   },
-  buttonFlex1: {
+  buttonFlex: {
     flex: 1,
-    minWidth: 0, // Allow flex shrinking
+    minWidth: 0,
   },
-  buttonFullWidth: {
+  fullWidthButton: {
     width: '100%',
-  },
-  buttonCompact: {
-    paddingVertical: 10,
   },
   primaryButton: {
     backgroundColor: '#5E936C',
-    paddingVertical: 12,
-    paddingHorizontal: 12,
     borderRadius: 12,
     alignItems: 'center',
     justifyContent: 'center',
-    shadowColor: '#5E936C',
-    shadowOffset: { width: 0, height: 4 },
-    shadowOpacity: 0.3,
-    shadowRadius: 8,
-    elevation: 5,
+    paddingVertical: 12,
+    paddingHorizontal: 12,
   },
   primaryButtonText: {
     color: '#FFFFFF',
-    fontSize: 15,
+    fontSize: 16,
     fontWeight: '700',
     textAlign: 'center',
-  },
-  primaryButtonTextCompact: {
-    fontSize: 14,
   },
   secondaryButton: {
     backgroundColor: '#F5F5F5',
-    paddingVertical: 12,
-    paddingHorizontal: 8,
     borderRadius: 12,
-    alignItems: 'center',
-    justifyContent: 'center',
     borderWidth: 1,
     borderColor: '#E0E0E0',
+    alignItems: 'center',
+    justifyContent: 'center',
+    paddingVertical: 12,
+    paddingHorizontal: 12,
   },
   secondaryButtonText: {
-    color: '#333',
-    fontSize: 13,
+    color: '#333333',
+    fontSize: 16,
     fontWeight: '600',
     textAlign: 'center',
-    lineHeight: 16,
-  },
-  secondaryButtonTextCompact: {
-    fontSize: 12,
-    lineHeight: 14,
-  },
-  // Highlight All Mode Styles
-  highlightAllPanel: {
-    position: 'absolute',
-    backgroundColor: '#FFFFFF',
-    borderRadius: 22,
-    paddingVertical: 18,
-    paddingHorizontal: 16,
-    shadowColor: '#000',
-    shadowOffset: { width: 0, height: 6 },
-    shadowOpacity: 0.25,
-    shadowRadius: 12,
-    elevation: 10,
-  },
-  highlightAllTitle: {
-    fontSize: 20,
-    fontWeight: '800',
-    color: '#1a1a1a',
-    textAlign: 'center',
-    marginBottom: 12,
-  },
-  highlightAllChipWrap: {
-    flexDirection: 'row',
-    flexWrap: 'wrap',
-    justifyContent: 'center',
-    gap: 8,
-  },
-  highlightAllChip: {
-    backgroundColor: '#EEF6F0',
-    borderColor: '#CFE2D5',
-    borderWidth: 1,
-    borderRadius: 999,
-    paddingHorizontal: 12,
-    paddingVertical: 6,
-  },
-  highlightAllChipText: {
-    color: '#2D5A3F',
-    fontSize: 13,
-    fontWeight: '700',
-  },
-  highlightAllCloseContainer: {
-    position: 'absolute',
-    bottom: 20,
-    left: 20,
-    right: 20,
-    alignItems: 'center',
-  },
-  highlightAllCloseButton: {
-    backgroundColor: '#5E936C',
-    paddingVertical: 16,
-    paddingHorizontal: 48,
-    borderRadius: 30,
-    shadowColor: '#000',
-    shadowOffset: { width: 0, height: 8 },
-    shadowOpacity: 0.3,
-    shadowRadius: 12,
-    elevation: 12,
-    minWidth: 180,
-    alignItems: 'center',
-  },
-  highlightAllCloseText: {
-    color: '#FFFFFF',
-    fontSize: 18,
-    fontWeight: 'bold',
   },
 });
