@@ -25,7 +25,8 @@ import { resetGuestScanCount, preserveDeviceLockBeforeLogin } from '@/utils/gues
 import { LinearGradient } from 'expo-linear-gradient';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import * as Haptics from 'expo-haptics';
-import { checkVerificationStatus } from '@/services/auth/verificationService';
+import { checkVerificationStatus, getCachedVerificationStatus } from '@/services/auth/verificationService';
+import { loadOfflineSession } from '@/utils/auth/offlineSession';
 
 export default function SignInScreen({ navigation }) {
   const { t } = useTranslation();
@@ -142,10 +143,24 @@ export default function SignInScreen({ navigation }) {
       let verified = false;
       try {
         const verificationResult = await checkVerificationStatus(user.uid);
-        verified = verificationResult.isVerified === true;
+        const cachedVerified = await getCachedVerificationStatus(user.uid);
+        const offlineSession = await loadOfflineSession();
+        const offlineSessionVerified =
+          offlineSession?.uid === user.uid && offlineSession?.isVerified === true;
+        verified =
+          verificationResult.isVerified === true ||
+          cachedVerified === true ||
+          offlineSessionVerified;
       } catch (verificationError) {
         console.warn('Verification check failed during sign-in:', verificationError?.message);
-        verified = user.emailVerified === true;
+        const cachedVerified = await getCachedVerificationStatus(user.uid);
+        const offlineSession = await loadOfflineSession();
+        const offlineSessionVerified =
+          offlineSession?.uid === user.uid && offlineSession?.isVerified === true;
+        verified =
+          user.emailVerified === true ||
+          cachedVerified === true ||
+          offlineSessionVerified;
       }
 
       if (!verified) {

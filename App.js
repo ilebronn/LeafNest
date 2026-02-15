@@ -342,6 +342,12 @@ function AppContent() {
       });
     };
 
+    const getOfflineVerifiedForUser = async (firebaseUser) => {
+      if (!firebaseUser?.uid) return false;
+      const cachedSession = await loadOfflineSession();
+      return cachedSession?.uid === firebaseUser.uid && cachedSession?.isVerified === true;
+    };
+
         // Listen for auth state changes
     const unsubscribe = onAuthStateChanged(auth, async (currentUser) => {
       setInitializing(true);
@@ -368,6 +374,7 @@ function AppContent() {
 
       setUser(currentUser);
       pushSetupRef.current = false;
+      const offlineSessionVerified = await getOfflineVerifiedForUser(currentUser);
 
       const runPostVerificationSetup = async () => {
         if (pushSetupRef.current || !currentUser) {
@@ -395,10 +402,15 @@ function AppContent() {
         const cachedVerified = await getCachedVerificationStatus(currentUser.uid);
         if (cachedVerified !== null) {
           setIsVerified(cachedVerified || currentUser.emailVerified === true);
+        } else if (offlineSessionVerified) {
+          setIsVerified(true);
         }
 
         const verificationResult = await checkVerificationStatus(currentUser.uid);
-        const initialVerified = verificationResult.isVerified === true || currentUser.emailVerified === true;
+        const initialVerified =
+          verificationResult.isVerified === true ||
+          currentUser.emailVerified === true ||
+          offlineSessionVerified;
         setIsVerified(initialVerified);
         if (initialVerified && verificationResult?.source !== 'cache') {
           await setCachedVerificationStatus(currentUser.uid, true);
@@ -415,7 +427,7 @@ function AppContent() {
         }
       } catch (error) {
         console.warn('Initial verification check failed:', error?.message);
-        const fallbackVerified = currentUser.emailVerified === true;
+        const fallbackVerified = currentUser.emailVerified === true || offlineSessionVerified;
         setIsVerified(fallbackVerified);
         if (fallbackVerified) {
           await persistOfflineSession(currentUser, true);
@@ -447,7 +459,7 @@ function AppContent() {
             const cachedVerified = await getCachedVerificationStatus(currentUser.uid);
             const fallbackVerified = cachedVerified !== null
               ? cachedVerified
-              : currentUser.emailVerified === true;
+              : currentUser.emailVerified === true || offlineSessionVerified;
             setIsVerified(fallbackVerified);
             if (fallbackVerified) {
               await persistOfflineSession(currentUser, true);

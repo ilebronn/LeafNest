@@ -23,6 +23,9 @@
         "image": "src/assets/images/splash.png",
         "resizeMode": "contain",
         "backgroundColor": "#10B981"
+      },
+      "runtimeVersion": {
+        "policy": "appVersion"
       }
     },
     "android": {
@@ -40,9 +43,17 @@
       "permissions": [
         "ACCESS_COARSE_LOCATION",
         "ACCESS_FINE_LOCATION",
-        "POST_NOTIFICATIONS"
+        "POST_NOTIFICATIONS",
+        "android.permission.ACCESS_COARSE_LOCATION",
+        "android.permission.ACCESS_FINE_LOCATION",
+        "ACCESS_COARSE_LOCATION",
+        "ACCESS_FINE_LOCATION",
+        "POST_NOTIFICATIONS",
+        "android.permission.ACCESS_COARSE_LOCATION",
+        "android.permission.ACCESS_FINE_LOCATION"
       ],
-      "googleServicesFile": "./google-services.json"
+      "googleServicesFile": "./google-services.json",
+      "runtimeVersion": "1.0.0"
     },
     "web": {
       "favicon": "./assets/favicon.png"
@@ -79,6 +90,9 @@
       "color": "#5E936C",
       "androidMode": "default",
       "androidCollapsedTitle": "#{unread_notifications} new interactions"
+    },
+    "updates": {
+      "url": "https://u.expo.dev/0549a304-0587-4910-bedf-b53f03c2c8c3"
     }
   }
 }

@@ -93,7 +93,6 @@ export default function TourManager({ visible, onComplete, targetRefs }) {
 
   const step = TOUR_STEPS[currentStep];
   const isLastStep = currentStep === TOUR_STEPS.length - 1;
-  const highlightPadding = step.highlightPadding ?? 8;
   const arrowSize = 12;
 
   // Render Highlight All Mode
@@ -154,25 +153,6 @@ export default function TourManager({ visible, onComplete, targetRefs }) {
           activeOpacity={1} 
           onPress={() => {}} // Prevent dismissal on overlay tap
         />
-
-        {/* Spotlight highlight */}
-        {targetLayout && (
-          <View
-            style={[
-              styles.spotlight,
-              {
-                left: targetLayout.x - highlightPadding,
-                top: targetLayout.y - highlightPadding,
-                width: targetLayout.width + highlightPadding * 2,
-                height: targetLayout.height + highlightPadding * 2,
-                borderRadius: Math.max(
-                  (targetLayout.height + highlightPadding * 2) / 2,
-                  12
-                ),
-              },
-            ]}
-          />
-        )}
 
         {/* Tooltip - Dynamic positioning */}
         {targetLayout && (() => {
@@ -417,18 +397,6 @@ const styles = StyleSheet.create({
   overlay: {
     ...StyleSheet.absoluteFillObject,
     backgroundColor: 'rgba(0, 0, 0, 0.75)',
-  },
-  spotlight: {
-    position: 'absolute',
-    borderRadius: 16,
-    borderWidth: 3,
-    borderColor: '#5E936C',
-    backgroundColor: 'rgba(94, 147, 108, 0.15)',
-    shadowColor: '#5E936C',
-    shadowOffset: { width: 0, height: 0 },
-    shadowOpacity: 0.9,
-    shadowRadius: 20,
-    elevation: 15,
   },
   tooltip: {
     position: 'absolute',
