@@ -103,19 +103,26 @@ export default function TourManager({ visible, onComplete, targetRefs }) {
           {/* Semi-transparent overlay */}
           <View style={styles.overlay} />
 
-          {/* Highlight all features */}
-          {ALL_FEATURES.map((feature) => {
-            const ref = targetRefs[feature.key];
-            if (!ref?.current) return null;
-
-            return (
-              <HighlightFeature
-                key={feature.key}
-                targetRef={ref}
-                label={feature.label}
-              />
-            );
-          })}
+          {/* Responsive feature panel for "Highlight All" mode */}
+          <View
+            style={[
+              styles.highlightAllPanel,
+              {
+                top: Math.max(insets.top + 20, windowHeight * 0.18),
+                left: Math.max(16, tooltipSidePadding),
+                right: Math.max(16, tooltipSidePadding),
+              },
+            ]}
+          >
+            <Text style={styles.highlightAllTitle}>Available Features</Text>
+            <View style={styles.highlightAllChipWrap}>
+              {ALL_FEATURES.map((feature) => (
+                <View key={feature.key} style={styles.highlightAllChip}>
+                  <Text style={styles.highlightAllChipText}>{feature.label}</Text>
+                </View>
+              ))}
+            </View>
+          </View>
 
           {/* Close button */}
           <View
@@ -331,59 +338,6 @@ function getTooltipPosition(targetLayout, step, metrics) {
   };
 }
 
-/**
- * HighlightFeature Component
- * Highlights a single feature with label in "Highlight All" mode
- */
-function HighlightFeature({ targetRef, label }) {
-  const [layout, setLayout] = useState(null);
-  const { width: windowWidth, height: windowHeight } = useWindowDimensions();
-  const insets = useSafeAreaInsets();
-
-  useEffect(() => {
-    if (targetRef?.current) {
-      setTimeout(() => {
-        targetRef.current.measureInWindow((pageX, pageY, width, height) => {
-          setLayout({ x: pageX, y: pageY, width, height });
-        });
-      }, 150);
-    }
-  }, [targetRef, windowWidth, windowHeight]);
-
-  if (!layout) return null;
-
-  return (
-    <>
-      <View
-        style={[
-          styles.highlightBox,
-          {
-            left: layout.x - 8,
-            top: layout.y - 8,
-            width: layout.width + 16,
-            height: layout.height + 16,
-            borderRadius: Math.max((layout.height + 16) / 2, 12),
-          },
-        ]}
-      />
-      <View
-        style={[
-          styles.featureLabel,
-          {
-            left: Math.max(10, Math.min(windowWidth - 90, layout.x + layout.width / 2 - 40)),
-            top: Math.max(
-              insets.top + 8,
-              Math.min(windowHeight - insets.bottom - 28, layout.y - 40)
-            ),
-          },
-        ]}
-      >
-        <Text style={styles.featureLabelText}>{label}</Text>
-      </View>
-    </>
-  );
-}
-
 const styles = StyleSheet.create({
   container: {
     flex: 1,
@@ -535,35 +489,42 @@ const styles = StyleSheet.create({
     lineHeight: 14,
   },
   // Highlight All Mode Styles
-  highlightBox: {
+  highlightAllPanel: {
     position: 'absolute',
-    borderRadius: 16,
-    borderWidth: 3,
-    borderColor: '#5E936C',
-    backgroundColor: 'transparent',
-    shadowColor: '#5E936C',
-    shadowOffset: { width: 0, height: 0 },
-    shadowOpacity: 0.9,
-    shadowRadius: 20,
-    elevation: 15,
+    backgroundColor: '#FFFFFF',
+    borderRadius: 22,
+    paddingVertical: 18,
+    paddingHorizontal: 16,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 6 },
+    shadowOpacity: 0.25,
+    shadowRadius: 12,
+    elevation: 10,
   },
-  featureLabel: {
-    position: 'absolute',
-    backgroundColor: '#5E936C',
+  highlightAllTitle: {
+    fontSize: 20,
+    fontWeight: '800',
+    color: '#1a1a1a',
+    textAlign: 'center',
+    marginBottom: 12,
+  },
+  highlightAllChipWrap: {
+    flexDirection: 'row',
+    flexWrap: 'wrap',
+    justifyContent: 'center',
+    gap: 8,
+  },
+  highlightAllChip: {
+    backgroundColor: '#EEF6F0',
+    borderColor: '#CFE2D5',
+    borderWidth: 1,
+    borderRadius: 999,
     paddingHorizontal: 12,
     paddingVertical: 6,
-    borderRadius: 8,
-    minWidth: 70,
-    alignItems: 'center',
-    shadowColor: '#000',
-    shadowOffset: { width: 0, height: 4 },
-    shadowOpacity: 0.3,
-    shadowRadius: 8,
-    elevation: 8,
   },
-  featureLabelText: {
-    color: '#FFFFFF',
-    fontSize: 12,
+  highlightAllChipText: {
+    color: '#2D5A3F',
+    fontSize: 13,
     fontWeight: '700',
   },
   highlightAllCloseContainer: {

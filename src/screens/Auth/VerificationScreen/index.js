@@ -17,8 +17,11 @@ import { Ionicons } from '@expo/vector-icons';
 import { useTranslation } from 'react-i18next';
 import { LinearGradient } from 'expo-linear-gradient';
 import { CommonActions } from '@react-navigation/native';
+import NetInfo from '@react-native-community/netinfo';
 import { useEmailVerification } from '@hooks/useEmailVerification';
 import { auth, signOut } from '@config/firebase';
+import { getCachedVerificationStatus } from '@services/auth/verificationService';
+import { loadOfflineSession } from '@utils/auth/offlineSession';
 
 const { width, height } = Dimensions.get('window');
 
@@ -51,6 +54,23 @@ export default function VerificationScreen({ navigation, route }) {
 
   const [codeFocused, setCodeFocused] = useState(false);
 
+  const navigateToMainTabs = (displayName) => {
+    navigation.dispatch(
+      CommonActions.reset({
+        index: 0,
+        routes: [
+          {
+            name: 'MainTabs',
+            params: {
+              screen: 'Home',
+              params: { guest: false, displayName },
+            },
+          },
+        ],
+      })
+    );
+  };
+
   const handleBackPress = async () => {
     if (navigation.canGoBack()) {
       navigation.goBack();
@@ -76,22 +96,48 @@ export default function VerificationScreen({ navigation, route }) {
   // Navigate to main app when verified
   useEffect(() => {
     if (isVerified) {
-      navigation.dispatch(
-        CommonActions.reset({
-          index: 0,
-          routes: [
-            {
-              name: 'MainTabs',
-              params: {
-                screen: 'Home',
-                params: { guest: false, displayName: currentUser?.displayName },
-              },
-            },
-          ],
-        })
-      );
+      navigateToMainTabs(currentUser?.displayName);
     }
   }, [isVerified]);
+
+  // Offline fail-safe: if user is already verified locally, never block on code screen.
+  useEffect(() => {
+    let active = true;
+
+    const bypassIfOfflineVerified = async () => {
+      try {
+        const netState = await NetInfo.fetch();
+        const online = netState.isConnected && netState.isInternetReachable !== false;
+        if (online) return;
+
+        const uid = auth.currentUser?.uid;
+        if (!uid) return;
+
+        const [cachedVerified, offlineSession] = await Promise.all([
+          getCachedVerificationStatus(uid),
+          loadOfflineSession(),
+        ]);
+
+        const offlineSessionVerified =
+          offlineSession?.uid === uid && offlineSession?.isVerified === true;
+        const canBypass =
+          cachedVerified === true ||
+          offlineSessionVerified ||
+          auth.currentUser?.emailVerified === true;
+
+        if (active && canBypass) {
+          navigateToMainTabs(auth.currentUser?.displayName);
+        }
+      } catch (error) {
+        console.warn('Offline verification bypass check failed:', error?.message);
+      }
+    };
+
+    bypassIfOfflineVerified();
+    return () => {
+      active = false;
+    };
+  }, [navigation]);
 
   const onVerifyPress = async () => {
     const result = await handleVerify();
