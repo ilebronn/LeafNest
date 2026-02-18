@@ -370,91 +370,6 @@
     "noFavoritesYet": "Pas encore de favoris",
     "addFromDaily": "Ajoutez-en depuis Plantes ou Animaux du Jour."
   },
-  "history": {
-    "title": "Historique",
-    "loading": "Chargement de l'historique...",
-    "loadingMore": "Chargement...",
-    "signInRequiredTitle": "Connexion requise",
-    "signInRequiredBody": "CrÃ©ez un compte ou connectez-vous pour voir votre historique de scans.",
-    "selection": {
-      "selectedCount": "{{count}} sÃ©lectionnÃ©",
-      "selectedCount_plural": "{{count}} sÃ©lectionnÃ©s",
-      "deleteButton": "Supprimer {{count}} enregistrement",
-      "deleteButton_plural": "Supprimer {{count}} enregistrements"
-    },
-    "offlineBanner": {
-      "premium": "Mode hors ligne (Premium)",
-      "locked": "Le mode hors ligne nÃ©cessite Premium"
-    },
-    "search": {
-      "placeholder": "Rechercher par nom..."
-    },
-    "filters": {
-      "all": "Tous",
-      "plants": "Plantes",
-      "animals": "Animaux"
-    },
-    "empty": {
-      "noHistoryTitle": "Pas encore d'historique",
-      "noHistoryBody": "Votre historique de scans apparaÃ®tra ici lorsque vous commencerez Ã  identifier des plantes et des animaux.",
-      "noResultsTitle": "Aucun rÃ©sultat",
-      "noResultsBody": "Aucun enregistrement ne correspond Ã  votre recherche ou Ã  vos filtres. Essayez d'ajuster vos filtres."
-    },
-    "actions": {
-      "signIn": "Se connecter",
-      "delete": "Supprimer",
-      "clearAll": "Tout effacer",
-      "clearFilters": "Effacer les filtres"
-    },
-    "alerts": {
-      "visibilityNow": "Le scan est maintenant {{status}}",
-      "visibilityUpdateFailed": "Impossible de mettre Ã  jour la visibilitÃ©.",
-      "visibilityNeedsSync": "Ce scan doit d'abord se synchroniser. RÃ©essayez dans un instant.",
-      "visibilityOffline": "Impossible de changer la visibilitÃ© hors ligne. VÃ©rifiez votre connexion.",
-      "visibilityNotSynced": "Ce scan n'a pas encore Ã©tÃ© synchronisÃ© avec le cloud. Attendez la synchronisation puis rÃ©essayez.",
-      "visibilityPermissionDenied": "Vous n'avez pas la permission de modifier ce scan.",
-      "visibilityNetworkError": "Erreur rÃ©seau. VÃ©rifiez votre connexion et rÃ©essayez.",
-      "errorWithMessage": "Erreur : {{message}}",
-      "deleteRecordTitle": "Supprimer l'enregistrement",
-      "deleteRecordMessage": "Supprimer \"{{name}}\" de l'historique ?",
-      "deleteRecordSuccess": "Enregistrement supprimÃ©.",
-      "deleteRecordError": "Impossible de supprimer l'enregistrement.",
-      "deleteSelectedTitle": "Supprimer la sÃ©lection",
-      "deleteSelectedMessage": "Supprimer {{count}} enregistrement de l'historique ?",
-      "deleteSelectedMessage_plural": "Supprimer {{count}} enregistrements de l'historique ?",
-      "deleteSelectedSuccess": "{{count}} enregistrement supprimÃ©.",
-      "deleteSelectedSuccess_plural": "{{count}} enregistrements supprimÃ©s.",
-      "deleteSelectedError": "Impossible de supprimer les enregistrements sÃ©lectionnÃ©s.",
-      "clearAllTitle": "Tout effacer l'historique",
-      "clearAllMessage": "Voulez-vous vraiment supprimer tout l'historique ? Cette action est irrÃ©versible.",
-      "clearAllSuccess": "Historique effacÃ©.",
-      "clearAllError": "Impossible d'effacer l'historique."
-    },
-    "visibility": {
-      "public": "public",
-      "private": "privÃ©"
-    },
-    "unknownSpecies": "EspÃ¨ce inconnue",
-    "details": {
-      "commonName": "Nom commun",
-      "scientificName": "Nom scientifique",
-      "taxonomicRank": "Rang taxonomique",
-      "type": "Type",
-      "conservationStatus": "Statut de conservation",
-      "timesScanned": "Nombre de scans",
-      "timeCount": "{{count}} fois",
-      "timeCount_plural": "{{count}} fois",
-      "globalAppScans": "Scans globaux dans l'app",
-      "scanCount": "{{count}} scan",
-      "scanCount_plural": "{{count}} scans",
-      "scannedOn": "ScannÃ© le"
-    },
-    "premiumGate": {
-      "title": "Abonnez-vous pour accÃ©der au mode hors ligne",
-      "message": "L'accÃ¨s hors ligne Ã  votre historique est une fonctionnalitÃ© premium. Abonnez-vous pour voir votre historique de scans lorsque vous Ãªtes hors ligne."
-    },
-    "noHistory": "Pas encore d'historique"
-  },
   "about": {
     "title": "Ã€ propos",
     "developedBy": "DÃ©veloppÃ© et conÃ§u par l'Ã©quipe LeafNest",
@@ -757,26 +672,6 @@
       "genericErrorTitle": "Quelque chose s'est mal passe",
       "genericErrorMessage": "Veuillez reessayer plus tard ou nous ecrire a {{email}}."
     }
-  },
-  "postDetail": {
-    "title": "Publication",
-    "errorTitle": "Erreur",
-    "postNotFound": "Publication non trouvÃ©e",
-    "failedToLoadPost": "Impossible de charger la publication",
-    "signInRequired": "Connexion requise",
-    "signInToLike": "Connectez-vous pour aimer les publications",
-    "signInToComment": "Connectez-vous pour commenter",
-    "failedToLike": "Impossible d'aimer la publication",
-    "unknownSpecies": "EspÃ¨ce inconnue",
-    "about": "Ã€ propos",
-    "showMore": "Afficher plus",
-    "showLess": "Afficher moins",
-    "beFirstToLike": "Soyez le premier Ã  aimer cette publication",
-    "like": "mention J'aime",
-    "likes": "mentions J'aime",
-    "comment": "commentaire",
-    "comments": "commentaires",
-    "viewAllComments": "Voir les {{count}} {{type}}"
   },
   "comments": {
     "title": "Commentaires",

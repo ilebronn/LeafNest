@@ -370,10 +370,6 @@
     "noFavoritesYet": "AÃºn no hay favoritos",
     "addFromDaily": "Agrega algunos de Plantas o Animales del DÃ­a."
   },
-  "history": {
-    "title": "Historial",
-    "noHistory": "AÃºn no hay historial"
-  },
   "about": {
     "title": "Acerca de",
     "developedBy": "Desarrollado y diseÃ±ado por el equipo de LeafNest",
@@ -676,26 +672,6 @@
       "genericErrorTitle": "Algo salio mal",
       "genericErrorMessage": "Intentalo de nuevo mas tarde o escribenos a {{email}}."
     }
-  },
-  "postDetail": {
-    "title": "Publicación",
-    "errorTitle": "Error",
-    "postNotFound": "Publicación no encontrada",
-    "failedToLoadPost": "Error al cargar la publicación",
-    "signInRequired": "Se requiere iniciar sesión",
-    "signInToLike": "Inicia sesión para indicar que te gusta la publicación",
-    "signInToComment": "Inicia sesión para comentar",
-    "failedToLike": "Error al indicar que te gusta la publicación",
-    "unknownSpecies": "Especie desconocida",
-    "about": "Acerca de",
-    "showMore": "Ver más",
-    "showLess": "Ver menos",
-    "beFirstToLike": "Sé el primero en indicar que te gusta esto",
-    "like": "me gusta",
-    "likes": "me gusta",
-    "comment": "comentario",
-    "comments": "comentarios",
-    "viewAllComments": "Ver los {{count}} {{type}}"
   },
   "comments": {
     "title": "Comentarios",

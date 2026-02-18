@@ -613,26 +613,6 @@
       "genericErrorMessage": "Please try again later or email us at {{email}}."
     }
   },
-  "postDetail": {
-    "title": "Post",
-    "errorTitle": "Error",
-    "postNotFound": "Post not found",
-    "failedToLoadPost": "Failed to load post",
-    "signInRequired": "Sign in required",
-    "signInToLike": "Please sign in to like posts",
-    "signInToComment": "Please sign in to comment",
-    "failedToLike": "Failed to like post",
-    "unknownSpecies": "Unknown Species",
-    "about": "About",
-    "showMore": "Show more",
-    "showLess": "Show less",
-    "beFirstToLike": "Be the first to like this",
-    "like": "like",
-    "likes": "likes",
-    "comment": "comment",
-    "comments": "comments",
-    "viewAllComments": "View all {{count}} {{type}}"
-  },
   "comments": {
     "title": "Comments",
     "noComments": "No comments yet",
