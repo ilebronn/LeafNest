@@ -137,9 +137,30 @@ export const extractCandidatesWithScores = (visionData) => {
 };
 
 export const isPlantOrAnimal = (visionData) => {
-  if (!visionData || !visionData.labelAnnotations) return false;
+  if (!visionData) return false;
 
-  const labels = visionData.labelAnnotations;
+  const labelAnnotations = visionData.labelAnnotations || [];
+  const webEntities = visionData.webDetection?.webEntities || [];
+  const bestGuessLabels = visionData.webDetection?.bestGuessLabels || [];
+
+  const combinedSignals = [
+    ...labelAnnotations.map(item => ({
+      description: (item.description || '').toLowerCase(),
+      score: Number(item.score) || 0
+    })),
+    ...webEntities.map(item => ({
+      description: (item.description || '').toLowerCase(),
+      score: (Math.min(Number(item.score) || 0, 1)) * 0.85
+    })),
+    ...bestGuessLabels.map(item => ({
+      description: (item.label || '').toLowerCase(),
+      // Best-guess labels have no explicit confidence score from Vision API.
+      score: 0.7
+    }))
+  ].filter(signal => signal.description);
+
+  if (combinedSignals.length === 0) return false;
+
   let plantScore = 0;
   let animalScore = 0;
   let humanScore = 0;
@@ -149,9 +170,9 @@ export const isPlantOrAnimal = (visionData) => {
   let animalHits = 0;
   let humanHits = 0;
 
-  for (const label of labels) {
-    const desc = label.description.toLowerCase();
-    const score = label.score || 0;
+  for (const signal of combinedSignals) {
+    const desc = signal.description;
+    const score = signal.score || 0;
 
     if (PLANT_KEYWORDS.some(kw => desc.includes(kw))) {
       plantScore += score;
@@ -186,12 +207,14 @@ export const isPlantOrAnimal = (visionData) => {
     (strongSignal ? weakAnimalScore * 0.2 : 0);
 
   const threshold = Math.max(RELEVANCE_THRESHOLD, irrelevantScore + 0.15);
-  const isValid = strongSignal && relevantScore > threshold;
+  const objectDominates = irrelevantScore >= 0.75 && irrelevantScore > relevantScore;
+  const isValid = strongSignal && relevantScore > threshold && !objectDominates;
 
   console.log(
     `Plant/Animal check: plant=${plantScore.toFixed(2)} ` +
     `animal=${animalScore.toFixed(2)} human=${humanScore.toFixed(2)} ` +
     `weak=${weakAnimalScore.toFixed(2)} irrelevant=${irrelevantScore.toFixed(2)} ` +
+    `signals=${combinedSignals.length} objectDominates=${objectDominates} ` +
     `-> ${isValid ? 'OK' : 'NO'}`
   );
 

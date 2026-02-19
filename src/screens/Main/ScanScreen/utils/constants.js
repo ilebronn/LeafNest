@@ -113,8 +113,10 @@ export const PLANT_KEYWORDS = [
 export const ANIMAL_KEYWORDS = [
   'animal', 'bird', 'insect', 'fish', 'mammal', 'reptile',
   'amphibian', 'wildlife', 'fauna', 'creature', 'pet',
-  'wing', 'feather', 'fur', 'beak', 'claw', 'tail', 'fin',
-  'paw', 'whisker', 'whiskers', 'snout', 'muzzle', 'hoof', 'antler'
+  'cat', 'dog', 'bear', 'rabbit', 'deer', 'horse', 'cow', 'goat',
+  'sheep', 'pig', 'chicken', 'duck', 'snake', 'lizard', 'frog',
+  'turtle', 'spider', 'butterfly', 'bee', 'ant', 'owl', 'eagle',
+  'shark', 'whale', 'dolphin', 'rodent', 'primate'
 ];
 
 // Human-specific keywords (handled separately from general animal detection)
@@ -127,6 +129,8 @@ export const HUMAN_KEYWORDS = [
 
 // Weak animal signals that require stronger context
 export const WEAK_ANIMAL_KEYWORDS = [
+  'wing', 'feather', 'fur', 'beak', 'claw', 'tail', 'fin',
+  'paw', 'whisker', 'whiskers', 'snout', 'muzzle', 'hoof', 'antler',
   'scale'
 ];
 
@@ -149,7 +153,11 @@ export const IRRELEVANT_KEYWORDS = [
   'shoe', 'shoes', 'sneaker', 'sneakers', 'footwear', 'boot', 'boots',
   'sock', 'socks', 'lace', 'laces', 'shoelace', 'shoelaces',
   'sole', 'insole', 'insoles', 'tread',
-  'leather', 'fabric', 'rubber'
+  'leather', 'fabric', 'rubber',
+  // Plush/toy/object-like subjects that should never be treated as species
+  'toy', 'toys', 'plush', 'stuffed', 'stuffed toy', 'stuffed animal',
+  'doll', 'teddy', 'teddy bear', 'figurine', 'statue', 'mannequin',
+  'mascot', 'costume', 'ornament', 'decoration'
 ];
 
 // ===========================
