@@ -41,6 +41,7 @@ import {
   FEEDBACK_STORAGE_PREFIX,
   CONFIDENCE_THRESHOLD
 } from '@screens/Main/ScanScreen/utils/constants';
+import { pickSpeciesName } from '@utils/text/speciesName';
 
 /**
  * ✅ UPDATED: Assess match quality based on how well sources agree
@@ -170,6 +171,10 @@ const useImageProcessing = () => {
       const taxonData = taxonDetails.status === 'fulfilled' ? taxonDetails.value : null;
       const gbif = gbifData.status === 'fulfilled' ? gbifData.value : null;
       const obs = obsCount.status === 'fulfilled' ? obsCount.value : 0;
+      const resolvedCommonName = pickSpeciesName(
+        matchResult.commonName,
+        taxonData?.preferred_common_name
+      );
 
       // ✅ Ensure rank is never undefined
       const finalRank = matchResult.rank || taxonData?.rank || gbif?.rank || 'species';
@@ -291,7 +296,7 @@ const useImageProcessing = () => {
           // Record scan with final confidence
           await recordScan(user.uid, {
             speciesName: matchResult.name,
-            plantName: matchResult.commonName || matchResult.name,
+            plantName: resolvedCommonName || matchResult.name,
             confidence: finalConfidence,
             taxonId: matchResult.taxonId,
             scanType: 'camera',
@@ -302,7 +307,7 @@ const useImageProcessing = () => {
             taxonId: matchResult.taxonId,
             name: matchResult.name,
             scientificName: matchResult.name,
-            commonName: matchResult.commonName || matchResult.name,
+            commonName: resolvedCommonName || null,
           });
 
           console.log(`✅ Global observation count: ${globalObsResult.success ? globalObsResult.count : 'failed'}`);
@@ -311,7 +316,7 @@ const useImageProcessing = () => {
           const historyData = {
             name: matchResult.name,
             scientificName: matchResult.name,
-            commonName: matchResult.commonName || matchResult.name,
+            commonName: resolvedCommonName || null,
             taxonId: matchResult.taxonId || null,
             rank: finalRank,
             iconicTaxon: taxonData?.iconic_taxon_name || null,
@@ -337,7 +342,7 @@ const useImageProcessing = () => {
         photoUri: photoUri,
         speciesData: gbif || {
           scientificName: matchResult.name,
-          commonName: matchResult.commonName || matchResult.name,
+          commonName: resolvedCommonName || null,
           rank: finalRank
         },
         iNaturalistData: taxonData || null,

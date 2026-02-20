@@ -694,10 +694,35 @@ export const syncUserData = async (userId, options = {}) => {
       ...localHistory.map(item => {
         const firestoreItem = firestoreHistoryMap.get(item.id);
         if (firestoreItem) {
+          const mergedName = pickSpeciesName(
+            firestoreItem.name,
+            item.name,
+            firestoreItem.plantName,
+            item.plantName,
+            firestoreItem.commonName,
+            item.commonName,
+            firestoreItem.scientificName,
+            item.scientificName
+          );
+          const mergedCommonName = pickSpeciesName(
+            firestoreItem.commonName,
+            item.commonName,
+            firestoreItem.preferred_common_name,
+            item.preferred_common_name,
+            firestoreItem.common_name,
+            item.common_name
+          );
+          const mergedScientificName = pickSpeciesName(
+            firestoreItem.scientificName,
+            item.scientificName
+          );
           // ✅ Firestore is source of truth for isPublic status
           return { 
             ...item, 
             ...firestoreItem, 
+            name: mergedName || null,
+            commonName: mergedCommonName || null,
+            scientificName: mergedScientificName || null,
             isPublic: firestoreItem.isPublic === true, // Preserve Firestore status
             synced: true 
           };
@@ -1334,6 +1359,27 @@ export const addToHistory = async (userId, historyData) => {
           lastScanned: serverTimestamp(),
           timestamp: serverTimestamp(),
         };
+        const incomingName = pickSpeciesName(
+          historyData.name,
+          historyData.plantName,
+          historyData.commonName,
+          historyData.scientificName
+        );
+        const incomingScientificName = pickSpeciesName(historyData.scientificName);
+        const incomingCommonName = pickSpeciesName(
+          historyData.commonName,
+          historyData.preferred_common_name,
+          historyData.common_name
+        );
+        if (incomingName) {
+          updatePayload.name = incomingName;
+        }
+        if (incomingScientificName) {
+          updatePayload.scientificName = incomingScientificName;
+        }
+        if (incomingCommonName) {
+          updatePayload.commonName = incomingCommonName;
+        }
         if (typeof historyData.globalObsCount === 'number') {
           updatePayload.globalObsCount = historyData.globalObsCount;
         }

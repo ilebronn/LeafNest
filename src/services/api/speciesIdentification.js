@@ -792,19 +792,28 @@ export const fetchGBIF = async (speciesName) => {
 };
 
 export const extractBestCommonName = (result) => {
+  const scientificCandidates = new Set(
+    [result.name, result.scientificName]
+      .filter(Boolean)
+      .map(name => String(name).trim().toLowerCase())
+  );
+
   const candidates = [
     result.commonName,
     result.preferred_common_name,
-    result.name,
-    result.scientificName
+    result.common_name,
+    result.english_common_name
   ].filter(Boolean);
 
   if (candidates.length === 0) {
-    return 'Unknown Species';
+    return null;
   }
 
   const commonNameCandidates = candidates.filter(name => {
     const lower = name.toLowerCase();
+    const normalized = lower.trim();
+
+    if (scientificCandidates.has(normalized)) return false;
     
     if (lower.includes(' sp.') || lower.includes(' spp.')) return false;
     if (lower === lower.toLowerCase() && !lower.includes(' ')) return false;
@@ -825,9 +834,10 @@ export const extractBestCommonName = (result) => {
 export const validateAndEnrichResult = (result, visionCandidates, category) => {
   if (!result) return null;
 
+  const extractedCommonName = extractBestCommonName(result);
   const enrichedResult = {
     ...result,
-    commonName: extractBestCommonName(result),
+    commonName: extractedCommonName,
     name: result.name || result.scientificName || 'Unknown',
     rank: result.rank || 'species',
     confidence: result.confidence || 50
@@ -846,19 +856,24 @@ export const validateAndEnrichResult = (result, visionCandidates, category) => {
   }
 
   const genericTerms = ['plantae', 'animalia', 'unknown', 'unidentified'];
-  if (genericTerms.some(term => enrichedResult.commonName.toLowerCase().includes(term))) {
+  if (
+    enrichedResult.commonName &&
+    genericTerms.some(term => enrichedResult.commonName.toLowerCase().includes(term))
+  ) {
     const betterCandidate = visionCandidates.find(c => 
       !genericTerms.some(term => c.name.toLowerCase().includes(term))
     );
     
     if (betterCandidate) {
-      enrichedResult.commonName = extractBestCommonName({ name: betterCandidate.name });
+      enrichedResult.commonName = extractBestCommonName({ commonName: betterCandidate.name });
       enrichedResult.confidence = Math.min(enrichedResult.confidence, 60);
       console.log(`  ✅ Used better candidate: ${enrichedResult.commonName}`);
     }
   }
 
-  console.log(`✅ Result validated and enriched: ${enrichedResult.commonName} (${enrichedResult.confidence}%)`);
+  console.log(
+    `✅ Result validated and enriched: ${enrichedResult.commonName || enrichedResult.name} (${enrichedResult.confidence}%)`
+  );
   
   return enrichedResult;
 };

@@ -27,6 +27,7 @@ import PremiumGate from '@components/modals/PremiumGate';
 import stripHtmlTags from '@utils/text/stripHtmlTags';
 import { pickSpeciesName } from '@utils/text/speciesName';
 import { emitPublicFeedRemoval } from '@utils/publicFeedEvents';
+import { fetchTaxonDetails, searchINaturalistByName } from '@services/api/speciesIdentification';
 
 const { width } = Dimensions.get('window');
 
@@ -35,6 +36,18 @@ const CARD_HEIGHT = 116; // Card height for performance optimization
 const ITEMS_PER_PAGE = 20; // Pagination constant
 const GLOBAL_COUNTS_MAX_RETRIES = 2;
 const GLOBAL_COUNTS_RETRY_BASE_MS = 1500;
+
+const isSameName = (a, b) => {
+  const left = pickSpeciesName(a);
+  const right = pickSpeciesName(b);
+  if (!left || !right) return false;
+  return left.trim().toLowerCase() === right.trim().toLowerCase();
+};
+
+const getDistinctCommonName = (...candidates) => {
+  const commonName = pickSpeciesName(...candidates);
+  return commonName || null;
+};
 
 // ✅ FIX: Helper to safely get timestamp value
 const getTimestampValue = (timestamp) => {
@@ -283,12 +296,18 @@ const SwipeableCard = React.memo(({
           
           <View style={styles.infoContainer}>
             {(() => {
+              const scientificName = pickSpeciesName(item.scientificName);
+              const commonName = pickSpeciesName(item.commonName);
+              const hasDistinctCommonName =
+                !!commonName && (!scientificName || !isSameName(commonName, scientificName));
               const primaryName =
-                pickSpeciesName(item.commonName, item.name, item.scientificName) ||
-                item.name;
+                hasDistinctCommonName
+                  ? commonName
+                  : pickSpeciesName(item.name, scientificName) || item.name;
               const secondaryName =
-                pickSpeciesName(item.scientificName) ||
-                (item.commonName && item.name && item.name !== item.commonName ? item.name : null);
+                scientificName && !isSameName(primaryName, scientificName)
+                  ? scientificName
+                  : null;
               return (
                 <>
             <View style={styles.nameRow}>
@@ -333,6 +352,7 @@ const SwipeableCard = React.memo(({
     prevProps.item.globalObsCount === nextProps.item.globalObsCount &&
     prevProps.item.createdAt === nextProps.item.createdAt &&
     prevProps.item.name === nextProps.item.name &&
+    prevProps.item.commonName === nextProps.item.commonName &&
     prevProps.item.scientificName === nextProps.item.scientificName &&
     prevProps.item.imageUrl === nextProps.item.imageUrl &&
     prevProps.isSelected === nextProps.isSelected &&
@@ -357,6 +377,10 @@ export default function HistoryScreen({ navigation }) {
   const globalCountsFetchedRef = useRef(false);
   const globalCountsInFlightRef = useRef(false);
   const globalCountsRetryRef = useRef(0);
+  const commonNameLookupInFlightRef = useRef(false);
+  const commonNameLookupCacheRef = useRef(new Map());
+  const attemptedCommonLookupKeysRef = useRef(new Set());
+  const isOfflineRef = useRef(false);
   const [deletingItemIds, setDeletingItemIds] = useState(new Set());
   const [togglingItemIds, setTogglingItemIds] = useState(new Set());
   
@@ -380,6 +404,10 @@ export default function HistoryScreen({ navigation }) {
     canAccessOffline, 
     shouldBlockOfflineAccess 
   } = useOfflineAccess();
+
+  useEffect(() => {
+    isOfflineRef.current = isOffline;
+  }, [isOffline]);
 
   // ✅ ADD REF FOR MODAL SCROLL INSIDE THE COMPONENT
   const modalScrollRef = useRef(null);
@@ -437,6 +465,119 @@ export default function HistoryScreen({ navigation }) {
       });
   }, []);
 
+  const enrichMissingCommonNames = useCallback(async (itemsForLookup = []) => {
+    if (isOfflineRef.current) return;
+    if (!Array.isArray(itemsForLookup) || itemsForLookup.length === 0) return;
+    if (commonNameLookupInFlightRef.current) return;
+
+    const candidates = itemsForLookup
+      .filter((item) => {
+        const scientificName = pickSpeciesName(item.scientificName, item.name);
+        if (!scientificName) return false;
+
+        const commonName = getDistinctCommonName(
+          item.commonName,
+          item.preferred_common_name,
+          item.common_name
+        );
+        if (commonName && !isSameName(commonName, scientificName)) {
+          return false;
+        }
+
+        const lookupKey = item.taxonId
+          ? `taxon:${item.taxonId}`
+          : `sci:${scientificName.toLowerCase()}`;
+        if (attemptedCommonLookupKeysRef.current.has(lookupKey)) {
+          return false;
+        }
+
+        attemptedCommonLookupKeysRef.current.add(lookupKey);
+        return true;
+      })
+      .slice(0, 8);
+
+    if (candidates.length === 0) return;
+
+    commonNameLookupInFlightRef.current = true;
+    try {
+      const updates = [];
+
+      for (const item of candidates) {
+        const scientificName = pickSpeciesName(item.scientificName, item.name);
+        if (!scientificName) continue;
+
+        const cacheKey = item.taxonId
+          ? `taxon:${item.taxonId}`
+          : `sci:${scientificName.toLowerCase()}`;
+        let resolvedCommonName = commonNameLookupCacheRef.current.get(cacheKey);
+
+        if (resolvedCommonName === undefined) {
+          resolvedCommonName = null;
+
+          if (item.taxonId) {
+            const taxonDetails = await fetchTaxonDetails(item.taxonId);
+            resolvedCommonName = pickSpeciesName(
+              taxonDetails?.preferred_common_name,
+              taxonDetails?.common_name
+            );
+          }
+
+          if (!resolvedCommonName) {
+            const searchResult = await searchINaturalistByName(scientificName);
+            resolvedCommonName = pickSpeciesName(
+              searchResult?.preferred_common_name,
+              searchResult?.common_name
+            );
+          }
+
+          if (resolvedCommonName && isSameName(resolvedCommonName, scientificName)) {
+            resolvedCommonName = null;
+          }
+
+          commonNameLookupCacheRef.current.set(cacheKey, resolvedCommonName || null);
+        }
+
+        if (resolvedCommonName) {
+          updates.push({
+            id: item.id,
+            commonName: resolvedCommonName,
+          });
+        }
+      }
+
+      if (updates.length === 0) return;
+
+      const updateMap = new Map(updates.map(update => [update.id, update.commonName]));
+
+      setItems(prevItems =>
+        prevItems.map(item => {
+          const resolvedCommonName = updateMap.get(item.id);
+          if (!resolvedCommonName) return item;
+          return {
+            ...item,
+            commonName: resolvedCommonName,
+            name: pickSpeciesName(resolvedCommonName, item.name, item.scientificName) || item.name,
+          };
+        })
+      );
+
+      setSelectedSpecies(prev => {
+        if (!prev) return prev;
+        const resolvedCommonName = updateMap.get(prev.id);
+        if (!resolvedCommonName) return prev;
+        return {
+          ...prev,
+          commonName: resolvedCommonName,
+          name: pickSpeciesName(resolvedCommonName, prev.name, prev.scientificName) || prev.name,
+        };
+      });
+    } catch (error) {
+      console.warn('Failed to enrich history common names:', error?.message || error);
+    } finally {
+      commonNameLookupInFlightRef.current = false;
+    }
+  }, []);
+
   // ========== FIX 2: OPTIMIZED loadHistory ==========
   const loadHistory = useCallback(async () => {
     if (!uid) {
@@ -450,15 +591,25 @@ export default function HistoryScreen({ navigation }) {
       
       if (result.success) {
         const normalized = result.data.map((it, idx) => {
+          const rawCommonName = pickSpeciesName(
+            it.commonName,
+            it.preferred_common_name,
+            it.common_name
+          );
+          const scientificName = pickSpeciesName(it.scientificName);
+          const commonName =
+            rawCommonName && !isSameName(rawCommonName, scientificName)
+              ? rawCommonName
+              : null;
           const displayName =
-            pickSpeciesName(it.plantName, it.name, it.commonName, it.scientificName) ||
+            pickSpeciesName(commonName, it.plantName, it.name, scientificName) ||
             t('history.unknownSpecies');
           const { remoteUrl, localUri } = getImageSources(it);
           const normalizedItem = {
             id: buildHistoryId(it, idx),
             name: displayName,
-            scientificName: pickSpeciesName(it.scientificName),
-            commonName: pickSpeciesName(it.commonName),
+            scientificName,
+            commonName,
             rank: it.rank || null,
             iconicTaxon: it.iconicTaxon || null,
             genusKey: it.genusKey || null,
@@ -505,6 +656,7 @@ export default function HistoryScreen({ navigation }) {
         // ✅ CRITICAL: Set items IMMEDIATELY - don't wait for counts
         setItems(uniqueItems);
         setLoading(false);
+        enrichMissingCommonNames(uniqueItems);
 
         // ✅ Fetch counts in background with retry - SKIP if batch deleting
         if (!isDeletingBatch && !globalCountsFetchedRef.current && uniqueItems.length > 0) {
@@ -544,6 +696,9 @@ export default function HistoryScreen({ navigation }) {
       globalCountsFetchedRef.current = false;
       globalCountsInFlightRef.current = false;
       globalCountsRetryRef.current = 0;
+      commonNameLookupInFlightRef.current = false;
+      commonNameLookupCacheRef.current = new Map();
+      attemptedCommonLookupKeysRef.current = new Set();
       setGlobalCounts({});
     });
     return unsub;
@@ -557,6 +712,8 @@ export default function HistoryScreen({ navigation }) {
     globalCountsFetchedRef.current = false;
     globalCountsInFlightRef.current = false;
     globalCountsRetryRef.current = 0;
+    commonNameLookupInFlightRef.current = false;
+    attemptedCommonLookupKeysRef.current = new Set();
     setGlobalCounts({});
     await loadHistory();
     setRefreshing(false);
@@ -1095,11 +1252,16 @@ export default function HistoryScreen({ navigation }) {
               </View>
 
               <Text style={styles.modalTitle}>
-                {selectedSpecies.name || t('history.unknownSpecies')}
+                {pickSpeciesName(
+                  selectedSpecies.commonName,
+                  selectedSpecies.name,
+                  selectedSpecies.scientificName
+                ) || t('history.unknownSpecies')}
               </Text>
 
               <View style={styles.detailsContainer}>
-                {selectedSpecies.commonName && selectedSpecies.commonName !== selectedSpecies.name && (
+                {selectedSpecies.commonName &&
+                  !isSameName(selectedSpecies.commonName, selectedSpecies.scientificName) && (
                   <View style={styles.detailRow}>
                     <Ionicons name="leaf-outline" size={20} color="#5E936C" style={styles.detailIcon} />
                     <View style={styles.detailTextContainer}>
