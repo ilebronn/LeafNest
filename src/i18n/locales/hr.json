@@ -1,0 +1,895 @@
+{
+  "common": {
+    "welcome": "Dobrodošli",
+    "guest": "Gost",
+    "loading": "Učitavanje...",
+    "error": "Greška",
+    "success": "Uspjeh",
+    "cancel": "Otkazati",
+    "ok": "U REDU",
+    "save": "Uštedjeti",
+    "back": "Nazad",
+    "edit": "Uredi",
+    "username": "Korisničko ime",
+    "and": "i"
+  },
+  "login": {
+    "title": "LeafNest",
+    "signInWithGoogle": "Prijavite se s Googleom",
+    "signInAsGuest": "Prijavite se kao gost",
+    "signInFailed": "Prijava nije uspjela",
+    "googleAuthError": "Pogreška Google autentifikacije",
+    "unexpectedError": "Neočekivana pogreška",
+    "unknownError": "Nepoznata greška",
+    "termsText": "Prijavom potvrđujete da ste pročitali i prihvatili",
+    "termsOfUse": "Uvjeti korištenja",
+    "privacyPolicy": "Politika privatnosti",
+    "cookiesPolicy": "Politika kolačića",
+    "signIn": "Prijavite se",
+    "welcomeTitle": "Dobrodošli u LeafNest",
+    "welcomeSubtitle": "Otkrijte ljepotu prirode",
+    "signInWithEmailButton": "Prijavite se putem e-pošte",
+    "dividerOr": "ili",
+    "continueAsGuest": "Nastavi kao gost",
+    "continueAgreement": "Nastavkom, slažete se s našim"
+  },
+  "home": {
+    "welcomeGuest": "Dobrodošli, Gost",
+    "welcomeUser": "Dobro došli, {{name}}",
+    "guestModeSubtitle": "U načinu ste gosta. Prijavite se za otključavanje svih značajki.",
+    "welcomeBackSubtitle": "Lijepo te vidjeti natrag!",
+    "scanPlantsTitle": "Trenutno skenirajte biljke",
+    "scanPlantsSubtitle": "Usmjerite, snimajte i identificirajte floru u sekundi.",
+    "scanAnimalsTitle": "Trenutno skenirajte životinje",
+    "scanAnimalsSubtitle": "Identificirajte životinje u sekundi.",
+    "learnNatureTitle": "Učite o prirodi",
+    "learnNatureSubtitle": "Otkrijte više uz pretvaranje teksta u govor i kratke činjenice.",
+    "scanningStats": "Skeniranje statistike",
+    "plantsScanned": "Skenirane biljke",
+    "animalsIdentified": "Identificirane životinje",
+    "dailyDiscovery": "Dnevno otkriće",
+    "dailyDiscoverySubtitle": "Svaki dan nauči nešto novo",
+    "plantOfTheDay": "Biljka dana",
+    "animalOfTheDay": "Životinja dana",
+    "scientificName": "Znanstveni naziv",
+    "habitat": "Stanište",
+    "diet": "Dijeta",
+    "lifespan": "Životni vijek",
+    "weight": "Težina",
+    "cycle": "Životni ciklus",
+    "watering": "Zalijevanje",
+    "sunlight": "Sunčeva svjetlost",
+    "loadingDaily": "Učitavanje dnevnog sadržaja...",
+    "errorLoadingDaily": "Nije moguće učitati dnevni sadržaj",
+    "pullToRefresh": "Povucite za osvježavanje",
+    "offlineMode": "Offline sadržaj",
+    "funFact": "Zabavna činjenica",
+    "newFact": "Nova činjenica",
+    "trendingPlants": "Biljke u trendu",
+    "trendingAnimals": "Životinje u trendu",
+    "alerts": {
+      "authRequiredTitle": "Potrebna provjera autentičnosti",
+      "authRequiredBody": "Prijavite se za preuzimanje PDF-a.",
+      "pdfSuccessTitle": "Uspjeh",
+      "pdfSuccessBody": "PDF je generiran i poslan na vašu e-poštu.",
+      "pdfErrorTitle": "Greška",
+      "pdfErrorBody": "Generiranje PDF-a nije uspjelo. Molimo pokušajte ponovo.",
+      "signInRequiredTitle": "Potrebna je prijava",
+      "signInLikeBody": "Prijavite se da biste lajkali objave.",
+      "signInCommentBody": "Molimo prijavite se za komentiranje.",
+      "downloadsUnavailableTitle": "Preuzimanja nedostupna",
+      "downloadsUnavailableBody": "Prijavite se za besplatni račun za preuzimanje informacija o vrstama.",
+      "downloadLimitCheckErrorBody": "Failed to check download limit. Molimo pokušajte ponovo."
+    },
+    "pdf": {
+      "defaultCommon": "Nepoznato",
+      "defaultScientific": "Nepoznato",
+      "defaultRank": "Nepoznat rang",
+      "defaultTaxon": "Nepoznato",
+      "noDescription": "Opis nije dostupan.",
+      "infoUnavailable": "Informacije nisu dostupne.",
+      "notEvaluated": "Nije ocijenjeno"
+    },
+    "trending": {
+      "title": "Vrste u trendu"
+    },
+    "emptyState": {
+      "title": "Dobro došli u zajednicu",
+      "subtitle": "Počnite istraživati ​​i dijeliti svoja otkrića u prirodi.",
+      "cta": "Skenirajte svoju prvu vrstu"
+    },
+    "feed": {
+      "likesCount": "{{count}} sviđa mi se",
+      "likesCount_plural": "{{count}} sviđanja",
+      "beFirst": "Budite prvi koji će lajkati ovo",
+      "showMore": "Prikaži više",
+      "showLess": "Prikaži manje",
+      "viewComments": "Prikaži sve {{count}} komentare",
+      "viewComments_plural": "Prikaži sve {{count}} komentara",
+      "unknownUser": "Anonimno",
+      "unknownSpecies": "Nepoznata vrsta",
+      "likeError": "Neuspješno sviđanje objave."
+    },
+    "relativeTime": {
+      "justNow": "Upravo sada",
+      "minutes": "prije {{count}}m",
+      "hours": "prije {{count}}h",
+      "days": "prije {{count}}d"
+    }
+  },
+  "settings": {
+    "title": "postavke",
+    "account": "Račun",
+    "guestMode": "Način rada za goste",
+    "signedIn": "Prijavljeni",
+    "username": "Korisničko ime",
+    "editUsername": "Uredi korisničko ime",
+    "currentUsername": "Trenutno korisničko ime",
+    "newUsername": "Novo korisničko ime",
+    "usernameUpdated": "Korisničko ime je uspješno ažurirano!",
+    "usernameUpdateError": "Ažuriranje korisničkog imena nije uspjelo",
+    "usernameUpdateFailed": "Ažuriranje korisničkog imena nije uspjelo",
+    "usernameRequired": "Korisničko ime je potrebno",
+    "usernameTooShort": "Korisničko ime mora imati najmanje 3 znaka",
+    "usernameTooLong": "Korisničko ime mora imati 20 znakova ili manje",
+    "usernameInvalidChars": "Korisničko ime može sadržavati samo slova, brojke, podvlake i crtice",
+    "language": "Jezik",
+    "selectLanguage": "Odaberite jezik",
+    "logout": "Odjava",
+    "logoutError": "Odjava nije uspjela.",
+    "about": "Oko",
+    "appName": "LeafNest",
+    "yourPlan": "Vaš plan",
+    "leafNestFree": "LeafNest besplatno",
+    "help": "Pomoć",
+    "sendFeedback": "Pošaljite povratne informacije",
+    "faq": "FAQ",
+    "termsOfUse": "Uvjeti korištenja",
+    "generalSection": "General",
+    "supportSection": "podrška",
+    "legalSection": "Pravno"
+  },
+  "profile": {
+    "title": "Profil",
+    "editUsername": "Uredi korisničko ime",
+    "signOut": "Odjavi se",
+    "leaveAccount": "Napustite svoj račun",
+    "signIn": "Prijavite se",
+    "accessFullFeatures": "Pristup svim značajkama",
+    "createAccount": "Napravi račun",
+    "joinLeafNest": "Pridružite se LeafNestu",
+    "guestUser": "Korisnik gost",
+    "statsTitle": "Statistika skeniranja",
+    "viewAll": "Pogledaj sve",
+    "guestPromptTitle": "Pratite svoj napredak",
+    "guestPromptText": "Prijavite se za praćenje skeniranja, otkrivanje vrsta i otključavanje postignuća.",
+    "badgeNew": "Novi",
+    "editPlaceholder": "Unesite korisničko ime",
+    "stats": {
+      "total": "Ukupno skeniranje",
+      "week": "Ovaj tjedan",
+      "species": "Vrsta"
+    },
+    "sections": {
+      "account": "Postavke računa"
+    },
+    "menu": {
+      "planTitle": "Vaš plan",
+      "planSubtitle": "LeafNest besplatno",
+      "notificationsTitle": "Obavijesti",
+      "notificationsSubtitle": "Upravljajte svojim obavijestima",
+      "passwordTitle": "Zaboravili ste lozinku",
+      "passwordSubtitle": "Ponovno postavite lozinku",
+      "signOutTitle": "Odjavi se",
+      "signOutSubtitle": "Odjavite se sa svog računa",
+      "signInTitle": "Prijavite se",
+      "signInSubtitle": "Pristup svim značajkama",
+      "createAccountTitle": "Napravi račun",
+      "createAccountSubtitle": "Pridružite se LeafNestu danas"
+    },
+    "alerts": {
+      "syncSuccess": "Sinkronizirano {{count}} skeniranje na čekanju",
+      "syncSuccess_plural": "Sinkronizirano {{count}} skeniranja na čekanju",
+      "usernameUpdated": "Korisničko ime je uspješno ažurirano!",
+      "usernameUpdateError": "Ažuriranje korisničkog imena nije uspjelo.",
+      "signOutTitle": "Odjavi se",
+      "signOutMessage": "Jeste li sigurni da se želite odjaviti?",
+      "signOutConfirm": "Odjavi se",
+      "signOutError": "Odjava nije uspjela. Molimo pokušajte ponovo."
+    }
+  },
+  "languages": {
+    "ar": "arapski",
+    "zh-CN": "kineski (pojednostavljeni)",
+    "zh-TW": "kineski (tradicionalni)",
+    "hr": "hrvatski",
+    "cs": "češki",
+    "da": "danski",
+    "nl": "nizozemski",
+    "en": "engleski",
+    "fi": "finski",
+    "fr": "francuski",
+    "de": "njemački",
+    "el": "grčki",
+    "hi": "hindski",
+    "hu": "mađarski",
+    "id": "indonezijski",
+    "it": "talijanski",
+    "ja": "japanski",
+    "ko": "korejski",
+    "ms": "malajski",
+    "no": "norveški",
+    "fa": "perzijski",
+    "pl": "Polirati",
+    "pt": "portugalski",
+    "ro": "rumunjski",
+    "ru": "ruski",
+    "sk": "slovački",
+    "es": "španjolski",
+    "sv": "švedski",
+    "tl": "tagalog",
+    "th": "tajlandski",
+    "tr": "turski",
+    "uk": "ukrajinski",
+    "vi": "vijetnamski"
+  },
+  "tabs": {
+    "home": "Dom",
+    "scan": "Skenirati",
+    "history": "Povijest",
+    "settings": "postavke"
+  },
+  "animals": {
+    "title": "Životinje dana",
+    "lion": {
+      "name": "Lav",
+      "scientificName": "Panthera leo",
+      "description": "Lav je velika mačka iz roda Panthera porijeklom iz Afrike i Indije. Ima mišićavo tijelo širokih prsa, kratku zaobljenu glavu, okrugle uši i dlakavi čuperak na kraju repa.",
+      "habitat": "Savane, travnjaci i otvorene šume",
+      "diet": "Mesojedi - prvenstveno veliki sisavci poput zebri, gnuova i bivola",
+      "lifespan": "10-14 godina u divljini, do 20 godina u zatočeništvu",
+      "conservationStatus": "Ranjiv"
+    },
+    "elephant": {
+      "name": "Slon",
+      "scientificName": "Elephantidae",
+      "description": "Slonovi su najveće postojeće kopnene životinje, a karakteriziraju ih dugi proboscis (surla), stupaste noge i ogromne glave sa temporalnim žlijezdama i širokim, pljosnatim ušima.",
+      "habitat": "Savane, šume, pustinje i močvare",
+      "diet": "Biljojedi - trave, lišće, kora, voće i tlo",
+      "lifespan": "60-70 godina",
+      "conservationStatus": "Ugrožena"
+    },
+    "panda": {
+      "name": "velika panda",
+      "scientificName": "Ailuropoda melanoleuca",
+      "description": "Velika panda je medvjed porijeklom iz južne središnje Kine. Karakterizira ga hrabra crno-bijela dlaka i okruglo tijelo.",
+      "habitat": "Planinski lanci u središnjoj Kini s gustim šumama bambusa",
+      "diet": "Prvenstveno bambus (99% prehrane), povremeno male životinje",
+      "lifespan": "20 godina u divljini, do 30 godina u zatočeništvu",
+      "conservationStatus": "Ranjiv"
+    },
+    "loading": "Učitavanje životinja...",
+    "errorLoading": "Učitavanje životinja nije uspjelo",
+    "addToFavorites": "Dodaj u favorite",
+    "removeFromFavorites": "Ukloni iz Favorita",
+    "learnMore": "Saznajte više",
+    "share": "Podijeli životinju"
+  },
+  "signup": {
+    "title": "Napravi račun",
+    "username": "Korisničko ime",
+    "email": "E-mail",
+    "password": "Lozinka",
+    "confirmPassword": "Potvrdite lozinku",
+    "register": "Registar",
+    "alreadyHaveAccount": "Već imate račun? Prijavite se",
+    "passwordsDontMatch": "Lozinke se ne slažu!",
+    "fillAllFields": "Molimo ispunite sva polja.",
+    "verificationEmailSent": "E-pošta za potvrdu poslana je na vašu e-poštu.",
+    "emailAlreadyInUse": "E-mail adresa je već u upotrebi.",
+    "invalidEmail": "E-mail adresa nije važeća.",
+    "subtitle": "Pridružite nam se u istraživanju prirode",
+    "processing": "Obrada...",
+    "dividerOr": "ili",
+    "alreadyMember": "Već ste član?",
+    "signInLink": "Prijavite se"
+  },
+  "signin": {
+    "title": "Prijavite se",
+    "email": "E-mail",
+    "password": "Lozinka",
+    "signIn": "Prijavite se",
+    "signInWithGoogle": "Prijavite se s Googleom",
+    "dontHaveAccount": "Nemate račun? Prijavite se",
+    "fillAllFields": "Molimo ispunite sva polja.",
+    "signInSuccessful": "Uspješna prijava",
+    "welcomeBack": "Dobro došao nazad",
+    "userNotFound": "Nije pronađen nijedan korisnik s ovom e-poštom.",
+    "wrongPassword": "Netočna lozinka.",
+    "invalidEmail": "Nevažeća adresa e-pošte.",
+    "subtitle": "Prijavite se za nastavak putovanja",
+    "forgotPasswordLink": "Zaboravili ste lozinku?",
+    "dividerOr": "ili",
+    "noAccountPrompt": "Nemate račun?",
+    "signUpLink": "Prijavite se"
+  },
+  "scan": {
+    "loadingCamera": "Učitavanje kamere...",
+    "needPermission": "Trebamo vaše dopuštenje da pokažemo kameru",
+    "grantPermission": "Dajte dopuštenje",
+    "preparingCamera": "Priprema kamere..."
+  },
+  "favorites": {
+    "title": "Favoriti",
+    "all": "Sve",
+    "plants": "Biljke",
+    "animals": "Životinje",
+    "removeFavorite": "Ukloni favorit",
+    "remove": "Ukloniti",
+    "cancel": "Otkazati",
+    "removed": "Uklonjeno",
+    "removedMessage": "je uklonjen iz vaših favorita.",
+    "error": "Greška",
+    "failedToRemove": "Uklanjanje iz favorita nije uspjelo.",
+    "clearFavorites": "Očisti favorite",
+    "removeAllFavorites": "Ukloniti sve favorite?",
+    "removeAll": "Ukloni sve",
+    "failedToClear": "Brisanje favorita nije uspjelo.",
+    "plant": "Biljka",
+    "animal": "Životinja",
+    "noFavoritesYet": "Još nema favorita",
+    "addFromDaily": "Dodajte nešto iz Biljaka ili Životinja dana."
+  },
+  "about": {
+    "title": "Oko",
+    "developedBy": "Razvio i dizajnirao LeafNest tim",
+    "teamTitle": "LeafNest tim",
+    "specialThanks": "Posebna hvala",
+    "mentor": "g. Joshua R. Lasac",
+    "credits": "Izvorno kreiran od strane LeafNest tima uz podršku Pinamalayan Maritime Foundation And Technological College INC. (PMFTCI) i School of Computer Studies.",
+    "privacyPolicy": "Politika privatnosti",
+    "version": "Verzija 0.0.1 (1)",
+    "help": "Za pomoć: leafnest.capstone@gmail.com",
+    "tagline": "Identifikacija biljaka i životinja",
+    "institutionalSupport": "Institucionalna podrška",
+    "mentorRole": "Mentor i savjetnik projekta"
+  },
+  "plan": {
+    "title": "Planovi",
+    "upgradeTitle": "Nadogradite na Premium",
+    "upgradeSubtitle": "Otključajte sve značajke i maksimalno iskoristite našu aplikaciju.",
+    "free": "Besplatno",
+    "freePrice": "₱0 / mjesec",
+    "freeFeature1": "Skenirajte ograničene biljke i životinje",
+    "freeFeature2": "Osnovna dnevna otkrića",
+    "freeFeature3": "Nema izvanmrežnog pristupa povijesti",
+    "freeFeature4": "Oglasi uključeni",
+    "premium": "Premija",
+    "premiumPrice": "₱129,00 mjesečno",
+    "premiumFeature1": "Neograničeno skeniranje",
+    "premiumFeature2": "Ekskluzivna dnevna otkrića",
+    "premiumFeature3": "Izvanmrežni pristup povijesti",
+    "premiumFeature4": "Iskustvo bez oglasa",
+    "subscribeNow": "Pretplatite se sada",
+    "selectedPlan": "Odabrali ste plan {{plan}}!"
+  },
+  "legal": {
+    "cookies": {
+      "title": "Politika kolačića",
+      "subtitle": "Kako koristimo kolačiće za poboljšanje vašeg iskustva",
+      "effectiveDate": "Datum stupanja na snagu: 1. srpnja 2025",
+      "intro": "Ova Pravila o kolačićima objašnjavaju kako koristimo kolačiće za poboljšanje vašeg iskustva kada posjetite našu aplikaciju i koristite njezine značajke. Korištenjem ove aplikacije pristajete na korištenje kolačića kako je opisano u ovim pravilima.",
+      "sections": [
+        {
+          "title": "Što su kolačići?",
+          "content": "Kolačići su male tekstualne datoteke pohranjene na vašem uređaju kada posjećujete web stranice ili koristite aplikacije. Pomažu nam razumjeti vašu interakciju s našom uslugom i omogućuju nam da vam pružimo bolje, personaliziranije iskustvo."
+        },
+        {
+          "title": "Kako koristimo kolačiće",
+          "content": "Kolačiće koristimo u nekoliko bitnih svrha:",
+          "list": [
+            "Za personalizaciju sadržaja i reklama",
+            "Za analizu obrazaca prometa i poboljšanje korisničkog iskustva",
+            "Za omogućavanje određenih značajki i funkcionalnosti naše aplikacije",
+            "Za pamćenje vaših preferencija i postavki",
+            "Omogućiti siguran pristup vašem računu"
+          ]
+        },
+        {
+          "title": "Vrste kolačića koje koristimo",
+          "content": "Koristimo različite vrste kolačića kako bismo poboljšali vaše iskustvo:",
+          "list": [
+            "Osnovni kolačići: potrebni za osnovne funkcije aplikacije",
+            "Kolačići za rad: Pomozite nam razumjeti kako koristite aplikaciju",
+            "Funkcionalni kolačići: pamte vaše postavke i izbore",
+            "Analitički kolačići: pružaju uvid u obrasce korištenja aplikacije"
+          ]
+        },
+        {
+          "title": "Upravljanje kolačićima",
+          "content": "Možete kontrolirati i upravljati kolačićima putem postavki uređaja. Međutim, imajte na umu da onemogućavanje određenih kolačića može utjecati na vaše iskustvo i ograničiti funkcionalnost aplikacije."
+        },
+        {
+          "title": "Trajanje kolačića",
+          "content": "Neki kolačići su privremeni (kolačići sesije) i brišu se kada zatvorite aplikaciju. Drugi ostaju na vašem uređaju određeno razdoblje kako bi zapamtili vaše postavke tijekom sesija."
+        },
+        {
+          "title": "Promjene ove politike",
+          "content": "S vremena na vrijeme možemo ažurirati ovu Politiku kolačića kako bismo odražavali promjene u tehnologiji ili pravnim zahtjevima. Sve promjene bit će objavljene na ovoj stranici s ažuriranim datumom revizije."
+        },
+        {
+          "title": "Kontaktirajte nas",
+          "content": "Ako imate bilo kakvih pitanja, nedoumica ili povratnih informacija u vezi s ovom Politikom kolačića, kontaktirajte nas na leafnest.capstone@gmail.com."
+        }
+      ],
+      "footerTitle": "Vaša privatnost je važna",
+      "footerText": "Predani smo transparentnosti o tome kako koristimo kolačiće. Vaše daljnje korištenje naše aplikacije znači da prihvaćate ovu politiku.",
+      "copyright": "© 2025 LeafNest. Sva prava pridržana.",
+      "lastUpdated": "Zadnje ažuriranje: 1. srpnja 2025"
+    },
+    "privacy": {
+      "title": "Politika privatnosti",
+      "subtitle": "Vaša privatnost nam je važna",
+      "effectiveDate": "Datum stupanja na snagu: 1. srpnja 2025",
+      "intro": "U LeafNestu predani smo zaštiti vaše privatnosti i osiguravanju sigurnosti vaših osobnih podataka.",
+      "sections": [
+        {
+          "title": "Podaci koje prikupljamo",
+          "content": "Prikupljamo informacije koje nam dajete izravno, primjerice kada kreirate račun, učitate fotografije ili nas kontaktirate za podršku. To može uključivati ​​vaše ime, adresu e-pošte i sve druge podatke koje odlučite dati."
+        },
+        {
+          "title": "Kako koristimo vaše podatke",
+          "content": "Podatke koje prikupljamo koristimo za pružanje, održavanje i poboljšanje naših usluga, za komunikaciju s vama i za razvoj novih značajki. Vaše osobne podatke ne prodajemo trećim stranama."
+        },
+        {
+          "title": "Sigurnost podataka",
+          "content": "Provodimo odgovarajuće tehničke i organizacijske mjere kako bismo zaštitili vaše osobne podatke od neovlaštenog pristupa, izmjene, otkrivanja ili uništenja."
+        },
+        {
+          "title": "Vaša prava",
+          "content": "Imate pravo pristupa, ažuriranja ili brisanja svojih osobnih podataka. To možete učiniti putem postavki računa ili nas kontaktirate izravno."
+        },
+        {
+          "title": "Usluge trećih strana",
+          "content": "Naša aplikacija može sadržavati veze na web stranice i usluge trećih strana. Nismo odgovorni za njihovu praksu privatnosti. Potičemo vas da pregledate njihova pravila o privatnosti."
+        },
+        {
+          "title": "Promjene Politike privatnosti",
+          "content": "Zadržavamo pravo ažurirati ovu Politiku privatnosti u bilo kojem trenutku. Promjene će biti objavljene na ovoj stranici s ažuriranim datumom stupanja na snagu. Vaše daljnje korištenje predstavlja prihvaćanje promjena."
+        },
+        {
+          "title": "Kontaktirajte nas",
+          "content": "Ako imate bilo kakvih pitanja o ovim Pravilima privatnosti ili našim praksama privatnosti, obratite nam se na privacy@leafnest.com."
+        }
+      ],
+      "footerTitle": "Stalo nam je do vas",
+      "footerText": "Vaše povjerenje nam je važno. Predani smo transparentnoj praksi podataka i vašem pravu na privatnost.",
+      "copyright": "© 2025 LeafNest. Sva prava pridržana.",
+      "lastUpdated": "Zadnje ažuriranje: 1. srpnja 2025"
+    },
+    "terms": {
+      "title": "Uvjeti korištenja",
+      "subtitle": "Pažljivo pročitajte prije uporabe",
+      "effectiveDate": "Datum stupanja na snagu: 1. srpnja 2025",
+      "intro": "Ovi Uvjeti korištenja reguliraju korištenje aplikacije i usluga LeafNest. Korištenjem naše aplikacije pristajete na ove uvjete i odredbe.",
+      "sections": [
+        {
+          "title": "Prihvaćanje uvjeta",
+          "content": "Pristupanjem ili korištenjem aplikacije LeafNest prihvaćate ove Uvjete korištenja. Ako se ne slažete s ovim uvjetima, ne biste trebali koristiti aplikaciju."
+        },
+        {
+          "title": "Odgovornosti korisnika",
+          "content": "Suglasni ste koristiti aplikaciju samo u zakonite svrhe i na način koji ne krši prava drugih. Vi ste odgovorni za održavanje povjerljivosti podataka o svom računu."
+        },
+        {
+          "title": "Intelektualno vlasništvo",
+          "content": "Sav sadržaj, zaštitni znakovi, logotipi i intelektualno vlasništvo unutar aplikacije u vlasništvu su LeafNesta ili su nam licencirani. Neovlašteno korištenje našeg intelektualnog vlasništva je strogo zabranjeno."
+        },
+        {
+          "title": "Privatnost i prikupljanje podataka",
+          "content": "Prikupljamo i obrađujemo osobne podatke kako je opisano u našim Pravilima privatnosti. Korištenjem naše aplikacije pristajete na naše postupke prikupljanja, pohranjivanja i obrade podataka."
+        },
+        {
+          "title": "Ograničenje odgovornosti",
+          "content": "LeafNest nije odgovoran ni za kakvu štetu, gubitke ili ozljede nastale korištenjem aplikacije ili njezinih usluga. Aplikaciju koristite na vlastitu odgovornost i diskreciju."
+        },
+        {
+          "title": "Promjene Uvjeta",
+          "content": "Zadržavamo pravo ažuriranja ovih Uvjeta korištenja u bilo kojem trenutku. Sve promjene bit će objavljene na ovoj stranici s ažuriranim datumom stupanja na snagu. Nastavak korištenja predstavlja prihvaćanje promjena."
+        },
+        {
+          "title": "Kontaktirajte nas",
+          "content": "Ako imate pitanja, nedoumica ili povratnih informacija o ovim Uvjetima korištenja, obratite nam se na leafnest.capstone@gmail.com."
+        }
+      ],
+      "footerTitle": "Hvala",
+      "footerText": "Hvala što ste odvojili vrijeme da pregledate naše Uvjete korištenja. Vaše povjerenje i usklađenost pomažu nam stvoriti bolje iskustvo za sve.",
+      "copyright": "© 2025 LeafNest. Sva prava pridržana.",
+      "lastUpdated": "Zadnje ažuriranje: 1. srpnja 2025"
+    }
+  },
+  "faq": {
+    "title": "Pomoć & FAQ",
+    "subtitle": "Pronađite odgovore na uobičajena pitanja",
+    "categories": [
+      {
+        "title": "Početak rada",
+        "items": [
+          {
+            "question": "Što je LeafNest?",
+            "answer": "LeafNest je aplikacija za identifikaciju biljaka i informacije koja koristi AI tehnologiju kako bi vam pomogla identificirati biljke i životinje kako biste pružili znanje o prirodi."
+          },
+          {
+            "question": "Kako da počnem?",
+            "answer": "Otvorite aplikaciju, dodirnite ikonu skeniranja i usmjerite je prema bilo kojoj biljci ili životinji. AI će ga identificirati i dati detaljne informacije o toj vrsti."
+          }
+        ]
+      },
+      {
+        "title": "Korištenje skenera",
+        "items": [
+          {
+            "question": "Kako mogu skenirati vrstu?",
+            "answer": "Dodirnite ikonu skeniranja na početnom zaslonu, usmjerite kameru prema vrsti i snimite jasnu fotografiju. Aplikacija će ga automatski identificirati."
+          },
+          {
+            "question": "Što čini dobro skeniranje?",
+            "answer": "Pobrinite se za dobro osvjetljenje, usredotočite se na karakteristične značajke i držite kameru mirno za najbolje rezultate."
+          },
+          {
+            "question": "Mogu li skenirati iz svoje galerije fotografija?",
+            "answer": "Da. Možete prenijeti postojeće fotografije iz svoje galerije odabirom opcije galerije na zaslonu skenera."
+          }
+        ]
+      },
+      {
+        "title": "Točnost i značajke",
+        "items": [
+          {
+            "question": "Koliko je točna identifikacija?",
+            "answer": "LeafNest koristi napredne modele strojnog učenja. Točnost ovisi o osvjetljenju i kvaliteti slike, ali obično prelazi 90%."
+          },
+          {
+            "question": "Mogu li spasiti svoje omiljene biljke?",
+            "answer": "Da. Dodirnite ikonu srca na bilo kojoj identificiranoj vrsti da je dodate u svoje favorite za brzi pristup kasnije."
+          }
+        ]
+      },
+      {
+        "title": "Podrška i pomoć",
+        "items": [
+          {
+            "question": "Kako mogu kontaktirati podršku?",
+            "answer": "Otvorite izbornik Postavke i odaberite Pomoć i podrška ili nam pošaljite e-poruku na leafnest.capstone@gmail.com."
+          }
+        ]
+      }
+    ]
+  },
+  "help": {
+    "title": "Pomoć i podrška",
+    "subtitle": "Savjeti za skeniranje biljaka i životinja pomoću umjetne inteligencije — i gdje dobiti dodatnu pomoć.",
+    "quickStart": {
+      "title": "Brzi početak",
+      "bullets": [
+        "Dodirnite gumb Skeniraj na početnom zaslonu.",
+        "Centrirajte biljku ili životinju u okviru.",
+        "Držite se mirno, a zatim snimite jasnu fotografiju."
+      ],
+      "cta": "Otvorite Skener"
+    },
+    "bestResults": {
+      "title": "Kako do boljih rezultata",
+      "bullets": [
+        "Koristite dobro osvjetljenje i izbjegavajte oštro pozadinsko osvjetljenje.",
+        "Ispunite okvir subjektom, fokusirajući se na prepoznatljive detalje.",
+        "Isprobajte više kutova kao što su lišće, cvijeće, kora ili profilne snimke."
+      ]
+    },
+    "troubleshooting": {
+      "title": "Rješavanje problema",
+      "bullets": [
+        "Dnevni istaknuti dijelovi izgledaju isto? Povucite za osvježavanje ili ponovno otvaranje aplikacije nakon ponoći (po filipinskom vremenu).",
+        "nema interneta? Provjerite svoju vezu jer je za prepoznavanje slika potrebna mrežna veza.",
+        "Niska točnost? Snimite jasniju, bližu fotografiju uz bolje osvjetljenje."
+      ]
+    },
+    "links": {
+      "faq": "FAQ",
+      "feedback": "Pošaljite povratne informacije",
+      "about": "O LeafNestu",
+      "privacy": "Politika privatnosti",
+      "terms": "Uvjeti korištenja",
+      "contact": "Obratite se podršci"
+    },
+    "alerts": {
+      "noEmailTitle": "Nije moguće otvoriti aplikaciju za e-poštu",
+      "noEmailBody": "Pošaljite nam e-poruku na {{email}}."
+    }
+  },
+  "feedback": {
+    "title": "Pošaljite povratne informacije",
+    "subtitle": "Recite nam što radi odlično ili što bi se moglo poboljšati. Čitamo svaku poruku.",
+    "topicLabel": "Tema",
+    "topics": {
+      "bug": "Prijavi grešku",
+      "idea": "Zahtjev za značajku",
+      "ux": "Dizajn / UX",
+      "content": "Vrsta / sadržaj",
+      "account": "Račun / Prijava",
+      "other": "ostalo"
+    },
+    "subjectLabel": "Predmet",
+    "subjectPlaceholder": "Kratki sažetak (npr. Scanner pogrešno označava list kao javor)",
+    "messageLabel": "Poruka",
+    "messagePlaceholder": "Opišite što se dogodilo, korake za reprodukciju i očekivanja.",
+    "emailLabel": "Vaša e-pošta (nije obavezno)",
+    "emailPlaceholder": "Ovdje ćemo odgovoriti ako bude potrebno",
+    "includeDiagnostics": "Uključite dijagnostiku",
+    "diagnosticsHint": "Pomaže nam otkloniti probleme (samo platforma i OS).",
+    "submit": "Pošaljite povratne informacije",
+    "submitting": "Slanje...",
+    "footerText": "Ili nam pošaljite e-poštu izravno na {{email}}",
+    "alerts": {
+      "missingInfoTitle": "Nedostaju podaci",
+      "missingInfoMessage": "Dodajte predmet i poruku.",
+      "invalidEmailTitle": "Nevažeća e-pošta",
+      "invalidEmailMessage": "Unesite važeću adresu e-pošte ili ostavite prazno.",
+      "noEmailAppTitle": "Nije moguće poslati povratne informacije",
+      "noEmailAppMessage": "Pokušajte ponovno kasnije ili nam pošaljite e-poruku na {{email}}.",
+      "successTitle": "Povratne informacije su poslane",
+      "successMessage": "Hvala na povratnim informacijama! Uskoro ćemo ga pregledati.",
+      "genericErrorTitle": "Nešto nije u redu",
+      "genericErrorMessage": "Pokušajte ponovno kasnije ili nam pošaljite e-poruku na {{email}}."
+    }
+  },
+  "comments": {
+    "title": "Komentari",
+    "noComments": "Još nema komentara",
+    "beFirstToComment": "Budite prvi koji će komentirati!",
+    "addComment": "Dodajte komentar...",
+    "deleteComment": "Izbriši komentar",
+    "deleteConfirm": "Jeste li sigurni da želite izbrisati ovaj komentar?",
+    "delete": "Izbrisati",
+    "failedToDelete": "Brisanje komentara nije uspjelo",
+    "failedToLike": "Komentar nije ocijenjen oznakom \"sviđa mi se\".",
+    "loginRequired": "Potrebna prijava",
+    "loginToComment": "Morate biti prijavljeni da biste komentirali",
+    "loginToLike": "Morate biti prijavljeni da biste lajkali komentare",
+    "justNow": "Upravo sada"
+  },
+  "notification": {
+    "title": "Obavijesti",
+    "noNotifications": "Još nema obavijesti",
+    "markAsRead": "Označi kao pročitano",
+    "markAllAsRead": "Označi sve kao pročitano",
+    "delete": "Izbrisati",
+    "deleteAll": "Izbriši sve"
+  },
+  "commentsModal": {
+    "title": "Komentari",
+    "inputPlaceholder": "Dodajte komentar...",
+    "empty": {
+      "title": "Još nema komentara",
+      "subtitle": "Budite prvi koji će komentirati!"
+    },
+    "actions": {
+      "cancel": "Otkazati",
+      "delete": "Izbrisati"
+    },
+    "alerts": {
+      "loadErrorTitle": "Greška",
+      "loadErrorBody": "Nije uspjelo učitavanje komentara.",
+      "loginRequiredTitle": "Potrebna prijava",
+      "loginRequiredCommentBody": "Morate biti prijavljeni da biste komentirali.",
+      "loginRequiredLikeBody": "Morate biti prijavljeni da biste lajkali komentare.",
+      "addErrorTitle": "Greška",
+      "addErrorBody": "Dodavanje komentara nije uspjelo.",
+      "likeErrorTitle": "Greška",
+      "likeErrorBody": "Komentar nije ocijenjen oznakom \"sviđa mi se\".",
+      "deleteTitle": "Obriši komentar",
+      "deleteConfirmBody": "Jeste li sigurni da želite izbrisati ovaj komentar?",
+      "deleteErrorTitle": "Greška",
+      "deleteErrorBody": "Brisanje komentara nije uspjelo."
+    }
+  },
+  "premiumGate": {
+    "offline": {
+      "title": "Potreban je izvanmrežni pristup",
+      "historySubtitle": "Pretplatite se za izvanmrežni pristup povijesti",
+      "historyDescription": "Izvanmrežni pristup vašoj povijesti skeniranja vrhunska je značajka. Nadogradite kako biste svoju povijest vidjeli bilo kada i bilo gdje.",
+      "favoritesSubtitle": "Pretplatite se za izvanmrežni pristup favoritima",
+      "favoritesDescription": "Izvanmrežni pristup vašim favoritima vrhunska je značajka. Nadogradite kako biste vidjeli svoje favorite bilo kada i bilo gdje."
+    },
+    "limits": {
+      "scanTitle": "Dosegnuto je ograničenje skeniranja",
+      "scanSubtitle": "Iskoristili ste svih {{limit}} skeniranja",
+      "scanDescription": "Nadogradite na Premium za neograničeno skeniranje i više značajki!",
+      "downloadTitle": "Dosegnuto je ograničenje preuzimanja",
+      "downloadSubtitle": "Iskoristili ste svih {{limit}} preuzimanja",
+      "downloadDescription": "Nadogradite na Premium za neograničena preuzimanja!"
+    },
+    "timer": {
+      "resetsInHours": "Ponovno se postavlja za {{count}} sat",
+      "resetsInHours_plural": "Ponovno se postavlja za {{count}} sati"
+    },
+    "usage": {
+      "scans": "Skeniranja:",
+      "downloads": "preuzimanja:"
+    },
+    "features": {
+      "title": "Premium pogodnosti:",
+      "offlineHistory": "Izvanmrežni pristup povijesti",
+      "offlineFavorites": "Offline pristup favoritima",
+      "unlimitedScans": "Neograničeno skeniranje",
+      "unlimitedDownloads": "Neograničena preuzimanja"
+    },
+    "pricing": {
+      "amount": "{{amount}}",
+      "period": "za {{days}} dana"
+    },
+    "actions": {
+      "upgrade": "Nadogradite na Premium",
+      "later": "Možda kasnije"
+    }
+  },
+  "manageNotifications": {
+    "title": "Upravljanje obavijestima",
+    "pushNotifications": "Push obavijesti",
+    "emailNotifications": "Obavijesti e-poštom",
+    "likeNotifications": "Kao Obavijesti",
+    "commentNotifications": "Obavijesti o komentarima",
+    "followNotifications": "Pratite obavijesti",
+    "enabled": "Omogućeno",
+    "disabled": "Onesposobljeno",
+    "save": "Spremi postavke"
+  },
+  "history": {
+    "title": "Povijest",
+    "loading": "Učitavanje povijesti...",
+    "loadingMore": "Učitavanje više...",
+    "signInRequiredTitle": "Potrebna je prijava",
+    "signInRequiredBody": "Napravite račun ili se prijavite za pregled povijesti skeniranja.",
+    "selection": {
+      "selectedCount": "{{count}} odabrano",
+      "deleteButton": "Izbriši {{count}} zapis",
+      "deleteButton_plural": "Izbriši {{count}} zapisa"
+    },
+    "offlineBanner": {
+      "premium": "Izvanmrežni način rada (Premium)",
+      "locked": "Izvanmrežni način rada zahtijeva Premium"
+    },
+    "search": {
+      "placeholder": "Traži po imenu..."
+    },
+    "filters": {
+      "all": "Sve",
+      "plants": "Biljke",
+      "animals": "Životinje"
+    },
+    "empty": {
+      "noHistoryTitle": "Još nema povijesti",
+      "noHistoryBody": "Vaša povijest skeniranja vrsta pojavit će se ovdje kada počnete identificirati biljke i životinje.",
+      "noResultsTitle": "Nema rezultata",
+      "noResultsBody": "Nijedan zapis ne odgovara vašem kriteriju pretraživanja ili filtra. Pokušajte prilagoditi svoje filtre."
+    },
+    "actions": {
+      "signIn": "Prijavite se",
+      "delete": "Izbrisati",
+      "clearAll": "Obriši sve",
+      "clearFilters": "Očisti filtre"
+    },
+    "alerts": {
+      "visibilityNow": "Skeniranje je sada {{status}}",
+      "visibilityUpdateFailed": "Ažuriranje vidljivosti nije uspjelo.",
+      "visibilityNeedsSync": "Ovo skeniranje prvo treba sinkronizirati. Pokušajte ponovno za koji trenutak.",
+      "visibilityOffline": "Nije moguće promijeniti vidljivost dok ste izvan mreže. Provjerite vezu.",
+      "visibilityNotSynced": "Ovo skeniranje još nije sinkronizirano s oblakom. Molimo pričekajte da sinkronizacija završi i pokušajte ponovno.",
+      "visibilityPermissionDenied": "Nemate dopuštenje za izmjenu ovog skeniranja.",
+      "visibilityNetworkError": "Mrežna greška. Provjerite svoju vezu i pokušajte ponovno.",
+      "errorWithMessage": "Greška: {{message}}",
+      "deleteRecordTitle": "Izbriši zapis",
+      "deleteRecordMessage": "Izbrisati \"{{name}}\" iz povijesti?",
+      "deleteRecordSuccess": "Zapis izbrisan.",
+      "deleteRecordError": "Brisanje zapisa nije uspjelo.",
+      "deleteSelectedTitle": "Izbriši odabrano",
+      "deleteSelectedMessage": "Izbrisati {{count}} zapis iz povijesti?",
+      "deleteSelectedMessage_plural": "Izbrisati {{count}} zapisa iz povijesti?",
+      "deleteSelectedSuccess": "{{count}} zapis izbrisan.",
+      "deleteSelectedSuccess_plural": "{{count}} zapisa izbrisano.",
+      "deleteSelectedError": "Brisanje odabranih zapisa nije uspjelo.",
+      "clearAllTitle": "Izbriši svu povijest",
+      "clearAllMessage": "Jeste li sigurni da želite izbrisati sve zapise povijesti? Ova se radnja ne može poništiti.",
+      "clearAllSuccess": "Sva povijest izbrisana.",
+      "clearAllError": "Brisanje povijesti nije uspjelo."
+    },
+    "visibility": {
+      "public": "javnost",
+      "private": "privatni"
+    },
+    "unknownSpecies": "Nepoznata vrsta",
+    "details": {
+      "commonName": "Uobičajeno ime",
+      "scientificName": "Znanstveno ime",
+      "taxonomicRank": "Taksonomski rang",
+      "type": "Tip",
+      "conservationStatus": "Status zaštite",
+      "timesScanned": "Vremena skenirana",
+      "timeCount": "{{count}} vrijeme",
+      "timeCount_plural": "{{count}} puta",
+      "globalAppScans": "Globalno skeniranje aplikacija",
+      "scanCount": "{{count}} skeniranje",
+      "scanCount_plural": "{{count}} skeniranja",
+      "scannedOn": "Skenirano na"
+    },
+    "premiumGate": {
+      "title": "Pretplatite se za pristup izvanmrežnom načinu rada",
+      "message": "Izvanmrežni pristup vašoj povijesti vrhunska je značajka. Pretplatite se da biste vidjeli svoju povijest skeniranja kada ste izvan mreže."
+    },
+    "noHistory": "Još nema povijesti",
+    "startScanning": "Počnite skenirati kako biste izgradili svoju povijest",
+    "delete": "Izbrisati",
+    "deleteAll": "Izbriši sve",
+    "deleteConfirm": "Jeste li sigurni da želite izbrisati ovu stavku?",
+    "deleteAllConfirm": "Jeste li sigurni da želite izbrisati svu povijest?",
+    "scannedOn": "Skenirano {{date}}"
+  },
+  "postDetail": {
+    "title": "Post",
+    "aboutLabel": "Oko",
+    "emptyTitle": "Post nije pronađen",
+    "alerts": {
+      "postNotFoundTitle": "Greška",
+      "postNotFoundBody": "Post nije pronađen.",
+      "loadErrorTitle": "Greška",
+      "loadErrorBody": "Učitavanje objave nije uspjelo.",
+      "likeErrorBody": "Neuspješno sviđanje objave."
+    }
+  },
+  "speciesGallery": {
+    "title": "Galerija",
+    "noResults": "Nema rezultata",
+    "loadMore": "Učitaj više",
+    "error": "Učitavanje galerije nije uspjelo"
+  },
+  "speciesLanding": {
+    "title": "Pojedinosti o vrsti",
+    "scientificName": "Znanstveni naziv",
+    "commonName": "Uobičajeno ime",
+    "description": "Opis",
+    "habitat": "Stanište",
+    "diet": "Dijeta",
+    "lifespan": "Životni vijek",
+    "conservationStatus": "Status zaštite",
+    "addToFavorites": "Dodaj u favorite",
+    "removeFromFavorites": "Ukloni iz Favorita",
+    "share": "Udio",
+    "viewMore": "Prikaži više",
+    "error": "Učitavanje pojedinosti o vrsti nije uspjelo"
+  },
+  "manualPayment": {
+    "title": "Ručno plaćanje",
+    "uploadProof": "Prenesite dokaz o plaćanju",
+    "selectImage": "Odaberite Slika",
+    "takePhoto": "Fotografiraj",
+    "chooseFromGallery": "Odaberite iz galerije",
+    "uploadImage": "Učitaj sliku",
+    "uploading": "Prijenos...",
+    "submit": "Pošaljite uplatu",
+    "submitting": "Slanje...",
+    "successTitle": "Uspjeh",
+    "successMessage": "Uplata je uspješno izvršena. Uskoro ćemo to provjeriti.",
+    "errorTitle": "Greška",
+    "errorMessage": "Plaćanje nije uspjelo. Molimo pokušajte ponovo.",
+    "selectImageFirst": "Prvo odaberite sliku"
+  },
+  "scanStats": {
+    "title": "Statistika skeniranja",
+    "totalScans": "Ukupno skeniranje",
+    "thisWeek": "Ovaj tjedan",
+    "thisMonth": "Ovaj mjesec",
+    "plants": "Biljke",
+    "animals": "Životinje",
+    "noData": "Podaci skeniranja još nisu dostupni"
+  }
+}

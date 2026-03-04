@@ -1,0 +1,895 @@
+{
+  "common": {
+    "welcome": "Tervetuloa",
+    "guest": "Vieras",
+    "loading": "Ladataan...",
+    "error": "Virhe",
+    "success": "Menestys",
+    "cancel": "Peruuttaa",
+    "ok": "OK",
+    "save": "Tallentaa",
+    "back": "Takaisin",
+    "edit": "Muokata",
+    "username": "Käyttäjätunnus",
+    "and": "ja"
+  },
+  "login": {
+    "title": "LeafNest",
+    "signInWithGoogle": "Kirjaudu sisään Googlella",
+    "signInAsGuest": "Kirjaudu sisään vieraana",
+    "signInFailed": "Kirjautuminen epäonnistui",
+    "googleAuthError": "Google Auth -virhe",
+    "unexpectedError": "Odottamaton virhe",
+    "unknownError": "Tuntematon virhe",
+    "termsText": "Rekisteröitymällä osoitat, että olet lukenut ja hyväksynyt",
+    "termsOfUse": "Käyttöehdot",
+    "privacyPolicy": "Tietosuojakäytäntö",
+    "cookiesPolicy": "Evästekäytäntö",
+    "signIn": "Kirjaudu sisään",
+    "welcomeTitle": "Tervetuloa LeafNestiin",
+    "welcomeSubtitle": "Tutustu luonnon kauneuteen",
+    "signInWithEmailButton": "Kirjaudu sisään sähköpostilla",
+    "dividerOr": "tai",
+    "continueAsGuest": "Jatka vieraana",
+    "continueAgreement": "Jatkamalla hyväksyt meidän"
+  },
+  "home": {
+    "welcomeGuest": "Tervetuloa, Vieras",
+    "welcomeUser": "Tervetuloa, {{name}}",
+    "guestModeSubtitle": "Olet vierastilassa. Kirjaudu sisään avataksesi kaikki ominaisuudet.",
+    "welcomeBackSubtitle": "Mahtavaa nähdä sinut takaisin!",
+    "scanPlantsTitle": "Skannaa kasvit välittömästi",
+    "scanPlantsSubtitle": "Osoita, ammu ja tunnista kasvisto sekunneissa.",
+    "scanAnimalsTitle": "Skannaa eläimet välittömästi",
+    "scanAnimalsSubtitle": "Tunnista eläimet sekunneissa.",
+    "learnNatureTitle": "Opi luonnosta",
+    "learnNatureSubtitle": "Löydä enemmän tekstistä puheeksi ja nopeilla faktoilla.",
+    "scanningStats": "Skannaustilastot",
+    "plantsScanned": "Skannatut kasvit",
+    "animalsIdentified": "Eläimet tunnistettu",
+    "dailyDiscovery": "Päivittäinen löytö",
+    "dailyDiscoverySubtitle": "Opi jotain uutta joka päivä",
+    "plantOfTheDay": "Päivän kasvi",
+    "animalOfTheDay": "Päivän eläin",
+    "scientificName": "Tieteellinen nimi",
+    "habitat": "Habitat",
+    "diet": "Ruokavalio",
+    "lifespan": "Elinikä",
+    "weight": "Paino",
+    "cycle": "Elinkaari",
+    "watering": "Kastelu",
+    "sunlight": "Auringonvalo",
+    "loadingDaily": "Ladataan päivittäistä sisältöä...",
+    "errorLoadingDaily": "Päivittäistä sisältöä ei voi ladata",
+    "pullToRefresh": "Päivitä vetämällä",
+    "offlineMode": "Offline-sisältö",
+    "funFact": "Hauska Fakta",
+    "newFact": "Uusi Fakta",
+    "trendingPlants": "Trendaavat kasvit",
+    "trendingAnimals": "Trendaavat eläimet",
+    "alerts": {
+      "authRequiredTitle": "Todennus vaaditaan",
+      "authRequiredBody": "Kirjaudu sisään ladataksesi PDF-tiedoston.",
+      "pdfSuccessTitle": "Menestys",
+      "pdfSuccessBody": "PDF on luotu ja lähetetty sähköpostiisi.",
+      "pdfErrorTitle": "Virhe",
+      "pdfErrorBody": "PDF:n luominen epäonnistui. Yritä uudelleen.",
+      "signInRequiredTitle": "Kirjautuminen vaaditaan",
+      "signInLikeBody": "Kirjaudu sisään pitääksesi viesteistä.",
+      "signInCommentBody": "Kirjaudu sisään kommentoidaksesi.",
+      "downloadsUnavailableTitle": "Latauksia ei ole saatavilla",
+      "downloadsUnavailableBody": "Rekisteröidy ilmaiseksi tilille ladataksesi lajitietoja.",
+      "downloadLimitCheckErrorBody": "Latausrajan tarkistaminen epäonnistui. Yritä uudelleen."
+    },
+    "pdf": {
+      "defaultCommon": "Tuntematon",
+      "defaultScientific": "Tuntematon",
+      "defaultRank": "Tuntematon arvosana",
+      "defaultTaxon": "Tuntematon",
+      "noDescription": "Kuvausta ei ole saatavilla.",
+      "infoUnavailable": "Tietoja ei ole saatavilla.",
+      "notEvaluated": "Ei arvioitu"
+    },
+    "trending": {
+      "title": "Trendikäs lajit"
+    },
+    "emptyState": {
+      "title": "Tervetuloa yhteisöön",
+      "subtitle": "Aloita luontolöytöjesi tutkiminen ja jakaminen.",
+      "cta": "Skannaa ensimmäinen lajisi"
+    },
+    "feed": {
+      "likesCount": "{{count}} tykkää",
+      "likesCount_plural": "{{count}} tykkää",
+      "beFirst": "Ole ensimmäinen, joka tykkää tästä",
+      "showMore": "Näytä lisää",
+      "showLess": "Näytä vähemmän",
+      "viewComments": "Näytä kaikki {{count}} kommentti",
+      "viewComments_plural": "Näytä kaikki {{count}} kommenttia",
+      "unknownUser": "Anonyymi",
+      "unknownSpecies": "Tuntematon laji",
+      "likeError": "Viestistä tykkääminen epäonnistui."
+    },
+    "relativeTime": {
+      "justNow": "Juuri nyt",
+      "minutes": "{{count}}min sitten",
+      "hours": "{{count}}h sitten",
+      "days": "{{count}}pv sitten"
+    }
+  },
+  "settings": {
+    "title": "Asetukset",
+    "account": "Tili",
+    "guestMode": "Vierastila",
+    "signedIn": "Kirjautunut sisään",
+    "username": "Käyttäjätunnus",
+    "editUsername": "Muokkaa käyttäjätunnusta",
+    "currentUsername": "Nykyinen käyttäjätunnus",
+    "newUsername": "Uusi käyttäjätunnus",
+    "usernameUpdated": "Käyttäjätunnus päivitetty onnistuneesti!",
+    "usernameUpdateError": "Käyttäjätunnuksen päivittäminen epäonnistui",
+    "usernameUpdateFailed": "Käyttäjätunnuksen päivitys epäonnistui",
+    "usernameRequired": "Käyttäjätunnus vaaditaan",
+    "usernameTooShort": "Käyttäjätunnuksessa on oltava vähintään 3 merkkiä",
+    "usernameTooLong": "Käyttäjätunnuksessa saa olla enintään 20 merkkiä",
+    "usernameInvalidChars": "Käyttäjätunnus voi sisältää vain kirjaimia, numeroita, alaviivoja ja yhdysmerkkejä",
+    "language": "Kieli",
+    "selectLanguage": "Valitse Kieli",
+    "logout": "Kirjaudu ulos",
+    "logoutError": "Uloskirjautuminen epäonnistui.",
+    "about": "Noin",
+    "appName": "LeafNest",
+    "yourPlan": "Sinun suunnitelmasi",
+    "leafNestFree": "LeafNest ilmainen",
+    "help": "Auttaa",
+    "sendFeedback": "Lähetä palautetta",
+    "faq": "FAQ",
+    "termsOfUse": "Käyttöehdot",
+    "generalSection": "Kenraali",
+    "supportSection": "Tukea",
+    "legalSection": "Laillinen"
+  },
+  "profile": {
+    "title": "Profiili",
+    "editUsername": "Muokkaa käyttäjätunnusta",
+    "signOut": "Kirjaudu ulos",
+    "leaveAccount": "Poistu tilistäsi",
+    "signIn": "Kirjaudu sisään",
+    "accessFullFeatures": "Käytä kaikkia ominaisuuksia",
+    "createAccount": "Luo tili",
+    "joinLeafNest": "Liity LeafNestiin",
+    "guestUser": "Vieraskäyttäjä",
+    "statsTitle": "Skannaa tilastot",
+    "viewAll": "Näytä kaikki",
+    "guestPromptTitle": "Seuraa edistymistäsi",
+    "guestPromptText": "Kirjaudu sisään seurataksesi skannauksia, löytääksesi lajeja ja avataksesi saavutuksia.",
+    "badgeNew": "Uusi",
+    "editPlaceholder": "Anna käyttäjänimi",
+    "stats": {
+      "total": "Skannaukset yhteensä",
+      "week": "Tällä viikolla",
+      "species": "Laji"
+    },
+    "sections": {
+      "account": "Tilin asetukset"
+    },
+    "menu": {
+      "planTitle": "Sinun suunnitelmasi",
+      "planSubtitle": "LeafNest ilmainen",
+      "notificationsTitle": "Ilmoitukset",
+      "notificationsSubtitle": "Hallinnoi ilmoituksiasi",
+      "passwordTitle": "Salasana unohtunut",
+      "passwordSubtitle": "Palauta salasanasi",
+      "signOutTitle": "Kirjaudu ulos",
+      "signOutSubtitle": "Kirjaudu ulos tililtäsi",
+      "signInTitle": "Kirjaudu sisään",
+      "signInSubtitle": "Käytä kaikkia ominaisuuksia",
+      "createAccountTitle": "Luo tili",
+      "createAccountSubtitle": "Liity LeafNestiin tänään"
+    },
+    "alerts": {
+      "syncSuccess": "Synkronoitu {{count}} odottaa tarkistusta",
+      "syncSuccess_plural": "Synkronoitu {{count}} odottavaa skannausta",
+      "usernameUpdated": "Käyttäjätunnus päivitetty onnistuneesti!",
+      "usernameUpdateError": "Käyttäjätunnuksen päivittäminen epäonnistui.",
+      "signOutTitle": "Kirjaudu ulos",
+      "signOutMessage": "Haluatko varmasti kirjautua ulos?",
+      "signOutConfirm": "Kirjaudu ulos",
+      "signOutError": "Uloskirjautuminen epäonnistui. Yritä uudelleen."
+    }
+  },
+  "languages": {
+    "ar": "arabia",
+    "zh-CN": "kiina (yksinkertaistettu)",
+    "zh-TW": "kiina (perinteinen)",
+    "hr": "kroatialainen",
+    "cs": "Tšekki",
+    "da": "tanskalainen",
+    "nl": "hollantilainen",
+    "en": "englanti",
+    "fi": "suomalainen",
+    "fr": "ranskalainen",
+    "de": "saksaksi",
+    "el": "kreikkalainen",
+    "hi": "hindi",
+    "hu": "Unkari",
+    "id": "Indonesialainen",
+    "it": "italialainen",
+    "ja": "japanilainen",
+    "ko": "korealainen",
+    "ms": "malaiji",
+    "no": "norjalainen",
+    "fa": "persialainen",
+    "pl": "Kiillottaa",
+    "pt": "portugali",
+    "ro": "romanialainen",
+    "ru": "venäjäksi",
+    "sk": "Slovakian",
+    "es": "espanja",
+    "sv": "ruotsinkielinen",
+    "tl": "Tagalog",
+    "th": "thaimaalainen",
+    "tr": "turkkilainen",
+    "uk": "ukrainalainen",
+    "vi": "vietnam"
+  },
+  "tabs": {
+    "home": "Kotiin",
+    "scan": "Skannata",
+    "history": "Historia",
+    "settings": "Asetukset"
+  },
+  "animals": {
+    "title": "Päivän eläimet",
+    "lion": {
+      "name": "Leijona",
+      "scientificName": "Panthera leo",
+      "description": "Leijona on Panthera-sukuun kuuluva iso kissa, joka on kotoisin Afrikasta ja Intiasta. Sillä on lihaksikas, leveä rintakehä, lyhyt pyöreä pää, pyöreät korvat ja karvainen tupsu hännän päässä.",
+      "habitat": "Savannit, niityt ja avoimet metsät",
+      "diet": "Lihansyöjä - ensisijaisesti suuret nisäkkäät, kuten seeprat, gnuut ja puhvelit",
+      "lifespan": "10-14 vuotta luonnossa, jopa 20 vuotta vankeudessa",
+      "conservationStatus": "Haavoittuvainen"
+    },
+    "elephant": {
+      "name": "Norsu",
+      "scientificName": "Elephantidae",
+      "description": "Norsut ovat suurimpia olemassa olevia maaeläimiä, joille on tunnusomaista niiden pitkä vartalo (runko), pylväsmaiset jalat ja valtavat päät, joissa on temporaaliset rauhaset ja leveät, litteät korvat.",
+      "habitat": "Savannit, metsät, aavikot ja suot",
+      "diet": "Kasvinsyöjä - ruoho, lehdet, kuori, hedelmät ja maaperä",
+      "lifespan": "60-70 vuotta",
+      "conservationStatus": "Uhanalainen"
+    },
+    "panda": {
+      "name": "Jättiläinen Panda",
+      "scientificName": "Ailuropoda melanoleuca",
+      "description": "Jättipanda on Etelä-Kiinan kotoisin oleva karhu. Sille on ominaista sen rohkea mustavalkoinen turkki ja pyöreä runko.",
+      "habitat": "Vuoristot Keski-Kiinassa ja tiheitä bambumetsiä",
+      "diet": "Pääasiassa bambu (99 % ruokavaliosta), joskus pieniä eläimiä",
+      "lifespan": "20 vuotta luonnossa, jopa 30 vuotta vankeudessa",
+      "conservationStatus": "Haavoittuvainen"
+    },
+    "loading": "Ladataan eläimiä...",
+    "errorLoading": "Eläinten lataaminen epäonnistui",
+    "addToFavorites": "Lisää suosikkeihin",
+    "removeFromFavorites": "Poista suosikeista",
+    "learnMore": "Lisätietoja",
+    "share": "Jaa eläin"
+  },
+  "signup": {
+    "title": "Luo tili",
+    "username": "Käyttäjätunnus",
+    "email": "Sähköposti",
+    "password": "Salasana",
+    "confirmPassword": "Vahvista salasana",
+    "register": "Rekisteröidy",
+    "alreadyHaveAccount": "Onko sinulla jo tili? Kirjaudu sisään",
+    "passwordsDontMatch": "Salasanat eivät täsmää!",
+    "fillAllFields": "Täytä kaikki kentät.",
+    "verificationEmailSent": "Sähköpostiisi on lähetetty vahvistussähköposti.",
+    "emailAlreadyInUse": "Sähköpostiosoite on jo käytössä.",
+    "invalidEmail": "Sähköpostiosoite ei kelpaa.",
+    "subtitle": "Liity kanssamme tutkimaan luontoa",
+    "processing": "Käsitellään...",
+    "dividerOr": "tai",
+    "alreadyMember": "Oletko jo jäsen?",
+    "signInLink": "Kirjaudu sisään"
+  },
+  "signin": {
+    "title": "Kirjaudu sisään",
+    "email": "Sähköposti",
+    "password": "Salasana",
+    "signIn": "Kirjaudu sisään",
+    "signInWithGoogle": "Kirjaudu sisään Googlella",
+    "dontHaveAccount": "Eikö sinulla ole tiliä? Rekisteröidy",
+    "fillAllFields": "Täytä kaikki kentät.",
+    "signInSuccessful": "Sisäänkirjautuminen onnistui",
+    "welcomeBack": "Tervetuloa takaisin",
+    "userNotFound": "Tällä sähköpostilla ei löytynyt käyttäjää.",
+    "wrongPassword": "Väärä salasana.",
+    "invalidEmail": "Virheellinen sähköpostiosoite.",
+    "subtitle": "Kirjaudu sisään jatkaaksesi matkaasi",
+    "forgotPasswordLink": "Salasana unohtunut?",
+    "dividerOr": "tai",
+    "noAccountPrompt": "Eikö sinulla ole tiliä?",
+    "signUpLink": "Rekisteröidy"
+  },
+  "scan": {
+    "loadingCamera": "Ladataan kameraa...",
+    "needPermission": "Tarvitsemme luvan kameran näyttämiseen",
+    "grantPermission": "Myönnä lupa",
+    "preparingCamera": "Valmistellaan kameraa..."
+  },
+  "favorites": {
+    "title": "Suosikit",
+    "all": "Kaikki",
+    "plants": "Kasveja",
+    "animals": "Eläimet",
+    "removeFavorite": "Poista suosikki",
+    "remove": "Poistaa",
+    "cancel": "Peruuttaa",
+    "removed": "Poistettu",
+    "removedMessage": "on poistettu suosikeistasi.",
+    "error": "Virhe",
+    "failedToRemove": "Suosikeista poistaminen epäonnistui.",
+    "clearFavorites": "Tyhjennä suosikit",
+    "removeAllFavorites": "Poistetaanko kaikki suosikit?",
+    "removeAll": "Poista kaikki",
+    "failedToClear": "Suosikkien tyhjentäminen epäonnistui.",
+    "plant": "Kasvi",
+    "animal": "Eläin",
+    "noFavoritesYet": "Ei vielä suosikkeja",
+    "addFromDaily": "Lisää joitain päivän kasveista tai eläimistä."
+  },
+  "about": {
+    "title": "Noin",
+    "developedBy": "LeafNest-tiimin kehittämä ja suunnittelema",
+    "teamTitle": "LeafNest-tiimi",
+    "specialThanks": "Erityinen kiitos",
+    "mentor": "Herra Joshua R. Lasac",
+    "credits": "Alun perin LeafNest-tiimi loi Pinamalayan Maritime Foundationin ja Technological College INC:n (PMFTCI) ja School of Computer Studiesin tuella.",
+    "privacyPolicy": "Tietosuojakäytäntö",
+    "version": "Versio 0.0.1 (1)",
+    "help": "Apua: leafnest.capstone@gmail.com",
+    "tagline": "Kasvien ja eläinten tunnistus",
+    "institutionalSupport": "Institutionaalinen tuki",
+    "mentorRole": "Projektin mentori ja neuvonantaja"
+  },
+  "plan": {
+    "title": "Suunnitelmat",
+    "upgradeTitle": "Päivitä Premiumiin",
+    "upgradeSubtitle": "Avaa kaikki ominaisuudet ja ota kaikki irti sovelluksestamme.",
+    "free": "Ilmainen",
+    "freePrice": "0 ₱ / kk",
+    "freeFeature1": "Skannaa rajoitetut kasvit ja eläimet",
+    "freeFeature2": "Päivittäiset peruslöydöt",
+    "freeFeature3": "Ei offline-käyttöä historiaan",
+    "freeFeature4": "Mukana mainoksia",
+    "premium": "Premium",
+    "premiumPrice": "129,00 ₱ / kk",
+    "premiumFeature1": "Rajoittamaton skannaus",
+    "premiumFeature2": "Ainutlaatuisia päivittäisiä löytöjä",
+    "premiumFeature3": "Offline-käyttö historiaan",
+    "premiumFeature4": "Kokemus ilman mainoksia",
+    "subscribeNow": "Tilaa nyt",
+    "selectedPlan": "Valitsit suunnitelman {{plan}}!"
+  },
+  "legal": {
+    "cookies": {
+      "title": "Evästekäytäntö",
+      "subtitle": "Kuinka käytämme evästeitä parantaaksemme käyttökokemustasi",
+      "effectiveDate": "Voimaantulopäivä: 1.7.2025",
+      "intro": "Tämä evästekäytäntö selittää, kuinka käytämme evästeitä parantaaksemme käyttökokemustasi, kun vierailet sovelluksessamme ja käytät sen ominaisuuksia. Käyttämällä tätä sovellusta hyväksyt evästeiden käytön tässä käytännössä kuvatulla tavalla.",
+      "sections": [
+        {
+          "title": "Mitä evästeet ovat?",
+          "content": "Evästeet ovat pieniä tekstitiedostoja, jotka tallennetaan laitteellesi, kun vierailet verkkosivustoilla tai käytät sovelluksia. Ne auttavat meitä ymmärtämään, kuinka olet vuorovaikutuksessa palvelumme kanssa, ja antavat meille mahdollisuuden tarjota sinulle paremman, henkilökohtaisemman kokemuksen."
+        },
+        {
+          "title": "Kuinka käytämme evästeitä",
+          "content": "Käytämme evästeitä useisiin olennaisiin tarkoituksiin:",
+          "list": [
+            "Sisällön ja mainosten personointi",
+            "Liikennemallien analysointiin ja käyttökokemuksen parantamiseen",
+            "Ottaaksemme käyttöön sovelluksemme tietyt ominaisuudet ja toiminnot",
+            "Muista mieltymyksesi ja asetuksesi",
+            "Turvallisen pääsyn tarjoaminen tilillesi"
+          ]
+        },
+        {
+          "title": "Käyttämämme evästetyypit",
+          "content": "Käytämme erilaisia ​​evästeitä parantaaksemme käyttökokemustasi:",
+          "list": [
+            "Tärkeät evästeet: Vaaditaan sovelluksen perustoimintoja varten",
+            "Suorituskykyevästeet: Auta meitä ymmärtämään, kuinka käytät sovellusta",
+            "Toiminnalliset evästeet: Muista mieltymyksesi ja valintasi",
+            "Analytics-evästeet: Tarjoa näkemyksiä sovellusten käyttömalleista"
+          ]
+        },
+        {
+          "title": "Evästeiden hallinta",
+          "content": "Voit hallita ja hallita evästeitä laitteesi asetuksista. Huomaa kuitenkin, että tiettyjen evästeiden poistaminen käytöstä voi vaikuttaa käyttökokemukseesi ja rajoittaa sovelluksen toimivuutta."
+        },
+        {
+          "title": "Evästeen kesto",
+          "content": "Jotkut evästeet ovat väliaikaisia ​​(istuntoevästeet) ja ne poistetaan, kun suljet sovelluksen. Muut pysyvät laitteessasi tietyn ajan muistaakseen asetuksesi istuntojen aikana."
+        },
+        {
+          "title": "Muutokset tähän käytäntöön",
+          "content": "Saatamme päivittää tätä evästekäytäntöä ajoittain vastaamaan tekniikan muutoksia tai lakivaatimuksia. Kaikki muutokset julkaistaan ​​tälle sivulle päivitetyllä tarkistuspäivämäärällä."
+        },
+        {
+          "title": "Ota yhteyttä",
+          "content": "Jos sinulla on kysyttävää, huolenaiheita tai palautetta tästä evästekäytännöstä, ota meihin yhteyttä osoitteeseen leafnest.capstone@gmail.com."
+        }
+      ],
+      "footerTitle": "Yksityisyytesi on tärkeä",
+      "footerText": "Olemme sitoutuneet avoimuuteen evästeiden käytön suhteen. Sovelluksemme jatkuva käyttö osoittaa, että hyväksyt tämän käytännön.",
+      "copyright": "© 2025 LeafNest. Kaikki oikeudet pidätetään.",
+      "lastUpdated": "Viimeksi päivitetty: 1. heinäkuuta 2025"
+    },
+    "privacy": {
+      "title": "Tietosuojakäytäntö",
+      "subtitle": "Yksityisyytesi on meille tärkeä",
+      "effectiveDate": "Voimaantulopäivä: 1.7.2025",
+      "intro": "LeafNest on sitoutunut suojelemaan yksityisyyttäsi ja varmistamaan henkilötietojesi turvallisuuden.",
+      "sections": [
+        {
+          "title": "Keräämämme tiedot",
+          "content": "Keräämme tietoja, jotka annat meille suoraan, esimerkiksi kun luot tilin, lähetät valokuvia tai otat meihin yhteyttä tukeaksesi. Tämä voi sisältää nimesi, sähköpostiosoitteesi ja kaikki muut antamasi tiedot."
+        },
+        {
+          "title": "Kuinka käytämme tietojasi",
+          "content": "Käytämme keräämiämme tietoja tarjotaksemme, ylläpitääksemme ja parantaaksemme palveluitamme, kommunikoidaksemme kanssasi ja kehittääksemme uusia ominaisuuksia. Emme myy henkilötietojasi kolmansille osapuolille."
+        },
+        {
+          "title": "Tietoturva",
+          "content": "Toteutamme asianmukaisia ​​teknisiä ja organisatorisia toimenpiteitä henkilötietojesi suojaamiseksi luvattomalta käytöltä, muuttamiselta, paljastamiselta tai tuhoamiselta."
+        },
+        {
+          "title": "Sinun oikeutesi",
+          "content": "Sinulla on oikeus tarkastella, päivittää tai poistaa henkilötietojasi. Voit tehdä tämän tilisi asetuksista tai ottamalla meihin suoraan yhteyttä."
+        },
+        {
+          "title": "Kolmannen osapuolen palvelut",
+          "content": "Sovelluksemme voi sisältää linkkejä kolmansien osapuolien verkkosivustoille ja palveluihin. Emme ole vastuussa heidän tietosuojakäytännöistään. Kehotamme sinua tutustumaan heidän tietosuojakäytäntöihinsä."
+        },
+        {
+          "title": "Muutokset tietosuojakäytäntöön",
+          "content": "Pidätämme oikeuden päivittää tätä tietosuojakäytäntöä milloin tahansa. Muutokset julkaistaan ​​tälle sivulle päivitetyllä voimaantulopäivämäärällä. Jatkuva käyttö merkitsee muutosten hyväksymistä."
+        },
+        {
+          "title": "Ota yhteyttä",
+          "content": "Jos sinulla on kysyttävää tästä tietosuojakäytännöstä tai tietosuojakäytännöistämme, ota meihin yhteyttä osoitteeseen privacy@leafnest.com."
+        }
+      ],
+      "footerTitle": "Me välitämme sinusta",
+      "footerText": "Luottamuksesi on meille tärkeä. Olemme sitoutuneet läpinäkyviin tietokäytäntöihin ja oikeutesi yksityisyyteen.",
+      "copyright": "© 2025 LeafNest. Kaikki oikeudet pidätetään.",
+      "lastUpdated": "Viimeksi päivitetty: 1. heinäkuuta 2025"
+    },
+    "terms": {
+      "title": "Käyttöehdot",
+      "subtitle": "Lue huolellisesti ennen käyttöä",
+      "effectiveDate": "Voimaantulopäivä: 1.7.2025",
+      "intro": "Nämä käyttöehdot säätelevät LeafNest-sovelluksen ja -palvelujen käyttöä. Käyttämällä sovellustamme hyväksyt nämä ehdot.",
+      "sections": [
+        {
+          "title": "Ehtojen hyväksyminen",
+          "content": "Käyttämällä tai käyttämällä LeafNest-sovellusta sitoudut noudattamaan näitä käyttöehtoja. Jos et hyväksy näitä ehtoja, sinun ei tule käyttää sovellusta."
+        },
+        {
+          "title": "Käyttäjien velvollisuudet",
+          "content": "Suostut käyttämään sovellusta vain laillisiin tarkoituksiin ja tavalla, joka ei loukkaa muiden oikeuksia. Olet vastuussa tilitietojesi luottamuksellisuudesta."
+        },
+        {
+          "title": "Immateriaaliomaisuus",
+          "content": "Kaikki sovelluksen sisältö, tavaramerkit, logot ja immateriaalioikeudet ovat LeafNestin omistamia tai meille lisensoituja. Immateriaaliomaisuutemme luvaton käyttö on ehdottomasti kielletty."
+        },
+        {
+          "title": "Yksityisyys ja tiedonkeruu",
+          "content": "Keräämme ja käsittelemme henkilötietoja tietosuojakäytännössämme kuvatulla tavalla. Käyttämällä sovellustamme hyväksyt tiedonkeruu-, tallennus- ja käsittelykäytäntömme."
+        },
+        {
+          "title": "Vastuun rajoitus",
+          "content": "LeafNest ei ole vastuussa mistään vahingoista, menetyksistä tai vammoista, jotka johtuvat sovelluksen tai sen palveluiden käytöstä. Käytät sovellusta omalla vastuullasi ja harkintasi mukaan."
+        },
+        {
+          "title": "Muutokset ehtoihin",
+          "content": "Pidätämme oikeuden päivittää näitä käyttöehtoja milloin tahansa. Mahdolliset muutokset julkaistaan ​​tälle sivulle päivitetyllä voimaantulopäivämäärällä. Jatkuva käyttö merkitsee muutosten hyväksymistä."
+        },
+        {
+          "title": "Ota yhteyttä",
+          "content": "Jos sinulla on kysymyksiä, huolenaiheita tai palautetta näistä käyttöehdoista, ota meihin yhteyttä osoitteeseen leafnest.capstone@gmail.com."
+        }
+      ],
+      "footerTitle": "Kiitos",
+      "footerText": "Kiitos, että käytit aikaa käyttöehtojemme lukemiseen. Luottamuksesi ja noudattamisesi auttavat meitä luomaan paremman kokemuksen kaikille.",
+      "copyright": "© 2025 LeafNest. Kaikki oikeudet pidätetään.",
+      "lastUpdated": "Viimeksi päivitetty: 1. heinäkuuta 2025"
+    }
+  },
+  "faq": {
+    "title": "Ohje ja UKK",
+    "subtitle": "Etsi vastauksia yleisiin kysymyksiin",
+    "categories": [
+      {
+        "title": "Aloitus",
+        "items": [
+          {
+            "question": "Mikä on LeafNest?",
+            "answer": "LeafNest on kasvien tunnistus- ja tiedotussovellus, joka käyttää tekoälyteknologiaa auttaakseen sinua tunnistamaan kasveja ja eläimiä ja tarjoamaan tietoa luonnosta."
+          },
+          {
+            "question": "Miten pääsen alkuun?",
+            "answer": "Avaa sovellus, napauta skannauskuvaketta ja osoita se mitä tahansa kasvia tai eläintä kohti. Tekoäly tunnistaa sen ja antaa yksityiskohtaista tietoa kyseisestä lajista."
+          }
+        ]
+      },
+      {
+        "title": "Skannerin käyttäminen",
+        "items": [
+          {
+            "question": "Kuinka skannaan lajin?",
+            "answer": "Napauta aloitusnäytön skannauskuvaketta, suuntaa kamera lajiin ja ota selkeä valokuva. Sovellus tunnistaa sen automaattisesti."
+          },
+          {
+            "question": "Mikä tekee hyvästä skannauksesta?",
+            "answer": "Varmista hyvä valaistus, keskity erottuviin ominaisuuksiin ja pidä kamera vakaana saadaksesi parhaat tulokset."
+          },
+          {
+            "question": "Voinko skannata kuvagalleriastani?",
+            "answer": "Kyllä. Voit ladata olemassa olevia valokuvia galleriastasi valitsemalla galleriavaihtoehdon skannerin näytöstä."
+          }
+        ]
+      },
+      {
+        "title": "Tarkkuus ja ominaisuudet",
+        "items": [
+          {
+            "question": "Kuinka tarkka tunnistaminen on?",
+            "answer": "LeafNest käyttää edistyneitä koneoppimismalleja. Tarkkuus vaihtelee valaistuksen ja kuvanlaadun mukaan, mutta tyypillisesti ylittää 90 %."
+          },
+          {
+            "question": "Voinko säästää suosikkikasvejani?",
+            "answer": "Kyllä. Napauta minkä tahansa tunnistetun lajin sydänkuvaketta lisätäksesi sen suosikkeihisi, jotta voit käyttää niitä myöhemmin nopeasti."
+          }
+        ]
+      },
+      {
+        "title": "Tuki & Apu",
+        "items": [
+          {
+            "question": "Kuinka voin ottaa yhteyttä tukeen?",
+            "answer": "Avaa Asetukset-valikko ja valitse Ohje ja tuki tai lähetä meille sähköpostia osoitteeseen leafnest.capstone@gmail.com."
+          }
+        ]
+      }
+    ]
+  },
+  "help": {
+    "title": "Apua ja tuki",
+    "subtitle": "Vinkkejä kasvien ja eläinten skannaamiseen tekoälyllä – ja mistä saat lisäapua.",
+    "quickStart": {
+      "title": "Pika-aloitus",
+      "bullets": [
+        "Napauta aloitusnäytössä Skannaa-painiketta.",
+        "Keskitä kasvi tai eläin kehykseen.",
+        "Pidä paikallaan ja ota sitten selkeä kuva."
+      ],
+      "cta": "Avaa Skanneri"
+    },
+    "bestResults": {
+      "title": "Kuinka saada parempia tuloksia",
+      "bullets": [
+        "Käytä hyvää valaistusta ja vältä voimakasta taustavaloa.",
+        "Täytä kehys kohteella keskittyen erottuviin yksityiskohtiin.",
+        "Kokeile useita kuvakulmia, kuten lehtiä, kukkia, kuorta tai profiilikuvia."
+      ]
+    },
+    "troubleshooting": {
+      "title": "Vianetsintä",
+      "bullets": [
+        "Päivittäiset kohokohdat näyttävät samalta? Päivitä sovellus tai avaa se uudelleen puolenyön jälkeen (Filippiinien aikaa) vetämällä.",
+        "Ei Internetiä? Tarkista yhteys, koska kuvantunnistus vaatii verkkoyhteyden.",
+        "alhainen tarkkuus? Ota selkeämpi ja lähempi kuva paremmalla valaistuksella."
+      ]
+    },
+    "links": {
+      "faq": "FAQ",
+      "feedback": "Lähetä palautetta",
+      "about": "Tietoja LeafNestistä",
+      "privacy": "Tietosuojakäytäntö",
+      "terms": "Käyttöehdot",
+      "contact": "Ota yhteyttä tukeen"
+    },
+    "alerts": {
+      "noEmailTitle": "Sähköpostisovellusta ei voi avata",
+      "noEmailBody": "Lähetä meille sähköpostia osoitteeseen {{email}}."
+    }
+  },
+  "feedback": {
+    "title": "Lähetä palautetta",
+    "subtitle": "Kerro meille, mikä toimii hyvin tai mitä voisi parantaa. Luemme jokaisen viestin.",
+    "topicLabel": "Aihe",
+    "topics": {
+      "bug": "Ilmoita virheestä",
+      "idea": "Ominaisuuspyyntö",
+      "ux": "Suunnittelu / UX",
+      "content": "Laji / Sisältö",
+      "account": "Tili / Kirjautuminen",
+      "other": "muu"
+    },
+    "subjectLabel": "Aihe",
+    "subjectPlaceholder": "Lyhyt yhteenveto (esim. skanneri merkitsee lehden väärin vaahteraksi)",
+    "messageLabel": "Viesti",
+    "messagePlaceholder": "Kuvaile mitä tapahtui, vaiheita toistamiseen ja odotuksia.",
+    "emailLabel": "Sähköpostisi (valinnainen)",
+    "emailPlaceholder": "Vastaamme tänne tarvittaessa",
+    "includeDiagnostics": "Sisällytä diagnostiikka",
+    "diagnosticsHint": "Auttaa meitä virheenkorjausongelmissa (vain alusta ja käyttöjärjestelmä).",
+    "submit": "Lähetä palautetta",
+    "submitting": "Lähetetään...",
+    "footerText": "Tai lähetä meille sähköpostia suoraan osoitteeseen {{email}}",
+    "alerts": {
+      "missingInfoTitle": "Puuttuvat tiedot",
+      "missingInfoMessage": "Lisää aihe ja viesti.",
+      "invalidEmailTitle": "Virheellinen sähköpostiosoite",
+      "invalidEmailMessage": "Anna kelvollinen sähköpostiosoite tai jätä se tyhjäksi.",
+      "noEmailAppTitle": "Palautetta ei voi lähettää",
+      "noEmailAppMessage": "Yritä myöhemmin uudelleen tai lähetä meille sähköpostia osoitteeseen {{email}}.",
+      "successTitle": "Palaute lähetetty",
+      "successMessage": "Kiitos palautteestasi! Tarkistamme sen pian.",
+      "genericErrorTitle": "Jotain meni pieleen",
+      "genericErrorMessage": "Yritä myöhemmin uudelleen tai lähetä meille sähköpostia osoitteeseen {{email}}."
+    }
+  },
+  "comments": {
+    "title": "Kommentit",
+    "noComments": "Ei vielä kommentteja",
+    "beFirstToComment": "Ole ensimmäinen kommentoija!",
+    "addComment": "Lisää kommentti...",
+    "deleteComment": "Poista kommentti",
+    "deleteConfirm": "Haluatko varmasti poistaa tämän kommentin?",
+    "delete": "Poistaa",
+    "failedToDelete": "Kommentin poistaminen epäonnistui",
+    "failedToLike": "Kommentista tykkäys epäonnistui",
+    "loginRequired": "Kirjautuminen vaaditaan",
+    "loginToComment": "Sinun tulee olla kirjautuneena kommentoidaksesi",
+    "loginToLike": "Sinun on oltava kirjautuneena sisään pitääksesi kommentteja",
+    "justNow": "Juuri nyt"
+  },
+  "notification": {
+    "title": "Ilmoitukset",
+    "noNotifications": "Ei vielä ilmoituksia",
+    "markAsRead": "Merkitse luetuksi",
+    "markAllAsRead": "Merkitse kaikki luetuiksi",
+    "delete": "Poistaa",
+    "deleteAll": "Poista kaikki"
+  },
+  "commentsModal": {
+    "title": "Kommentit",
+    "inputPlaceholder": "Lisää kommentti...",
+    "empty": {
+      "title": "Ei vielä kommentteja",
+      "subtitle": "Ole ensimmäinen kommentoija!"
+    },
+    "actions": {
+      "cancel": "Peruuttaa",
+      "delete": "Poistaa"
+    },
+    "alerts": {
+      "loadErrorTitle": "Virhe",
+      "loadErrorBody": "Kommenttien lataaminen epäonnistui.",
+      "loginRequiredTitle": "Kirjautuminen vaaditaan",
+      "loginRequiredCommentBody": "Sinun tulee olla kirjautuneena kommentoidaksesi.",
+      "loginRequiredLikeBody": "Sinun on oltava kirjautuneena sisään pitääksesi kommentteja.",
+      "addErrorTitle": "Virhe",
+      "addErrorBody": "Kommentin lisääminen epäonnistui.",
+      "likeErrorTitle": "Virhe",
+      "likeErrorBody": "Kommentista tykkääminen epäonnistui.",
+      "deleteTitle": "Poista kommentti",
+      "deleteConfirmBody": "Haluatko varmasti poistaa tämän kommentin?",
+      "deleteErrorTitle": "Virhe",
+      "deleteErrorBody": "Kommentin poistaminen epäonnistui."
+    }
+  },
+  "premiumGate": {
+    "offline": {
+      "title": "Offline-käyttö vaaditaan",
+      "historySubtitle": "Tilaa nähdäksesi historian offline-tilassa",
+      "historyDescription": "Offline-käyttö skannaushistoriaasi on premium-ominaisuus. Päivitä nähdäksesi historiasi milloin tahansa ja missä tahansa.",
+      "favoritesSubtitle": "Tilaa, niin voit käyttää suosikkeja offline-tilassa",
+      "favoritesDescription": "Offline-käyttö suosikkeihisi on premium-ominaisuus. Päivitä nähdäksesi suosikkisi milloin tahansa ja missä tahansa."
+    },
+    "limits": {
+      "scanTitle": "Skannausraja saavutettu",
+      "scanSubtitle": "Olet käyttänyt kaikki {{limit}} skannausta",
+      "scanDescription": "Päivitä Premiumiin, niin saat rajattomasti skannauksia ja muita ominaisuuksia!",
+      "downloadTitle": "Latausraja saavutettu",
+      "downloadSubtitle": "Olet käyttänyt kaikki {{limit}} latausta",
+      "downloadDescription": "Päivitä Premiumiin, niin voit ladata rajattomasti!"
+    },
+    "timer": {
+      "resetsInHours": "Nollautuu {{count}} tunnin kuluttua",
+      "resetsInHours_plural": "Nollautuu {{count}} tunnin kuluttua"
+    },
+    "usage": {
+      "scans": "Skannaukset:",
+      "downloads": "Lataukset:"
+    },
+    "features": {
+      "title": "Premium-edut:",
+      "offlineHistory": "Offline-historian käyttöoikeus",
+      "offlineFavorites": "Offline-suosikkien käyttöoikeus",
+      "unlimitedScans": "Rajoittamaton skannaus",
+      "unlimitedDownloads": "Rajoittamattomat lataukset"
+    },
+    "pricing": {
+      "amount": "{{amount}}",
+      "period": "{{days}} päivän ajan"
+    },
+    "actions": {
+      "upgrade": "Päivitä Premiumiin",
+      "later": "Ehkä myöhemmin"
+    }
+  },
+  "manageNotifications": {
+    "title": "Hallitse ilmoituksia",
+    "pushNotifications": "Push-ilmoitukset",
+    "emailNotifications": "Sähköposti-ilmoitukset",
+    "likeNotifications": "Kuten Ilmoitukset",
+    "commentNotifications": "Kommentti-ilmoitukset",
+    "followNotifications": "Seuraa ilmoituksia",
+    "enabled": "Käytössä",
+    "disabled": "Ei käytössä",
+    "save": "Tallenna asetukset"
+  },
+  "history": {
+    "title": "Historia",
+    "loading": "Ladataan historiaa...",
+    "loadingMore": "Ladataan lisää...",
+    "signInRequiredTitle": "Kirjautuminen vaaditaan",
+    "signInRequiredBody": "Luo tili tai kirjaudu sisään nähdäksesi skannaushistoriasi.",
+    "selection": {
+      "selectedCount": "{{count}} valittu",
+      "deleteButton": "Poista {{count}}-tietue",
+      "deleteButton_plural": "Poista {{count}} tietueita"
+    },
+    "offlineBanner": {
+      "premium": "Offline-tila (Premium)",
+      "locked": "Offline-tila vaatii Premiumin"
+    },
+    "search": {
+      "placeholder": "Hae nimellä..."
+    },
+    "filters": {
+      "all": "Kaikki",
+      "plants": "Kasveja",
+      "animals": "Eläimet"
+    },
+    "empty": {
+      "noHistoryTitle": "Ei vielä historiaa",
+      "noHistoryBody": "Lajien skannaushistoriasi näkyy täällä, kun alat tunnistaa kasveja ja eläimiä.",
+      "noResultsTitle": "Tuloksia ei löytynyt",
+      "noResultsBody": "Yksikään tietue ei vastaa haku- tai suodatusehtojasi. Kokeile säätää suodattimia."
+    },
+    "actions": {
+      "signIn": "Kirjaudu sisään",
+      "delete": "Poistaa",
+      "clearAll": "Tyhjennä kaikki",
+      "clearFilters": "Selkeät suodattimet"
+    },
+    "alerts": {
+      "visibilityNow": "Skannaus on nyt {{status}}",
+      "visibilityUpdateFailed": "Näkyvyyden päivittäminen epäonnistui.",
+      "visibilityNeedsSync": "Tämä skannaus on synkronoitava ensin. Yritä hetken kuluttua uudelleen.",
+      "visibilityOffline": "Näkyvyyttä ei voi muuttaa offline-tilassa. Tarkista yhteys.",
+      "visibilityNotSynced": "Tätä tarkistusta ei ole vielä synkronoitu pilveen. Odota synkronoinnin valmistumista ja yritä uudelleen.",
+      "visibilityPermissionDenied": "Sinulla ei ole lupaa muokata tätä skannausta.",
+      "visibilityNetworkError": "Verkkovirhe. Tarkista yhteys ja yritä uudelleen.",
+      "errorWithMessage": "Virhe: {{message}}",
+      "deleteRecordTitle": "Poista tietue",
+      "deleteRecordMessage": "Poistetaanko \"{{name}}\" historiasta?",
+      "deleteRecordSuccess": "Tietue poistettu.",
+      "deleteRecordError": "Tietueen poistaminen epäonnistui.",
+      "deleteSelectedTitle": "Poista valitut",
+      "deleteSelectedMessage": "Poistetaanko {{count}}-tietue historiasta?",
+      "deleteSelectedMessage_plural": "Poistetaanko {{count}} tietueet historiasta?",
+      "deleteSelectedSuccess": "{{count}} tietue poistettu.",
+      "deleteSelectedSuccess_plural": "{{count}} tietueita poistettu.",
+      "deleteSelectedError": "Valittujen tietueiden poistaminen epäonnistui.",
+      "clearAllTitle": "Tyhjennä koko historia",
+      "clearAllMessage": "Haluatko varmasti poistaa kaikki historiatietueet? Tätä toimintoa ei voi kumota.",
+      "clearAllSuccess": "Kaikki historia tyhjennetty.",
+      "clearAllError": "Historian tyhjennys epäonnistui."
+    },
+    "visibility": {
+      "public": "julkinen",
+      "private": "yksityinen"
+    },
+    "unknownSpecies": "Tuntematon laji",
+    "details": {
+      "commonName": "Yleinen nimi",
+      "scientificName": "Tieteellinen nimi",
+      "taxonomicRank": "Taksonominen asema",
+      "type": "Tyyppi",
+      "conservationStatus": "Suojelutilanne",
+      "timesScanned": "Ajat skannattu",
+      "timeCount": "{{count}} kertaa",
+      "timeCount_plural": "{{count}} kertaa",
+      "globalAppScans": "Globaalit sovellusskannaukset",
+      "scanCount": "{{count}} skannaus",
+      "scanCount_plural": "{{count}} skannaa",
+      "scannedOn": "Skannattu päälle"
+    },
+    "premiumGate": {
+      "title": "Tilaa päästäksesi offline-tilaan",
+      "message": "Offline-käyttö historiaan on premium-ominaisuus. Tilaa nähdäksesi skannaushistoriasi, kun olet offline-tilassa."
+    },
+    "noHistory": "Ei vielä historiaa",
+    "startScanning": "Aloita skannaus historian rakentamiseksi",
+    "delete": "Poistaa",
+    "deleteAll": "Poista kaikki",
+    "deleteConfirm": "Haluatko varmasti poistaa tämän kohteen?",
+    "deleteAllConfirm": "Haluatko varmasti poistaa koko historian?",
+    "scannedOn": "Skannattu {{date}}"
+  },
+  "postDetail": {
+    "title": "Lähettää",
+    "aboutLabel": "Noin",
+    "emptyTitle": "Viestiä ei löydy",
+    "alerts": {
+      "postNotFoundTitle": "Virhe",
+      "postNotFoundBody": "Viestiä ei löydy.",
+      "loadErrorTitle": "Virhe",
+      "loadErrorBody": "Viestin lataaminen epäonnistui.",
+      "likeErrorBody": "Viestistä tykkääminen epäonnistui."
+    }
+  },
+  "speciesGallery": {
+    "title": "Galleria",
+    "noResults": "Tuloksia ei löytynyt",
+    "loadMore": "Lataa lisää",
+    "error": "Gallerian lataaminen epäonnistui"
+  },
+  "speciesLanding": {
+    "title": "Lajien tiedot",
+    "scientificName": "Tieteellinen nimi",
+    "commonName": "Yleisnimi",
+    "description": "Kuvaus",
+    "habitat": "Habitat",
+    "diet": "Ruokavalio",
+    "lifespan": "Elinikä",
+    "conservationStatus": "Säilytystila",
+    "addToFavorites": "Lisää suosikkeihin",
+    "removeFromFavorites": "Poista suosikeista",
+    "share": "Jakaa",
+    "viewMore": "Näytä lisää",
+    "error": "Lajitietojen lataaminen epäonnistui"
+  },
+  "manualPayment": {
+    "title": "Manuaalinen maksu",
+    "uploadProof": "Lataa maksutodistus",
+    "selectImage": "Valitse Kuva",
+    "takePhoto": "Ota valokuva",
+    "chooseFromGallery": "Valitse Galleriasta",
+    "uploadImage": "Lataa kuva",
+    "uploading": "Ladataan...",
+    "submit": "Lähetä Maksu",
+    "submitting": "Lähetetään...",
+    "successTitle": "Menestys",
+    "successMessage": "Maksu lähetetty onnistuneesti. Tarkistamme sen pian.",
+    "errorTitle": "Virhe",
+    "errorMessage": "Maksun lähettäminen epäonnistui. Yritä uudelleen.",
+    "selectImageFirst": "Valitse ensin kuva"
+  },
+  "scanStats": {
+    "title": "Skannaa tilastot",
+    "totalScans": "Skannaukset yhteensä",
+    "thisWeek": "Tällä viikolla",
+    "thisMonth": "Tässä kuussa",
+    "plants": "Kasveja",
+    "animals": "Eläimet",
+    "noData": "Skannaustietoja ei ole vielä saatavilla"
+  }
+}

@@ -13,6 +13,164 @@ const { NOTIFICATION_TYPES, formatNotificationForPush } = require("./notificatio
 
 admin.initializeApp();
 const SUPPORT_EMAIL = "leafnest.capstone@gmail.com";
+const EMAIL_VALIDATION_API_URL = "https://emailreputation.abstractapi.com/v1/";
+const EMAIL_VALIDATION_TIMEOUT_MS = 8000;
+const ALLOWED_EMAIL_DOMAINS = new Set([
+  "gmail.com",
+  "googlemail.com",
+  "outlook.com",
+  "hotmail.com",
+  "live.com",
+  "msn.com",
+  "yahoo.com",
+  "yahoo.co.uk",
+  "yahoo.ca",
+  "ymail.com",
+  "rocketmail.com",
+  "icloud.com",
+  "me.com",
+  "mac.com",
+  "proton.me",
+  "protonmail.com",
+  "zoho.com",
+  "aol.com",
+  "gmx.com",
+  "mail.com",
+  "yandex.com",
+  "yandex.ru",
+  "fastmail.com",
+  "tutanota.com",
+]);
+
+/**
+ * Validate that an email address looks deliverable using Abstract's email API.
+ */
+const validateExistingEmailAddress = async (email) => {
+  const validationApiKey = process.env.EMAIL_VALIDATION_API_KEY;
+
+  if (!validationApiKey) {
+    throw new HttpsError(
+      "failed-precondition",
+      "Email validation service is not configured properly",
+    );
+  }
+
+  const normalizedEmail = String(email || "").trim();
+  const url = new URL(EMAIL_VALIDATION_API_URL);
+  url.searchParams.set("api_key", validationApiKey);
+  url.searchParams.set("email", normalizedEmail);
+
+  let response;
+  try {
+    response = await fetch(url.toString(), {
+      method: "GET",
+      headers: { Accept: "application/json" },
+      signal: AbortSignal.timeout(EMAIL_VALIDATION_TIMEOUT_MS),
+    });
+  } catch (error) {
+    console.error("Email validation API request failed:", error);
+    throw new HttpsError(
+      "unavailable",
+      "Unable to validate email right now. Please try again.",
+    );
+  }
+
+  if (!response.ok) {
+    const responseText = await response.text();
+    console.error("Email validation API returned non-200:", {
+      status: response.status,
+      body: responseText,
+    });
+    throw new HttpsError(
+      "unavailable",
+      "Unable to validate email right now. Please try again.",
+    );
+  }
+
+  let payload;
+  try {
+    payload = await response.json();
+  } catch (error) {
+    console.error("Email validation API returned invalid JSON:", error);
+    throw new HttpsError(
+      "unavailable",
+      "Unable to validate email right now. Please try again.",
+    );
+  }
+
+  const deliverabilityStatus = payload?.email_deliverability?.status || "unknown";
+  const statusDetail = payload?.email_deliverability?.status_detail || "unknown";
+  const hasValidFormat = payload?.email_deliverability?.is_format_valid !== false;
+  const hasValidMx = payload?.email_deliverability?.is_mx_valid !== false;
+  const isDisposable = payload?.email_quality?.is_disposable === true;
+  const isUndeliverable = deliverabilityStatus === "undeliverable";
+  const isUnknown = deliverabilityStatus === "unknown";
+
+  if (!hasValidFormat || !hasValidMx || isDisposable || isUndeliverable || isUnknown) {
+    console.warn("Email validation rejected address:", {
+      email: normalizedEmail,
+      deliverabilityStatus,
+      statusDetail,
+      hasValidFormat,
+      hasValidMx,
+      isDisposable,
+    });
+
+    throw new HttpsError(
+      "invalid-argument",
+      "This email address appears invalid or inactive. Please use an existing active email address.",
+    );
+  }
+
+  return {
+    deliverabilityStatus,
+    statusDetail,
+  };
+};
+
+const validateAllowedEmailDomain = (email) => {
+  const normalizedEmail = String(email || "").trim().toLowerCase();
+  const domain = normalizedEmail.split("@")[1] || "";
+
+  if (!ALLOWED_EMAIL_DOMAINS.has(domain)) {
+    throw new HttpsError(
+      "invalid-argument",
+      "Unsupported email domain. Please use a common provider like Gmail, Outlook, Yahoo, or iCloud.",
+    );
+  }
+};
+
+// =========================================================================
+// REGISTRATION EMAIL VALIDATION
+// =========================================================================
+exports.validateRegistrationEmail = onCall(
+  {
+    secrets: ["EMAIL_VALIDATION_API_KEY"],
+    timeoutSeconds: 60,
+    memory: "256MiB",
+  },
+  async (request) => {
+    const { email } = request.data || {};
+    const normalizedEmail = String(email || "").trim();
+
+    if (!normalizedEmail) {
+      throw new HttpsError("invalid-argument", "Email is required");
+    }
+
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!emailRegex.test(normalizedEmail)) {
+      throw new HttpsError("invalid-argument", "Invalid email format");
+    }
+
+    validateAllowedEmailDomain(normalizedEmail);
+    await validateExistingEmailAddress(normalizedEmail);
+
+    return {
+      success: true,
+      message: "Email looks valid and deliverable",
+    };
+  },
+);
 
 // =========================================================================
 // EMAIL VERIFICATION FUNCTION
@@ -30,19 +188,20 @@ const SUPPORT_EMAIL = "leafnest.capstone@gmail.com";
  */
 exports.sendVerificationEmail = onCall(
   {
-    secrets: ["EMAIL_USER", "EMAIL_PASS"],
+    secrets: ["EMAIL_USER", "EMAIL_PASS", "EMAIL_VALIDATION_API_KEY"],
     timeoutSeconds: 300, // ✅ 5 minutes timeout
     memory: "256MiB", // ✅ More memory for faster processing
   },
   async (request) => {
     try {
       const { email, code, userId } = request.data;
+      const normalizedEmail = String(email || "").trim();
 
       console.log("=== SEND VERIFICATION EMAIL FUNCTION ===");
-      console.log("Email:", email, "Code:", code, "UserID:", userId);
+      console.log("Email:", normalizedEmail, "Code:", code, "UserID:", userId);
 
       // Validation
-      if (!email || !code || !userId) {
+      if (!normalizedEmail || !code || !userId) {
         console.error("Validation failed: Missing required fields");
         throw new HttpsError(
           'invalid-argument', 
@@ -52,9 +211,13 @@ exports.sendVerificationEmail = onCall(
 
       // Email validation
       const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-      if (!emailRegex.test(email)) {
+      if (!emailRegex.test(normalizedEmail)) {
         throw new HttpsError('invalid-argument', 'Invalid email format');
       }
+
+      validateAllowedEmailDomain(normalizedEmail);
+      console.log("Validating email deliverability...");
+      await validateExistingEmailAddress(normalizedEmail);
 
       // Get email credentials from environment variables (V2 secrets)
       const gmailUser = process.env.EMAIL_USER;
@@ -89,7 +252,7 @@ exports.sendVerificationEmail = onCall(
       // Email template
       const mailOptions = {
         from: 'LeafNest <noreply@leafnest.app>',
-        to: email,
+        to: normalizedEmail,
         subject: '🌿 Verify Your Email - LeafNest',
         html: `
           <!DOCTYPE html>
@@ -145,7 +308,7 @@ exports.sendVerificationEmail = onCall(
       console.log("Sending verification email...");
       await transporter.sendMail(mailOptions);
       
-      console.log(`✅ Verification email sent to ${email}`);
+      console.log(`✅ Verification email sent to ${normalizedEmail}`);
       
       return { 
         success: true, 

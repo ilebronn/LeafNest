@@ -1,0 +1,895 @@
+{
+  "common": {
+    "welcome": "환영",
+    "guest": "손님",
+    "loading": "로드 중...",
+    "error": "오류",
+    "success": "성공",
+    "cancel": "취소",
+    "ok": "좋아요",
+    "save": "구하다",
+    "back": "뒤쪽에",
+    "edit": "편집하다",
+    "username": "사용자 이름",
+    "and": "그리고"
+  },
+  "login": {
+    "title": "리프네스트",
+    "signInWithGoogle": "Google로 로그인",
+    "signInAsGuest": "손님으로 로그인",
+    "signInFailed": "로그인 실패",
+    "googleAuthError": "구글 인증 오류",
+    "unexpectedError": "예상치 못한 오류",
+    "unknownError": "알 수 없는 오류",
+    "termsText": "가입함으로써 귀하는 다음 사항을 읽고 인정했음을 나타냅니다.",
+    "termsOfUse": "이용약관",
+    "privacyPolicy": "개인 정보 보호 정책",
+    "cookiesPolicy": "쿠키 정책",
+    "signIn": "로그인",
+    "welcomeTitle": "리프네스트에 오신 것을 환영합니다",
+    "welcomeSubtitle": "자연의 아름다움을 발견해보세요",
+    "signInWithEmailButton": "이메일로 로그인",
+    "dividerOr": "또는",
+    "continueAsGuest": "게스트로 계속",
+    "continueAgreement": "계속하면 다음 내용에 동의하게 됩니다."
+  },
+  "home": {
+    "welcomeGuest": "환영합니다, 손님",
+    "welcomeUser": "환영합니다, {{name}}",
+    "guestModeSubtitle": "현재 게스트 모드입니다. 모든 기능을 잠금 해제하려면 로그인하세요.",
+    "welcomeBackSubtitle": "다시 만나서 반가워요!",
+    "scanPlantsTitle": "즉시 식물 스캔",
+    "scanPlantsSubtitle": "단 몇 초 만에 식물군을 가리키고, 쏘고, 식별할 수 있습니다.",
+    "scanAnimalsTitle": "동물을 즉시 스캔하세요",
+    "scanAnimalsSubtitle": "몇 초 만에 동물을 식별하세요.",
+    "learnNatureTitle": "자연에 대해 알아보기",
+    "learnNatureSubtitle": "텍스트 음성 변환과 빠른 사실을 통해 더 많은 정보를 알아보세요.",
+    "scanningStats": "스캔 통계",
+    "plantsScanned": "스캔된 식물",
+    "animalsIdentified": "확인된 동물",
+    "dailyDiscovery": "매일의 발견",
+    "dailyDiscoverySubtitle": "매일 새로운 것을 배워보세요",
+    "plantOfTheDay": "오늘의 식물",
+    "animalOfTheDay": "오늘의 동물",
+    "scientificName": "학명",
+    "habitat": "서식지",
+    "diet": "다이어트",
+    "lifespan": "수명",
+    "weight": "무게",
+    "cycle": "수명주기",
+    "watering": "살수",
+    "sunlight": "햇빛",
+    "loadingDaily": "일일 콘텐츠 로드 중...",
+    "errorLoadingDaily": "일일 콘텐츠를 로드할 수 없습니다.",
+    "pullToRefresh": "당겨서 새로고침",
+    "offlineMode": "오프라인 콘텐츠",
+    "funFact": "재미있는 사실",
+    "newFact": "새로운 사실",
+    "trendingPlants": "트렌드 식물",
+    "trendingAnimals": "인기 동물",
+    "alerts": {
+      "authRequiredTitle": "인증 필요",
+      "authRequiredBody": "PDF를 다운로드하려면 로그인하세요.",
+      "pdfSuccessTitle": "성공",
+      "pdfSuccessBody": "PDF가 생성되어 이메일로 전송되었습니다.",
+      "pdfErrorTitle": "오류",
+      "pdfErrorBody": "PDF를 생성하지 못했습니다. 다시 시도해 주세요.",
+      "signInRequiredTitle": "로그인이 필요합니다",
+      "signInLikeBody": "게시물에 좋아요를 누르려면 로그인하세요.",
+      "signInCommentBody": "댓글을 달려면 로그인하세요.",
+      "downloadsUnavailableTitle": "다운로드할 수 없음",
+      "downloadsUnavailableBody": "종 정보를 다운로드하려면 무료 계정에 가입하세요.",
+      "downloadLimitCheckErrorBody": "다운로드 제한을 확인하지 못했습니다. 다시 시도해 주세요."
+    },
+    "pdf": {
+      "defaultCommon": "알려지지 않은",
+      "defaultScientific": "알려지지 않은",
+      "defaultRank": "순위를 알 수 없음",
+      "defaultTaxon": "알려지지 않은",
+      "noDescription": "설명이 없습니다.",
+      "infoUnavailable": "정보가 없습니다.",
+      "notEvaluated": "평가되지 않음"
+    },
+    "trending": {
+      "title": "동향 종"
+    },
+    "emptyState": {
+      "title": "커뮤니티에 오신 것을 환영합니다",
+      "subtitle": "자연 발견을 탐색하고 공유해 보세요.",
+      "cta": "첫 번째 종을 스캔하세요"
+    },
+    "feed": {
+      "likesCount": "{{count}} 좋아요",
+      "likesCount_plural": "{{count}} 좋아요",
+      "beFirst": "가장 먼저 좋아요를 눌러주세요",
+      "showMore": "더 보기",
+      "showLess": "간략히 보기",
+      "viewComments": "{{count}} 댓글 모두 보기",
+      "viewComments_plural": "{{count}} 댓글 모두 보기",
+      "unknownUser": "익명의",
+      "unknownSpecies": "알려지지 않은 종",
+      "likeError": "게시물에 좋아요를 누르지 못했습니다."
+    },
+    "relativeTime": {
+      "justNow": "방금",
+      "minutes": "{{count}}분 전",
+      "hours": "{{count}}시간 전",
+      "days": "{{count}}d 전"
+    }
+  },
+  "settings": {
+    "title": "설정",
+    "account": "계정",
+    "guestMode": "게스트 모드",
+    "signedIn": "로그인됨",
+    "username": "사용자 이름",
+    "editUsername": "사용자 이름 편집",
+    "currentUsername": "현재 사용자 이름",
+    "newUsername": "새 사용자 이름",
+    "usernameUpdated": "사용자 이름이 성공적으로 업데이트되었습니다!",
+    "usernameUpdateError": "사용자 이름을 업데이트하지 못했습니다.",
+    "usernameUpdateFailed": "사용자 이름 업데이트 실패",
+    "usernameRequired": "사용자 이름이 필요합니다",
+    "usernameTooShort": "사용자 이름은 3자 이상이어야 합니다.",
+    "usernameTooLong": "사용자 이름은 20자 이하여야 합니다.",
+    "usernameInvalidChars": "사용자 이름에는 문자, 숫자, 밑줄, 하이픈만 포함할 수 있습니다.",
+    "language": "언어",
+    "selectLanguage": "언어 선택",
+    "logout": "로그아웃",
+    "logoutError": "로그아웃하지 못했습니다.",
+    "about": "에 대한",
+    "appName": "리프네스트",
+    "yourPlan": "귀하의 계획",
+    "leafNestFree": "리프네스트 무료",
+    "help": "돕다",
+    "sendFeedback": "피드백 보내기",
+    "faq": "FAQ",
+    "termsOfUse": "이용약관",
+    "generalSection": "일반적인",
+    "supportSection": "지원하다",
+    "legalSection": "합법적인"
+  },
+  "profile": {
+    "title": "윤곽",
+    "editUsername": "사용자 이름 편집",
+    "signOut": "로그아웃",
+    "leaveAccount": "계정을 떠나세요",
+    "signIn": "로그인",
+    "accessFullFeatures": "모든 기능에 액세스",
+    "createAccount": "계정 만들기",
+    "joinLeafNest": "리프네스트 가입",
+    "guestUser": "게스트 사용자",
+    "statsTitle": "스캔 통계",
+    "viewAll": "모두 보기",
+    "guestPromptTitle": "진행 상황을 추적하세요",
+    "guestPromptText": "스캔을 추적하고, 종을 발견하고, 성과를 잠금 해제하려면 로그인하세요.",
+    "badgeNew": "새로운",
+    "editPlaceholder": "사용자 이름을 입력하세요",
+    "stats": {
+      "total": "총 스캔",
+      "week": "이번 주",
+      "species": "종"
+    },
+    "sections": {
+      "account": "계정 설정"
+    },
+    "menu": {
+      "planTitle": "귀하의 계획",
+      "planSubtitle": "리프네스트 무료",
+      "notificationsTitle": "알림",
+      "notificationsSubtitle": "알림 관리",
+      "passwordTitle": "비밀번호를 잊으셨나요?",
+      "passwordSubtitle": "비밀번호 재설정",
+      "signOutTitle": "로그아웃",
+      "signOutSubtitle": "계정에서 로그아웃",
+      "signInTitle": "로그인",
+      "signInSubtitle": "모든 기능에 액세스",
+      "createAccountTitle": "계정 만들기",
+      "createAccountSubtitle": "지금 LeafNest에 가입하세요"
+    },
+    "alerts": {
+      "syncSuccess": "동기화된 {{count}} 스캔 대기 중",
+      "syncSuccess_plural": "동기화된 {{count}} 대기 중인 스캔",
+      "usernameUpdated": "사용자 이름이 성공적으로 업데이트되었습니다!",
+      "usernameUpdateError": "사용자 이름을 업데이트하지 못했습니다.",
+      "signOutTitle": "로그아웃",
+      "signOutMessage": "정말로 로그아웃하시겠습니까?",
+      "signOutConfirm": "로그아웃",
+      "signOutError": "로그아웃하지 못했습니다. 다시 시도해 주세요."
+    }
+  },
+  "languages": {
+    "ar": "아라비아 말",
+    "zh-CN": "중국어(간체)",
+    "zh-TW": "중국어(번체)",
+    "hr": "크로아티아어",
+    "cs": "체코 사람",
+    "da": "덴마크 말",
+    "nl": "네덜란드 사람",
+    "en": "영어",
+    "fi": "핀란드어",
+    "fr": "프랑스 국민",
+    "de": "독일 사람",
+    "el": "그리스 사람",
+    "hi": "힌디 어",
+    "hu": "헝가리 인",
+    "id": "인도네시아 인",
+    "it": "이탈리아 사람",
+    "ja": "일본어",
+    "ko": "한국인",
+    "ms": "말레이 사람",
+    "no": "노르웨이 인",
+    "fa": "페르시아 인",
+    "pl": "광택",
+    "pt": "포르투갈 인",
+    "ro": "루마니아 사람",
+    "ru": "러시아인",
+    "sk": "슬로바키아 사람",
+    "es": "스페인 사람",
+    "sv": "스웨덴어",
+    "tl": "타갈로그어",
+    "th": "태국어",
+    "tr": "터키어",
+    "uk": "우크라이나 말",
+    "vi": "베트남 사람"
+  },
+  "tabs": {
+    "home": "집",
+    "scan": "주사",
+    "history": "역사",
+    "settings": "설정"
+  },
+  "animals": {
+    "title": "오늘의 동물",
+    "lion": {
+      "name": "사자",
+      "scientificName": "판테라 레오",
+      "description": "사자는 아프리카와 인도가 원산지인 표범속(Panthera) 속의 큰 고양이입니다. 근육질이고 가슴이 넓은 몸체, 짧고 둥근 머리, 둥근 귀, 꼬리 끝에 털이 많은 술이 있습니다.",
+      "habitat": "사바나, 초원, 열린 삼림 지대",
+      "diet": "육식성 - 주로 얼룩말, 누우, 버팔로와 같은 대형 포유류",
+      "lifespan": "야생에서는 10~14년, 사육 상태에서는 최대 20년",
+      "conservationStatus": "취약한"
+    },
+    "elephant": {
+      "name": "코끼리",
+      "scientificName": "코끼리과",
+      "description": "코끼리는 긴 코(몸통), 원주형 다리, 측두선과 넓고 납작한 귀가 있는 거대한 머리가 특징인 현존하는 육상 동물 중 가장 큰 동물입니다.",
+      "habitat": "사바나, 숲, 사막, 습지",
+      "diet": "초식성 - 풀, 잎, 나무껍질, 과일, 토양",
+      "lifespan": "60~70세",
+      "conservationStatus": "멸종위기"
+    },
+    "panda": {
+      "name": "자이언트 판다",
+      "scientificName": "속알루로포다 멜라놀류카",
+      "description": "자이언트 팬더는 중국 중남부가 원산지인 곰입니다. 대담한 흑백 털과 둥그스름한 몸체가 특징입니다.",
+      "habitat": "울창한 대나무 숲이 있는 중국 중부의 산맥",
+      "diet": "주로 대나무(식이의 99%), 때때로 작은 동물",
+      "lifespan": "야생에서는 20년, 포로생활에서는 최대 30년",
+      "conservationStatus": "취약한"
+    },
+    "loading": "동물 로드 중...",
+    "errorLoading": "동물을 로드하지 못했습니다.",
+    "addToFavorites": "즐겨찾기에 추가",
+    "removeFromFavorites": "즐겨찾기에서 삭제",
+    "learnMore": "자세히 알아보기",
+    "share": "동물 공유"
+  },
+  "signup": {
+    "title": "계정 만들기",
+    "username": "사용자 이름",
+    "email": "이메일",
+    "password": "비밀번호",
+    "confirmPassword": "비밀번호 확인",
+    "register": "등록하다",
+    "alreadyHaveAccount": "이미 계정이 있습니까? 로그인",
+    "passwordsDontMatch": "비밀번호가 일치하지 않습니다!",
+    "fillAllFields": "모든 필드를 작성해 주세요.",
+    "verificationEmailSent": "귀하의 이메일로 확인 이메일이 발송되었습니다.",
+    "emailAlreadyInUse": "해당 이메일 주소는 이미 사용 중입니다.",
+    "invalidEmail": "이메일 주소가 유효하지 않습니다.",
+    "subtitle": "우리와 함께 자연을 탐험해보세요",
+    "processing": "처리 중...",
+    "dividerOr": "또는",
+    "alreadyMember": "이미 회원이신가요?",
+    "signInLink": "로그인"
+  },
+  "signin": {
+    "title": "로그인",
+    "email": "이메일",
+    "password": "비밀번호",
+    "signIn": "로그인",
+    "signInWithGoogle": "Google로 로그인",
+    "dontHaveAccount": "계정이 없으신가요? 가입",
+    "fillAllFields": "모든 필드를 작성해 주세요.",
+    "signInSuccessful": "로그인 성공",
+    "welcomeBack": "돌아온 것을 환영합니다",
+    "userNotFound": "이 이메일에는 사용자가 없습니다.",
+    "wrongPassword": "비밀번호가 잘못되었습니다.",
+    "invalidEmail": "이메일 주소가 잘못되었습니다.",
+    "subtitle": "여행을 계속하려면 로그인하세요.",
+    "forgotPasswordLink": "비밀번호를 잊으셨나요?",
+    "dividerOr": "또는",
+    "noAccountPrompt": "계정이 없나요?",
+    "signUpLink": "가입"
+  },
+  "scan": {
+    "loadingCamera": "카메라 로드 중...",
+    "needPermission": "카메라를 보여주려면 귀하의 허가가 필요합니다",
+    "grantPermission": "권한 부여",
+    "preparingCamera": "카메라 준비 중..."
+  },
+  "favorites": {
+    "title": "즐겨찾기",
+    "all": "모두",
+    "plants": "식물",
+    "animals": "동물",
+    "removeFavorite": "즐겨찾기 제거",
+    "remove": "제거하다",
+    "cancel": "취소",
+    "removed": "제거됨",
+    "removedMessage": "즐겨찾기에서 삭제되었습니다.",
+    "error": "오류",
+    "failedToRemove": "즐겨찾기에서 제거하지 못했습니다.",
+    "clearFavorites": "즐겨찾기 지우기",
+    "removeAllFavorites": "즐겨찾기를 모두 삭제하시겠습니까?",
+    "removeAll": "모두 제거",
+    "failedToClear": "즐겨찾기를 삭제하지 못했습니다.",
+    "plant": "식물",
+    "animal": "동물",
+    "noFavoritesYet": "아직 즐겨찾기가 없습니다.",
+    "addFromDaily": "오늘의 식물이나 동물 중 일부를 추가하세요."
+  },
+  "about": {
+    "title": "에 대한",
+    "developedBy": "LeafNest 팀에서 개발 및 설계",
+    "teamTitle": "리프네스트 팀",
+    "specialThanks": "특별한 감사",
+    "mentor": "조슈아 R. 라삭 씨",
+    "credits": "원래 Pinamalayan Maritime Foundation And Technological College INC.(PMFTCI)와 School of Computer Studies의 지원을 받아 LeafNest 팀이 만들었습니다.",
+    "privacyPolicy": "개인 정보 보호 정책",
+    "version": "버전 0.0.1 (1)",
+    "help": "도움이 필요한 경우: leafnest.capstone@gmail.com",
+    "tagline": "식물 및 동물 식별",
+    "institutionalSupport": "제도적 지원",
+    "mentorRole": "프로젝트 멘토 및 고문"
+  },
+  "plan": {
+    "title": "계획",
+    "upgradeTitle": "프리미엄으로 업그레이드",
+    "upgradeSubtitle": "모든 기능을 잠금 해제하고 앱을 최대한 활용하세요.",
+    "free": "무료",
+    "freePrice": "₱0/월",
+    "freeFeature1": "제한된 식물과 동물을 스캔하세요",
+    "freeFeature2": "기본적인 일상 발견",
+    "freeFeature3": "기록에 오프라인으로 액세스할 수 없습니다.",
+    "freeFeature4": "광고가 포함됨",
+    "premium": "프리미엄",
+    "premiumPrice": "₱129.00 / 월",
+    "premiumFeature1": "무제한 스캔",
+    "premiumFeature2": "독점적인 일일 발견",
+    "premiumFeature3": "기록에 대한 오프라인 액세스",
+    "premiumFeature4": "광고 없는 경험",
+    "subscribeNow": "지금 구독하세요",
+    "selectedPlan": "{{plan}} 요금제를 선택하셨습니다!"
+  },
+  "legal": {
+    "cookies": {
+      "title": "쿠키 정책",
+      "subtitle": "귀하의 경험을 향상시키기 위해 쿠키를 사용하는 방법",
+      "effectiveDate": "시행일: 2025년 7월 1일",
+      "intro": "본 쿠키 정책은 귀하가 당사 앱을 방문하고 해당 기능을 사용할 때 귀하의 경험을 향상시키기 위해 당사가 쿠키를 사용하는 방법을 설명합니다. 이 앱을 사용하면 이 정책에 설명된 대로 쿠키 사용에 동의하게 됩니다.",
+      "sections": [
+        {
+          "title": "쿠키란 무엇입니까?",
+          "content": "쿠키는 귀하가 웹사이트를 방문하거나 앱을 사용할 때 귀하의 장치에 저장되는 작은 텍스트 파일입니다. 이는 귀하가 당사 서비스와 상호 작용하는 방식을 이해하는 데 도움이 되며 귀하에게 더 나은 맞춤형 경험을 제공할 수 있게 해줍니다."
+        },
+        {
+          "title": "당사가 쿠키를 사용하는 방법",
+          "content": "당사는 다음과 같은 몇 가지 필수 목적을 위해 쿠키를 사용합니다.",
+          "list": [
+            "콘텐츠와 광고를 개인화하기 위해",
+            "트래픽 패턴 분석 및 사용자 경험 개선을 위해",
+            "당사 앱의 특정 기능을 활성화하기 위해",
+            "기본 설정 및 설정을 기억하려면",
+            "귀하의 계정에 대한 보안 액세스를 제공하기 위해"
+          ]
+        },
+        {
+          "title": "당사가 사용하는 쿠키의 유형",
+          "content": "당사는 귀하의 경험을 향상시키기 위해 다양한 유형의 쿠키를 사용합니다.",
+          "list": [
+            "필수 쿠키: 기본 앱 기능에 필요합니다.",
+            "성능 쿠키: 귀하의 앱 사용 방식을 이해하는 데 도움이 됩니다.",
+            "기능 쿠키: 귀하의 선호 사항과 선택 사항을 기억합니다.",
+            "분석 쿠키: 앱 사용 패턴에 대한 통찰력 제공"
+          ]
+        },
+        {
+          "title": "쿠키 관리",
+          "content": "귀하는 귀하의 기기 설정을 통해 쿠키를 제어하고 관리할 수 있습니다. 그러나 특정 쿠키를 비활성화하면 귀하의 경험에 영향을 미치고 앱 기능이 제한될 수 있다는 점에 유의하십시오."
+        },
+        {
+          "title": "쿠키 기간",
+          "content": "일부 쿠키는 임시 쿠키(세션 쿠키)이며 앱을 닫으면 삭제됩니다. 다른 것들은 세션 전반에 걸쳐 귀하의 기본 설정을 기억하기 위해 일정 기간 동안 귀하의 장치에 남아 있습니다."
+        },
+        {
+          "title": "본 정책의 변경 사항",
+          "content": "당사는 기술 또는 법적 요구 사항의 변경을 반영하기 위해 수시로 이 쿠키 정책을 업데이트할 수 있습니다. 모든 변경 사항은 업데이트된 개정 날짜와 함께 이 페이지에 게시됩니다."
+        },
+        {
+          "title": "문의하기",
+          "content": "본 쿠키 정책에 관해 질문, 우려 사항 또는 피드백이 있는 경우 leafnest.capstone@gmail.com으로 문의해 주십시오."
+        }
+      ],
+      "footerTitle": "귀하의 개인 정보 보호 문제",
+      "footerText": "우리는 쿠키 사용 방법에 대한 투명성을 보장하기 위해 최선을 다하고 있습니다. 당사 앱을 계속 사용하면 이 정책에 동의한다는 의미입니다.",
+      "copyright": "© 2025 리프네스트. 모든 권리 보유.",
+      "lastUpdated": "최종 업데이트 날짜: 2025년 7월 1일"
+    },
+    "privacy": {
+      "title": "개인 정보 보호 정책",
+      "subtitle": "귀하의 개인정보는 우리에게 중요합니다",
+      "effectiveDate": "시행일: 2025년 7월 1일",
+      "intro": "LeafNest는 귀하의 개인정보를 보호하고 개인정보의 보안을 보장하기 위해 최선을 다하고 있습니다.",
+      "sections": [
+        {
+          "title": "당사가 수집하는 정보",
+          "content": "당사는 귀하가 계정을 만들거나, 사진을 업로드하거나, 지원을 위해 당사에 연락할 때와 같이 귀하가 당사에 직접 제공하는 정보를 수집합니다. 여기에는 귀하의 이름, 이메일 주소 및 귀하가 제공하기로 선택한 기타 정보가 포함될 수 있습니다."
+        },
+        {
+          "title": "당사가 귀하의 정보를 사용하는 방법",
+          "content": "당사는 서비스를 제공, 유지 및 개선하고, 귀하와 소통하고, 새로운 기능을 개발하기 위해 수집한 정보를 사용합니다. 당사는 귀하의 개인정보를 제3자에게 판매하지 않습니다."
+        },
+        {
+          "title": "데이터 보안",
+          "content": "당사는 귀하의 개인정보를 무단 접근, 변경, 공개 또는 파기로부터 보호하기 위해 적절한 기술 및 조직적 조치를 취합니다."
+        },
+        {
+          "title": "귀하의 권리",
+          "content": "귀하는 귀하의 개인정보에 접근, 업데이트, 삭제할 권리가 있습니다. 귀하의 계정 설정을 통해 또는 당사에 직접 문의하여 이를 수행할 수 있습니다."
+        },
+        {
+          "title": "제3자 서비스",
+          "content": "당사 앱에는 제3자 웹사이트 및 서비스에 대한 링크가 포함될 수 있습니다. 우리는 그들의 개인 정보 보호 관행에 대해 책임을 지지 않습니다. 해당 개인정보 보호정책을 검토해 보시기 바랍니다."
+        },
+        {
+          "title": "개인정보 보호정책 변경",
+          "content": "당사는 언제든지 본 개인정보 보호정책을 업데이트할 권리를 보유합니다. 변경 사항은 업데이트된 유효 날짜와 함께 이 페이지에 게시됩니다. 계속해서 사용하면 변경 사항에 동의하는 것으로 간주됩니다."
+        },
+        {
+          "title": "문의하기",
+          "content": "본 개인정보 보호정책이나 당사의 개인정보 보호 관행에 대해 질문이 있는 경우, Privacy@leafnest.com으로 문의해 주십시오."
+        }
+      ],
+      "footerTitle": "우리는 당신을 걱정합니다",
+      "footerText": "귀하의 신뢰는 우리에게 중요합니다. 우리는 투명한 데이터 관행과 귀하의 개인 정보 보호 권리를 위해 최선을 다하고 있습니다.",
+      "copyright": "© 2025 리프네스트. 모든 권리 보유.",
+      "lastUpdated": "최종 업데이트 날짜: 2025년 7월 1일"
+    },
+    "terms": {
+      "title": "이용약관",
+      "subtitle": "사용하기 전에 주의 깊게 읽어 보십시오.",
+      "effectiveDate": "시행일: 2025년 7월 1일",
+      "intro": "본 이용 약관은 LeafNest 앱 및 서비스 사용에 적용됩니다. 우리 앱을 사용함으로써 귀하는 본 이용 약관에 동의하게 됩니다.",
+      "sections": [
+        {
+          "title": "약관 동의",
+          "content": "LeafNest 앱에 액세스하거나 이를 사용함으로써 귀하는 본 이용 약관을 준수할 것에 동의하게 됩니다. 본 약관에 동의하지 않으면 앱을 사용해서는 안 됩니다."
+        },
+        {
+          "title": "사용자 책임",
+          "content": "귀하는 합법적인 목적으로만 타인의 권리를 침해하지 않는 방식으로 앱을 사용할 것에 동의합니다. 귀하는 귀하의 계정 정보의 기밀을 유지할 책임이 있습니다."
+        },
+        {
+          "title": "지적재산권",
+          "content": "앱 내의 모든 콘텐츠, 상표, 로고 및 지적 재산은 LeafNest의 소유이거나 당사에 라이선스가 부여됩니다. 당사의 지적 재산을 무단으로 사용하는 것은 엄격히 금지됩니다."
+        },
+        {
+          "title": "개인정보 보호 및 데이터 수집",
+          "content": "당사는 개인정보 보호정책에 설명된 대로 개인정보를 수집하고 처리합니다. 당사 앱을 사용함으로써 귀하는 당사의 데이터 수집, 저장 및 처리 관행에 동의하게 됩니다."
+        },
+        {
+          "title": "책임의 제한",
+          "content": "LeafNest는 앱이나 서비스 사용으로 인해 발생하는 손해, 손실 또는 부상에 대해 책임을 지지 않습니다. 귀하는 자신의 위험과 재량에 따라 앱을 사용합니다."
+        },
+        {
+          "title": "약관 변경",
+          "content": "당사는 언제든지 본 이용 약관을 업데이트할 권리를 보유합니다. 모든 변경 사항은 업데이트된 유효 날짜와 함께 이 페이지에 게시됩니다. 계속 사용하면 변경 사항을 수락하는 것으로 간주됩니다."
+        },
+        {
+          "title": "문의하기",
+          "content": "본 이용 약관에 대해 질문, 우려 사항 또는 피드백이 있는 경우 leafnest.capstone@gmail.com으로 문의해 주세요."
+        }
+      ],
+      "footerTitle": "감사합니다",
+      "footerText": "시간을 내어 이용 약관을 검토해 주셔서 감사합니다. 귀하의 신뢰와 규정 준수는 모두를 위한 더 나은 경험을 만드는 데 도움이 됩니다.",
+      "copyright": "© 2025 리프네스트. 모든 권리 보유.",
+      "lastUpdated": "최종 업데이트 날짜: 2025년 7월 1일"
+    }
+  },
+  "faq": {
+    "title": "도움말 및 FAQ",
+    "subtitle": "일반적인 질문에 대한 답변 찾기",
+    "categories": [
+      {
+        "title": "시작하기",
+        "items": [
+          {
+            "question": "리프네스트란 무엇인가요?",
+            "answer": "LeafNest는 AI 기술을 활용해 식물과 동물을 식별할 수 있도록 도와 자연에 대한 지식을 제공하는 식물 식별 및 정보 앱입니다."
+          },
+          {
+            "question": "어떻게 시작하나요?",
+            "answer": "앱을 열고 스캔 아이콘을 탭한 후 식물이나 동물을 가리킵니다. AI는 이를 식별하고 해당 종에 대한 자세한 정보를 제공합니다."
+          }
+        ]
+      },
+      {
+        "title": "스캐너 사용",
+        "items": [
+          {
+            "question": "종을 어떻게 스캔하나요?",
+            "answer": "홈 화면에서 스캔 아이콘을 탭하고 카메라를 해당 종에 대고 선명한 사진을 촬영하세요. 앱이 자동으로 식별합니다."
+          },
+          {
+            "question": "무엇이 좋은 스캔을 만드는가?",
+            "answer": "좋은 조명을 확보하고, 독특한 기능에 초점을 맞추고, 최상의 결과를 위해 카메라를 안정적으로 유지하세요."
+          },
+          {
+            "question": "내 사진 갤러리에서 스캔할 수 있나요?",
+            "answer": "예. 스캐너 화면에서 갤러리 옵션을 선택하여 갤러리의 기존 사진을 업로드할 수 있습니다."
+          }
+        ]
+      },
+      {
+        "title": "정확성 및 기능",
+        "items": [
+          {
+            "question": "신원 확인은 얼마나 정확합니까?",
+            "answer": "LeafNest는 고급 기계 학습 모델을 사용합니다. 정확도는 조명과 이미지 품질에 따라 다르지만 일반적으로 90%를 초과합니다."
+          },
+          {
+            "question": "내가 좋아하는 식물을 저장할 수 있나요?",
+            "answer": "예. 나중에 빠르게 액세스할 수 있도록 식별된 종의 하트 아이콘을 탭하여 즐겨찾기에 추가하세요."
+          }
+        ]
+      },
+      {
+        "title": "지원 및 도움말",
+        "items": [
+          {
+            "question": "지원팀에 어떻게 문의하나요?",
+            "answer": "설정 메뉴를 열고 도움말 및 지원을 선택하거나 leafnest.capstone@gmail.com으로 이메일을 보내주세요."
+          }
+        ]
+      }
+    ]
+  },
+  "help": {
+    "title": "도움말 및 지원",
+    "subtitle": "AI로 식물과 동물을 스캔하기 위한 팁과 추가 도움을 받을 수 있는 곳.",
+    "quickStart": {
+      "title": "빠른 시작",
+      "bullets": [
+        "홈 화면에서 스캔 버튼을 누릅니다.",
+        "프레임 중앙에 식물이나 동물을 배치하세요.",
+        "흔들리지 않게 잡고 선명한 사진을 촬영하세요."
+      ],
+      "cta": "스캐너 열기"
+    },
+    "bestResults": {
+      "title": "더 나은 결과를 얻는 방법",
+      "bullets": [
+        "좋은 조명을 사용하고 거친 역광을 피하십시오.",
+        "독특한 디테일에 초점을 맞춰 프레임을 피사체로 채웁니다.",
+        "나뭇잎, 꽃, 나무껍질, 프로필 사진 등 다양한 각도에서 촬영해 보세요."
+      ]
+    },
+    "troubleshooting": {
+      "title": "문제 해결",
+      "bullets": [
+        "일일 하이라이트는 똑같아 보이죠? 자정(필리핀 시간) 이후에 앱을 당겨 새로 고치거나 다시 엽니다.",
+        "인터넷이 없나요? 영상 인식을 위해서는 네트워크 연결이 필요하므로 연결 상태를 확인하세요.",
+        "정확도가 낮나요? 더 나은 조명으로 더욱 선명하고 가까이서 사진을 찍어보세요."
+      ]
+    },
+    "links": {
+      "faq": "FAQ",
+      "feedback": "피드백 보내기",
+      "about": "리프네스트 소개",
+      "privacy": "개인 정보 보호 정책",
+      "terms": "이용약관",
+      "contact": "지원팀에 문의"
+    },
+    "alerts": {
+      "noEmailTitle": "이메일 앱을 열 수 없습니다",
+      "noEmailBody": "{{email}}로 이메일을 보내주세요."
+    }
+  },
+  "feedback": {
+    "title": "피드백 보내기",
+    "subtitle": "효과가 좋은 점이나 개선할 수 있는 점을 알려주세요. 우리는 모든 메시지를 읽습니다.",
+    "topicLabel": "주제",
+    "topics": {
+      "bug": "버그 신고",
+      "idea": "기능 요청",
+      "ux": "디자인 / UX",
+      "content": "종 / 함량",
+      "account": "계정 / 로그인",
+      "other": "다른"
+    },
+    "subjectLabel": "주제",
+    "subjectPlaceholder": "간단한 요약(예: 스캐너가 잎사귀를 단풍나무로 잘못 분류함)",
+    "messageLabel": "메시지",
+    "messagePlaceholder": "무슨 일이 일어났는지, 재현 단계, 기대치를 설명하세요.",
+    "emailLabel": "귀하의 이메일(선택사항)",
+    "emailPlaceholder": "필요한 경우 여기에 답변해 드리겠습니다.",
+    "includeDiagnostics": "진단 포함",
+    "diagnosticsHint": "문제를 디버그하는 데 도움이 됩니다(플랫폼 및 OS에만 해당).",
+    "submit": "피드백 보내기",
+    "submitting": "배상...",
+    "footerText": "또는 {{email}}로 직접 이메일을 보내주세요.",
+    "alerts": {
+      "missingInfoTitle": "누락된 정보",
+      "missingInfoMessage": "제목과 메시지를 추가해주세요.",
+      "invalidEmailTitle": "잘못된 이메일",
+      "invalidEmailMessage": "유효한 이메일 주소를 입력하거나 공백으로 남겨두십시오.",
+      "noEmailAppTitle": "의견을 보낼 수 없습니다.",
+      "noEmailAppMessage": "나중에 다시 시도하거나 {{email}}로 이메일을 보내주세요.",
+      "successTitle": "피드백 전송됨",
+      "successMessage": "피드백을 보내주셔서 감사합니다! 곧 검토하겠습니다.",
+      "genericErrorTitle": "문제가 발생했습니다.",
+      "genericErrorMessage": "나중에 다시 시도하거나 {{email}}로 이메일을 보내주세요."
+    }
+  },
+  "comments": {
+    "title": "댓글",
+    "noComments": "아직 댓글이 없습니다",
+    "beFirstToComment": "가장 먼저 댓글을 달아주세요!",
+    "addComment": "댓글 추가...",
+    "deleteComment": "댓글 삭제",
+    "deleteConfirm": "이 댓글을 삭제하시겠습니까?",
+    "delete": "삭제",
+    "failedToDelete": "댓글을 삭제하지 못했습니다.",
+    "failedToLike": "댓글에 좋아요를 누르지 못했습니다.",
+    "loginRequired": "로그인 필요",
+    "loginToComment": "댓글을 쓰려면 로그인해야 합니다.",
+    "loginToLike": "댓글에 좋아요를 누르려면 로그인이 필요합니다",
+    "justNow": "방금"
+  },
+  "notification": {
+    "title": "알림",
+    "noNotifications": "아직 알림이 없습니다",
+    "markAsRead": "읽음으로 표시",
+    "markAllAsRead": "모두 읽음으로 표시",
+    "delete": "삭제",
+    "deleteAll": "모두 삭제"
+  },
+  "commentsModal": {
+    "title": "댓글",
+    "inputPlaceholder": "댓글 추가...",
+    "empty": {
+      "title": "아직 댓글이 없습니다",
+      "subtitle": "가장 먼저 댓글을 달아주세요!"
+    },
+    "actions": {
+      "cancel": "취소",
+      "delete": "삭제"
+    },
+    "alerts": {
+      "loadErrorTitle": "오류",
+      "loadErrorBody": "댓글을 로드하지 못했습니다.",
+      "loginRequiredTitle": "로그인이 필요합니다",
+      "loginRequiredCommentBody": "댓글을 달려면 로그인이 필요합니다.",
+      "loginRequiredLikeBody": "댓글에 좋아요를 누르려면 로그인이 필요합니다.",
+      "addErrorTitle": "오류",
+      "addErrorBody": "댓글을 추가하지 못했습니다.",
+      "likeErrorTitle": "오류",
+      "likeErrorBody": "댓글에 좋아요를 누르지 못했습니다.",
+      "deleteTitle": "댓글 삭제",
+      "deleteConfirmBody": "이 댓글을 삭제하시겠습니까?",
+      "deleteErrorTitle": "오류",
+      "deleteErrorBody": "댓글을 삭제하지 못했습니다."
+    }
+  },
+  "premiumGate": {
+    "offline": {
+      "title": "오프라인 액세스 필요",
+      "historySubtitle": "오프라인 액세스 기록 구독",
+      "historyDescription": "스캔 기록에 대한 오프라인 액세스는 프리미엄 기능입니다. 언제 어디서나 기록을 보려면 업그레이드하세요.",
+      "favoritesSubtitle": "즐겨찾기에 오프라인으로 액세스하려면 구독하세요",
+      "favoritesDescription": "즐겨찾기에 대한 오프라인 액세스는 프리미엄 기능입니다. 언제 어디서나 즐겨찾는 콘텐츠를 보려면 업그레이드하세요."
+    },
+    "limits": {
+      "scanTitle": "스캔 한도에 도달했습니다.",
+      "scanSubtitle": "{{limit}} 스캔을 모두 사용했습니다.",
+      "scanDescription": "무제한 스캔과 더 많은 기능을 이용하려면 프리미엄으로 업그레이드하세요!",
+      "downloadTitle": "다운로드 한도에 도달했습니다.",
+      "downloadSubtitle": "{{limit}} 다운로드를 모두 사용했습니다.",
+      "downloadDescription": "무제한 다운로드를 위해 프리미엄으로 업그레이드하세요!"
+    },
+    "timer": {
+      "resetsInHours": "{{count}}시간 후에 재설정됩니다.",
+      "resetsInHours_plural": "{{count}}시간 후에 재설정됩니다."
+    },
+    "usage": {
+      "scans": "스캔:",
+      "downloads": "다운로드:"
+    },
+    "features": {
+      "title": "프리미엄 혜택:",
+      "offlineHistory": "오프라인 기록 액세스",
+      "offlineFavorites": "오프라인 즐겨찾기 액세스",
+      "unlimitedScans": "무제한 스캔",
+      "unlimitedDownloads": "무제한 다운로드"
+    },
+    "pricing": {
+      "amount": "{{amount}}",
+      "period": "{{days}}일 동안"
+    },
+    "actions": {
+      "upgrade": "프리미엄으로 업그레이드",
+      "later": "어쩌면 나중에"
+    }
+  },
+  "manageNotifications": {
+    "title": "알림 관리",
+    "pushNotifications": "푸시 알림",
+    "emailNotifications": "이메일 알림",
+    "likeNotifications": "좋아요 알림",
+    "commentNotifications": "댓글 알림",
+    "followNotifications": "알림 팔로우",
+    "enabled": "활성화됨",
+    "disabled": "장애가 있는",
+    "save": "설정 저장"
+  },
+  "history": {
+    "title": "역사",
+    "loading": "기록 로드 중...",
+    "loadingMore": "더 로드 중...",
+    "signInRequiredTitle": "로그인이 필요합니다",
+    "signInRequiredBody": "스캔 기록을 보려면 계정을 만들거나 로그인하세요.",
+    "selection": {
+      "selectedCount": "{{count}} 선택됨",
+      "deleteButton": "{{count}} 레코드 삭제",
+      "deleteButton_plural": "{{count}} 레코드 삭제"
+    },
+    "offlineBanner": {
+      "premium": "오프라인 모드(프리미엄)",
+      "locked": "오프라인 모드에는 프리미엄이 필요합니다"
+    },
+    "search": {
+      "placeholder": "이름으로 검색..."
+    },
+    "filters": {
+      "all": "모두",
+      "plants": "식물",
+      "animals": "동물"
+    },
+    "empty": {
+      "noHistoryTitle": "아직 기록이 없습니다.",
+      "noHistoryBody": "식물과 동물 식별을 시작하면 종 스캔 기록이 여기에 표시됩니다.",
+      "noResultsTitle": "검색결과가 없습니다",
+      "noResultsBody": "검색 또는 필터 기준과 일치하는 기록이 없습니다. 필터를 조정해보세요."
+    },
+    "actions": {
+      "signIn": "로그인",
+      "delete": "삭제",
+      "clearAll": "모두 지우기",
+      "clearFilters": "필터 지우기"
+    },
+    "alerts": {
+      "visibilityNow": "현재 스캔은 {{status}}입니다.",
+      "visibilityUpdateFailed": "공개 상태를 업데이트하지 못했습니다.",
+      "visibilityNeedsSync": "이 스캔은 먼저 동기화해야 합니다. 잠시 후 다시 시도해 주세요.",
+      "visibilityOffline": "오프라인 상태에서는 공개 상태를 변경할 수 없습니다. 연결을 확인해주세요.",
+      "visibilityNotSynced": "이 스캔은 아직 클라우드에 동기화되지 않았습니다. 동기화가 완료될 때까지 기다린 후 다시 시도해 주세요.",
+      "visibilityPermissionDenied": "이 스캔을 수정할 권한이 없습니다.",
+      "visibilityNetworkError": "네트워크 오류입니다. 연결을 확인하고 다시 시도해 주세요.",
+      "errorWithMessage": "오류: {{message}}",
+      "deleteRecordTitle": "기록 삭제",
+      "deleteRecordMessage": "기록에서 '{{name}}'을(를) 삭제하시겠습니까?",
+      "deleteRecordSuccess": "기록이 삭제되었습니다.",
+      "deleteRecordError": "레코드를 삭제하지 못했습니다.",
+      "deleteSelectedTitle": "선택 항목 삭제",
+      "deleteSelectedMessage": "기록에서 {{count}} 레코드를 삭제하시겠습니까?",
+      "deleteSelectedMessage_plural": "기록에서 {{count}} 레코드를 삭제하시겠습니까?",
+      "deleteSelectedSuccess": "{{count}} 레코드가 삭제되었습니다.",
+      "deleteSelectedSuccess_plural": "{{count}} 레코드가 삭제되었습니다.",
+      "deleteSelectedError": "선택한 레코드를 삭제하지 못했습니다.",
+      "clearAllTitle": "모든 기록 지우기",
+      "clearAllMessage": "모든 기록을 삭제하시겠습니까? 이 작업은 취소할 수 없습니다.",
+      "clearAllSuccess": "모든 기록이 삭제되었습니다.",
+      "clearAllError": "기록을 지우지 못했습니다."
+    },
+    "visibility": {
+      "public": "공공의",
+      "private": "사적인"
+    },
+    "unknownSpecies": "알려지지 않은 종",
+    "details": {
+      "commonName": "일반 이름",
+      "scientificName": "학명",
+      "taxonomicRank": "분류학적 순위",
+      "type": "유형",
+      "conservationStatus": "보존상태",
+      "timesScanned": "스캔 횟수",
+      "timeCount": "{{count}} 시간",
+      "timeCount_plural": "{{count}}회",
+      "globalAppScans": "글로벌 앱 검사",
+      "scanCount": "{{count}} 스캔",
+      "scanCount_plural": "{{count}} 스캔",
+      "scannedOn": "스캔 날짜"
+    },
+    "premiumGate": {
+      "title": "오프라인 모드에 액세스하려면 구독하세요",
+      "message": "기록에 대한 오프라인 액세스는 프리미엄 기능입니다. 오프라인일 때 스캔 기록을 보려면 구독하세요."
+    },
+    "noHistory": "아직 기록이 없습니다.",
+    "startScanning": "스캔을 시작하여 기록을 구축하세요",
+    "delete": "삭제",
+    "deleteAll": "모두 삭제",
+    "deleteConfirm": "이 항목을 삭제하시겠습니까?",
+    "deleteAllConfirm": "모든 기록을 삭제하시겠습니까?",
+    "scannedOn": "{{date}}에 스캔됨"
+  },
+  "postDetail": {
+    "title": "우편",
+    "aboutLabel": "에 대한",
+    "emptyTitle": "게시물을 찾을 수 없습니다",
+    "alerts": {
+      "postNotFoundTitle": "오류",
+      "postNotFoundBody": "게시물을 찾을 수 없습니다.",
+      "loadErrorTitle": "오류",
+      "loadErrorBody": "게시물을 로드하지 못했습니다.",
+      "likeErrorBody": "게시물에 좋아요를 누르지 못했습니다."
+    }
+  },
+  "speciesGallery": {
+    "title": "갱도",
+    "noResults": "검색결과가 없습니다",
+    "loadMore": "더 로드하기",
+    "error": "갤러리를 로드하지 못했습니다."
+  },
+  "speciesLanding": {
+    "title": "종 세부정보",
+    "scientificName": "학명",
+    "commonName": "일반 이름",
+    "description": "설명",
+    "habitat": "서식지",
+    "diet": "다이어트",
+    "lifespan": "수명",
+    "conservationStatus": "보존상태",
+    "addToFavorites": "즐겨찾기에 추가",
+    "removeFromFavorites": "즐겨찾기에서 삭제",
+    "share": "공유하다",
+    "viewMore": "더 많이 보기",
+    "error": "종 세부정보를 로드하지 못했습니다."
+  },
+  "manualPayment": {
+    "title": "수동 결제",
+    "uploadProof": "결제 증빙 업로드",
+    "selectImage": "이미지 선택",
+    "takePhoto": "사진 찍기",
+    "chooseFromGallery": "갤러리에서 선택",
+    "uploadImage": "이미지 업로드",
+    "uploading": "업로드 중...",
+    "submit": "결제 제출",
+    "submitting": "제출 중...",
+    "successTitle": "성공",
+    "successMessage": "결제가 성공적으로 제출되었습니다. 곧 확인해드리겠습니다.",
+    "errorTitle": "오류",
+    "errorMessage": "결제를 제출하지 못했습니다. 다시 시도해 주세요.",
+    "selectImageFirst": "먼저 이미지를 선택해주세요"
+  },
+  "scanStats": {
+    "title": "스캔 통계",
+    "totalScans": "총 스캔",
+    "thisWeek": "이번 주",
+    "thisMonth": "이번 달",
+    "plants": "식물",
+    "animals": "동물",
+    "noData": "아직 스캔 데이터가 없습니다."
+  }
+}

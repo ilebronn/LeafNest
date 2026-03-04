@@ -32,6 +32,8 @@ npm run start
 - `npm run android` - Run on Android device/emulator.
 - `npm run ios` - Run on iOS simulator (macOS).
 - `npm run web` - Run on web.
+- `npm run i18n:translate -- --provider=google` - translator
+
 
 **Configuration**
 - Environment variables live in `.env` (do not commit secrets).

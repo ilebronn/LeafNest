@@ -1,0 +1,895 @@
+{
+  "common": {
+    "welcome": "欢迎",
+    "guest": "客人",
+    "loading": "加载中...",
+    "error": "错误",
+    "success": "成功",
+    "cancel": "取消",
+    "ok": "好的",
+    "save": "节省",
+    "back": "后退",
+    "edit": "编辑",
+    "username": "用户名",
+    "and": "和"
+  },
+  "login": {
+    "title": "叶巢",
+    "signInWithGoogle": "使用 Google 登录",
+    "signInAsGuest": "以访客身份登录",
+    "signInFailed": "登录失败",
+    "googleAuthError": "谷歌验证错误",
+    "unexpectedError": "意外错误",
+    "unknownError": "未知错误",
+    "termsText": "注册即表示您已阅读并承认",
+    "termsOfUse": "使用条款",
+    "privacyPolicy": "隐私政策",
+    "cookiesPolicy": "Cookie 政策",
+    "signIn": "登入",
+    "welcomeTitle": "欢迎来到叶巢",
+    "welcomeSubtitle": "发现自然之美",
+    "signInWithEmailButton": "使用电子邮件登录",
+    "dividerOr": "或者",
+    "continueAsGuest": "继续以访客身份",
+    "continueAgreement": "继续，即表示您同意我们的"
+  },
+  "home": {
+    "welcomeGuest": "欢迎，客人",
+    "welcomeUser": "欢迎，{{name}}",
+    "guestModeSubtitle": "您处于访客模式。登录以解锁所有功能。",
+    "welcomeBackSubtitle": "很高兴见到你回来！",
+    "scanPlantsTitle": "即时扫描植物",
+    "scanPlantsSubtitle": "在几秒钟内瞄准、射击并识别植物群。",
+    "scanAnimalsTitle": "即时扫描动物",
+    "scanAnimalsSubtitle": "在几秒钟内识别动物。",
+    "learnNatureTitle": "了解自然",
+    "learnNatureSubtitle": "通过文本转语音和速览了解更多信息。",
+    "scanningStats": "扫描统计",
+    "plantsScanned": "扫描植物",
+    "animalsIdentified": "已识别的动物",
+    "dailyDiscovery": "每日发现",
+    "dailyDiscoverySubtitle": "每天学习新东西",
+    "plantOfTheDay": "今日植物",
+    "animalOfTheDay": "今日动物",
+    "scientificName": "学名",
+    "habitat": "栖息地",
+    "diet": "饮食",
+    "lifespan": "寿命",
+    "weight": "重量",
+    "cycle": "生命周期",
+    "watering": "浇水",
+    "sunlight": "阳光",
+    "loadingDaily": "正在加载每日内容...",
+    "errorLoadingDaily": "无法加载每日内容",
+    "pullToRefresh": "拉动刷新",
+    "offlineMode": "离线内容",
+    "funFact": "有趣的事实",
+    "newFact": "新事实",
+    "trendingPlants": "流行植物",
+    "trendingAnimals": "热门动物",
+    "alerts": {
+      "authRequiredTitle": "需要身份验证",
+      "authRequiredBody": "请登录以下载 PDF。",
+      "pdfSuccessTitle": "成功",
+      "pdfSuccessBody": "PDF 已生成并发送到您的电子邮件。",
+      "pdfErrorTitle": "错误",
+      "pdfErrorBody": "生成 PDF 失败。请再试一次。",
+      "signInRequiredTitle": "需要登录",
+      "signInLikeBody": "请登录才能喜欢帖子。",
+      "signInCommentBody": "请登录后发表评论。",
+      "downloadsUnavailableTitle": "无法下载",
+      "downloadsUnavailableBody": "请注册免费帐户以下载物种信息。",
+      "downloadLimitCheckErrorBody": "无法检查下载限制。请再试一次。"
+    },
+    "pdf": {
+      "defaultCommon": "未知",
+      "defaultScientific": "未知",
+      "defaultRank": "军衔未知",
+      "defaultTaxon": "未知",
+      "noDescription": "没有可用的描述。",
+      "infoUnavailable": "信息不可用。",
+      "notEvaluated": "未评价"
+    },
+    "trending": {
+      "title": "热门物种"
+    },
+    "emptyState": {
+      "title": "欢迎来到社区",
+      "subtitle": "开始探索并分享您的自然发现。",
+      "cta": "扫描你的第一个物种"
+    },
+    "feed": {
+      "likesCount": "{{count}} 喜欢",
+      "likesCount_plural": "{{count}} 喜欢",
+      "beFirst": "成为第一个喜欢这个的人",
+      "showMore": "显示更多",
+      "showLess": "显示较少",
+      "viewComments": "查看所有 {{count}} 评论",
+      "viewComments_plural": "查看所有 {{count}} 评论",
+      "unknownUser": "匿名的",
+      "unknownSpecies": "未知物种",
+      "likeError": "未能喜欢该帖子。"
+    },
+    "relativeTime": {
+      "justNow": "现在",
+      "minutes": "{{count}} 分钟前",
+      "hours": "{{count}} 小时前",
+      "days": "{{count}} 天前"
+    }
+  },
+  "settings": {
+    "title": "设置",
+    "account": "帐户",
+    "guestMode": "访客模式",
+    "signedIn": "已登录",
+    "username": "用户名",
+    "editUsername": "编辑用户名",
+    "currentUsername": "当前用户名",
+    "newUsername": "新用户名",
+    "usernameUpdated": "用户名更新成功！",
+    "usernameUpdateError": "更新用户名失败",
+    "usernameUpdateFailed": "用户名更新失败",
+    "usernameRequired": "用户名是必需的",
+    "usernameTooShort": "用户名必须至少 3 个字符",
+    "usernameTooLong": "用户名不得超过 20 个字符",
+    "usernameInvalidChars": "用户名只能包含字母、数字、下划线和连字符",
+    "language": "语言",
+    "selectLanguage": "选择语言",
+    "logout": "退出",
+    "logoutError": "退出失败。",
+    "about": "关于",
+    "appName": "叶巢",
+    "yourPlan": "你的计划",
+    "leafNestFree": "叶巢免费",
+    "help": "帮助",
+    "sendFeedback": "发送反馈",
+    "faq": "常问问题",
+    "termsOfUse": "使用条款",
+    "generalSection": "一般的",
+    "supportSection": "支持",
+    "legalSection": "合法的"
+  },
+  "profile": {
+    "title": "轮廓",
+    "editUsername": "编辑用户名",
+    "signOut": "登出",
+    "leaveAccount": "留下您的帐户",
+    "signIn": "登入",
+    "accessFullFeatures": "访问所有功能",
+    "createAccount": "创建账户",
+    "joinLeafNest": "加入叶巢",
+    "guestUser": "访客用户",
+    "statsTitle": "扫描统计",
+    "viewAll": "查看全部",
+    "guestPromptTitle": "追踪您的进度",
+    "guestPromptText": "登录以跟踪扫描、发现物种并解锁成就。",
+    "badgeNew": "新的",
+    "editPlaceholder": "输入用户名",
+    "stats": {
+      "total": "总扫描次数",
+      "week": "本星期",
+      "species": "物种"
+    },
+    "sections": {
+      "account": "账户设置"
+    },
+    "menu": {
+      "planTitle": "你的计划",
+      "planSubtitle": "叶巢免费",
+      "notificationsTitle": "通知",
+      "notificationsSubtitle": "管理您的通知",
+      "passwordTitle": "忘记密码",
+      "passwordSubtitle": "重置您的密码",
+      "signOutTitle": "登出",
+      "signOutSubtitle": "从您的帐户注销",
+      "signInTitle": "登入",
+      "signInSubtitle": "访问所有功能",
+      "createAccountTitle": "创建账户",
+      "createAccountSubtitle": "立即加入叶巢"
+    },
+    "alerts": {
+      "syncSuccess": "已同步 {{count}} 待扫描",
+      "syncSuccess_plural": "已同步 {{count}} 待处理扫描",
+      "usernameUpdated": "用户名更新成功！",
+      "usernameUpdateError": "更新用户名失败。",
+      "signOutTitle": "登出",
+      "signOutMessage": "您确定要退出吗？",
+      "signOutConfirm": "登出",
+      "signOutError": "退出失败。请再试一次。"
+    }
+  },
+  "languages": {
+    "ar": "阿拉伯",
+    "zh-CN": "中文（简体）",
+    "zh-TW": "中文（繁体）",
+    "hr": "克罗地亚语",
+    "cs": "捷克语",
+    "da": "丹麦语",
+    "nl": "荷兰语",
+    "en": "英语",
+    "fi": "芬兰",
+    "fr": "法语",
+    "de": "德语",
+    "el": "希腊语",
+    "hi": "印地语",
+    "hu": "匈牙利",
+    "id": "印度尼西亚",
+    "it": "意大利语",
+    "ja": "日本人",
+    "ko": "韩国人",
+    "ms": "马来语",
+    "no": "挪威",
+    "fa": "波斯语",
+    "pl": "抛光",
+    "pt": "葡萄牙语",
+    "ro": "罗马尼亚语",
+    "ru": "俄语",
+    "sk": "斯洛伐克语",
+    "es": "西班牙语",
+    "sv": "瑞典",
+    "tl": "他加禄语",
+    "th": "泰国",
+    "tr": "土耳其",
+    "uk": "乌克兰",
+    "vi": "越南语"
+  },
+  "tabs": {
+    "home": "家",
+    "scan": "扫描",
+    "history": "历史",
+    "settings": "设置"
+  },
+  "animals": {
+    "title": "今日动物",
+    "lion": {
+      "name": "狮子",
+      "scientificName": "狮子座豹",
+      "description": "狮子是豹属的大型猫科动物，原产于非洲和印度。它的身体肌肉发达，胸部宽阔，头部短而圆，耳朵圆，尾巴末端有一簇毛。",
+      "habitat": "稀树草原、草原和开阔的林地",
+      "diet": "肉食性 - 主要是大型哺乳动物，如斑马、角马和水牛",
+      "lifespan": "野外可保存10-14年，人工饲养可保存长达20年",
+      "conservationStatus": "易受伤害的"
+    },
+    "elephant": {
+      "name": "大象",
+      "scientificName": "象科",
+      "description": "大象是现存最大的陆地动物，其特征是长长的鼻子（躯干）、柱状腿、巨大的头部、颞腺和宽而扁平的耳朵。",
+      "habitat": "稀树草原、森林、沙漠和沼泽",
+      "diet": "草食性 - 草、树叶、树皮、水果和土壤",
+      "lifespan": "60-70岁",
+      "conservationStatus": "濒危"
+    },
+    "panda": {
+      "name": "大熊猫",
+      "scientificName": "大熊猫",
+      "description": "大熊猫是一种原产于中国中南部的熊。它的特点是大胆的黑白皮毛和圆滚滚的身体。",
+      "habitat": "中国中部山脉，竹林茂密",
+      "diet": "主要以竹子（99% 的饮食）为主，偶尔有小动物",
+      "lifespan": "野外可保存20年，人工饲养可保存长达30年",
+      "conservationStatus": "易受伤害的"
+    },
+    "loading": "正在加载动物...",
+    "errorLoading": "加载动物失败",
+    "addToFavorites": "添加到收藏夹",
+    "removeFromFavorites": "从收藏夹中删除",
+    "learnMore": "了解更多",
+    "share": "分享动物"
+  },
+  "signup": {
+    "title": "创建账户",
+    "username": "用户名",
+    "email": "电子邮件",
+    "password": "密码",
+    "confirmPassword": "确认密码",
+    "register": "登记",
+    "alreadyHaveAccount": "已经有帐户？登入",
+    "passwordsDontMatch": "密码不匹配！",
+    "fillAllFields": "请填写所有字段。",
+    "verificationEmailSent": "验证邮件已发送至您的邮箱。",
+    "emailAlreadyInUse": "该电子邮件地址已被使用。",
+    "invalidEmail": "该电子邮件地址无效。",
+    "subtitle": "和我们一起探索大自然",
+    "processing": "加工...",
+    "dividerOr": "或者",
+    "alreadyMember": "已经是会员了？",
+    "signInLink": "登入"
+  },
+  "signin": {
+    "title": "登入",
+    "email": "电子邮件",
+    "password": "密码",
+    "signIn": "登入",
+    "signInWithGoogle": "使用 Google 登录",
+    "dontHaveAccount": "没有帐户？报名",
+    "fillAllFields": "请填写所有字段。",
+    "signInSuccessful": "登录成功",
+    "welcomeBack": "欢迎回来",
+    "userNotFound": "未找到使用此电子邮件的用户。",
+    "wrongPassword": "密码不正确。",
+    "invalidEmail": "电子邮件地址无效。",
+    "subtitle": "登录以继续您的旅程",
+    "forgotPasswordLink": "忘记密码？",
+    "dividerOr": "或者",
+    "noAccountPrompt": "没有帐户？",
+    "signUpLink": "报名"
+  },
+  "scan": {
+    "loadingCamera": "正在加载相机...",
+    "needPermission": "我们需要您的许可才能展示相机",
+    "grantPermission": "授予许可",
+    "preparingCamera": "准备相机..."
+  },
+  "favorites": {
+    "title": "收藏夹",
+    "all": "全部",
+    "plants": "植物",
+    "animals": "动物",
+    "removeFavorite": "删除收藏夹",
+    "remove": "消除",
+    "cancel": "取消",
+    "removed": "已删除",
+    "removedMessage": "已从您的收藏夹中删除。",
+    "error": "错误",
+    "failedToRemove": "无法从收藏夹中删除。",
+    "clearFavorites": "清除收藏夹",
+    "removeAllFavorites": "删除所有收藏夹？",
+    "removeAll": "全部删除",
+    "failedToClear": "无法清除收藏夹。",
+    "plant": "植物",
+    "animal": "动物",
+    "noFavoritesYet": "还没有收藏夹",
+    "addFromDaily": "添加一些来自每日植物或动物的内容。"
+  },
+  "about": {
+    "title": "关于",
+    "developedBy": "由 LeafNest 团队开发和设计",
+    "teamTitle": "叶巢团队",
+    "specialThanks": "特别感谢",
+    "mentor": "约书亚·拉萨克先生",
+    "credits": "最初由 LeafNest 团队在 Pinamalayan Maritime Foundation And Technological College INC. (PMFTCI) 和计算机研究学院的支持下创建。",
+    "privacyPolicy": "隐私政策",
+    "version": "版本0.0.1 (1)",
+    "help": "如需帮助：leafnest.capstone@gmail.com",
+    "tagline": "植物和动物鉴定",
+    "institutionalSupport": "机构支持",
+    "mentorRole": "项目导师及顾问"
+  },
+  "plan": {
+    "title": "计划",
+    "upgradeTitle": "升级至高级版",
+    "upgradeSubtitle": "解锁所有功能并充分利用我们的应用程序。",
+    "free": "自由的",
+    "freePrice": "₱0 / 月",
+    "freeFeature1": "扫描有限的植物和动物",
+    "freeFeature2": "基本日常发现",
+    "freeFeature3": "无法离线访问历史记录",
+    "freeFeature4": "包含广告",
+    "premium": "优质的",
+    "premiumPrice": "₱129.00 / 月",
+    "premiumFeature1": "无限次扫描",
+    "premiumFeature2": "每日独家发现",
+    "premiumFeature3": "离线访问历史记录",
+    "premiumFeature4": "无广告体验",
+    "subscribeNow": "立即订阅",
+    "selectedPlan": "您选择了 {{plan}} 计划！"
+  },
+  "legal": {
+    "cookies": {
+      "title": "Cookie 政策",
+      "subtitle": "我们如何使用 cookie 来增强您的体验",
+      "effectiveDate": "生效日期：2025 年 7 月 1 日",
+      "intro": "本 Cookie 政策解释了我们如何使用 Cookie 来增强您在访问我们的应用程序并使用其功能时的体验。使用此应用程序即表示您同意使用本政策中所述的 cookie。",
+      "sections": [
+        {
+          "title": "什么是 Cookie？",
+          "content": "Cookie 是您访问网站或使用应用程序时存储在您设备上的小文本文件。它们帮助我们了解您如何与我们的服务互动，并使我们能够为您提供更好、更个性化的体验。"
+        },
+        {
+          "title": "我们如何使用 Cookie",
+          "content": "我们将 cookie 用于几个基本目的：",
+          "list": [
+            "个性化内容和广告",
+            "分析流量模式并改善用户体验",
+            "启用我们应用程序的某些特性和功能",
+            "记住您的偏好和设置",
+            "提供对您帐户的安全访问"
+          ]
+        },
+        {
+          "title": "我们使用的 Cookie 类型",
+          "content": "我们使用不同类型的 cookie 来增强您的体验：",
+          "list": [
+            "基本 Cookie：基本应用程序功能所需",
+            "性能 Cookie：帮助我们了解您如何使用该应用程序",
+            "功能性 Cookie：记住您的偏好和选择",
+            "分析 Cookie：提供对应用程序使用模式的见解"
+          ]
+        },
+        {
+          "title": "管理 Cookie",
+          "content": "您可以通过设备设置来控制和管理 cookie。但请注意，禁用某些 Cookie 可能会影响您的体验并限制应用程序的功能。"
+        },
+        {
+          "title": "Cookie 持续时间",
+          "content": "有些 cookie 是临时的（会话 cookie），当您关闭应用程序时会被删除。其他人会在您的设备上保留一段设定的时间，以记住您在会话期间的偏好。"
+        },
+        {
+          "title": "本政策的变更",
+          "content": "我们可能会不时更新本 Cookie 政策，以反映技术或法律要求的变化。任何更改都将在此页面上发布，并附有更新的修订日期。"
+        },
+        {
+          "title": "联系我们",
+          "content": "如果您对本 Cookie 政策有任何问题、疑虑或反馈，请通过 leafnest.capstone@gmail.com 与我们联系。"
+        }
+      ],
+      "footerTitle": "您的隐私很重要",
+      "footerText": "我们致力于保持 cookie 使用方式的透明度。您继续使用我们的应用程序即表示您接受本政策。",
+      "copyright": "© 2025 叶巢。版权所有。",
+      "lastUpdated": "最后更新时间：2025 年 7 月 1 日"
+    },
+    "privacy": {
+      "title": "隐私政策",
+      "subtitle": "您的隐私对我们很重要",
+      "effectiveDate": "生效日期：2025 年 7 月 1 日",
+      "intro": "在LeafNest，我们致力于保护您的隐私并确保您的个人信息的安全。",
+      "sections": [
+        {
+          "title": "我们收集的信息",
+          "content": "我们收集您直接提供给我们的信息，例如当您创建帐户、上传照片或联系我们寻求支持时。这可能包括您的姓名、电子邮件地址以及您选择提供的任何其他信息。"
+        },
+        {
+          "title": "我们如何使用您的信息",
+          "content": "我们使用收集的信息来提供、维护和改进我们的服务，与您沟通以及开发新功能。我们不会将您的个人信息出售给第三方。"
+        },
+        {
+          "title": "数据安全",
+          "content": "我们采取适当的技术和组织措施来保护您的个人信息免遭未经授权的访问、更改、披露或破坏。"
+        },
+        {
+          "title": "您的权利",
+          "content": "您有权访问、更新或删除您的个人信息。您可以通过帐户设置或直接联系我们来执行此操作。"
+        },
+        {
+          "title": "第三方服务",
+          "content": "我们的应用程序可能包含第三方网站和服务的链接。我们不对他们的隐私做法负责。我们鼓励您查看他们的隐私政策。"
+        },
+        {
+          "title": "隐私政策的变更",
+          "content": "我们保留随时更新本隐私政策的权利。更改将发布在此页面上，并附有更新的生效日期。您继续使用即表示接受更改。"
+        },
+        {
+          "title": "联系我们",
+          "content": "如果您对本隐私政策或我们的隐私惯例有任何疑问，请通过privacy@leafnest.com 与我们联系。"
+        }
+      ],
+      "footerTitle": "我们关心您",
+      "footerText": "您的信任对我们很重要。我们致力于透明的数据实践和您的隐私权。",
+      "copyright": "© 2025 叶巢。版权所有。",
+      "lastUpdated": "最后更新时间：2025 年 7 月 1 日"
+    },
+    "terms": {
+      "title": "使用条款",
+      "subtitle": "使用前请仔细阅读",
+      "effectiveDate": "生效日期：2025 年 7 月 1 日",
+      "intro": "这些使用条款管辖 LeafNest 应用程序和服务的使用。使用我们的应用程序即表示您同意这些条款和条件。",
+      "sections": [
+        {
+          "title": "接受条款",
+          "content": "通过访问或使用 LeafNest 应用程序，您同意受这些使用条款的约束。如果您不同意这些条款，则不应使用该应用程序。"
+        },
+        {
+          "title": "用户的责任",
+          "content": "您同意仅出于合法目的并以不侵犯他人权利的方式使用该应用程序。您有责任维护您的帐户信息的机密性。"
+        },
+        {
+          "title": "知识产权",
+          "content": "应用程序内的所有内容、商标、徽标和知识产权均归 LeafNest 所有或授权给我们。严禁未经授权使用我们的知识产权。"
+        },
+        {
+          "title": "隐私和数据收集",
+          "content": "我们按照隐私政策中的规定收集和处理个人信息。使用我们的应用程序，即表示您同意我们的数据收集、存储和处理做法。"
+        },
+        {
+          "title": "责任限制",
+          "content": "LeafNest 对因使用该应用程序或其服务而造成的任何损害、损失或伤害不承担任何责任。您使用该应用程序的风险由您自行承担。"
+        },
+        {
+          "title": "条款变更",
+          "content": "我们保留随时更新这些使用条款的权利。任何更改都将在此页面上发布，并附有更新的生效日期。继续使用即表示接受更改。"
+        },
+        {
+          "title": "联系我们",
+          "content": "如果您对这些使用条款有任何问题、疑虑或反馈，请通过 leafnest.capstone@gmail.com 与我们联系。"
+        }
+      ],
+      "footerTitle": "谢谢",
+      "footerText": "感谢您花时间查看我们的使用条款。您的信任和合规帮助我们为每个人创造更好的体验。",
+      "copyright": "© 2025 叶巢。版权所有。",
+      "lastUpdated": "最后更新时间：2025 年 7 月 1 日"
+    }
+  },
+  "faq": {
+    "title": "帮助和常见问题解答",
+    "subtitle": "查找常见问题的答案",
+    "categories": [
+      {
+        "title": "入门",
+        "items": [
+          {
+            "question": "什么是叶巢？",
+            "answer": "LeafNest是一款植物识别和信息应用程序，利用AI技术帮助您识别植物和动物，提供有关自然的知识。"
+          },
+          {
+            "question": "我该如何开始？",
+            "answer": "打开应用程序，点击扫描图标，然后将其指向任何植物或动物。人工智能将识别它并提供有关该物种的详细信息。"
+          }
+        ]
+      },
+      {
+        "title": "使用扫描仪",
+        "items": [
+          {
+            "question": "如何扫描物种？",
+            "answer": "点击主屏幕上的扫描图标，将相机对准物种，然后拍摄清晰的照片。该应用程序将自动识别它。"
+          },
+          {
+            "question": "怎样才是好的扫描？",
+            "answer": "确保良好的照明，专注于独特的特征，并保持相机稳定以获得最佳效果。"
+          },
+          {
+            "question": "我可以从我的照片库进行扫描吗？",
+            "answer": "是的。您可以通过选择扫描仪屏幕中的图库选项来上传图库中的现有照片。"
+          }
+        ]
+      },
+      {
+        "title": "准确性和特点",
+        "items": [
+          {
+            "question": "识别准确率如何？",
+            "answer": "LeafNest 使用先进的机器学习模型。准确度因照明和图像质量而异，但通常超过 90%。"
+          },
+          {
+            "question": "我可以保存我最喜欢的植物吗？",
+            "answer": "是的。点击任何已识别物种上的心形图标，将其添加到您的收藏夹中，以便稍后快速访问。"
+          }
+        ]
+      },
+      {
+        "title": "支持与帮助",
+        "items": [
+          {
+            "question": "如何联系支持人员？",
+            "answer": "打开“设置”菜单并选择“帮助和支持”，或发送电子邮件至 leafnest.capstone@gmail.com。"
+          }
+        ]
+      }
+    ]
+  },
+  "help": {
+    "title": "帮助与支持",
+    "subtitle": "使用人工智能扫描植物和动物的提示 - 以及从哪里获得更多帮助。",
+    "quickStart": {
+      "title": "快速入门",
+      "bullets": [
+        "点击主屏幕上的扫描按钮。",
+        "将植物或动物置于框架中央。",
+        "保持稳定，然后拍摄清晰的照片。"
+      ],
+      "cta": "打开扫描仪"
+    },
+    "bestResults": {
+      "title": "如何获得更好的结果",
+      "bullets": [
+        "使用良好的照明并避免刺眼的背光。",
+        "用主题填充画面，重点关注独特的细节。",
+        "尝试多种角度，例如树叶、花朵、树皮或侧面照片。"
+      ]
+    },
+    "troubleshooting": {
+      "title": "故障排除",
+      "bullets": [
+        "每日亮点看起来都一样吗？午夜（菲律宾时间）后拉动以刷新或重新打开应用程序。",
+        "没有互联网？检查您的连接，因为图像识别需要网络连接。",
+        "准确率低？使用更好的光线拍摄更清晰、更近的照片。"
+      ]
+    },
+    "links": {
+      "faq": "常问问题",
+      "feedback": "发送反馈",
+      "about": "关于叶巢",
+      "privacy": "隐私政策",
+      "terms": "使用条款",
+      "contact": "联系支持人员"
+    },
+    "alerts": {
+      "noEmailTitle": "无法打开电子邮件应用程序",
+      "noEmailBody": "请发送电子邮件至 {{email}}。"
+    }
+  },
+  "feedback": {
+    "title": "发送反馈",
+    "subtitle": "告诉我们什么是有效的或什么可以改进。我们阅读每一条消息。",
+    "topicLabel": "话题",
+    "topics": {
+      "bug": "报告错误",
+      "idea": "功能请求",
+      "ux": "设计/用户体验",
+      "content": "种类/含量",
+      "account": "账户/登录",
+      "other": "其他"
+    },
+    "subjectLabel": "主题",
+    "subjectPlaceholder": "简短摘要（例如，扫描仪将一片叶子错误标记为枫树）",
+    "messageLabel": "信息",
+    "messagePlaceholder": "描述发生的情况、重现步骤和期望。",
+    "emailLabel": "您的电子邮件（可选）",
+    "emailPlaceholder": "如果需要我们会在这里回复",
+    "includeDiagnostics": "包括诊断",
+    "diagnosticsHint": "帮助我们调试问题（仅限平台和操作系统）。",
+    "submit": "发送反馈",
+    "submitting": "正在发送...",
+    "footerText": "或者直接发送电子邮件至 {{email}}",
+    "alerts": {
+      "missingInfoTitle": "缺少信息",
+      "missingInfoMessage": "请添加主题和消息。",
+      "invalidEmailTitle": "电子邮件无效",
+      "invalidEmailMessage": "请输入有效的电子邮件地址或将其留空。",
+      "noEmailAppTitle": "无法发送反馈",
+      "noEmailAppMessage": "请稍后重试或发送电子邮件至 {{email}}。",
+      "successTitle": "已发送反馈",
+      "successMessage": "感谢您的反馈！我们会尽快审核。",
+      "genericErrorTitle": "出了点问题",
+      "genericErrorMessage": "请稍后重试或发送电子邮件至 {{email}}。"
+    }
+  },
+  "comments": {
+    "title": "评论",
+    "noComments": "还没有评论",
+    "beFirstToComment": "成为第一个发表评论的人！",
+    "addComment": "添加评论...",
+    "deleteComment": "删除评论",
+    "deleteConfirm": "您确定要删除此评论吗？",
+    "delete": "删除",
+    "failedToDelete": "删除评论失败",
+    "failedToLike": "无法点赞评论",
+    "loginRequired": "需要登录",
+    "loginToComment": "您必须登录才能发表评论",
+    "loginToLike": "您必须登录才能点赞评论",
+    "justNow": "现在"
+  },
+  "notification": {
+    "title": "通知",
+    "noNotifications": "还没有通知",
+    "markAsRead": "标记为已读",
+    "markAllAsRead": "全部标记为已读",
+    "delete": "删除",
+    "deleteAll": "全部删除"
+  },
+  "commentsModal": {
+    "title": "评论",
+    "inputPlaceholder": "添加评论...",
+    "empty": {
+      "title": "还没有评论",
+      "subtitle": "成为第一个发表评论的人！"
+    },
+    "actions": {
+      "cancel": "取消",
+      "delete": "删除"
+    },
+    "alerts": {
+      "loadErrorTitle": "错误",
+      "loadErrorBody": "无法加载评论。",
+      "loginRequiredTitle": "需要登录",
+      "loginRequiredCommentBody": "您必须登录才能发表评论。",
+      "loginRequiredLikeBody": "您必须登录才能喜欢评论。",
+      "addErrorTitle": "错误",
+      "addErrorBody": "添加评论失败。",
+      "likeErrorTitle": "错误",
+      "likeErrorBody": "未能点赞评论。",
+      "deleteTitle": "删除评论",
+      "deleteConfirmBody": "您确定要删除此评论吗？",
+      "deleteErrorTitle": "错误",
+      "deleteErrorBody": "删除评论失败。"
+    }
+  },
+  "premiumGate": {
+    "offline": {
+      "title": "需要离线访问",
+      "historySubtitle": "订阅离线访问历史记录",
+      "historyDescription": "离线访问扫描历史记录是一项高级功能。升级后即可随时随地查看您的历史记录。",
+      "favoritesSubtitle": "订阅以离线访问收藏夹",
+      "favoritesDescription": "离线访问您的收藏夹是一项高级功能。升级后即可随时随地查看您的最爱。"
+    },
+    "limits": {
+      "scanTitle": "已达到扫描限制",
+      "scanSubtitle": "您已使用所有 {{limit}} 扫描",
+      "scanDescription": "升级到高级版可无限次扫描和更多功能！",
+      "downloadTitle": "达到下载限制",
+      "downloadSubtitle": "您已使用所有 {{limit}} 下载内容",
+      "downloadDescription": "升级到高级版即可无限下载！"
+    },
+    "timer": {
+      "resetsInHours": "{{count}} 小时后重置",
+      "resetsInHours_plural": "{{count}} 小时后重置"
+    },
+    "usage": {
+      "scans": "扫描：",
+      "downloads": "下载次数："
+    },
+    "features": {
+      "title": "高级福利：",
+      "offlineHistory": "离线历史记录访​​问",
+      "offlineFavorites": "离线收藏夹访问",
+      "unlimitedScans": "无限次扫描",
+      "unlimitedDownloads": "无限下载"
+    },
+    "pricing": {
+      "amount": "{{amount}}",
+      "period": "{{days}} 天"
+    },
+    "actions": {
+      "upgrade": "升级至高级版",
+      "later": "也许稍后"
+    }
+  },
+  "manageNotifications": {
+    "title": "管理通知",
+    "pushNotifications": "推送通知",
+    "emailNotifications": "电子邮件通知",
+    "likeNotifications": "喜欢通知",
+    "commentNotifications": "评论通知",
+    "followNotifications": "关注通知",
+    "enabled": "启用",
+    "disabled": "残疾人",
+    "save": "保存设置"
+  },
+  "history": {
+    "title": "历史",
+    "loading": "加载历史记录...",
+    "loadingMore": "加载更多...",
+    "signInRequiredTitle": "需要登录",
+    "signInRequiredBody": "创建帐户或登录以查看您的扫描历史记录。",
+    "selection": {
+      "selectedCount": "已选择 {{count}}",
+      "deleteButton": "删除 {{count}} 记录",
+      "deleteButton_plural": "删除 {{count}} 条记录"
+    },
+    "offlineBanner": {
+      "premium": "离线模式（高级）",
+      "locked": "离线模式需要高级版"
+    },
+    "search": {
+      "placeholder": "按名称搜索..."
+    },
+    "filters": {
+      "all": "全部",
+      "plants": "植物",
+      "animals": "动物"
+    },
+    "empty": {
+      "noHistoryTitle": "还没有历史记录",
+      "noHistoryBody": "一旦您开始识别植物和动物，您的物种扫描历史记录将显示在此处。",
+      "noResultsTitle": "没有找到结果",
+      "noResultsBody": "没有记录符合您的搜索或过滤条件。尝试调整你的过滤器。"
+    },
+    "actions": {
+      "signIn": "登入",
+      "delete": "删除",
+      "clearAll": "全部清除",
+      "clearFilters": "清除过滤器"
+    },
+    "alerts": {
+      "visibilityNow": "扫描时间现在为 {{status}}",
+      "visibilityUpdateFailed": "无法更新可见性。",
+      "visibilityNeedsSync": "此扫描需要首先同步。请稍后重试。",
+      "visibilityOffline": "离线时无法更改可见性。请检查您的连接。",
+      "visibilityNotSynced": "此扫描尚未同步到云端。请等待同步完成，然后重试。",
+      "visibilityPermissionDenied": "您无权修改此扫描。",
+      "visibilityNetworkError": "网络错误。请检查您的连接并重试。",
+      "errorWithMessage": "错误：{{message}}",
+      "deleteRecordTitle": "删除记录",
+      "deleteRecordMessage": "从历史记录中删除“{{name}}”？",
+      "deleteRecordSuccess": "记录已删除。",
+      "deleteRecordError": "删除记录失败。",
+      "deleteSelectedTitle": "删除所选内容",
+      "deleteSelectedMessage": "从历史记录中删除 {{count}} 记录吗？",
+      "deleteSelectedMessage_plural": "从历史记录中删除 {{count}} 记录吗？",
+      "deleteSelectedSuccess": "{{count}} 记录已删除。",
+      "deleteSelectedSuccess_plural": "{{count}} 记录已删除。",
+      "deleteSelectedError": "无法删除选定的记录。",
+      "clearAllTitle": "清除所有历史记录",
+      "clearAllMessage": "您确定要删除所有历史记录吗？此操作无法撤消。",
+      "clearAllSuccess": "所有历史记录都被清除。",
+      "clearAllError": "清除历史记录失败。"
+    },
+    "visibility": {
+      "public": "民众",
+      "private": "私人的"
+    },
+    "unknownSpecies": "未知物种",
+    "details": {
+      "commonName": "通用名",
+      "scientificName": "学名",
+      "taxonomicRank": "分类等级",
+      "type": "类型",
+      "conservationStatus": "保护状况",
+      "timesScanned": "扫描次数",
+      "timeCount": "{{count}} 时间",
+      "timeCount_plural": "{{count}} 次",
+      "globalAppScans": "全球应用扫描",
+      "scanCount": "{{count}} 扫描",
+      "scanCount_plural": "{{count}} 扫描",
+      "scannedOn": "扫描于"
+    },
+    "premiumGate": {
+      "title": "订阅即可访问离线模式",
+      "message": "离线访问您的历史记录是一项高级功能。订阅以在离线时查看您的扫描历史记录。"
+    },
+    "noHistory": "还没有历史记录",
+    "startScanning": "开始扫描以建立您的历史",
+    "delete": "删除",
+    "deleteAll": "全部删除",
+    "deleteConfirm": "您确定要删除该项目吗？",
+    "deleteAllConfirm": "您确定要删除所有历史记录吗？",
+    "scannedOn": "扫描于 {{date}}"
+  },
+  "postDetail": {
+    "title": "邮政",
+    "aboutLabel": "关于",
+    "emptyTitle": "找不到帖子",
+    "alerts": {
+      "postNotFoundTitle": "错误",
+      "postNotFoundBody": "找不到帖子。",
+      "loadErrorTitle": "错误",
+      "loadErrorBody": "无法加载帖子。",
+      "likeErrorBody": "未能喜欢该帖子。"
+    }
+  },
+  "speciesGallery": {
+    "title": "画廊",
+    "noResults": "没有找到结果",
+    "loadMore": "加载更多",
+    "error": "加载图库失败"
+  },
+  "speciesLanding": {
+    "title": "物种详情",
+    "scientificName": "学名",
+    "commonName": "通用名",
+    "description": "描述",
+    "habitat": "栖息地",
+    "diet": "饮食",
+    "lifespan": "寿命",
+    "conservationStatus": "保护状况",
+    "addToFavorites": "添加到收藏夹",
+    "removeFromFavorites": "从收藏夹中删除",
+    "share": "分享",
+    "viewMore": "查看更多",
+    "error": "无法加载物种详细信息"
+  },
+  "manualPayment": {
+    "title": "手动付款",
+    "uploadProof": "上传付款证明",
+    "selectImage": "选择图像",
+    "takePhoto": "拍照",
+    "chooseFromGallery": "从图库中选择",
+    "uploadImage": "上传图片",
+    "uploading": "正在上传...",
+    "submit": "提交付款",
+    "submitting": "正在提交...",
+    "successTitle": "成功",
+    "successMessage": "付款提交成功。我们将尽快验证。",
+    "errorTitle": "错误",
+    "errorMessage": "提交付款失败。请再试一次。",
+    "selectImageFirst": "请先选择一张图片"
+  },
+  "scanStats": {
+    "title": "扫描统计",
+    "totalScans": "总扫描次数",
+    "thisWeek": "本星期",
+    "thisMonth": "本月",
+    "plants": "植物",
+    "animals": "动物",
+    "noData": "尚无可用的扫描数据"
+  }
+}

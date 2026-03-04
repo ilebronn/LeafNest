@@ -1,0 +1,895 @@
+{
+  "common": {
+    "welcome": "Bun venit",
+    "guest": "Oaspete",
+    "loading": "Încărcare...",
+    "error": "Eroare",
+    "success": "Succes",
+    "cancel": "Anula",
+    "ok": "Bine",
+    "save": "Salva",
+    "back": "Spate",
+    "edit": "Edita",
+    "username": "Nume de utilizator",
+    "and": "şi"
+  },
+  "login": {
+    "title": "LeafNest",
+    "signInWithGoogle": "Conectați-vă cu Google",
+    "signInAsGuest": "Conectați-vă ca invitat",
+    "signInFailed": "Conectarea nu a reușit",
+    "googleAuthError": "Eroare de autentificare Google",
+    "unexpectedError": "Eroare neașteptată",
+    "unknownError": "Eroare necunoscută",
+    "termsText": "Prin înscriere, indicați că ați citit și confirmați",
+    "termsOfUse": "Termeni de utilizare",
+    "privacyPolicy": "Politica de confidențialitate",
+    "cookiesPolicy": "Politica de cookie-uri",
+    "signIn": "Conectare",
+    "welcomeTitle": "Bun venit la LeafNest",
+    "welcomeSubtitle": "Descoperă frumusețea naturii",
+    "signInWithEmailButton": "Conectați-vă cu e-mail",
+    "dividerOr": "sau",
+    "continueAsGuest": "Continuați ca invitat",
+    "continueAgreement": "Continuând, sunteți de acord cu noastre"
+  },
+  "home": {
+    "welcomeGuest": "Bun venit, oaspete",
+    "welcomeUser": "Bun venit, {{name}}",
+    "guestModeSubtitle": "Sunteți în modul invitat. Conectați-vă pentru a debloca toate funcțiile.",
+    "welcomeBackSubtitle": "Mă bucur să te revăd!",
+    "scanPlantsTitle": "Scanați plantele instantaneu",
+    "scanPlantsSubtitle": "Îndreptați, trageți și identificați flora în câteva secunde.",
+    "scanAnimalsTitle": "Scanați animalele instantaneu",
+    "scanAnimalsSubtitle": "Identificați animalele în câteva secunde.",
+    "learnNatureTitle": "Aflați despre natură",
+    "learnNatureSubtitle": "Descoperiți mai multe cu text-to-speech și informații rapide.",
+    "scanningStats": "Statistici de scanare",
+    "plantsScanned": "Plante Scanate",
+    "animalsIdentified": "Animale identificate",
+    "dailyDiscovery": "Descoperire zilnică",
+    "dailyDiscoverySubtitle": "Învață ceva nou în fiecare zi",
+    "plantOfTheDay": "Planta zilei",
+    "animalOfTheDay": "Animalul zilei",
+    "scientificName": "Nume științific",
+    "habitat": "Habitat",
+    "diet": "Dieta",
+    "lifespan": "Durată de viaţă",
+    "weight": "Greutate",
+    "cycle": "Ciclu de viață",
+    "watering": "Udare",
+    "sunlight": "Lumina soarelui",
+    "loadingDaily": "Se încarcă conținut zilnic...",
+    "errorLoadingDaily": "Nu se poate încărca conținutul zilnic",
+    "pullToRefresh": "Trageți pentru a reîmprospăta",
+    "offlineMode": "Conținut offline",
+    "funFact": "Fapt amuzant",
+    "newFact": "Fapt nou",
+    "trendingPlants": "Plante în tendințe",
+    "trendingAnimals": "Animale în tendințe",
+    "alerts": {
+      "authRequiredTitle": "Este necesară autentificarea",
+      "authRequiredBody": "Vă rugăm să vă conectați pentru a descărca PDF-ul.",
+      "pdfSuccessTitle": "Succes",
+      "pdfSuccessBody": "PDF-ul a fost generat și trimis pe e-mailul dvs.",
+      "pdfErrorTitle": "Eroare",
+      "pdfErrorBody": "Nu s-a putut genera PDF. Vă rugăm să încercați din nou.",
+      "signInRequiredTitle": "Este necesară conectarea",
+      "signInLikeBody": "Vă rugăm să vă conectați pentru a aprecia postările.",
+      "signInCommentBody": "Vă rugăm să vă conectați pentru a comenta.",
+      "downloadsUnavailableTitle": "Descărcări indisponibile",
+      "downloadsUnavailableBody": "Vă rugăm să creați un cont gratuit pentru a descărca informații despre specii.",
+      "downloadLimitCheckErrorBody": "Nu s-a verificat limita de descărcare. Vă rugăm să încercați din nou."
+    },
+    "pdf": {
+      "defaultCommon": "Necunoscut",
+      "defaultScientific": "Necunoscut",
+      "defaultRank": "Rang necunoscut",
+      "defaultTaxon": "Necunoscut",
+      "noDescription": "Nu există descriere disponibilă.",
+      "infoUnavailable": "Informații nu sunt disponibile.",
+      "notEvaluated": "Neevaluat"
+    },
+    "trending": {
+      "title": "Specii în tendințe"
+    },
+    "emptyState": {
+      "title": "Bun venit în Comunitate",
+      "subtitle": "Începeți să explorați și să vă împărtășiți descoperirile din natură.",
+      "cta": "Scanează-ți prima specie"
+    },
+    "feed": {
+      "likesCount": "{{count}} like",
+      "likesCount_plural": "{{count}} aprecieri",
+      "beFirst": "Fii primul căruia îi place asta",
+      "showMore": "Arată mai multe",
+      "showLess": "Arată mai puțin",
+      "viewComments": "Vezi toate {{count}} comentariile",
+      "viewComments_plural": "Vedeți toate {{count}} comentariile",
+      "unknownUser": "Anonim",
+      "unknownSpecies": "Specie necunoscută",
+      "likeError": "Postarea nu a fost apreciată."
+    },
+    "relativeTime": {
+      "justNow": "Chiar acum",
+      "minutes": "acum {{count}}m",
+      "hours": "acum {{count}}h",
+      "days": "acum {{count}}d"
+    }
+  },
+  "settings": {
+    "title": "Setări",
+    "account": "Cont",
+    "guestMode": "Modul invitat",
+    "signedIn": "Conectat",
+    "username": "Nume de utilizator",
+    "editUsername": "Editați numele de utilizator",
+    "currentUsername": "Nume de utilizator curent",
+    "newUsername": "Nume de utilizator nou",
+    "usernameUpdated": "Numele de utilizator a fost actualizat cu succes!",
+    "usernameUpdateError": "Nu s-a putut actualiza numele de utilizator",
+    "usernameUpdateFailed": "Actualizarea numelui de utilizator a eșuat",
+    "usernameRequired": "Numele de utilizator este obligatoriu",
+    "usernameTooShort": "Numele de utilizator trebuie să aibă cel puțin 3 caractere",
+    "usernameTooLong": "Numele de utilizator trebuie să aibă 20 de caractere sau mai puțin",
+    "usernameInvalidChars": "Numele de utilizator poate conține numai litere, cifre, caractere de subliniere și cratime",
+    "language": "Limbă",
+    "selectLanguage": "Selectați Limbă",
+    "logout": "Deconectați-vă",
+    "logoutError": "Nu s-a putut deconecta.",
+    "about": "Despre",
+    "appName": "LeafNest",
+    "yourPlan": "Planul tău",
+    "leafNestFree": "LeafNest gratuit",
+    "help": "Ajutor",
+    "sendFeedback": "Trimiteți feedback",
+    "faq": "FAQ",
+    "termsOfUse": "Termeni de utilizare",
+    "generalSection": "General",
+    "supportSection": "Sprijin",
+    "legalSection": "Legal"
+  },
+  "profile": {
+    "title": "Profil",
+    "editUsername": "Editați numele de utilizator",
+    "signOut": "Sign out",
+    "leaveAccount": "Lasă-ți contul",
+    "signIn": "Conectare",
+    "accessFullFeatures": "Accesați toate funcțiile",
+    "createAccount": "Creează cont",
+    "joinLeafNest": "Alăturați-vă LeafNest",
+    "guestUser": "Utilizator invitat",
+    "statsTitle": "Statistici de scanare",
+    "viewAll": "Vezi toate",
+    "guestPromptTitle": "Urmăriți-vă progresul",
+    "guestPromptText": "Conectați-vă pentru a urmări scanările, a descoperi specii și a debloca realizări.",
+    "badgeNew": "Nou",
+    "editPlaceholder": "Introduceți numele de utilizator",
+    "stats": {
+      "total": "Scanări totale",
+      "week": "În această săptămână",
+      "species": "Specie"
+    },
+    "sections": {
+      "account": "Setările contului"
+    },
+    "menu": {
+      "planTitle": "Planul tău",
+      "planSubtitle": "LeafNest gratuit",
+      "notificationsTitle": "Notificări",
+      "notificationsSubtitle": "Gestionați-vă notificările",
+      "passwordTitle": "Aţi uitat parola",
+      "passwordSubtitle": "Resetați parola",
+      "signOutTitle": "Sign out",
+      "signOutSubtitle": "Deconectați-vă de la contul dvs",
+      "signInTitle": "Conectare",
+      "signInSubtitle": "Accesați toate funcțiile",
+      "createAccountTitle": "Creează cont",
+      "createAccountSubtitle": "Alăturați-vă LeafNest astăzi"
+    },
+    "alerts": {
+      "syncSuccess": "Sincronizat {{count}} în așteptarea scanării",
+      "syncSuccess_plural": "{{count}} scanări în așteptare sincronizate",
+      "usernameUpdated": "Numele de utilizator a fost actualizat cu succes!",
+      "usernameUpdateError": "Nu s-a putut actualiza numele de utilizator.",
+      "signOutTitle": "Sign out",
+      "signOutMessage": "Sigur doriți să vă deconectați?",
+      "signOutConfirm": "Sign out",
+      "signOutError": "Nu s-a putut deconecta. Vă rugăm să încercați din nou."
+    }
+  },
+  "languages": {
+    "ar": "arabic",
+    "zh-CN": "Chineză (simplificată)",
+    "zh-TW": "Chineză (tradițională)",
+    "hr": "croat",
+    "cs": "ceh",
+    "da": "danez",
+    "nl": "olandeză",
+    "en": "engleză",
+    "fi": "finlandeză",
+    "fr": "franceză",
+    "de": "german",
+    "el": "greacă",
+    "hi": "hindi",
+    "hu": "maghiară",
+    "id": "indoneziană",
+    "it": "italian",
+    "ja": "japonez",
+    "ko": "coreean",
+    "ms": "Malaeză",
+    "no": "norvegian",
+    "fa": "persană",
+    "pl": "Lustrui",
+    "pt": "portugheză",
+    "ro": "romanesc",
+    "ru": "rusă",
+    "sk": "slovacă",
+    "es": "spaniolă",
+    "sv": "suedez",
+    "tl": "tagalog",
+    "th": "thailandez",
+    "tr": "turc",
+    "uk": "ucrainean",
+    "vi": "vietnamez"
+  },
+  "tabs": {
+    "home": "Acasă",
+    "scan": "Scanează",
+    "history": "Istorie",
+    "settings": "Setări"
+  },
+  "animals": {
+    "title": "Animalele zilei",
+    "lion": {
+      "name": "Leu",
+      "scientificName": "Panthera leo",
+      "description": "Leul este o pisică mare din genul Panthera originară din Africa și India. Are un corp musculos, cu piept lat, cap scurt rotunjit, urechi rotunde și un smoc păros la capătul cozii.",
+      "habitat": "Savane, pajiști și păduri deschise",
+      "diet": "Carnivore - în primul rând mamifere mari, cum ar fi zebrele, gnule și bivolii",
+      "lifespan": "10-14 ani în sălbăticie, până la 20 de ani în captivitate",
+      "conservationStatus": "Vulnerabil"
+    },
+    "elephant": {
+      "name": "Elefant",
+      "scientificName": "Elephantidae",
+      "description": "Elefanții sunt cele mai mari animale terestre existente, caracterizate prin proboscis (trunchi) lung, picioare columnare și capete uriașe cu glande temporale și urechi largi și plate.",
+      "habitat": "Savane, păduri, deșerturi și mlaștini",
+      "diet": "Erbivor - ierburi, frunze, scoarță, fructe și sol",
+      "lifespan": "60-70 de ani",
+      "conservationStatus": "Pe cale de dispariție"
+    },
+    "panda": {
+      "name": "Panda uriaș",
+      "scientificName": "Ailuropoda melanoleuca",
+      "description": "Panda uriaș este un urs originar din China Centrală de Sud. Se caracterizează prin haina îndrăzneață alb-negru și corpul rotund.",
+      "habitat": "Lanțuri muntoase din centrul Chinei cu păduri dese de bambus",
+      "diet": "În primul rând bambus (99% din dietă), ocazional animale mici",
+      "lifespan": "20 de ani în sălbăticie, până la 30 de ani în captivitate",
+      "conservationStatus": "Vulnerabil"
+    },
+    "loading": "Se încarcă animale...",
+    "errorLoading": "Nu s-au încărcat animalele",
+    "addToFavorites": "Adăugați la Favorite",
+    "removeFromFavorites": "Eliminați din Favorite",
+    "learnMore": "Află mai multe",
+    "share": "Distribuie Animal"
+  },
+  "signup": {
+    "title": "Creează cont",
+    "username": "Nume de utilizator",
+    "email": "E-mail",
+    "password": "Parolă",
+    "confirmPassword": "Confirmați parola",
+    "register": "Registru",
+    "alreadyHaveAccount": "Aveți deja un cont? Conectare",
+    "passwordsDontMatch": "Parolele nu se potrivesc!",
+    "fillAllFields": "Vă rugăm să completați toate câmpurile.",
+    "verificationEmailSent": "Un e-mail de verificare a fost trimis la adresa dvs. de e-mail.",
+    "emailAlreadyInUse": "Adresa de e-mail este deja utilizată.",
+    "invalidEmail": "Adresa de e-mail nu este validă.",
+    "subtitle": "Alăturați-vă nouă pentru a explora natura",
+    "processing": "Prelucrare...",
+    "dividerOr": "sau",
+    "alreadyMember": "Sunteți deja membru?",
+    "signInLink": "Conectare"
+  },
+  "signin": {
+    "title": "Conectare",
+    "email": "E-mail",
+    "password": "Parolă",
+    "signIn": "Conectare",
+    "signInWithGoogle": "Conectați-vă cu Google",
+    "dontHaveAccount": "Nu ai un cont? Înscrieți-vă",
+    "fillAllFields": "Vă rugăm să completați toate câmpurile.",
+    "signInSuccessful": "Conectare reușită",
+    "welcomeBack": "Bine ai revenit",
+    "userNotFound": "Nu a fost găsit niciun utilizator cu acest e-mail.",
+    "wrongPassword": "Parolă incorectă.",
+    "invalidEmail": "Adresă de e-mail nevalidă.",
+    "subtitle": "Conectați-vă pentru a vă continua călătoria",
+    "forgotPasswordLink": "Aţi uitat parola?",
+    "dividerOr": "sau",
+    "noAccountPrompt": "Nu ai un cont?",
+    "signUpLink": "Înscrieți-vă"
+  },
+  "scan": {
+    "loadingCamera": "Se încarcă camera...",
+    "needPermission": "Avem nevoie de permisiunea dvs. pentru a arăta camera",
+    "grantPermission": "Acordați permisiunea",
+    "preparingCamera": "Se pregătește camera..."
+  },
+  "favorites": {
+    "title": "Favorite",
+    "all": "Toate",
+    "plants": "Plante",
+    "animals": "Animale",
+    "removeFavorite": "Eliminați Favorit",
+    "remove": "Elimina",
+    "cancel": "Anula",
+    "removed": "Îndepărtat",
+    "removedMessage": "a fost eliminat din favorite.",
+    "error": "Eroare",
+    "failedToRemove": "Nu s-a putut elimina din favorite.",
+    "clearFavorites": "Ștergeți Favoritele",
+    "removeAllFavorites": "Eliminați toate favoritele?",
+    "removeAll": "Eliminați toate",
+    "failedToClear": "Nu s-au șters favoritele.",
+    "plant": "Planta",
+    "animal": "Animal",
+    "noFavoritesYet": "Încă nu sunt favorite",
+    "addFromDaily": "Adăugați câteva din Plantele sau Animalele zilei."
+  },
+  "about": {
+    "title": "Despre",
+    "developedBy": "Dezvoltat și proiectat de echipa LeafNest",
+    "teamTitle": "Echipa LeafNest",
+    "specialThanks": "Mulțumiri speciale",
+    "mentor": "domnul Iosua R. Lasac",
+    "credits": "Creat inițial de echipa LeafNest cu sprijinul Pinamalayan Maritime Foundation And Technological College INC. (PMFTCI) și al Școlii de Studii Informatice.",
+    "privacyPolicy": "Politica de confidențialitate",
+    "version": "Versiunea 0.0.1 (1)",
+    "help": "Pentru ajutor: leafnest.capstone@gmail.com",
+    "tagline": "Identificarea plantelor și animalelor",
+    "institutionalSupport": "Sprijin instituțional",
+    "mentorRole": "Mentor și consilier de proiect"
+  },
+  "plan": {
+    "title": "Planuri",
+    "upgradeTitle": "Faceți upgrade la Premium",
+    "upgradeSubtitle": "Deblocați toate funcțiile și profitați la maximum de aplicația noastră.",
+    "free": "Gratuit",
+    "freePrice": "0 ₱ / lună",
+    "freeFeature1": "Scanați plante și animale limitate",
+    "freeFeature2": "Descoperiri zilnice de bază",
+    "freeFeature3": "Nu există acces offline la Istoric",
+    "freeFeature4": "Reclame incluse",
+    "premium": "Premium",
+    "premiumPrice": "129,00 ₱ / lună",
+    "premiumFeature1": "Scanări nelimitate",
+    "premiumFeature2": "Descoperiri zilnice exclusive",
+    "premiumFeature3": "Acces offline la Istoric",
+    "premiumFeature4": "Experiență fără reclame",
+    "subscribeNow": "Abonați-vă acum",
+    "selectedPlan": "Ați selectat planul {{plan}}!"
+  },
+  "legal": {
+    "cookies": {
+      "title": "Politica de cookie-uri",
+      "subtitle": "Cum folosim cookie-urile pentru a vă îmbunătăți experiența",
+      "effectiveDate": "Data intrării în vigoare: 1 iulie 2025",
+      "intro": "Această Politică privind modulele cookie explică modul în care folosim module cookie pentru a vă îmbunătăți experiența atunci când vizitați aplicația noastră și folosiți funcțiile acesteia. Prin utilizarea acestei aplicații, sunteți de acord cu utilizarea cookie-urilor așa cum este descris în această politică.",
+      "sections": [
+        {
+          "title": "Ce sunt cookie-urile?",
+          "content": "Cookie-urile sunt fișiere text mici stocate pe dispozitivul dvs. atunci când vizitați site-uri web sau utilizați aplicații. Ele ne ajută să înțelegem cum interacționați cu serviciul nostru și ne permit să vă oferim o experiență mai bună, mai personalizată."
+        },
+        {
+          "title": "Cum folosim cookie-urile",
+          "content": "Folosim cookie-uri în mai multe scopuri esențiale:",
+          "list": [
+            "Pentru a personaliza conținutul și reclamele",
+            "Pentru a analiza tiparele de trafic și pentru a îmbunătăți experiența utilizatorului",
+            "Pentru a activa anumite caracteristici și funcționalități ale aplicației noastre",
+            "Pentru a vă aminti preferințele și setările",
+            "Pentru a oferi acces securizat la contul dvs"
+          ]
+        },
+        {
+          "title": "Tipuri de cookie-uri pe care le folosim",
+          "content": "Folosim diferite tipuri de cookie-uri pentru a vă îmbunătăți experiența:",
+          "list": [
+            "Cookie-uri esențiale: necesare pentru funcționalitatea de bază a aplicației",
+            "Cookie-uri de performanță: Ajută-ne să înțelegem cum folosești aplicația",
+            "Cookie-uri funcționale: Amintiți-vă preferințele și opțiunile",
+            "Cookie-uri de analiză: oferă informații despre modelele de utilizare a aplicațiilor"
+          ]
+        },
+        {
+          "title": "Gestionarea cookie-urilor",
+          "content": "Puteți controla și gestiona cookie-urile prin setările dispozitivului dvs. Cu toate acestea, rețineți că dezactivarea anumitor module cookie vă poate afecta experiența și poate limita funcționalitatea aplicației."
+        },
+        {
+          "title": "Durata cookie",
+          "content": "Unele module cookie sunt temporare (cookie-uri de sesiune) și sunt șterse atunci când închideți aplicația. Alții rămân pe dispozitivul dvs. pentru o perioadă stabilită pentru a vă aminti preferințele pe parcursul sesiunilor."
+        },
+        {
+          "title": "Modificări ale acestei politici",
+          "content": "Este posibil să actualizăm această Politică privind cookie-urile din când în când pentru a reflecta schimbările de tehnologie sau cerințele legale. Orice modificări vor fi postate pe această pagină cu o dată actualizată de revizuire."
+        },
+        {
+          "title": "Contactaţi-ne",
+          "content": "Dacă aveți întrebări, nelămuriri sau feedback cu privire la această Politică privind cookie-urile, vă rugăm să ne contactați la leafnest.capstone@gmail.com."
+        }
+      ],
+      "footerTitle": "Confidențialitatea ta contează",
+      "footerText": "Ne angajăm să asigurăm transparență cu privire la modul în care folosim cookie-urile. Utilizarea în continuare a aplicației noastre indică acceptarea acestei politici.",
+      "copyright": "© 2025 LeafNest. Toate drepturile rezervate.",
+      "lastUpdated": "Ultima actualizare: 1 iulie 2025"
+    },
+    "privacy": {
+      "title": "Politica de confidențialitate",
+      "subtitle": "Intimitatea ta contează pentru noi",
+      "effectiveDate": "Data intrării în vigoare: 1 iulie 2025",
+      "intro": "La LeafNest, ne angajăm să vă protejăm confidențialitatea și să asigurăm securitatea informațiilor dumneavoastră personale.",
+      "sections": [
+        {
+          "title": "Informații pe care le colectăm",
+          "content": "Colectăm informațiile pe care ni le furnizați direct, cum ar fi atunci când creați un cont, încărcați fotografii sau ne contactați pentru asistență. Aceasta poate include numele dvs., adresa de e-mail și orice alte informații pe care alegeți să le furnizați."
+        },
+        {
+          "title": "Cum folosim informațiile dvs",
+          "content": "Folosim informațiile pe care le colectăm pentru a furniza, menține și îmbunătăți serviciile noastre, pentru a comunica cu dvs. și pentru a dezvolta noi funcții. Nu vindem informațiile dumneavoastră personale către terți."
+        },
+        {
+          "title": "Securitatea datelor",
+          "content": "Implementăm măsuri tehnice și organizatorice adecvate pentru a vă proteja informațiile personale împotriva accesului, modificării, dezvăluirii sau distrugerii neautorizate."
+        },
+        {
+          "title": "Drepturile tale",
+          "content": "Aveți dreptul de a accesa, actualiza sau șterge informațiile dvs. personale. Puteți face acest lucru prin setările contului sau contactându-ne direct."
+        },
+        {
+          "title": "Servicii de la terți",
+          "content": "Aplicația noastră poate conține link-uri către site-uri web și servicii terțe. Nu suntem responsabili pentru practicile lor de confidențialitate. Vă încurajăm să consultați politicile lor de confidențialitate."
+        },
+        {
+          "title": "Modificări ale politicii de confidențialitate",
+          "content": "Ne rezervăm dreptul de a actualiza această Politică de confidențialitate în orice moment. Modificările vor fi publicate pe această pagină cu o dată de intrare actualizată. Utilizarea dvs. în continuare reprezintă acceptarea modificărilor."
+        },
+        {
+          "title": "Contactaţi-ne",
+          "content": "Dacă aveți întrebări despre această Politică de confidențialitate sau despre practicile noastre de confidențialitate, vă rugăm să ne contactați la privacy@leafnest.com."
+        }
+      ],
+      "footerTitle": "Ne pasă de tine",
+      "footerText": "Încrederea dumneavoastră este importantă pentru noi. Ne angajăm să respectăm practicile transparente privind datele și dreptul dumneavoastră la confidențialitate.",
+      "copyright": "© 2025 LeafNest. Toate drepturile rezervate.",
+      "lastUpdated": "Ultima actualizare: 1 iulie 2025"
+    },
+    "terms": {
+      "title": "Termeni de utilizare",
+      "subtitle": "Vă rugăm să citiți cu atenție înainte de utilizare",
+      "effectiveDate": "Data intrării în vigoare: 1 iulie 2025",
+      "intro": "Acești Termeni de utilizare reglementează utilizarea aplicației și serviciilor LeafNest. Folosind aplicația noastră, sunteți de acord cu acești termeni și condiții.",
+      "sections": [
+        {
+          "title": "Acceptarea Termenilor",
+          "content": "Accesând sau utilizând aplicația LeafNest, sunteți de acord să respectați acești Termeni de utilizare. Dacă nu sunteți de acord cu acești termeni, nu trebuie să utilizați aplicația."
+        },
+        {
+          "title": "Responsabilitățile utilizatorului",
+          "content": "Sunteți de acord să utilizați aplicația numai în scopuri legale și într-o manieră care să nu încalce drepturile altora. Sunteți responsabil pentru păstrarea confidențialității informațiilor contului dvs."
+        },
+        {
+          "title": "Proprietate intelectuală",
+          "content": "Tot conținutul, mărcile comerciale, siglele și proprietatea intelectuală din cadrul aplicației sunt deținute de LeafNest sau ne sunt licențiate. Utilizarea neautorizată a proprietății noastre intelectuale este strict interzisă."
+        },
+        {
+          "title": "Confidențialitate și colectare de date",
+          "content": "Colectăm și procesăm informații personale așa cum este descris în Politica noastră de confidențialitate. Folosind aplicația noastră, sunteți de acord cu practicile noastre de colectare, stocare și procesare a datelor."
+        },
+        {
+          "title": "Limitarea răspunderii",
+          "content": "LeafNest nu este responsabil pentru nicio daune, pierderi sau vătămări rezultate din utilizarea aplicației sau a serviciilor sale. Utilizați aplicația pe propriul risc și la discreție."
+        },
+        {
+          "title": "Modificări ale Termenilor",
+          "content": "Ne rezervăm dreptul de a actualiza acești Termeni de utilizare în orice moment. Orice modificări vor fi postate pe această pagină cu o dată actualizată de intrare în vigoare. Utilizarea continuă reprezintă acceptarea modificărilor."
+        },
+        {
+          "title": "Contactaţi-ne",
+          "content": "Dacă aveți întrebări, nelămuriri sau feedback cu privire la acești Termeni de utilizare, vă rugăm să ne contactați la leafnest.capstone@gmail.com."
+        }
+      ],
+      "footerTitle": "Multumesc",
+      "footerText": "Vă mulțumim că ți-ai acordat timp examinării Termenilor noștri de utilizare. Încrederea și conformitatea dvs. ne ajută să creăm o experiență mai bună pentru toată lumea.",
+      "copyright": "© 2025 LeafNest. Toate drepturile rezervate.",
+      "lastUpdated": "Ultima actualizare: 1 iulie 2025"
+    }
+  },
+  "faq": {
+    "title": "Ajutor și întrebări frecvente",
+    "subtitle": "Găsiți răspunsuri la întrebările frecvente",
+    "categories": [
+      {
+        "title": "Noțiuni de bază",
+        "items": [
+          {
+            "question": "Ce este LeafNest?",
+            "answer": "LeafNest este o aplicație de identificare și informare a plantelor care utilizează tehnologia AI pentru a vă ajuta să identificați plantele și animalele pentru a oferi cunoștințe despre natură."
+          },
+          {
+            "question": "Cum incep?",
+            "answer": "Deschideți aplicația, atingeți pictograma de scanare și îndreptați-o către orice plantă sau animal. AI îl va identifica și va oferi informații detaliate despre acea specie."
+          }
+        ]
+      },
+      {
+        "title": "Folosind scanerul",
+        "items": [
+          {
+            "question": "Cum scanez o specie?",
+            "answer": "Atingeți pictograma de scanare de pe ecranul de start, îndreptați camera către specie și faceți o fotografie clară. Aplicația o va identifica automat."
+          },
+          {
+            "question": "Ce face o scanare bună?",
+            "answer": "Asigurați o iluminare bună, concentrați-vă pe caracteristicile distinctive și mențineți camera stabilă pentru cele mai bune rezultate."
+          },
+          {
+            "question": "Pot scana din galeria mea foto?",
+            "answer": "Da. Puteți încărca fotografii existente din galeria dvs. selectând opțiunea de galerie din ecranul scanerului."
+          }
+        ]
+      },
+      {
+        "title": "Precizie și caracteristici",
+        "items": [
+          {
+            "question": "Cât de precisă este identificarea?",
+            "answer": "LeafNest utilizează modele avansate de învățare automată. Precizia variază în funcție de iluminare și calitatea imaginii, dar depășește de obicei 90%."
+          },
+          {
+            "question": "Pot să-mi salvez plantele preferate?",
+            "answer": "Da. Atingeți pictograma inimii pe orice specie identificată pentru a o adăuga la favorite pentru acces rapid mai târziu."
+          }
+        ]
+      },
+      {
+        "title": "Asistență și ajutor",
+        "items": [
+          {
+            "question": "Cum pot contacta asistența?",
+            "answer": "Deschideți meniul Setări și selectați Ajutor și asistență sau trimiteți-ne un e-mail la leafnest.capstone@gmail.com."
+          }
+        ]
+      }
+    ]
+  },
+  "help": {
+    "title": "Ajutor și asistență",
+    "subtitle": "Sfaturi pentru scanarea plantelor și animalelor cu AI – și de unde să obțineți mai mult ajutor.",
+    "quickStart": {
+      "title": "Pornire rapidă",
+      "bullets": [
+        "Atingeți butonul Scanare din ecranul de start.",
+        "Centrați planta sau animalul în cadru.",
+        "Țineți neclintit, apoi faceți o fotografie clară."
+      ],
+      "cta": "Deschide Scanner"
+    },
+    "bestResults": {
+      "title": "Cum să obțineți rezultate mai bune",
+      "bullets": [
+        "Utilizați o iluminare bună și evitați lumina de fundal puternică.",
+        "Umpleți cadrul cu subiectul, concentrându-vă pe detalii distinctive.",
+        "Încercați mai multe unghiuri, cum ar fi frunze, flori, scoarță sau fotografii de profil."
+      ]
+    },
+    "troubleshooting": {
+      "title": "Depanare",
+      "bullets": [
+        "Evidențierile zilnice arată la fel? Trageți pentru a reîmprospăta sau redeschide aplicația după miezul nopții (ora Filipine).",
+        "Fără internet? Verificați-vă conexiunea deoarece recunoașterea imaginii necesită o conexiune la rețea.",
+        "Precizie scăzută? Faceți o fotografie mai clară, mai aproape, cu o lumină mai bună."
+      ]
+    },
+    "links": {
+      "faq": "FAQ",
+      "feedback": "Trimiteți feedback",
+      "about": "Despre LeafNest",
+      "privacy": "Politica de confidențialitate",
+      "terms": "Termeni de utilizare",
+      "contact": "Contactați asistența"
+    },
+    "alerts": {
+      "noEmailTitle": "Nu se poate deschide aplicația de e-mail",
+      "noEmailBody": "Vă rugăm să ne trimiteți un e-mail la {{email}}."
+    }
+  },
+  "feedback": {
+    "title": "Trimiteți feedback",
+    "subtitle": "Spuneți-ne ce funcționează bine sau ce ar putea fi îmbunătățit. Citim fiecare mesaj.",
+    "topicLabel": "Subiect",
+    "topics": {
+      "bug": "Raportați o eroare",
+      "idea": "Solicitare caracteristică",
+      "ux": "Design / UX",
+      "content": "Specie/Conținut",
+      "account": "Cont / Autentificare",
+      "other": "Alte"
+    },
+    "subjectLabel": "Subiect",
+    "subjectPlaceholder": "Rezumat scurt (de exemplu, scanerul etichetează greșit o frunză ca arțar)",
+    "messageLabel": "Mesaj",
+    "messagePlaceholder": "Descrieți ce sa întâmplat, pașii de reproducere și așteptările.",
+    "emailLabel": "E-mailul dvs. (opțional)",
+    "emailPlaceholder": "Vă vom răspunde aici dacă va fi nevoie",
+    "includeDiagnostics": "Includeți diagnostice",
+    "diagnosticsHint": "Ne ajută să depanăm problemele (numai platformă și OS).",
+    "submit": "Trimiteți feedback",
+    "submitting": "Se trimite...",
+    "footerText": "Sau trimiteți-ne un e-mail direct la {{email}}",
+    "alerts": {
+      "missingInfoTitle": "Lipsesc informații",
+      "missingInfoMessage": "Vă rugăm să adăugați un subiect și un mesaj.",
+      "invalidEmailTitle": "E-mail nevalid",
+      "invalidEmailMessage": "Introduceți o adresă de e-mail validă sau lăsați-o necompletată.",
+      "noEmailAppTitle": "Nu se poate trimite feedback",
+      "noEmailAppMessage": "Vă rugăm să încercați din nou mai târziu sau să ne trimiteți un e-mail la {{email}}.",
+      "successTitle": "Feedback trimis",
+      "successMessage": "Vă mulțumim pentru feedback! Îl vom revizui în curând.",
+      "genericErrorTitle": "Ceva a mers prost",
+      "genericErrorMessage": "Vă rugăm să încercați din nou mai târziu sau să ne trimiteți un e-mail la {{email}}."
+    }
+  },
+  "comments": {
+    "title": "Comentarii",
+    "noComments": "Niciun comentariu încă",
+    "beFirstToComment": "Fii primul care comentează!",
+    "addComment": "Adauga un comentariu...",
+    "deleteComment": "Șterge comentariul",
+    "deleteConfirm": "Sigur doriți să ștergeți acest comentariu?",
+    "delete": "Şterge",
+    "failedToDelete": "Comentariul nu a fost șters",
+    "failedToLike": "Comentariul nu a fost apreciat",
+    "loginRequired": "Conectare obligatorie",
+    "loginToComment": "Trebuie să fii autentificat pentru a comenta",
+    "loginToLike": "Trebuie să fii autentificat pentru a aprecia comentariile",
+    "justNow": "Chiar acum"
+  },
+  "notification": {
+    "title": "Notificări",
+    "noNotifications": "Nicio notificare încă",
+    "markAsRead": "Marcați ca citit",
+    "markAllAsRead": "Marcați totul ca citit",
+    "delete": "Şterge",
+    "deleteAll": "Ștergeți tot"
+  },
+  "commentsModal": {
+    "title": "Comentarii",
+    "inputPlaceholder": "Adauga un comentariu...",
+    "empty": {
+      "title": "Niciun comentariu încă",
+      "subtitle": "Fii primul care comentează!"
+    },
+    "actions": {
+      "cancel": "Anula",
+      "delete": "Şterge"
+    },
+    "alerts": {
+      "loadErrorTitle": "Eroare",
+      "loadErrorBody": "Nu s-au încărcat comentariile.",
+      "loginRequiredTitle": "Este necesară autentificarea",
+      "loginRequiredCommentBody": "Trebuie să fii autentificat pentru a comenta.",
+      "loginRequiredLikeBody": "Trebuie să fii autentificat pentru a aprecia comentariile.",
+      "addErrorTitle": "Eroare",
+      "addErrorBody": "Nu s-a putut adăuga comentariul.",
+      "likeErrorTitle": "Eroare",
+      "likeErrorBody": "Comentariul nu a fost apreciat.",
+      "deleteTitle": "Șterge comentariul",
+      "deleteConfirmBody": "Sigur doriți să ștergeți acest comentariu?",
+      "deleteErrorTitle": "Eroare",
+      "deleteErrorBody": "Comentariul nu a fost șters."
+    }
+  },
+  "premiumGate": {
+    "offline": {
+      "title": "Este necesar acces offline",
+      "historySubtitle": "Abonați-vă pentru a accesa istoricul offline",
+      "historyDescription": "Accesul offline la istoricul scanării este o caracteristică premium. Faceți upgrade pentru a vă vedea istoricul oricând și oriunde.",
+      "favoritesSubtitle": "Abonați-vă pentru a accesa favorite offline",
+      "favoritesDescription": "Accesul offline la favorite este o caracteristică premium. Faceți upgrade pentru a vă vedea favoritele oricând și oriunde."
+    },
+    "limits": {
+      "scanTitle": "Limita de scanare a fost atinsă",
+      "scanSubtitle": "Ați folosit toate {{limit}} scanări",
+      "scanDescription": "Faceți upgrade la Premium pentru scanări nelimitate și mai multe funcții!",
+      "downloadTitle": "Limita de descărcare a fost atinsă",
+      "downloadSubtitle": "Ați folosit toate {{limit}} descărcări",
+      "downloadDescription": "Faceți upgrade la Premium pentru descărcări nelimitate!"
+    },
+    "timer": {
+      "resetsInHours": "Se resetează în {{count}} oră",
+      "resetsInHours_plural": "Se resetează în {{count}} ore"
+    },
+    "usage": {
+      "scans": "Scanări:",
+      "downloads": "Descărcări:"
+    },
+    "features": {
+      "title": "Beneficii premium:",
+      "offlineHistory": "Acces offline la istoric",
+      "offlineFavorites": "Acces offline la favorite",
+      "unlimitedScans": "Scanări nelimitate",
+      "unlimitedDownloads": "Descărcări nelimitate"
+    },
+    "pricing": {
+      "amount": "{{amount}}",
+      "period": "timp de {{days}} zile"
+    },
+    "actions": {
+      "upgrade": "Faceți upgrade la Premium",
+      "later": "Poate mai târziu"
+    }
+  },
+  "manageNotifications": {
+    "title": "Gestionați notificările",
+    "pushNotifications": "Notificări push",
+    "emailNotifications": "Notificări prin e-mail",
+    "likeNotifications": "Ca Notificări",
+    "commentNotifications": "Notificări de comentarii",
+    "followNotifications": "Urmăriți notificările",
+    "enabled": "Activat",
+    "disabled": "Dezactivat",
+    "save": "Salvați setările"
+  },
+  "history": {
+    "title": "Istorie",
+    "loading": "Se încarcă istoricul...",
+    "loadingMore": "Se încarcă mai multe...",
+    "signInRequiredTitle": "Este necesară conectarea",
+    "signInRequiredBody": "Creați un cont sau conectați-vă pentru a vedea istoricul scanărilor.",
+    "selection": {
+      "selectedCount": "{{count}} selectat",
+      "deleteButton": "Ștergeți înregistrarea {{count}}",
+      "deleteButton_plural": "Ștergeți {{count}} înregistrări"
+    },
+    "offlineBanner": {
+      "premium": "Modul offline (Premium)",
+      "locked": "Modul offline necesită Premium"
+    },
+    "search": {
+      "placeholder": "Cauta dupa nume..."
+    },
+    "filters": {
+      "all": "Toate",
+      "plants": "Plante",
+      "animals": "Animale"
+    },
+    "empty": {
+      "noHistoryTitle": "Nicio istorie încă",
+      "noHistoryBody": "Istoricul scanării speciilor dvs. va apărea aici odată ce începeți identificarea plantelor și animalelor.",
+      "noResultsTitle": "Nu s-au găsit rezultate",
+      "noResultsBody": "Nicio înregistrare nu corespunde criteriilor dvs. de căutare sau de filtrare. Încercați să vă ajustați filtrele."
+    },
+    "actions": {
+      "signIn": "Conectare",
+      "delete": "Şterge",
+      "clearAll": "Ștergeți totul",
+      "clearFilters": "Ștergeți filtrele"
+    },
+    "alerts": {
+      "visibilityNow": "Scanarea este acum {{status}}",
+      "visibilityUpdateFailed": "Nu s-a putut actualiza vizibilitatea.",
+      "visibilityNeedsSync": "Această scanare trebuie să se sincronizeze mai întâi. Vă rugăm să încercați din nou peste un moment.",
+      "visibilityOffline": "Nu se poate modifica vizibilitatea când este offline. Vă rugăm să vă verificați conexiunea.",
+      "visibilityNotSynced": "Această scanare nu a fost încă sincronizată cu cloud. Așteptați finalizarea sincronizării și încercați din nou.",
+      "visibilityPermissionDenied": "Nu aveți permisiunea de a modifica această scanare.",
+      "visibilityNetworkError": "Eroare de rețea. Vă rugăm să vă verificați conexiunea și să încercați din nou.",
+      "errorWithMessage": "Eroare: {{message}}",
+      "deleteRecordTitle": "Șterge înregistrarea",
+      "deleteRecordMessage": "Ștergeți „{{name}}” din istoric?",
+      "deleteRecordSuccess": "Înregistrare ștearsă.",
+      "deleteRecordError": "Nu s-a șters înregistrarea.",
+      "deleteSelectedTitle": "Ștergeți selectat",
+      "deleteSelectedMessage": "Ștergeți {{count}} înregistrare din istoric?",
+      "deleteSelectedMessage_plural": "Ștergeți {{count}} înregistrări din istoric?",
+      "deleteSelectedSuccess": "{{count}} înregistrare a fost ștearsă.",
+      "deleteSelectedSuccess_plural": "{{count}} înregistrări au fost șterse.",
+      "deleteSelectedError": "Nu s-au șters înregistrările selectate.",
+      "clearAllTitle": "Ștergeți tot istoricul",
+      "clearAllMessage": "Sigur doriți să ștergeți toate înregistrările istorice? Această acțiune nu poate fi anulată.",
+      "clearAllSuccess": "Toată istoricul a fost șters.",
+      "clearAllError": "Istoricul nu a fost șters."
+    },
+    "visibility": {
+      "public": "public",
+      "private": "privat"
+    },
+    "unknownSpecies": "Specie necunoscută",
+    "details": {
+      "commonName": "Nume comun",
+      "scientificName": "Nume științific",
+      "taxonomicRank": "Rang taxonomic",
+      "type": "Tip",
+      "conservationStatus": "Starea de conservare",
+      "timesScanned": "Timpuri scanate",
+      "timeCount": "{{count}} timp",
+      "timeCount_plural": "{{count}} ori",
+      "globalAppScans": "Scanări globale ale aplicațiilor",
+      "scanCount": "{{count}} scanează",
+      "scanCount_plural": "{{count}} scanează",
+      "scannedOn": "Scanat mai departe"
+    },
+    "premiumGate": {
+      "title": "Abonați-vă pentru a accesa modul offline",
+      "message": "Accesul offline la istoricul dvs. este o caracteristică premium. Abonați-vă pentru a vedea istoricul scanărilor când sunteți offline."
+    },
+    "noHistory": "Nicio istorie încă",
+    "startScanning": "Începeți să scanați pentru a vă construi istoricul",
+    "delete": "Şterge",
+    "deleteAll": "Ștergeți tot",
+    "deleteConfirm": "Sigur doriți să ștergeți acest articol?",
+    "deleteAllConfirm": "Sigur doriți să ștergeți tot istoricul?",
+    "scannedOn": "Scanat pe {{date}}"
+  },
+  "postDetail": {
+    "title": "Post",
+    "aboutLabel": "Despre",
+    "emptyTitle": "Postarea nu a fost găsită",
+    "alerts": {
+      "postNotFoundTitle": "Eroare",
+      "postNotFoundBody": "Postarea nu a fost găsită.",
+      "loadErrorTitle": "Eroare",
+      "loadErrorBody": "Nu s-a încărcat postarea.",
+      "likeErrorBody": "Postarea nu a fost apreciată."
+    }
+  },
+  "speciesGallery": {
+    "title": "Galerie",
+    "noResults": "Nu s-au găsit rezultate",
+    "loadMore": "Încărcați mai multe",
+    "error": "Nu s-a putut încărca galeria"
+  },
+  "speciesLanding": {
+    "title": "Detalii despre specie",
+    "scientificName": "Nume științific",
+    "commonName": "Nume comun",
+    "description": "Descriere",
+    "habitat": "Habitat",
+    "diet": "Dieta",
+    "lifespan": "Durată de viaţă",
+    "conservationStatus": "Starea de conservare",
+    "addToFavorites": "Adăugați la Favorite",
+    "removeFromFavorites": "Eliminați din Favorite",
+    "share": "Distribuie",
+    "viewMore": "Vezi mai multe",
+    "error": "Nu s-au încărcat detaliile speciei"
+  },
+  "manualPayment": {
+    "title": "Plata manuala",
+    "uploadProof": "Încărcați dovada plății",
+    "selectImage": "Selectați Imagine",
+    "takePhoto": "Faceți o fotografie",
+    "chooseFromGallery": "Alegeți din Galerie",
+    "uploadImage": "Încărcați imaginea",
+    "uploading": "Se încarcă...",
+    "submit": "Trimiteți plata",
+    "submitting": "Se trimite...",
+    "successTitle": "Succes",
+    "successMessage": "Plata a fost trimisă cu succes. O vom verifica în curând.",
+    "errorTitle": "Eroare",
+    "errorMessage": "Nu s-a trimis plata. Vă rugăm să încercați din nou.",
+    "selectImageFirst": "Vă rugăm să selectați mai întâi o imagine"
+  },
+  "scanStats": {
+    "title": "Statistici de scanare",
+    "totalScans": "Scanări totale",
+    "thisWeek": "În această săptămână",
+    "thisMonth": "Luna aceasta",
+    "plants": "Plante",
+    "animals": "Animale",
+    "noData": "Nu există date de scanare disponibile încă"
+  }
+}

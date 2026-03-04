@@ -1,0 +1,895 @@
+{
+  "common": {
+    "welcome": "Vitajte",
+    "guest": "hosť",
+    "loading": "Načítava sa...",
+    "error": "Chyba",
+    "success": "Úspech",
+    "cancel": "Zrušiť",
+    "ok": "OK",
+    "save": "Uložiť",
+    "back": "Späť",
+    "edit": "Upraviť",
+    "username": "Používateľské meno",
+    "and": "a"
+  },
+  "login": {
+    "title": "LeafNest",
+    "signInWithGoogle": "Prihláste sa pomocou Google",
+    "signInAsGuest": "Prihláste sa ako hosť",
+    "signInFailed": "Prihlásenie zlyhalo",
+    "googleAuthError": "Chyba Google Auth",
+    "unexpectedError": "Neočakávaná chyba",
+    "unknownError": "Neznáma chyba",
+    "termsText": "Registráciou dávate najavo, že ste si prečítali a beriete na vedomie",
+    "termsOfUse": "Podmienky používania",
+    "privacyPolicy": "Zásady ochrany osobných údajov",
+    "cookiesPolicy": "Zásady používania súborov cookie",
+    "signIn": "Prihlásiť sa",
+    "welcomeTitle": "Vitajte v LeafNest",
+    "welcomeSubtitle": "Objavte krásu prírody",
+    "signInWithEmailButton": "Prihláste sa pomocou e-mailu",
+    "dividerOr": "alebo",
+    "continueAsGuest": "Pokračujte ako hosť",
+    "continueAgreement": "Pokračovaním súhlasíte s našimi"
+  },
+  "home": {
+    "welcomeGuest": "Vitajte, hosť",
+    "welcomeUser": "Vitajte, {{name}}",
+    "guestModeSubtitle": "Ste v režime hosťa. Ak chcete odomknúť všetky funkcie, prihláste sa.",
+    "welcomeBackSubtitle": "Som rád, že vás opäť vidím!",
+    "scanPlantsTitle": "Okamžité skenovanie rastlín",
+    "scanPlantsSubtitle": "Namierte, strieľajte a identifikujte flóru v priebehu niekoľkých sekúnd.",
+    "scanAnimalsTitle": "Okamžité skenovanie zvierat",
+    "scanAnimalsSubtitle": "Identifikujte zvieratá v priebehu niekoľkých sekúnd.",
+    "learnNatureTitle": "Naučte sa niečo o prírode",
+    "learnNatureSubtitle": "Objavte viac pomocou prevodu textu na reč a rýchlych faktov.",
+    "scanningStats": "Štatistika skenovania",
+    "plantsScanned": "Rastliny skenované",
+    "animalsIdentified": "Identifikované zvieratá",
+    "dailyDiscovery": "Denné objavovanie",
+    "dailyDiscoverySubtitle": "Naučte sa každý deň niečo nové",
+    "plantOfTheDay": "Rastlina dňa",
+    "animalOfTheDay": "Zviera dňa",
+    "scientificName": "Vedecký názov",
+    "habitat": "Habitat",
+    "diet": "Diéta",
+    "lifespan": "Životnosť",
+    "weight": "Hmotnosť",
+    "cycle": "Životný cyklus",
+    "watering": "Polievanie",
+    "sunlight": "Slnečné svetlo",
+    "loadingDaily": "Načítava sa denný obsah...",
+    "errorLoadingDaily": "Nie je možné načítať denný obsah",
+    "pullToRefresh": "Potiahnutím obnovíte",
+    "offlineMode": "Offline obsah",
+    "funFact": "Zábavný fakt",
+    "newFact": "Nová skutočnosť",
+    "trendingPlants": "Trendové rastliny",
+    "trendingAnimals": "Trendy zvierat",
+    "alerts": {
+      "authRequiredTitle": "Vyžaduje sa overenie",
+      "authRequiredBody": "Ak chcete stiahnuť súbor PDF, prihláste sa.",
+      "pdfSuccessTitle": "Úspech",
+      "pdfSuccessBody": "PDF bol vygenerovaný a odoslaný na váš e-mail.",
+      "pdfErrorTitle": "Chyba",
+      "pdfErrorBody": "Vygenerovanie PDF zlyhalo. Skúste to znova.",
+      "signInRequiredTitle": "Vyžaduje sa prihlásenie",
+      "signInLikeBody": "Ak chcete príspevky páčiť, prihláste sa.",
+      "signInCommentBody": "Ak chcete komentovať, prihláste sa.",
+      "downloadsUnavailableTitle": "Prevzaté položky nie sú k dispozícii",
+      "downloadsUnavailableBody": "Prihláste sa na bezplatný účet a stiahnite si informácie o druhoch.",
+      "downloadLimitCheckErrorBody": "Nepodarilo sa skontrolovať limit sťahovania. Skúste to znova."
+    },
+    "pdf": {
+      "defaultCommon": "Neznámy",
+      "defaultScientific": "Neznámy",
+      "defaultRank": "Neznáma hodnosť",
+      "defaultTaxon": "Neznámy",
+      "noDescription": "Nie je k dispozícii žiadny popis.",
+      "infoUnavailable": "Informácie nie sú k dispozícii.",
+      "notEvaluated": "Nehodnotené"
+    },
+    "trending": {
+      "title": "Trendové druhy"
+    },
+    "emptyState": {
+      "title": "Vitajte v Spoločenstve",
+      "subtitle": "Začnite skúmať a zdieľať svoje objavy prírody.",
+      "cta": "Naskenujte svoj prvý druh"
+    },
+    "feed": {
+      "likesCount": "{{count}} páči sa mi",
+      "likesCount_plural": "{{count}} páči sa mi",
+      "beFirst": "Buďte prvý, komu sa to páči",
+      "showMore": "Zobraziť viac",
+      "showLess": "Ukážte menej",
+      "viewComments": "Zobraziť všetky {{count}} komentáre",
+      "viewComments_plural": "Zobraziť všetky komentáre ({{count}}).",
+      "unknownUser": "Anonymný",
+      "unknownSpecies": "Neznámy druh",
+      "likeError": "Nepodarilo sa označiť, že sa mi páči príspevok."
+    },
+    "relativeTime": {
+      "justNow": "Práve teraz",
+      "minutes": "pred {{count}}m",
+      "hours": "pred {{count}}h",
+      "days": "pred {{count}}d"
+    }
+  },
+  "settings": {
+    "title": "Nastavenia",
+    "account": "účtu",
+    "guestMode": "Hosťovský režim",
+    "signedIn": "Prihlásený",
+    "username": "Používateľské meno",
+    "editUsername": "Upraviť používateľské meno",
+    "currentUsername": "Aktuálne používateľské meno",
+    "newUsername": "Nové používateľské meno",
+    "usernameUpdated": "Používateľské meno bolo úspešne aktualizované!",
+    "usernameUpdateError": "Používateľské meno sa nepodarilo aktualizovať",
+    "usernameUpdateFailed": "Aktualizácia používateľského mena zlyhala",
+    "usernameRequired": "Vyžaduje sa používateľské meno",
+    "usernameTooShort": "Používateľské meno musí mať aspoň 3 znaky",
+    "usernameTooLong": "Používateľské meno musí mať 20 znakov alebo menej",
+    "usernameInvalidChars": "Používateľské meno môže obsahovať iba písmená, čísla, podčiarkovníky a spojovníky",
+    "language": "Jazyk",
+    "selectLanguage": "Vyberte Jazyk",
+    "logout": "Odhlásiť sa",
+    "logoutError": "Odhlásenie zlyhalo.",
+    "about": "O",
+    "appName": "LeafNest",
+    "yourPlan": "Váš plán",
+    "leafNestFree": "LeafNest zadarmo",
+    "help": "Pomoc",
+    "sendFeedback": "Odoslať spätnú väzbu",
+    "faq": "FAQ",
+    "termsOfUse": "Podmienky používania",
+    "generalSection": "generál",
+    "supportSection": "Podpora",
+    "legalSection": "Právne"
+  },
+  "profile": {
+    "title": "Profil",
+    "editUsername": "Upraviť používateľské meno",
+    "signOut": "Odhlásiť sa",
+    "leaveAccount": "Nechajte svoj účet",
+    "signIn": "Prihlásiť sa",
+    "accessFullFeatures": "Prístup ku všetkým funkciám",
+    "createAccount": "Vytvoriť účet",
+    "joinLeafNest": "Pripojte sa k LeafNest",
+    "guestUser": "Hosťujúci používateľ",
+    "statsTitle": "Štatistika skenovania",
+    "viewAll": "Zobraziť všetko",
+    "guestPromptTitle": "Sledujte svoj pokrok",
+    "guestPromptText": "Prihláste sa, aby ste mohli sledovať skeny, objavovať druhy a odomykať úspechy.",
+    "badgeNew": "Nové",
+    "editPlaceholder": "Zadajte používateľské meno",
+    "stats": {
+      "total": "Celkový počet skenov",
+      "week": "Tento týždeň",
+      "species": "Druhy"
+    },
+    "sections": {
+      "account": "Nastavenia účtu"
+    },
+    "menu": {
+      "planTitle": "Váš plán",
+      "planSubtitle": "LeafNest zadarmo",
+      "notificationsTitle": "Upozornenia",
+      "notificationsSubtitle": "Spravujte svoje upozornenia",
+      "passwordTitle": "Zabudnuté heslo",
+      "passwordSubtitle": "Obnovte svoje heslo",
+      "signOutTitle": "Odhlásiť sa",
+      "signOutSubtitle": "Odhláste sa zo svojho účtu",
+      "signInTitle": "Prihlásiť sa",
+      "signInSubtitle": "Prístup ku všetkým funkciám",
+      "createAccountTitle": "Vytvoriť účet",
+      "createAccountSubtitle": "Pripojte sa k LeafNest ešte dnes"
+    },
+    "alerts": {
+      "syncSuccess": "Synchronizované {{count}} čaká na kontrolu",
+      "syncSuccess_plural": "Synchronizované {{count}} čakajúce kontroly",
+      "usernameUpdated": "Používateľské meno bolo úspešne aktualizované!",
+      "usernameUpdateError": "Používateľské meno sa nepodarilo aktualizovať.",
+      "signOutTitle": "Odhlásiť sa",
+      "signOutMessage": "Naozaj sa chcete odhlásiť?",
+      "signOutConfirm": "Odhlásiť sa",
+      "signOutError": "Odhlásenie zlyhalo. Skúste to znova."
+    }
+  },
+  "languages": {
+    "ar": "arabčina",
+    "zh-CN": "čínština (zjednodušená)",
+    "zh-TW": "čínština (tradičná)",
+    "hr": "chorvátsky",
+    "cs": "český",
+    "da": "dánčina",
+    "nl": "holandský",
+    "en": "angličtina",
+    "fi": "fínsky",
+    "fr": "francúzsky",
+    "de": "nemecký",
+    "el": "grécky",
+    "hi": "hindčina",
+    "hu": "maďarský",
+    "id": "indonézsky",
+    "it": "taliansky",
+    "ja": "japončina",
+    "ko": "kórejský",
+    "ms": "malajčina",
+    "no": "nórsky",
+    "fa": "perzský",
+    "pl": "poľský",
+    "pt": "portugalčina",
+    "ro": "rumunský",
+    "ru": "ruský",
+    "sk": "slovenský",
+    "es": "španielčina",
+    "sv": "švédsky",
+    "tl": "Tagalog",
+    "th": "thajčina",
+    "tr": "turecký",
+    "uk": "Ukrajinčina",
+    "vi": "Vietnamci"
+  },
+  "tabs": {
+    "home": "Domov",
+    "scan": "skenovať",
+    "history": "História",
+    "settings": "Nastavenia"
+  },
+  "animals": {
+    "title": "Zvieratá dňa",
+    "lion": {
+      "name": "Lev",
+      "scientificName": "Panthera leo",
+      "description": "Lev je veľká mačka rodu Panthera pôvodom z Afriky a Indie. Má svalnaté telo so širokým hrudníkom, krátku zaoblenú hlavu, okrúhle uši a chlpatý chumáč na konci chvosta.",
+      "habitat": "Savany, pasienky a otvorené lesy",
+      "diet": "Mäsožravé – predovšetkým veľké cicavce ako zebry, pakone a byvoly",
+      "lifespan": "10-14 rokov vo voľnej prírode, do 20 rokov v zajatí",
+      "conservationStatus": "Zraniteľné"
+    },
+    "elephant": {
+      "name": "Slon",
+      "scientificName": "Elephantidae",
+      "description": "Slony sú najväčšími existujúcimi suchozemskými zvieratami, ktoré sa vyznačujú dlhým chobotom (chobotom), stĺpovitými nohami a obrovskými hlavami so spánkovými žľazami a širokými plochými ušami.",
+      "habitat": "Savany, lesy, púšte a močiare",
+      "diet": "Bylinožravé - trávy, listy, kôra, ovocie a pôda",
+      "lifespan": "60-70 rokov",
+      "conservationStatus": "Ohrozený"
+    },
+    "panda": {
+      "name": "Panda veľká",
+      "scientificName": "Ailuropoda melanoleuca",
+      "description": "Panda veľká je medveď pochádzajúci z južnej strednej Číny. Vyznačuje sa odvážnou čierno-bielou srsťou a okrúhlym telom.",
+      "habitat": "Pohoria v strednej Číne s hustými bambusovými lesmi",
+      "diet": "Predovšetkým bambus (99% stravy), občas malé zvieratá",
+      "lifespan": "20 rokov vo voľnej prírode, do 30 rokov v zajatí",
+      "conservationStatus": "Zraniteľné"
+    },
+    "loading": "Načítavam zvieratá...",
+    "errorLoading": "Nepodarilo sa načítať zvieratá",
+    "addToFavorites": "Pridať k obľúbeným",
+    "removeFromFavorites": "Odstrániť z obľúbených",
+    "learnMore": "Zistite viac",
+    "share": "Zdieľať zviera"
+  },
+  "signup": {
+    "title": "Vytvoriť účet",
+    "username": "Používateľské meno",
+    "email": "Email",
+    "password": "heslo",
+    "confirmPassword": "Potvrďte heslo",
+    "register": "Zaregistrujte sa",
+    "alreadyHaveAccount": "Už máte účet? Prihlásiť sa",
+    "passwordsDontMatch": "Heslá sa nezhodujú!",
+    "fillAllFields": "Vyplňte všetky polia.",
+    "verificationEmailSent": "Na váš e-mail bol odoslaný overovací e-mail.",
+    "emailAlreadyInUse": "E-mailová adresa sa už používa.",
+    "invalidEmail": "E-mailová adresa nie je platná.",
+    "subtitle": "Pridajte sa k nám a objavujte prírodu",
+    "processing": "Spracováva sa...",
+    "dividerOr": "alebo",
+    "alreadyMember": "Už ste členom?",
+    "signInLink": "Prihlásiť sa"
+  },
+  "signin": {
+    "title": "Prihlásiť sa",
+    "email": "Email",
+    "password": "heslo",
+    "signIn": "Prihlásiť sa",
+    "signInWithGoogle": "Prihláste sa pomocou Google",
+    "dontHaveAccount": "Nemáte účet? Zaregistrujte sa",
+    "fillAllFields": "Vyplňte všetky polia.",
+    "signInSuccessful": "Prihlásenie bolo úspešné",
+    "welcomeBack": "Vitajte späť",
+    "userNotFound": "S týmto e-mailom sa nenašiel žiadny používateľ.",
+    "wrongPassword": "Nesprávne heslo.",
+    "invalidEmail": "Neplatná e-mailová adresa.",
+    "subtitle": "Ak chcete pokračovať v ceste, prihláste sa",
+    "forgotPasswordLink": "Zabudli ste heslo?",
+    "dividerOr": "alebo",
+    "noAccountPrompt": "Nemáte účet?",
+    "signUpLink": "Zaregistrujte sa"
+  },
+  "scan": {
+    "loadingCamera": "Načítava sa fotoaparát...",
+    "needPermission": "Na zobrazenie kamery potrebujeme vaše povolenie",
+    "grantPermission": "Udeliť povolenie",
+    "preparingCamera": "Príprava fotoaparátu..."
+  },
+  "favorites": {
+    "title": "Obľúbené",
+    "all": "Všetky",
+    "plants": "Rastliny",
+    "animals": "Zvieratá",
+    "removeFavorite": "Odstrániť obľúbené",
+    "remove": "Odstrániť",
+    "cancel": "Zrušiť",
+    "removed": "Odstránené",
+    "removedMessage": "bol odstránený z vašich obľúbených položiek.",
+    "error": "Chyba",
+    "failedToRemove": "Nepodarilo sa odstrániť z obľúbených.",
+    "clearFavorites": "Vymazať obľúbené",
+    "removeAllFavorites": "Odstrániť všetky obľúbené položky?",
+    "removeAll": "Odstráňte všetky",
+    "failedToClear": "Vymazanie obľúbených položiek zlyhalo.",
+    "plant": "Rastlina",
+    "animal": "Zviera",
+    "noFavoritesYet": "Zatiaľ žiadne obľúbené",
+    "addFromDaily": "Pridajte niektoré z rastlín alebo zvierat dňa."
+  },
+  "about": {
+    "title": "O",
+    "developedBy": "Vyvinutý a navrhnutý tímom LeafNest",
+    "teamTitle": "Tím LeafNest",
+    "specialThanks": "Špeciálne poďakovanie",
+    "mentor": "pán Joshua R. Lasac",
+    "credits": "Pôvodne ho vytvoril tím LeafNest s podporou Pinamalayan Maritime Foundation And Technological College INC. (PMFTCI) a School of Computer Studies.",
+    "privacyPolicy": "Zásady ochrany osobných údajov",
+    "version": "Verzia 0.0.1 (1)",
+    "help": "Ak potrebujete pomoc: leafnest.capstone@gmail.com",
+    "tagline": "Identifikácia rastlín a zvierat",
+    "institutionalSupport": "Inštitucionálna podpora",
+    "mentorRole": "Projektový mentor a poradca"
+  },
+  "plan": {
+    "title": "Plány",
+    "upgradeTitle": "Inovujte na Premium",
+    "upgradeSubtitle": "Odomknite všetky funkcie a vyťažte z našej aplikácie maximum.",
+    "free": "Zadarmo",
+    "freePrice": "0 ₱/mesiac",
+    "freeFeature1": "Skenujte obmedzené rastliny a zvieratá",
+    "freeFeature2": "Základné každodenné objavy",
+    "freeFeature3": "Žiadny offline prístup k histórii",
+    "freeFeature4": "Vrátane reklám",
+    "premium": "Premium",
+    "premiumPrice": "129,00 ₱ mesačne",
+    "premiumFeature1": "Neobmedzené skenovanie",
+    "premiumFeature2": "Exkluzívne denné objavy",
+    "premiumFeature3": "Offline prístup k histórii",
+    "premiumFeature4": "Zážitok bez reklám",
+    "subscribeNow": "Prihláste sa teraz",
+    "selectedPlan": "Vybrali ste plán {{plan}}!"
+  },
+  "legal": {
+    "cookies": {
+      "title": "Zásady používania súborov cookie",
+      "subtitle": "Ako používame cookies na zlepšenie vášho zážitku",
+      "effectiveDate": "Dátum účinnosti: 1. júla 2025",
+      "intro": "Tieto Zásady používania súborov cookie vysvetľujú, ako používame súbory cookie na zlepšenie vášho zážitku, keď navštívite našu aplikáciu a používate jej funkcie. Používaním tejto aplikácie súhlasíte s používaním súborov cookie, ako je opísané v týchto zásadách.",
+      "sections": [
+        {
+          "title": "Čo sú cookies?",
+          "content": "Súbory cookie sú malé textové súbory ukladané do vášho zariadenia pri návšteve webových stránok alebo používaní aplikácií. Pomáhajú nám porozumieť tomu, ako interagujete s našou službou, a umožňujú nám poskytnúť vám lepšiu a prispôsobenejšiu skúsenosť."
+        },
+        {
+          "title": "Ako používame súbory cookie",
+          "content": "Súbory cookie používame na niekoľko základných účelov:",
+          "list": [
+            "Na prispôsobenie obsahu a reklám",
+            "Analyzovať vzorce návštevnosti a zlepšiť používateľskú skúsenosť",
+            "Ak chcete povoliť určité funkcie a funkcie našej aplikácie",
+            "Aby ste si zapamätali vaše preferencie a nastavenia",
+            "Na zabezpečenie bezpečného prístupu k vášmu účtu"
+          ]
+        },
+        {
+          "title": "Typy súborov cookie, ktoré používame",
+          "content": "Na zlepšenie vášho zážitku používame rôzne typy súborov cookie:",
+          "list": [
+            "Nevyhnutné súbory cookie: Vyžadujú sa pre základné funkcie aplikácie",
+            "Výkonnostné súbory cookie: Pomôžte nám pochopiť, ako aplikáciu používate",
+            "Funkčné súbory cookie: Zapamätajte si svoje preferencie a voľby",
+            "Súbory cookie Analytics: poskytujú prehľad o vzoroch používania aplikácií"
+          ]
+        },
+        {
+          "title": "Správa súborov cookie",
+          "content": "Súbory cookie môžete ovládať a spravovať prostredníctvom nastavení vášho zariadenia. Upozorňujeme však, že zakázanie určitých súborov cookie môže ovplyvniť vašu skúsenosť a obmedziť funkčnosť aplikácie."
+        },
+        {
+          "title": "Trvanie súboru cookie",
+          "content": "Niektoré súbory cookie sú dočasné (súbory cookie relácie) a po zatvorení aplikácie sa vymažú. Ostatné zostanú vo vašom zariadení počas nastaveného obdobia, aby si zapamätali vaše preferencie v rámci relácií."
+        },
+        {
+          "title": "Zmeny týchto zásad",
+          "content": "Tieto Zásady používania súborov cookie môžeme z času na čas aktualizovať, aby odrážali zmeny v technológii alebo právnych požiadavkách. Akékoľvek zmeny budú zverejnené na tejto stránke s aktualizovaným dátumom revízie."
+        },
+        {
+          "title": "Kontaktujte nás",
+          "content": "Ak máte akékoľvek otázky, obavy alebo spätnú väzbu týkajúcu sa týchto Zásad používania súborov cookie, kontaktujte nás na adrese leafnest.capstone@gmail.com."
+        }
+      ],
+      "footerTitle": "Na vašom súkromí záleží",
+      "footerText": "Zaviazali sme sa k transparentnosti o tom, ako používame súbory cookie. Vaše ďalšie používanie našej aplikácie znamená, že súhlasíte s týmito zásadami.",
+      "copyright": "© 2025 LeafNest. Všetky práva vyhradené.",
+      "lastUpdated": "Posledná aktualizácia: 1. júla 2025"
+    },
+    "privacy": {
+      "title": "Zásady ochrany osobných údajov",
+      "subtitle": "Vaše súkromie je pre nás dôležité",
+      "effectiveDate": "Dátum účinnosti: 1. júla 2025",
+      "intro": "V LeafNest sme sa zaviazali chrániť vaše súkromie a zaistiť bezpečnosť vašich osobných údajov.",
+      "sections": [
+        {
+          "title": "Informácie, ktoré zhromažďujeme",
+          "content": "Zhromažďujeme informácie, ktoré nám poskytnete priamo, napríklad keď si vytvoríte účet, nahráte fotografie alebo nás kontaktujete so žiadosťou o podporu. Môže to zahŕňať vaše meno, e-mailovú adresu a akékoľvek ďalšie informácie, ktoré sa rozhodnete poskytnúť."
+        },
+        {
+          "title": "Ako používame vaše informácie",
+          "content": "Informácie, ktoré zhromažďujeme, používame na poskytovanie, údržbu a zlepšovanie našich služieb, na komunikáciu s vami a na vývoj nových funkcií. Vaše osobné údaje nepredávame tretím stranám."
+        },
+        {
+          "title": "Bezpečnosť údajov",
+          "content": "Zavádzame vhodné technické a organizačné opatrenia na ochranu vašich osobných údajov pred neoprávneným prístupom, zmenou, zverejnením alebo zničením."
+        },
+        {
+          "title": "Vaše práva",
+          "content": "Máte právo na prístup, aktualizáciu alebo vymazanie svojich osobných údajov. Môžete to urobiť prostredníctvom nastavení účtu alebo nás priamo kontaktovať."
+        },
+        {
+          "title": "Služby tretích strán",
+          "content": "Naša aplikácia môže obsahovať odkazy na webové stránky a služby tretích strán. Nie sme zodpovední za ich postupy ochrany osobných údajov. Odporúčame vám, aby ste si prečítali ich zásady ochrany osobných údajov."
+        },
+        {
+          "title": "Zmeny zásad ochrany osobných údajov",
+          "content": "Vyhradzujeme si právo tieto Zásady ochrany osobných údajov kedykoľvek aktualizovať. Zmeny budú zverejnené na tejto stránke s aktualizovaným dátumom účinnosti. Vaše ďalšie používanie predstavuje prijatie zmien."
+        },
+        {
+          "title": "Kontaktujte nás",
+          "content": "Ak máte akékoľvek otázky týkajúce sa týchto zásad ochrany osobných údajov alebo našich postupov ochrany osobných údajov, kontaktujte nás na adrese privacy@leafnest.com."
+        }
+      ],
+      "footerTitle": "Záleží nám na vás",
+      "footerText": "Vaša dôvera je pre nás dôležitá. Zaviazali sme sa k transparentným postupom v oblasti údajov a k vášmu právu na súkromie.",
+      "copyright": "© 2025 LeafNest. Všetky práva vyhradené.",
+      "lastUpdated": "Posledná aktualizácia: 1. júla 2025"
+    },
+    "terms": {
+      "title": "Podmienky používania",
+      "subtitle": "Pred použitím si pozorne prečítajte",
+      "effectiveDate": "Dátum účinnosti: 1. júla 2025",
+      "intro": "Tieto Podmienky používania upravujú používanie aplikácie a služieb LeafNest. Používaním našej aplikácie súhlasíte s týmito zmluvnými podmienkami.",
+      "sections": [
+        {
+          "title": "Prijatie podmienok",
+          "content": "Vstupom do aplikácie LeafNest alebo jej používaním súhlasíte s tým, že budete viazaní týmito Podmienkami používania. Ak s týmito podmienkami nesúhlasíte, aplikáciu by ste nemali používať."
+        },
+        {
+          "title": "Zodpovednosti užívateľa",
+          "content": "Súhlasíte s tým, že budete aplikáciu používať iba na zákonné účely a spôsobom, ktorý neporušuje práva iných. Ste zodpovední za zachovanie dôvernosti informácií o vašom účte."
+        },
+        {
+          "title": "duševné vlastníctvo",
+          "content": "Všetok obsah, ochranné známky, logá a duševné vlastníctvo v rámci aplikácie vlastní LeafNest alebo máme na ne licenciu. Neoprávnené používanie nášho duševného vlastníctva je prísne zakázané."
+        },
+        {
+          "title": "Ochrana osobných údajov a zber údajov",
+          "content": "Osobné údaje zhromažďujeme a spracovávame tak, ako je popísané v našich Zásadách ochrany osobných údajov. Používaním našej aplikácie súhlasíte s našimi postupmi zhromažďovania, uchovávania a spracovania údajov."
+        },
+        {
+          "title": "Obmedzenie zodpovednosti",
+          "content": "Spoločnosť LeafNest nezodpovedá za žiadne škody, straty alebo zranenia vyplývajúce z používania aplikácie alebo jej služieb. Aplikáciu používate na vlastné riziko a uváženie."
+        },
+        {
+          "title": "Zmeny podmienok",
+          "content": "Vyhradzujeme si právo tieto Podmienky používania kedykoľvek aktualizovať. Akékoľvek zmeny budú zverejnené na tejto stránke s aktualizovaným dátumom účinnosti. Ďalšie používanie znamená prijatie zmien."
+        },
+        {
+          "title": "Kontaktujte nás",
+          "content": "Ak máte akékoľvek otázky, obavy alebo spätnú väzbu týkajúcu sa týchto Podmienok používania, kontaktujte nás na adrese leafnest.capstone@gmail.com."
+        }
+      ],
+      "footerTitle": "Ďakujem",
+      "footerText": "Ďakujeme, že ste si našli čas na prečítanie našich Podmienok používania. Vaša dôvera a dodržiavanie pravidiel nám pomáhajú vytvárať lepšie prostredie pre všetkých.",
+      "copyright": "© 2025 LeafNest. Všetky práva vyhradené.",
+      "lastUpdated": "Posledná aktualizácia: 1. júla 2025"
+    }
+  },
+  "faq": {
+    "title": "Pomocník a časté otázky",
+    "subtitle": "Nájdite odpovede na bežné otázky",
+    "categories": [
+      {
+        "title": "Začíname",
+        "items": [
+          {
+            "question": "Čo je LeafNest?",
+            "answer": "LeafNest je aplikácia na identifikáciu a informácie o rastlinách, ktorá využíva technológiu AI, aby vám pomohla identifikovať rastliny a zvieratá a poskytnúť tak poznatky o prírode."
+          },
+          {
+            "question": "Ako môžem začať?",
+            "answer": "Otvorte aplikáciu, klepnite na ikonu skenovania a nasmerujte ju na akúkoľvek rastlinu alebo zviera. AI ho identifikuje a poskytne podrobné informácie o tomto druhu."
+          }
+        ]
+      },
+      {
+        "title": "Používanie skenera",
+        "items": [
+          {
+            "question": "Ako naskenujem druh?",
+            "answer": "Ťuknite na ikonu skenovania na domovskej obrazovke, namierte fotoaparát na druh a urobte jasnú fotografiu. Aplikácia ho automaticky identifikuje."
+          },
+          {
+            "question": "Čo robí dobrý sken?",
+            "answer": "Zabezpečte dobré osvetlenie, zamerajte sa na charakteristické črty a udržujte fotoaparát stabilný, aby ste dosiahli čo najlepšie výsledky."
+          },
+          {
+            "question": "Môžem skenovať z mojej fotogalérie?",
+            "answer": "áno. Môžete nahrať existujúce fotografie z vašej galérie výberom možnosti galérie na obrazovke skenera."
+          }
+        ]
+      },
+      {
+        "title": "Presnosť a funkcie",
+        "items": [
+          {
+            "question": "Aká presná je identifikácia?",
+            "answer": "LeafNest využíva pokročilé modely strojového učenia. Presnosť sa líši podľa osvetlenia a kvality obrazu, ale zvyčajne presahuje 90 %."
+          },
+          {
+            "question": "Môžem si uložiť svoje obľúbené rastliny?",
+            "answer": "áno. Klepnutím na ikonu srdca na akomkoľvek identifikovanom druhu ho pridáte medzi svoje obľúbené, aby ste k nemu mali neskôr rýchly prístup."
+          }
+        ]
+      },
+      {
+        "title": "Podpora a pomoc",
+        "items": [
+          {
+            "question": "Ako môžem kontaktovať podporu?",
+            "answer": "Otvorte ponuku Nastavenia a vyberte položku Pomoc a podpora alebo nám pošlite e-mail na adresu leafnest.capstone@gmail.com."
+          }
+        ]
+      }
+    ]
+  },
+  "help": {
+    "title": "Pomoc a podpora",
+    "subtitle": "Tipy na skenovanie rastlín a zvierat pomocou AI – a kde získať ďalšiu pomoc.",
+    "quickStart": {
+      "title": "Rýchly štart",
+      "bullets": [
+        "Na domovskej obrazovke klepnite na tlačidlo Skenovať.",
+        "Vycentrujte rastlinu alebo zviera v ráme.",
+        "Pevne držte a potom urobte jasnú fotografiu."
+      ],
+      "cta": "Otvorte skener"
+    },
+    "bestResults": {
+      "title": "Ako dosiahnuť lepšie výsledky",
+      "bullets": [
+        "Používajte dobré osvetlenie a vyhýbajte sa ostrému podsvieteniu.",
+        "Vyplňte rám objektom a zamerajte sa na výrazné detaily.",
+        "Vyskúšajte viacero uhlov, ako sú listy, kvety, kôra alebo zábery z profilu."
+      ]
+    },
+    "troubleshooting": {
+      "title": "Riešenie problémov",
+      "bullets": [
+        "Vyzerajú denné highlighty rovnako? Potiahnutím obnovíte alebo znova otvoríte aplikáciu po polnoci (Filipínsky čas).",
+        "Bez internetu? Skontrolujte svoje pripojenie, pretože rozpoznávanie obrázkov vyžaduje sieťové pripojenie.",
+        "Nízka presnosť? Urobte jasnejšiu a bližšiu fotografiu s lepším osvetlením."
+      ]
+    },
+    "links": {
+      "faq": "FAQ",
+      "feedback": "Odoslať spätnú väzbu",
+      "about": "O LeafNest",
+      "privacy": "Zásady ochrany osobných údajov",
+      "terms": "Podmienky používania",
+      "contact": "Kontaktujte podporu"
+    },
+    "alerts": {
+      "noEmailTitle": "Nedá sa otvoriť e-mailová aplikácia",
+      "noEmailBody": "Pošlite nám e-mail na adresu {{email}}."
+    }
+  },
+  "feedback": {
+    "title": "Odoslať spätnú väzbu",
+    "subtitle": "Povedzte nám, čo funguje skvele alebo čo by sa dalo zlepšiť. Čítame každú správu.",
+    "topicLabel": "Téma",
+    "topics": {
+      "bug": "Nahlásiť chybu",
+      "idea": "Žiadosť o funkciu",
+      "ux": "Dizajn / UX",
+      "content": "Druh / Obsah",
+      "account": "Účet / Prihlásenie",
+      "other": "Iné"
+    },
+    "subjectLabel": "Predmet",
+    "subjectPlaceholder": "Krátky súhrn (napr. Skener nesprávne označí list ako javor)",
+    "messageLabel": "Správa",
+    "messagePlaceholder": "Opíšte, čo sa stalo, kroky na reprodukciu a očakávania.",
+    "emailLabel": "Váš email (voliteľné)",
+    "emailPlaceholder": "V prípade potreby vám tu odpovieme",
+    "includeDiagnostics": "Zahrňte diagnostiku",
+    "diagnosticsHint": "Pomáha nám ladiť problémy (iba platforma a OS).",
+    "submit": "Odoslať spätnú väzbu",
+    "submitting": "Odosiela sa...",
+    "footerText": "Alebo nám pošlite e-mail priamo na adresu {{email}}",
+    "alerts": {
+      "missingInfoTitle": "Chýbajúce informácie",
+      "missingInfoMessage": "Pridajte predmet a správu.",
+      "invalidEmailTitle": "Neplatný email",
+      "invalidEmailMessage": "Zadajte platnú e-mailovú adresu alebo ju nechajte prázdnu.",
+      "noEmailAppTitle": "Nedá sa odoslať spätná väzba",
+      "noEmailAppMessage": "Skúste to znova neskôr alebo nám pošlite e-mail na adresu {{email}}.",
+      "successTitle": "Spätná väzba bola odoslaná",
+      "successMessage": "Ďakujeme za vašu spätnú väzbu! Čoskoro to skontrolujeme.",
+      "genericErrorTitle": "Niečo sa pokazilo",
+      "genericErrorMessage": "Skúste to znova neskôr alebo nám pošlite e-mail na adresu {{email}}."
+    }
+  },
+  "comments": {
+    "title": "Komentáre",
+    "noComments": "Zatiaľ žiadne komentáre",
+    "beFirstToComment": "Pridajte komentár ako prvý!",
+    "addComment": "Pridať komentár...",
+    "deleteComment": "Odstrániť komentár",
+    "deleteConfirm": "Naozaj chcete odstrániť tento komentár?",
+    "delete": "Odstrániť",
+    "failedToDelete": "Komentár sa nepodarilo odstrániť",
+    "failedToLike": "Komentár sa nepodarilo označiť ako páči sa mi",
+    "loginRequired": "Vyžaduje sa prihlásenie",
+    "loginToComment": "Ak chcete komentovať, musíte byť prihlásený",
+    "loginToLike": "Pre lajkovanie komentárov musíte byť prihlásený",
+    "justNow": "Práve teraz"
+  },
+  "notification": {
+    "title": "Upozornenia",
+    "noNotifications": "Zatiaľ žiadne upozornenia",
+    "markAsRead": "Označiť ako prečítané",
+    "markAllAsRead": "Označiť všetko ako prečítané",
+    "delete": "Odstrániť",
+    "deleteAll": "Odstrániť všetky"
+  },
+  "commentsModal": {
+    "title": "Komentáre",
+    "inputPlaceholder": "Pridať komentár...",
+    "empty": {
+      "title": "Zatiaľ žiadne komentáre",
+      "subtitle": "Pridajte komentár ako prvý!"
+    },
+    "actions": {
+      "cancel": "Zrušiť",
+      "delete": "Odstrániť"
+    },
+    "alerts": {
+      "loadErrorTitle": "Chyba",
+      "loadErrorBody": "Komentáre sa nepodarilo načítať.",
+      "loginRequiredTitle": "Vyžaduje sa prihlásenie",
+      "loginRequiredCommentBody": "Ak chcete komentovať, musíte byť prihlásený.",
+      "loginRequiredLikeBody": "Pre lajkovanie komentárov musíte byť prihlásený.",
+      "addErrorTitle": "Chyba",
+      "addErrorBody": "Pridanie komentára zlyhalo.",
+      "likeErrorTitle": "Chyba",
+      "likeErrorBody": "Komentár sa nepodarilo označiť ako páči sa mi.",
+      "deleteTitle": "Odstrániť komentár",
+      "deleteConfirmBody": "Naozaj chcete odstrániť tento komentár?",
+      "deleteErrorTitle": "Chyba",
+      "deleteErrorBody": "Komentár sa nepodarilo odstrániť."
+    }
+  },
+  "premiumGate": {
+    "offline": {
+      "title": "Vyžaduje sa offline prístup",
+      "historySubtitle": "Ak chcete získať prístup k histórii offline, prihláste sa na odber",
+      "historyDescription": "Offline prístup k vašej histórii skenovania je prémiovou funkciou. Inovujte a zobrazte svoju históriu kedykoľvek a kdekoľvek.",
+      "favoritesSubtitle": "Prihláste sa na odber a získajte prístup k obľúbeným položkám offline",
+      "favoritesDescription": "Offline prístup k vašim obľúbeným je prémiovou funkciou. Inovujte a prezerajte si svoje obľúbené kedykoľvek a kdekoľvek."
+    },
+    "limits": {
+      "scanTitle": "Bol dosiahnutý limit skenovania",
+      "scanSubtitle": "Použili ste všetkých {{limit}} skenov",
+      "scanDescription": "Inovujte na Premium a získajte neobmedzené skenovanie a ďalšie funkcie!",
+      "downloadTitle": "Bol dosiahnutý limit sťahovania",
+      "downloadSubtitle": "Použili ste všetkých {{limit}} stiahnutí",
+      "downloadDescription": "Inovujte na Premium a získajte neobmedzené sťahovanie!"
+    },
+    "timer": {
+      "resetsInHours": "Resetuje sa o {{count}} hodinu",
+      "resetsInHours_plural": "Resetuje sa o {{count}} hodín"
+    },
+    "usage": {
+      "scans": "Skenuje:",
+      "downloads": "Stiahnuté:"
+    },
+    "features": {
+      "title": "Prémiové výhody:",
+      "offlineHistory": "Offline prístup k histórii",
+      "offlineFavorites": "Offline prístup k obľúbeným",
+      "unlimitedScans": "Neobmedzené skenovanie",
+      "unlimitedDownloads": "Neobmedzené sťahovanie"
+    },
+    "pricing": {
+      "amount": "{{amount}}",
+      "period": "na {{days}} dní"
+    },
+    "actions": {
+      "upgrade": "Inovujte na Premium",
+      "later": "Možno neskôr"
+    }
+  },
+  "manageNotifications": {
+    "title": "Spravovať upozornenia",
+    "pushNotifications": "Push notifikácie",
+    "emailNotifications": "E-mailové upozornenia",
+    "likeNotifications": "Rovnako ako upozornenia",
+    "commentNotifications": "Upozornenia na komentáre",
+    "followNotifications": "Sledujte upozornenia",
+    "enabled": "Povolené",
+    "disabled": "Zakázané",
+    "save": "Uložiť nastavenia"
+  },
+  "history": {
+    "title": "História",
+    "loading": "Načítava sa história...",
+    "loadingMore": "Načítava sa viac...",
+    "signInRequiredTitle": "Vyžaduje sa prihlásenie",
+    "signInRequiredBody": "Ak chcete zobraziť históriu skenovania, vytvorte si účet alebo sa prihláste.",
+    "selection": {
+      "selectedCount": "Vybraté: {{count}}",
+      "deleteButton": "Odstrániť záznam {{count}}",
+      "deleteButton_plural": "Odstrániť {{count}} záznamov"
+    },
+    "offlineBanner": {
+      "premium": "Režim offline (Premium)",
+      "locked": "Offline režim vyžaduje Premium"
+    },
+    "search": {
+      "placeholder": "Hľadať podľa mena..."
+    },
+    "filters": {
+      "all": "Všetky",
+      "plants": "Rastliny",
+      "animals": "Zvieratá"
+    },
+    "empty": {
+      "noHistoryTitle": "Zatiaľ bez histórie",
+      "noHistoryBody": "Vaša história skenovania druhov sa tu objaví, keď začnete identifikovať rastliny a zvieratá.",
+      "noResultsTitle": "Nenašli sa žiadne výsledky",
+      "noResultsBody": "Vašim kritériám vyhľadávania alebo filtra nevyhovujú žiadne záznamy. Skúste si upraviť filtre."
+    },
+    "actions": {
+      "signIn": "Prihláste sa",
+      "delete": "Odstrániť",
+      "clearAll": "Vymazať všetko",
+      "clearFilters": "Vymazať filtre"
+    },
+    "alerts": {
+      "visibilityNow": "Skenovanie je teraz {{status}}",
+      "visibilityUpdateFailed": "Nepodarilo sa aktualizovať viditeľnosť.",
+      "visibilityNeedsSync": "Toto skenovanie sa musí najskôr synchronizovať. Skúste to znova o chvíľu.",
+      "visibilityOffline": "Viditeľnosť nie je možné zmeniť v režime offline. Skontrolujte svoje pripojenie.",
+      "visibilityNotSynced": "Toto skenovanie ešte nebolo synchronizované s cloudom. Počkajte na dokončenie synchronizácie a skúste to znova.",
+      "visibilityPermissionDenied": "Nemáte povolenie na úpravu tohto skenovania.",
+      "visibilityNetworkError": "Chyba siete. Skontrolujte pripojenie a skúste to znova.",
+      "errorWithMessage": "Chyba: {{message}}",
+      "deleteRecordTitle": "Odstrániť záznam",
+      "deleteRecordMessage": "Odstrániť „{{name}}“ z histórie?",
+      "deleteRecordSuccess": "Záznam vymazaný.",
+      "deleteRecordError": "Záznam sa nepodarilo odstrániť.",
+      "deleteSelectedTitle": "Odstrániť vybraté",
+      "deleteSelectedMessage": "Odstrániť {{count}} záznam z histórie?",
+      "deleteSelectedMessage_plural": "Chcete odstrániť {{count}} záznamov z histórie?",
+      "deleteSelectedSuccess": "Záznam {{count}} bol odstránený.",
+      "deleteSelectedSuccess_plural": "{{count}} záznamy boli odstránené.",
+      "deleteSelectedError": "Vybraté záznamy sa nepodarilo odstrániť.",
+      "clearAllTitle": "Vymazať celú históriu",
+      "clearAllMessage": "Naozaj chcete vymazať všetky záznamy histórie? Túto akciu nie je možné vrátiť späť.",
+      "clearAllSuccess": "Celá história vymazaná.",
+      "clearAllError": "Históriu sa nepodarilo vymazať."
+    },
+    "visibility": {
+      "public": "verejnosti",
+      "private": "súkromné"
+    },
+    "unknownSpecies": "Neznámy druh",
+    "details": {
+      "commonName": "Bežné meno",
+      "scientificName": "Vedecký názov",
+      "taxonomicRank": "Taxonomické poradie",
+      "type": "Typ",
+      "conservationStatus": "Stav ochrany",
+      "timesScanned": "Naskenované časy",
+      "timeCount": "{{count}} čas",
+      "timeCount_plural": "{{count}}-krát",
+      "globalAppScans": "Globálne skenovanie aplikácií",
+      "scanCount": "{{count}} skenovanie",
+      "scanCount_plural": "{{count}} skenov",
+      "scannedOn": "Naskenované"
+    },
+    "premiumGate": {
+      "title": "Ak chcete získať prístup do režimu offline, prihláste sa na odber",
+      "message": "Offline prístup k vašej histórii je prémiová funkcia. Ak chcete zobraziť históriu skenovania, keď ste offline, prihláste sa na odber."
+    },
+    "noHistory": "Zatiaľ bez histórie",
+    "startScanning": "Začnite skenovať a vytvorte si históriu",
+    "delete": "Odstrániť",
+    "deleteAll": "Odstrániť všetky",
+    "deleteConfirm": "Naozaj chcete odstrániť túto položku?",
+    "deleteAllConfirm": "Naozaj chcete vymazať celú históriu?",
+    "scannedOn": "Naskenované dňa {{date}}"
+  },
+  "postDetail": {
+    "title": "Príspevok",
+    "aboutLabel": "O",
+    "emptyTitle": "Príspevok sa nenašiel",
+    "alerts": {
+      "postNotFoundTitle": "Chyba",
+      "postNotFoundBody": "Príspevok sa nenašiel.",
+      "loadErrorTitle": "Chyba",
+      "loadErrorBody": "Príspevok sa nepodarilo načítať.",
+      "likeErrorBody": "Nepodarilo sa označiť, že sa mi páči príspevok."
+    }
+  },
+  "speciesGallery": {
+    "title": "Galéria",
+    "noResults": "Nenašli sa žiadne výsledky",
+    "loadMore": "Načítať viac",
+    "error": "Nepodarilo sa načítať galériu"
+  },
+  "speciesLanding": {
+    "title": "Podrobnosti o druhu",
+    "scientificName": "Vedecký názov",
+    "commonName": "Bežné meno",
+    "description": "Popis",
+    "habitat": "Habitat",
+    "diet": "Diéta",
+    "lifespan": "Životnosť",
+    "conservationStatus": "Stav ochrany",
+    "addToFavorites": "Pridať k obľúbeným",
+    "removeFromFavorites": "Odstrániť z obľúbených",
+    "share": "zdieľať",
+    "viewMore": "Zobraziť viac",
+    "error": "Nepodarilo sa načítať podrobnosti o druhu"
+  },
+  "manualPayment": {
+    "title": "Manuálna platba",
+    "uploadProof": "Nahrajte doklad o platbe",
+    "selectImage": "Vyberte Obrázok",
+    "takePhoto": "Odfotiť",
+    "chooseFromGallery": "Vyberte si z Galérie",
+    "uploadImage": "Nahrať obrázok",
+    "uploading": "Nahráva sa...",
+    "submit": "Odoslať platbu",
+    "submitting": "Odosiela sa...",
+    "successTitle": "Úspech",
+    "successMessage": "Platba bola úspešne odoslaná. Čoskoro to overíme.",
+    "errorTitle": "Chyba",
+    "errorMessage": "Platbu sa nepodarilo odoslať. Skúste to znova.",
+    "selectImageFirst": "Najprv vyberte obrázok"
+  },
+  "scanStats": {
+    "title": "Štatistika skenovania",
+    "totalScans": "Celkový počet skenov",
+    "thisWeek": "Tento týždeň",
+    "thisMonth": "Tento mesiac",
+    "plants": "Rastliny",
+    "animals": "Zvieratá",
+    "noData": "Zatiaľ nie sú k dispozícii žiadne údaje o skenovaní"
+  }
+}

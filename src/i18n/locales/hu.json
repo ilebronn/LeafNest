@@ -1,0 +1,895 @@
+{
+  "common": {
+    "welcome": "Üdvözöljük",
+    "guest": "Vendég",
+    "loading": "Terhelés...",
+    "error": "Hiba",
+    "success": "Siker",
+    "cancel": "Mégsem",
+    "ok": "RENDBEN",
+    "save": "Megtakarítás",
+    "back": "Vissza",
+    "edit": "Szerkesztés",
+    "username": "Felhasználónév",
+    "and": "és"
+  },
+  "login": {
+    "title": "LeafNest",
+    "signInWithGoogle": "Jelentkezzen be a Google-lal",
+    "signInAsGuest": "Jelentkezzen be vendégként",
+    "signInFailed": "Sikertelen bejelentkezés",
+    "googleAuthError": "Google Auth hiba",
+    "unexpectedError": "Váratlan hiba",
+    "unknownError": "Ismeretlen hiba",
+    "termsText": "A regisztrációval kijelenti, hogy elolvasta és tudomásul veszi",
+    "termsOfUse": "Felhasználási feltételek",
+    "privacyPolicy": "Adatvédelmi szabályzat",
+    "cookiesPolicy": "Cookie-kra vonatkozó szabályzat",
+    "signIn": "Jelentkezzen be",
+    "welcomeTitle": "Üdvözöljük a LeafNestben",
+    "welcomeSubtitle": "Fedezze fel a természet szépségét",
+    "signInWithEmailButton": "Jelentkezzen be e-mail címmel",
+    "dividerOr": "vagy",
+    "continueAsGuest": "Folytatás vendégként",
+    "continueAgreement": "A folytatással Ön elfogadja a mi véleményünket"
+  },
+  "home": {
+    "welcomeGuest": "Üdvözlünk, Vendég",
+    "welcomeUser": "Üdvözlünk, {{name}}",
+    "guestModeSubtitle": "Ön vendég módban van. Jelentkezzen be az összes funkció feloldásához.",
+    "welcomeBackSubtitle": "Örülök, hogy újra látlak!",
+    "scanPlantsTitle": "Szkennelje be a növényeket azonnal",
+    "scanPlantsSubtitle": "Mutasson, lőjön és azonosítsa a flórát másodpercek alatt.",
+    "scanAnimalsTitle": "Szkennelje be az állatokat azonnal",
+    "scanAnimalsSubtitle": "Azonosítsa az állatokat másodpercek alatt.",
+    "learnNatureTitle": "Ismerje meg a természetet",
+    "learnNatureSubtitle": "Fedezzen fel többet a szövegfelolvasó és a gyors tények segítségével.",
+    "scanningStats": "Szkennelési statisztikák",
+    "plantsScanned": "Beolvasott növények",
+    "animalsIdentified": "Azonosított állatok",
+    "dailyDiscovery": "Napi felfedezés",
+    "dailyDiscoverySubtitle": "Minden nap tanulj valami újat",
+    "plantOfTheDay": "A nap növénye",
+    "animalOfTheDay": "A nap állata",
+    "scientificName": "Tudományos név",
+    "habitat": "Élőhely",
+    "diet": "Diéta",
+    "lifespan": "Élettartam",
+    "weight": "Súly",
+    "cycle": "Életciklus",
+    "watering": "Locsolás",
+    "sunlight": "Napfény",
+    "loadingDaily": "Napi tartalom betöltése...",
+    "errorLoadingDaily": "Nem sikerült betölteni a napi tartalmat",
+    "pullToRefresh": "Húzza meg a frissítéshez",
+    "offlineMode": "Offline tartalom",
+    "funFact": "Érdekes tény",
+    "newFact": "Új Tény",
+    "trendingPlants": "Felkapott növények",
+    "trendingAnimals": "Felkapott állatok",
+    "alerts": {
+      "authRequiredTitle": "Hitelesítés szükséges",
+      "authRequiredBody": "Kérjük, jelentkezzen be a PDF letöltéséhez.",
+      "pdfSuccessTitle": "Siker",
+      "pdfSuccessBody": "A PDF-t létrehoztuk és elküldtük az Ön e-mail címére.",
+      "pdfErrorTitle": "Hiba",
+      "pdfErrorBody": "PDF létrehozása sikertelen. Kérjük, próbálja újra.",
+      "signInRequiredTitle": "Bejelentkezés szükséges",
+      "signInLikeBody": "Kérlek jelentkezz be a bejegyzések kedveléséhez.",
+      "signInCommentBody": "Kérjük, jelentkezzen be a hozzászóláshoz.",
+      "downloadsUnavailableTitle": "Letöltések nem érhetők el",
+      "downloadsUnavailableBody": "Kérjük, regisztráljon egy ingyenes fiókot a fajokra vonatkozó információk letöltéséhez.",
+      "downloadLimitCheckErrorBody": "Nem sikerült ellenőrizni a letöltési korlátot. Kérjük, próbálja újra."
+    },
+    "pdf": {
+      "defaultCommon": "Ismeretlen",
+      "defaultScientific": "Ismeretlen",
+      "defaultRank": "Ismeretlen rang",
+      "defaultTaxon": "Ismeretlen",
+      "noDescription": "Nem áll rendelkezésre leírás.",
+      "infoUnavailable": "Információ nem áll rendelkezésre.",
+      "notEvaluated": "Nincs értékelve"
+    },
+    "trending": {
+      "title": "Felkapott fajok"
+    },
+    "emptyState": {
+      "title": "Üdvözöljük a Közösségben",
+      "subtitle": "Kezdje el felfedezni és megosztani természeti felfedezéseit.",
+      "cta": "Vizsgálja be az első fajt"
+    },
+    "feed": {
+      "likesCount": "{{count}} tetszik",
+      "likesCount_plural": "{{count}} kedveli",
+      "beFirst": "Legyen Ön az első, akinek ez tetszik",
+      "showMore": "Mutasson többet",
+      "showLess": "Mutass kevesebbet",
+      "viewComments": "Az összes {{count}} megjegyzés megtekintése",
+      "viewComments_plural": "Az összes {{count}} megjegyzés megtekintése",
+      "unknownUser": "Névtelen",
+      "unknownSpecies": "Ismeretlen faj",
+      "likeError": "Nem sikerült kedvelni a bejegyzést."
+    },
+    "relativeTime": {
+      "justNow": "Éppen most",
+      "minutes": "{{count}} perce",
+      "hours": "{{count}}órája",
+      "days": "{{count}}napja"
+    }
+  },
+  "settings": {
+    "title": "Beállítások elemre",
+    "account": "fiók",
+    "guestMode": "Vendég mód",
+    "signedIn": "Bejelentkezve",
+    "username": "Felhasználónév",
+    "editUsername": "Felhasználónév szerkesztése",
+    "currentUsername": "Jelenlegi felhasználónév",
+    "newUsername": "Új felhasználónév",
+    "usernameUpdated": "Felhasználónév sikeresen frissítve!",
+    "usernameUpdateError": "Nem sikerült frissíteni a felhasználónevet",
+    "usernameUpdateFailed": "A felhasználónév frissítése nem sikerült",
+    "usernameRequired": "Felhasználónév megadása kötelező",
+    "usernameTooShort": "A felhasználónévnek legalább 3 karakterből kell állnia",
+    "usernameTooLong": "A felhasználónév legfeljebb 20 karakterből állhat",
+    "usernameInvalidChars": "A felhasználónév csak betűket, számokat, aláhúzásjeleket és kötőjeleket tartalmazhat",
+    "language": "Nyelv",
+    "selectLanguage": "Válassza a Nyelv lehetőséget",
+    "logout": "Jelentkezzen ki",
+    "logoutError": "Nem sikerült kijelentkezni.",
+    "about": "Körülbelül",
+    "appName": "LeafNest",
+    "yourPlan": "Az Ön terve",
+    "leafNestFree": "LeafNest ingyenes",
+    "help": "Segítség",
+    "sendFeedback": "Visszajelzés küldése",
+    "faq": "GYIK",
+    "termsOfUse": "Felhasználási feltételek",
+    "generalSection": "Általános",
+    "supportSection": "Támogatás",
+    "legalSection": "Jogi"
+  },
+  "profile": {
+    "title": "Profil",
+    "editUsername": "Felhasználónév szerkesztése",
+    "signOut": "Jelentkezzen ki",
+    "leaveAccount": "Hagyja el fiókját",
+    "signIn": "Jelentkezzen be",
+    "accessFullFeatures": "Hozzáférés az összes funkcióhoz",
+    "createAccount": "Fiók létrehozása",
+    "joinLeafNest": "Csatlakozzon a LeafNesthez",
+    "guestUser": "Vendég felhasználó",
+    "statsTitle": "Szkennelési statisztika",
+    "viewAll": "Összes megtekintése",
+    "guestPromptTitle": "Kövesse nyomon fejlődését",
+    "guestPromptText": "Jelentkezzen be a vizsgálatok nyomon követéséhez, a fajok felfedezéséhez és a jutalmak feloldásához.",
+    "badgeNew": "Új",
+    "editPlaceholder": "Adja meg a felhasználónevet",
+    "stats": {
+      "total": "Összes szkennelés",
+      "week": "Ezen a héten",
+      "species": "Faj"
+    },
+    "sections": {
+      "account": "Fiókbeállítások"
+    },
+    "menu": {
+      "planTitle": "Az Ön terve",
+      "planSubtitle": "LeafNest ingyenes",
+      "notificationsTitle": "Értesítések",
+      "notificationsSubtitle": "Kezelje értesítéseit",
+      "passwordTitle": "Elfelejtett jelszó",
+      "passwordSubtitle": "Állítsa vissza jelszavát",
+      "signOutTitle": "Jelentkezzen ki",
+      "signOutSubtitle": "Jelentkezzen ki fiókjából",
+      "signInTitle": "Jelentkezzen be",
+      "signInSubtitle": "Hozzáférés az összes funkcióhoz",
+      "createAccountTitle": "Fiók létrehozása",
+      "createAccountSubtitle": "Csatlakozzon még ma a LeafNesthez"
+    },
+    "alerts": {
+      "syncSuccess": "Szinkronizált {{count}} függőben lévő vizsgálat",
+      "syncSuccess_plural": "Szinkronizált {{count}} függőben lévő vizsgálat",
+      "usernameUpdated": "Felhasználónév sikeresen frissítve!",
+      "usernameUpdateError": "Nem sikerült frissíteni a felhasználónevet.",
+      "signOutTitle": "Jelentkezzen ki",
+      "signOutMessage": "Biztosan ki szeretne jelentkezni?",
+      "signOutConfirm": "Jelentkezzen ki",
+      "signOutError": "Nem sikerült kijelentkezni. Kérjük, próbálja újra."
+    }
+  },
+  "languages": {
+    "ar": "arab",
+    "zh-CN": "kínai (egyszerűsített)",
+    "zh-TW": "kínai (hagyományos)",
+    "hr": "horvát",
+    "cs": "cseh",
+    "da": "dán",
+    "nl": "holland",
+    "en": "angol",
+    "fi": "finn",
+    "fr": "francia",
+    "de": "német",
+    "el": "görög",
+    "hi": "hindi",
+    "hu": "magyar",
+    "id": "indonéz",
+    "it": "olasz",
+    "ja": "japán",
+    "ko": "koreai",
+    "ms": "maláj",
+    "no": "norvég",
+    "fa": "perzsa",
+    "pl": "lengyel",
+    "pt": "portugál",
+    "ro": "román",
+    "ru": "orosz",
+    "sk": "szlovák",
+    "es": "spanyol",
+    "sv": "svéd",
+    "tl": "tagalog",
+    "th": "thai",
+    "tr": "török",
+    "uk": "ukrán",
+    "vi": "vietnami"
+  },
+  "tabs": {
+    "home": "Otthon",
+    "scan": "Letapogatás",
+    "history": "Történelem",
+    "settings": "Beállítások elemre"
+  },
+  "animals": {
+    "title": "A nap állatai",
+    "lion": {
+      "name": "Oroszlán",
+      "scientificName": "Panthera leo",
+      "description": "Az oroszlán a Panthera nemzetségbe tartozó nagy macska, amely Afrikában és Indiában őshonos. Izmos, széles mellkas, rövid, lekerekített fej, kerek fülek, farka végén szőrös tincse van.",
+      "habitat": "Szavannák, gyepek és nyílt erdők",
+      "diet": "Húsevő – elsősorban nagy emlősök, mint a zebrák, gnúk és bivalyok",
+      "lifespan": "Vadon 10-14 évig, fogságban 20 évig",
+      "conservationStatus": "Sebezhető"
+    },
+    "elephant": {
+      "name": "Elefánt",
+      "scientificName": "Elephantidae",
+      "description": "Az elefántok a létező legnagyobb szárazföldi állatok, amelyeket hosszú orrszáruk (törzsük), oszlopos lábaik, valamint halántékmirigyekkel rendelkező hatalmas fejük és széles, lapos fülük jellemez.",
+      "habitat": "Szavannák, erdők, sivatagok és mocsarak",
+      "diet": "Növényevő - füvek, levelek, kéreg, gyümölcs és talaj",
+      "lifespan": "60-70 év",
+      "conservationStatus": "Veszélyeztetett"
+    },
+    "panda": {
+      "name": "Óriás Panda",
+      "scientificName": "Ailuropoda melanoleuca",
+      "description": "Az óriáspanda Dél-Kínában őshonos medve. Merész fekete-fehér kabátja és kerek teste jellemzi.",
+      "habitat": "Közép-Kína hegyláncai sűrű bambusz erdőkkel",
+      "diet": "Elsősorban bambusz (az étrend 99%-a), esetenként kisállatok",
+      "lifespan": "20 évig vadon, akár 30 évig fogságban",
+      "conservationStatus": "Sebezhető"
+    },
+    "loading": "Állatok betöltése...",
+    "errorLoading": "Az állatok betöltése sikertelen",
+    "addToFavorites": "Hozzáadás a kedvencekhez",
+    "removeFromFavorites": "Eltávolítás a Kedvencek közül",
+    "learnMore": "További információ",
+    "share": "Share Animal"
+  },
+  "signup": {
+    "title": "Fiók létrehozása",
+    "username": "Felhasználónév",
+    "email": "Email",
+    "password": "Jelszó",
+    "confirmPassword": "Jelszó megerősítése",
+    "register": "Nyilvántartás",
+    "alreadyHaveAccount": "Már van fiókja? Jelentkezzen be",
+    "passwordsDontMatch": "A jelszavak nem egyeznek!",
+    "fillAllFields": "Kérjük, töltse ki az összes mezőt.",
+    "verificationEmailSent": "Ellenőrző e-mailt küldtünk az Ön e-mail címére.",
+    "emailAlreadyInUse": "Az e-mail cím már használatban van.",
+    "invalidEmail": "Az email cím nem érvényes.",
+    "subtitle": "Csatlakozzon hozzánk a természet felfedezéséhez",
+    "processing": "Feldolgozás...",
+    "dividerOr": "vagy",
+    "alreadyMember": "Már tag?",
+    "signInLink": "Jelentkezzen be"
+  },
+  "signin": {
+    "title": "Jelentkezzen be",
+    "email": "Email",
+    "password": "Jelszó",
+    "signIn": "Jelentkezzen be",
+    "signInWithGoogle": "Jelentkezzen be a Google-lal",
+    "dontHaveAccount": "Nincs fiókja? Regisztráljon",
+    "fillAllFields": "Kérjük, töltse ki az összes mezőt.",
+    "signInSuccessful": "Sikeres bejelentkezés",
+    "welcomeBack": "Isten hozott",
+    "userNotFound": "Nem található felhasználó ezzel az e-mail-címmel.",
+    "wrongPassword": "Helytelen jelszó.",
+    "invalidEmail": "Érvénytelen e-mail cím.",
+    "subtitle": "Jelentkezzen be az utazás folytatásához",
+    "forgotPasswordLink": "Elfelejtett jelszó?",
+    "dividerOr": "vagy",
+    "noAccountPrompt": "Nincs fiókja?",
+    "signUpLink": "Regisztráljon"
+  },
+  "scan": {
+    "loadingCamera": "Kamera betöltése...",
+    "needPermission": "Engedélyre van szükségünk a kamera bemutatásához",
+    "grantPermission": "Engedély megadása",
+    "preparingCamera": "Kamera előkészítése..."
+  },
+  "favorites": {
+    "title": "Kedvencek",
+    "all": "Minden",
+    "plants": "Növények",
+    "animals": "Állatok",
+    "removeFavorite": "Kedvenc eltávolítása",
+    "remove": "Távolítsa el",
+    "cancel": "Mégsem",
+    "removed": "Eltávolítva",
+    "removedMessage": "eltávolítva a kedvencei közül.",
+    "error": "Hiba",
+    "failedToRemove": "Nem sikerült eltávolítani a kedvencekből.",
+    "clearFavorites": "Kedvencek törlése",
+    "removeAllFavorites": "Eltávolítja az összes kedvencet?",
+    "removeAll": "Az összes eltávolítása",
+    "failedToClear": "Nem sikerült törölni a kedvenceket.",
+    "plant": "Növény",
+    "animal": "Állati",
+    "noFavoritesYet": "Még nincs kedvenc",
+    "addFromDaily": "Adjon hozzá néhányat a nap növényei vagy állatai közül."
+  },
+  "about": {
+    "title": "Körülbelül",
+    "developedBy": "A LeafNest csapata fejlesztette és tervezte",
+    "teamTitle": "LeafNest csapata",
+    "specialThanks": "Külön köszönet",
+    "mentor": "Joshua R. Lasac úr",
+    "credits": "Eredetileg a LeafNest csapata hozta létre a Pinamalayan Maritime Foundation And Technological College INC. (PMFTCI) és a School of Computer Studies támogatásával.",
+    "privacyPolicy": "Adatvédelmi szabályzat",
+    "version": "0.0.1 verzió (1)",
+    "help": "Segítségért: leafnest.capstone@gmail.com",
+    "tagline": "Növény- és állatazonosítás",
+    "institutionalSupport": "Intézményi támogatás",
+    "mentorRole": "Projekt mentor és tanácsadó"
+  },
+  "plan": {
+    "title": "Tervek",
+    "upgradeTitle": "Frissítsen Premiumra",
+    "upgradeSubtitle": "Oldja fel az összes funkciót, és hozza ki a legtöbbet alkalmazásunkból.",
+    "free": "Ingyenes",
+    "freePrice": "0 ₱ / hó",
+    "freeFeature1": "Vizsgálja meg a korlátozott számú növényeket és állatokat",
+    "freeFeature2": "Alapvető napi felfedezések",
+    "freeFeature3": "Nincs offline hozzáférés az előzményekhez",
+    "freeFeature4": "Hirdetések benne",
+    "premium": "Prémium",
+    "premiumPrice": "129,00 ₱ / hó",
+    "premiumFeature1": "Korlátlan beolvasás",
+    "premiumFeature2": "Exkluzív napi felfedezések",
+    "premiumFeature3": "Offline hozzáférés az előzményekhez",
+    "premiumFeature4": "Reklámmentes élmény",
+    "subscribeNow": "Iratkozz fel most",
+    "selectedPlan": "Ön a {{plan}} csomagot választotta!"
+  },
+  "legal": {
+    "cookies": {
+      "title": "Cookie-kra vonatkozó szabályzat",
+      "subtitle": "Hogyan használjuk a sütiket az élmény fokozása érdekében",
+      "effectiveDate": "Hatálybalépés napja: 2025. július 1",
+      "intro": "Ez a cookie-kra vonatkozó szabályzat elmagyarázza, hogyan használunk cookie-kat az Ön élményének fokozása érdekében, amikor meglátogatja alkalmazásunkat és használja annak funkcióit. Az alkalmazás használatával Ön hozzájárul a cookie-k használatához a jelen szabályzatban leírtak szerint.",
+      "sections": [
+        {
+          "title": "Mik azok a sütik?",
+          "content": "A cookie-k kis szöveges fájlok, amelyek az Ön eszközén tárolódnak, amikor webhelyeket látogat meg vagy alkalmazásokat használ. Segítenek megérteni, hogyan lép kapcsolatba szolgáltatásunkkal, és lehetővé teszik számunkra, hogy jobb, személyre szabottabb élményt nyújtsunk Önnek."
+        },
+        {
+          "title": "Hogyan használjuk a sütiket",
+          "content": "A sütiket számos alapvető célra használjuk:",
+          "list": [
+            "A tartalom és a hirdetések személyre szabásához",
+            "A forgalmi minták elemzése és a felhasználói élmény javítása",
+            "Alkalmazásunk bizonyos funkcióinak és funkcióinak engedélyezése",
+            "Hogy megjegyezze preferenciáit és beállításait",
+            "Biztonságos hozzáférés biztosítása fiókjához"
+          ]
+        },
+        {
+          "title": "Az általunk használt sütik típusai",
+          "content": "Különféle cookie-kat használunk az élmény fokozása érdekében:",
+          "list": [
+            "Alapvető cookie-k: Az alkalmazás alapvető funkcióihoz szükségesek",
+            "Teljesítményt biztosító cookie-k: Segítsen nekünk megérteni, hogyan használja az alkalmazást",
+            "Funkcionális sütik: Ne felejtse el preferenciáit és választásait",
+            "Analytics cookie-k: betekintést nyújtanak az alkalmazáshasználati mintákba"
+          ]
+        },
+        {
+          "title": "Cookie-k kezelése",
+          "content": "A cookie-kat az eszköz beállításain keresztül szabályozhatja és kezelheti. Azonban kérjük, vegye figyelembe, hogy bizonyos cookie-k letiltása befolyásolhatja a felhasználói élményt, és korlátozhatja az alkalmazás működését."
+        },
+        {
+          "title": "Cookie időtartama",
+          "content": "Egyes cookie-k ideiglenesek (munkamenet cookie-k), és az alkalmazás bezárásakor törlődnek. Mások meghatározott ideig az eszközön maradnak, hogy emlékezzenek a beállításokra a munkamenetek során."
+        },
+        {
+          "title": "Jelen szabályzat változásai",
+          "content": "Időről időre frissíthetjük ezt a cookie-kra vonatkozó szabályzatot, hogy tükrözze a technológiai vagy jogi követelmények változásait. Bármilyen változtatást ezen az oldalon teszünk közzé frissített felülvizsgálati dátummal."
+        },
+        {
+          "title": "Lépjen kapcsolatba velünk",
+          "content": "Ha bármilyen kérdése, aggálya vagy visszajelzése van a jelen Cookie-szabályzattal kapcsolatban, kérjük, vegye fel velünk a kapcsolatot a leafnest.capstone@gmail.com címen."
+        }
+      ],
+      "footerTitle": "Az Ön adatvédelme számít",
+      "footerText": "Elkötelezettek vagyunk a cookie-k használatának átláthatósága mellett. Alkalmazásunk további használata azt jelzi, hogy elfogadja ezt az irányelvet.",
+      "copyright": "© 2025 LeafNest. Minden jog fenntartva.",
+      "lastUpdated": "Utolsó frissítés: 2025. július 1"
+    },
+    "privacy": {
+      "title": "Adatvédelmi szabályzat",
+      "subtitle": "Az Ön adatainak védelme fontos számunkra",
+      "effectiveDate": "Hatálybalépés napja: 2025. július 1",
+      "intro": "A LeafNestnél elkötelezettek vagyunk az Ön adatainak védelme és személyes adatai biztonsága mellett.",
+      "sections": [
+        {
+          "title": "Az általunk gyűjtött információk",
+          "content": "Az Ön által közvetlenül nekünk megadott információkat gyűjtjük, például amikor fiókot hoz létre, fényképeket tölt fel, vagy felveszi velünk a kapcsolatot támogatásért. Ez magában foglalhatja az Ön nevét, e-mail címét és bármely egyéb adatot, amelyet megad."
+        },
+        {
+          "title": "Hogyan használjuk fel az Ön adatait",
+          "content": "Az összegyűjtött információkat szolgáltatásaink biztosítására, karbantartására és fejlesztésére, az Önnel való kommunikációra és új funkciók fejlesztésére használjuk. Személyes adatait nem adjuk el harmadik félnek."
+        },
+        {
+          "title": "Adatbiztonság",
+          "content": "Megfelelő technikai és szervezési intézkedéseket hajtunk végre annak érdekében, hogy megvédjük személyes adatait a jogosulatlan hozzáférés, megváltoztatás, nyilvánosságra hozatal vagy megsemmisítés ellen."
+        },
+        {
+          "title": "Az Ön jogai",
+          "content": "Önnek joga van hozzáférni, frissíteni vagy törölni személyes adatait. Ezt megteheti fiókbeállításaiban, vagy közvetlenül kapcsolatba léphet velünk."
+        },
+        {
+          "title": "Harmadik féltől származó szolgáltatások",
+          "content": "Alkalmazásunk tartalmazhat hivatkozásokat harmadik felek webhelyeire és szolgáltatásaira. Nem vállalunk felelősséget adatvédelmi gyakorlataikért. Javasoljuk, hogy tekintse át adatvédelmi irányelveiket."
+        },
+        {
+          "title": "Adatvédelmi szabályzat változásai",
+          "content": "Fenntartjuk magunknak a jogot, hogy ezt az Adatvédelmi szabályzatot bármikor frissítsük. A módosítások frissített hatálybalépési dátummal jelennek meg ezen az oldalon. Az Ön további használata a változtatások elfogadását jelenti."
+        },
+        {
+          "title": "Lépjen kapcsolatba velünk",
+          "content": "Ha bármilyen kérdése van a jelen Adatvédelmi szabályzattal vagy adatvédelmi gyakorlatunkkal kapcsolatban, kérjük, lépjen velünk kapcsolatba a privacy@leafnest.com címen."
+        }
+      ],
+      "footerTitle": "Mi törődünk Önnel",
+      "footerText": "Az Ön bizalma fontos számunkra. Elkötelezettek vagyunk az átlátható adatkezelési gyakorlatok és az Ön adatvédelemhez való joga mellett.",
+      "copyright": "© 2025 LeafNest. Minden jog fenntartva.",
+      "lastUpdated": "Utolsó frissítés: 2025. július 1"
+    },
+    "terms": {
+      "title": "Felhasználási feltételek",
+      "subtitle": "Kérjük, használat előtt figyelmesen olvassa el",
+      "effectiveDate": "Hatálybalépés napja: 2025. július 1",
+      "intro": "Jelen Felhasználási feltételek szabályozzák a LeafNest alkalmazás és szolgáltatások használatát. Alkalmazásunk használatával Ön elfogadja ezeket a feltételeket.",
+      "sections": [
+        {
+          "title": "Feltételek elfogadása",
+          "content": "A LeafNest alkalmazás elérésével vagy használatával Ön beleegyezik a jelen Felhasználási Feltételek betartásába. Ha nem fogadja el ezeket a feltételeket, ne használja az alkalmazást."
+        },
+        {
+          "title": "Felhasználói kötelezettségek",
+          "content": "Ön beleegyezik abba, hogy az alkalmazást csak törvényes célokra és olyan módon használja, amely nem sérti mások jogait. Ön felelős fiókinformációinak bizalmas kezeléséért."
+        },
+        {
+          "title": "Szellemi tulajdon",
+          "content": "Az alkalmazáson belüli összes tartalom, védjegy, logó és szellemi tulajdon a LeafNest tulajdonában van, vagy licenceljük nekünk. Szellemi tulajdonunk illetéktelen felhasználása szigorúan tilos."
+        },
+        {
+          "title": "Adatvédelem és adatgyűjtés",
+          "content": "Személyes adatokat gyűjtünk és dolgozunk fel az Adatvédelmi szabályzatunkban leírtak szerint. Alkalmazásunk használatával Ön hozzájárul adatgyűjtési, tárolási és feldolgozási gyakorlatunkhoz."
+        },
+        {
+          "title": "A felelősség korlátozása",
+          "content": "A LeafNest nem vállal felelősséget az alkalmazás vagy szolgáltatásai használatából eredő károkért, veszteségekért vagy sérülésekért. Az alkalmazást saját felelősségére és belátása szerint használja."
+        },
+        {
+          "title": "Változások a feltételekben",
+          "content": "Fenntartjuk magunknak a jogot, hogy jelen Felhasználási feltételeket bármikor frissítsük. Az esetleges módosítások frissített hatálybalépési dátummal jelennek meg ezen az oldalon. A folyamatos használat a változtatások elfogadását jelenti."
+        },
+        {
+          "title": "Lépjen kapcsolatba velünk",
+          "content": "Ha bármilyen kérdése, aggálya vagy visszajelzése van a jelen Felhasználási feltételekkel kapcsolatban, kérjük, lépjen velünk kapcsolatba a leafnest.capstone@gmail.com címen."
+        }
+      ],
+      "footerTitle": "Köszönöm",
+      "footerText": "Köszönjük, hogy időt szánt a felhasználási feltételeink áttekintésére. Az Ön bizalma és betartása segít abban, hogy mindenki számára jobb élményt nyújtsunk.",
+      "copyright": "© 2025 LeafNest. Minden jog fenntartva.",
+      "lastUpdated": "Utolsó frissítés: 2025. július 1"
+    }
+  },
+  "faq": {
+    "title": "Súgó és GYIK",
+    "subtitle": "Keressen választ a gyakori kérdésekre",
+    "categories": [
+      {
+        "title": "Kezdő lépések",
+        "items": [
+          {
+            "question": "Mi az a LeafNest?",
+            "answer": "A LeafNest egy növényazonosítási és -információs alkalmazás, amely mesterséges intelligencia technológiát használ a növények és állatok azonosításához, hogy ismereteket nyújtson a természetről."
+          },
+          {
+            "question": "Hogyan kezdjek hozzá?",
+            "answer": "Nyissa meg az alkalmazást, koppintson a szkennelés ikonra, és irányítsa bármely növényre vagy állatra. A mesterséges intelligencia azonosítja, és részletes információkat szolgáltat a fajról."
+          }
+        ]
+      },
+      {
+        "title": "A szkenner használata",
+        "items": [
+          {
+            "question": "Hogyan szkennelhetek be egy fajt?",
+            "answer": "Koppintson a szkennelés ikonra a kezdőképernyőn, irányítsa a kamerát a fajra, és készítsen tiszta fényképet. Az alkalmazás automatikusan azonosítja."
+          },
+          {
+            "question": "Mitől jó egy szkennelés?",
+            "answer": "Gondoskodjon jó megvilágításról, összpontosítson a jellegzetes jellemzőkre, és tartsa stabilan a fényképezőgépet a legjobb eredmény érdekében."
+          },
+          {
+            "question": "Beszkennelhetem a fotógalériámból?",
+            "answer": "Igen. Feltölthet meglévő fotókat a galériából, ha kiválasztja a galéria opciót a szkenner képernyőjén."
+          }
+        ]
+      },
+      {
+        "title": "Pontosság és jellemzők",
+        "items": [
+          {
+            "question": "Mennyire pontos az azonosítás?",
+            "answer": "A LeafNest fejlett gépi tanulási modelleket használ. A pontosság a megvilágítástól és a képminőségtől függően változik, de általában meghaladja a 90%-ot."
+          },
+          {
+            "question": "Megmenthetem a kedvenc növényeimet?",
+            "answer": "Igen. Koppintson a szív ikonra bármely azonosított fajnál, hogy hozzáadja kedvenceihez a későbbi gyors eléréshez."
+          }
+        ]
+      },
+      {
+        "title": "Támogatás és segítség",
+        "items": [
+          {
+            "question": "Hogyan léphetek kapcsolatba az ügyfélszolgálattal?",
+            "answer": "Nyissa meg a Beállítások menüt, és válassza a Súgó és támogatás lehetőséget, vagy írjon nekünk a leafnest.capstone@gmail.com címre."
+          }
+        ]
+      }
+    ]
+  },
+  "help": {
+    "title": "Súgó és támogatás",
+    "subtitle": "Tippek a növények és állatok mesterséges intelligencia segítségével történő szkenneléséhez – és hol kaphat további segítséget.",
+    "quickStart": {
+      "title": "Gyors kezdés",
+      "bullets": [
+        "Érintse meg a Beolvasás gombot a kezdőképernyőn.",
+        "Központosítsa a növényt vagy állatot a keretben.",
+        "Tartsa stabilan, majd készítsen tiszta fényképet."
+      ],
+      "cta": "Nyissa meg a Szkennert"
+    },
+    "bestResults": {
+      "title": "Hogyan lehet jobb eredményeket elérni",
+      "bullets": [
+        "Használjon jó világítást, és kerülje az erős háttérvilágítást.",
+        "Töltse ki a keretet a témával, a jellegzetes részletekre fókuszálva.",
+        "Próbáljon ki több szögből, például levelek, virágok, kéreg vagy profilképeket."
+      ]
+    },
+    "troubleshooting": {
+      "title": "Hibaelhárítás",
+      "bullets": [
+        "A napi csúcspontok ugyanúgy néznek ki? Húzza meg az alkalmazás frissítéséhez vagy éjfél utáni újranyitásához (Fülöp-szigeteki idő).",
+        "Nincs internet? Ellenőrizze a kapcsolatot, mert a képfelismerésnek hálózati kapcsolatra van szüksége.",
+        "Alacsony pontosság? Készítsen tisztább, közelebbi fotókat jobb megvilágítás mellett."
+      ]
+    },
+    "links": {
+      "faq": "GYIK",
+      "feedback": "Visszajelzés küldése",
+      "about": "A LeafNestről",
+      "privacy": "Adatvédelmi szabályzat",
+      "terms": "Felhasználási feltételek",
+      "contact": "Lépjen kapcsolatba az ügyfélszolgálattal"
+    },
+    "alerts": {
+      "noEmailTitle": "Az e-mail alkalmazást nem lehet megnyitni",
+      "noEmailBody": "Kérjük, írjon nekünk e-mailt a {{email}} címre."
+    }
+  },
+  "feedback": {
+    "title": "Visszajelzés küldése",
+    "subtitle": "Mondja el, mi működik jól, vagy mi az, amit javítani lehetne. Minden üzenetet elolvasunk.",
+    "topicLabel": "Téma",
+    "topics": {
+      "bug": "Hiba bejelentése",
+      "idea": "Funkciókérés",
+      "ux": "Tervezés / UX",
+      "content": "Faj / Tartalom",
+      "account": "Fiók / Bejelentkezés",
+      "other": "Más"
+    },
+    "subjectLabel": "Téma",
+    "subjectPlaceholder": "Rövid összefoglaló (pl. a szkenner tévesen juharként jelöli meg a levelet)",
+    "messageLabel": "Üzenet",
+    "messagePlaceholder": "Ismertesse a történteket, a reprodukálás lépéseit és az elvárásokat.",
+    "emailLabel": "Az Ön e-mail címe (nem kötelező)",
+    "emailPlaceholder": "Itt válaszolunk, ha szükséges",
+    "includeDiagnostics": "Tartalmazza a diagnosztikát",
+    "diagnosticsHint": "Segít a hibakeresésben (csak platformon és operációs rendszeren).",
+    "submit": "Visszajelzés küldése",
+    "submitting": "Küldés...",
+    "footerText": "Vagy írjon nekünk közvetlenül a következő címre: {{email}}",
+    "alerts": {
+      "missingInfoTitle": "Hiányzó információ",
+      "missingInfoMessage": "Kérjük, adjon hozzá tárgyat és üzenetet.",
+      "invalidEmailTitle": "Érvénytelen e-mail-cím",
+      "invalidEmailMessage": "Kérjük, adjon meg egy érvényes e-mail címet, vagy hagyja üresen.",
+      "noEmailAppTitle": "Nem lehet visszajelzést küldeni",
+      "noEmailAppMessage": "Kérjük, próbálja újra később, vagy írjon nekünk e-mailt a {{email}} címre.",
+      "successTitle": "Visszajelzés elküldve",
+      "successMessage": "Köszönjük visszajelzését! Hamarosan felülvizsgáljuk.",
+      "genericErrorTitle": "Valami elromlott",
+      "genericErrorMessage": "Kérjük, próbálja újra később, vagy írjon nekünk e-mailt a {{email}} címre."
+    }
+  },
+  "comments": {
+    "title": "Megjegyzések",
+    "noComments": "Még nincsenek megjegyzések",
+    "beFirstToComment": "Legyen Ön az első, aki hozzászól!",
+    "addComment": "Megjegyzés hozzáadása...",
+    "deleteComment": "Megjegyzés törlése",
+    "deleteConfirm": "Biztosan törlöd ezt a megjegyzést?",
+    "delete": "Töröl",
+    "failedToDelete": "Nem sikerült törölni a megjegyzést",
+    "failedToLike": "Nem sikerült kedvelni a megjegyzést",
+    "loginRequired": "Bejelentkezés szükséges",
+    "loginToComment": "A hozzászóláshoz be kell jelentkezned",
+    "loginToLike": "A hozzászólások kedveléséhez be kell jelentkezned",
+    "justNow": "Éppen most"
+  },
+  "notification": {
+    "title": "Értesítések",
+    "noNotifications": "Még nincsenek értesítések",
+    "markAsRead": "Megjelölés olvasottként",
+    "markAllAsRead": "Az összes megjelölése olvasottként",
+    "delete": "Töröl",
+    "deleteAll": "Az összes törlése"
+  },
+  "commentsModal": {
+    "title": "Megjegyzések",
+    "inputPlaceholder": "Megjegyzés hozzáadása...",
+    "empty": {
+      "title": "Még nincsenek megjegyzések",
+      "subtitle": "Legyen Ön az első, aki hozzászól!"
+    },
+    "actions": {
+      "cancel": "Mégsem",
+      "delete": "Töröl"
+    },
+    "alerts": {
+      "loadErrorTitle": "Hiba",
+      "loadErrorBody": "Nem sikerült betölteni a megjegyzéseket.",
+      "loginRequiredTitle": "Bejelentkezés szükséges",
+      "loginRequiredCommentBody": "A hozzászóláshoz be kell jelentkezned.",
+      "loginRequiredLikeBody": "A hozzászólások kedveléséhez be kell jelentkezned.",
+      "addErrorTitle": "Hiba",
+      "addErrorBody": "Nem sikerült megjegyzést hozzáadni.",
+      "likeErrorTitle": "Hiba",
+      "likeErrorBody": "Nem sikerült kedvelni a megjegyzést.",
+      "deleteTitle": "Megjegyzés törlése",
+      "deleteConfirmBody": "Biztosan törlöd ezt a megjegyzést?",
+      "deleteErrorTitle": "Hiba",
+      "deleteErrorBody": "Nem sikerült törölni a megjegyzést."
+    }
+  },
+  "premiumGate": {
+    "offline": {
+      "title": "Offline hozzáférés szükséges",
+      "historySubtitle": "Iratkozzon fel az előzmények offline eléréséhez",
+      "historyDescription": "Az offline hozzáférés a szkennelési előzményekhez prémium szolgáltatás. Frissítsen, hogy bármikor és bárhol megtekinthesse előzményeit.",
+      "favoritesSubtitle": "Iratkozzon fel a kedvencek offline eléréséhez",
+      "favoritesDescription": "A kedvenceihez való offline hozzáférés prémium szolgáltatás. Frissítsen, hogy bármikor és bárhol megtekinthesse kedvenceit."
+    },
+    "limits": {
+      "scanTitle": "Elérte a szkennelési korlátot",
+      "scanSubtitle": "Az összes {{limit}} vizsgálatot felhasználta",
+      "scanDescription": "Frissítsen Premiumra a korlátlan szkennelésért és további funkciókért!",
+      "downloadTitle": "Elérte a letöltési korlátot",
+      "downloadSubtitle": "Felhasználta az összes {{limit}} letöltést",
+      "downloadDescription": "Frissítsen Premiumra a korlátlan letöltésekért!"
+    },
+    "timer": {
+      "resetsInHours": "{{count}} óra múlva visszaáll",
+      "resetsInHours_plural": "{{count}} órán belül visszaáll"
+    },
+    "usage": {
+      "scans": "Szkennelések:",
+      "downloads": "Letöltések:"
+    },
+    "features": {
+      "title": "Prémium előnyök:",
+      "offlineHistory": "Offline előzmények elérése",
+      "offlineFavorites": "Offline hozzáférés a kedvencekhez",
+      "unlimitedScans": "Korlátlan beolvasás",
+      "unlimitedDownloads": "Korlátlan letöltés"
+    },
+    "pricing": {
+      "amount": "{{amount}}",
+      "period": "{{days}} napig"
+    },
+    "actions": {
+      "upgrade": "Frissítsen Premiumra",
+      "later": "Talán később"
+    }
+  },
+  "manageNotifications": {
+    "title": "Értesítések kezelése",
+    "pushNotifications": "Push értesítések",
+    "emailNotifications": "E-mail értesítések",
+    "likeNotifications": "Mint az Értesítések",
+    "commentNotifications": "Megjegyzés Értesítések",
+    "followNotifications": "Kövesse az értesítéseket",
+    "enabled": "Engedélyezve",
+    "disabled": "Letiltva",
+    "save": "Beállítások mentése"
+  },
+  "history": {
+    "title": "Történelem",
+    "loading": "Előzmények betöltése...",
+    "loadingMore": "Továbbiak betöltése...",
+    "signInRequiredTitle": "Bejelentkezés szükséges",
+    "signInRequiredBody": "Hozzon létre egy fiókot, vagy jelentkezzen be a szkennelési előzmények megtekintéséhez.",
+    "selection": {
+      "selectedCount": "{{count}} kiválasztva",
+      "deleteButton": "Törölje a {{count}} rekordot",
+      "deleteButton_plural": "{{count}} rekord törlése"
+    },
+    "offlineBanner": {
+      "premium": "Offline mód (prémium)",
+      "locked": "Az offline módhoz Premium szükséges"
+    },
+    "search": {
+      "placeholder": "Keresés név szerint..."
+    },
+    "filters": {
+      "all": "Minden",
+      "plants": "Növények",
+      "animals": "Állatok"
+    },
+    "empty": {
+      "noHistoryTitle": "Még nincs előzmény",
+      "noHistoryBody": "A fajvizsgálati előzmények itt jelennek meg, amint elkezdi azonosítani a növényeket és állatokat.",
+      "noResultsTitle": "Nincs találat",
+      "noResultsBody": "Egyetlen rekord sem felel meg a keresési vagy szűrési feltételeknek. Próbálja meg beállítani a szűrőket."
+    },
+    "actions": {
+      "signIn": "Jelentkezzen be",
+      "delete": "Töröl",
+      "clearAll": "Minden törlése",
+      "clearFilters": "Tiszta szűrők"
+    },
+    "alerts": {
+      "visibilityNow": "A beolvasás most {{status}}",
+      "visibilityUpdateFailed": "Nem sikerült frissíteni a láthatóságot.",
+      "visibilityNeedsSync": "Ezt a vizsgálatot először szinkronizálni kell. Kérjük, próbálja újra egy pillanat múlva.",
+      "visibilityOffline": "Offline állapotban nem lehet módosítani a láthatóságot. Kérjük, ellenőrizze a kapcsolatot.",
+      "visibilityNotSynced": "Ez a vizsgálat még nincs szinkronizálva a felhővel. Kérjük, várja meg, amíg a szinkronizálás befejeződik, és próbálja újra.",
+      "visibilityPermissionDenied": "Nincs engedélye a vizsgálat módosítására.",
+      "visibilityNetworkError": "Hálózati hiba. Kérjük, ellenőrizze a kapcsolatot, és próbálja újra.",
+      "errorWithMessage": "Hiba: {{message}}",
+      "deleteRecordTitle": "Rekord törlése",
+      "deleteRecordMessage": "Törli a \"{{name}}\" elemet az előzményekből?",
+      "deleteRecordSuccess": "A rekord törölve.",
+      "deleteRecordError": "Nem sikerült törölni a rekordot.",
+      "deleteSelectedTitle": "Kijelölt törlése",
+      "deleteSelectedMessage": "Törli a {{count}} rekordot az előzményekből?",
+      "deleteSelectedMessage_plural": "Töröl {{count}} rekordot az előzményekből?",
+      "deleteSelectedSuccess": "{{count}} rekord törölve.",
+      "deleteSelectedSuccess_plural": "{{count}} rekord törölve.",
+      "deleteSelectedError": "Nem sikerült törölni a kiválasztott rekordokat.",
+      "clearAllTitle": "Az összes előzmény törlése",
+      "clearAllMessage": "Biztosan törli az összes előzményrekordot? Ez a művelet nem vonható vissza.",
+      "clearAllSuccess": "Minden előzmény törölve.",
+      "clearAllError": "Nem sikerült törölni az előzményeket."
+    },
+    "visibility": {
+      "public": "nyilvános",
+      "private": "magán"
+    },
+    "unknownSpecies": "Ismeretlen faj",
+    "details": {
+      "commonName": "Közös név",
+      "scientificName": "Tudományos név",
+      "taxonomicRank": "Taxonómiai rang",
+      "type": "Írja be",
+      "conservationStatus": "Természetvédelmi állapot",
+      "timesScanned": "Beolvasott idők",
+      "timeCount": "{{count}} alkalommal",
+      "timeCount_plural": "{{count}} alkalommal",
+      "globalAppScans": "Globális alkalmazásvizsgálatok",
+      "scanCount": "{{count}} szkennelés",
+      "scanCount_plural": "{{count}} szkennel",
+      "scannedOn": "Beszkennelve"
+    },
+    "premiumGate": {
+      "title": "Iratkozzon fel az offline mód eléréséhez",
+      "message": "Az előzmények offline elérése prémium szolgáltatás. Iratkozzon fel a szkennelési előzmények megtekintéséhez offline állapotban."
+    },
+    "noHistory": "Még nincs előzmény",
+    "startScanning": "Kezdje el a szkennelést az előzmények felépítéséhez",
+    "delete": "Töröl",
+    "deleteAll": "Az összes törlése",
+    "deleteConfirm": "Biztosan törli ezt az elemet?",
+    "deleteAllConfirm": "Biztosan törli az összes előzményt?",
+    "scannedOn": "Beolvasva: {{date}}"
+  },
+  "postDetail": {
+    "title": "Hozzászólás",
+    "aboutLabel": "Körülbelül",
+    "emptyTitle": "A bejegyzés nem található",
+    "alerts": {
+      "postNotFoundTitle": "Hiba",
+      "postNotFoundBody": "A bejegyzés nem található.",
+      "loadErrorTitle": "Hiba",
+      "loadErrorBody": "Nem sikerült betölteni a bejegyzést.",
+      "likeErrorBody": "Nem sikerült kedvelni a bejegyzést."
+    }
+  },
+  "speciesGallery": {
+    "title": "Galéria",
+    "noResults": "Nincs találat",
+    "loadMore": "Töltsön be többet",
+    "error": "Nem sikerült betölteni a galériát"
+  },
+  "speciesLanding": {
+    "title": "A faj részletei",
+    "scientificName": "Tudományos név",
+    "commonName": "Közös név",
+    "description": "Leírás",
+    "habitat": "Élőhely",
+    "diet": "Diéta",
+    "lifespan": "Élettartam",
+    "conservationStatus": "Védelmi állapot",
+    "addToFavorites": "Hozzáadás a kedvencekhez",
+    "removeFromFavorites": "Eltávolítás a Kedvencek közül",
+    "share": "Részesedés",
+    "viewMore": "Továbbiak megtekintése",
+    "error": "Nem sikerült betölteni a faj részleteit"
+  },
+  "manualPayment": {
+    "title": "Kézi fizetés",
+    "uploadProof": "Fizetési igazolás feltöltése",
+    "selectImage": "Válassza a Kép lehetőséget",
+    "takePhoto": "Fotó készítése",
+    "chooseFromGallery": "Válasszon a Galériából",
+    "uploadImage": "Kép feltöltése",
+    "uploading": "Feltöltés...",
+    "submit": "Befizetés benyújtása",
+    "submitting": "Beküldés...",
+    "successTitle": "Siker",
+    "successMessage": "A fizetés sikeresen elküldve. Hamarosan ellenőrizni fogjuk.",
+    "errorTitle": "Hiba",
+    "errorMessage": "Nem sikerült elküldeni a fizetést. Kérjük, próbálja újra.",
+    "selectImageFirst": "Kérjük, először válasszon egy képet"
+  },
+  "scanStats": {
+    "title": "Szkennelési statisztika",
+    "totalScans": "Összes szkennelés",
+    "thisWeek": "Ezen a héten",
+    "thisMonth": "Ebben a hónapban",
+    "plants": "Növények",
+    "animals": "Állatok",
+    "noData": "Még nem állnak rendelkezésre szkennelési adatok"
+  }
+}

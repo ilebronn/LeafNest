@@ -1,0 +1,895 @@
+{
+  "common": {
+    "welcome": "Welkom",
+    "guest": "Gast",
+    "loading": "Laden...",
+    "error": "Fout",
+    "success": "Succes",
+    "cancel": "Annuleren",
+    "ok": "OK",
+    "save": "Redden",
+    "back": "Rug",
+    "edit": "Bewerking",
+    "username": "Gebruikersnaam",
+    "and": "En"
+  },
+  "login": {
+    "title": "BladNest",
+    "signInWithGoogle": "Log in met Google",
+    "signInAsGuest": "Meld u aan als gast",
+    "signInFailed": "Inloggen is mislukt",
+    "googleAuthError": "Google-authenticatiefout",
+    "unexpectedError": "Onverwachte fout",
+    "unknownError": "Onbekende fout",
+    "termsText": "Door u aan te melden, geeft u aan dat u de overeenkomst heeft gelezen en aanvaard",
+    "termsOfUse": "Gebruiksvoorwaarden",
+    "privacyPolicy": "Privacybeleid",
+    "cookiesPolicy": "Cookiebeleid",
+    "signIn": "Inloggen",
+    "welcomeTitle": "Welkom bij LeafNest",
+    "welcomeSubtitle": "Ontdek de schoonheid van de natuur",
+    "signInWithEmailButton": "Meld u aan met e-mail",
+    "dividerOr": "of",
+    "continueAsGuest": "Ga verder als gast",
+    "continueAgreement": "Als u doorgaat, gaat u akkoord met onze"
+  },
+  "home": {
+    "welcomeGuest": "Welkom, gast",
+    "welcomeUser": "Welkom, {{name}}",
+    "guestModeSubtitle": "Je bevindt je in de gastmodus. Log in om alle functies te ontgrendelen.",
+    "welcomeBackSubtitle": "Leuk om je terug te zien!",
+    "scanPlantsTitle": "Planten direct scannen",
+    "scanPlantsSubtitle": "Richt, schiet en identificeer de flora binnen enkele seconden.",
+    "scanAnimalsTitle": "Dieren direct scannen",
+    "scanAnimalsSubtitle": "Identificeer dieren in seconden.",
+    "learnNatureTitle": "Leer over de natuur",
+    "learnNatureSubtitle": "Ontdek meer met tekst-naar-spraak en snelle feiten.",
+    "scanningStats": "Statistieken scannen",
+    "plantsScanned": "Planten gescand",
+    "animalsIdentified": "Dieren geïdentificeerd",
+    "dailyDiscovery": "Dagelijkse ontdekking",
+    "dailyDiscoverySubtitle": "Leer elke dag iets nieuws",
+    "plantOfTheDay": "Plantje van de dag",
+    "animalOfTheDay": "Dier van de dag",
+    "scientificName": "Wetenschappelijke naam",
+    "habitat": "Habitat",
+    "diet": "Dieet",
+    "lifespan": "Levensduur",
+    "weight": "Gewicht",
+    "cycle": "Levenscyclus",
+    "watering": "Water geven",
+    "sunlight": "Zonlicht",
+    "loadingDaily": "Dagelijkse inhoud laden...",
+    "errorLoadingDaily": "Kan dagelijkse inhoud niet laden",
+    "pullToRefresh": "Trek om te vernieuwen",
+    "offlineMode": "Offline inhoud",
+    "funFact": "Leuk weetje",
+    "newFact": "Nieuw feit",
+    "trendingPlants": "Populaire planten",
+    "trendingAnimals": "Populaire dieren",
+    "alerts": {
+      "authRequiredTitle": "Authenticatie vereist",
+      "authRequiredBody": "Meld u aan om de PDF te downloaden.",
+      "pdfSuccessTitle": "Succes",
+      "pdfSuccessBody": "De PDF is gegenereerd en naar uw e-mailadres verzonden.",
+      "pdfErrorTitle": "Fout",
+      "pdfErrorBody": "Kan geen PDF genereren. Probeer het opnieuw.",
+      "signInRequiredTitle": "Inloggen vereist",
+      "signInLikeBody": "Log in om berichten leuk te vinden.",
+      "signInCommentBody": "Log in om commentaar te geven.",
+      "downloadsUnavailableTitle": "Downloads niet beschikbaar",
+      "downloadsUnavailableBody": "Meld u aan voor een gratis account om soortinformatie te downloaden.",
+      "downloadLimitCheckErrorBody": "Kan de downloadlimiet niet controleren. Probeer het opnieuw."
+    },
+    "pdf": {
+      "defaultCommon": "Onbekend",
+      "defaultScientific": "Onbekend",
+      "defaultRank": "Onbekende rang",
+      "defaultTaxon": "Onbekend",
+      "noDescription": "Geen beschrijving beschikbaar.",
+      "infoUnavailable": "Informatie niet beschikbaar.",
+      "notEvaluated": "Niet geëvalueerd"
+    },
+    "trending": {
+      "title": "Populaire soorten"
+    },
+    "emptyState": {
+      "title": "Welkom bij de gemeenschap",
+      "subtitle": "Begin met het verkennen en delen van uw natuurontdekkingen.",
+      "cta": "Scan uw eerste soort"
+    },
+    "feed": {
+      "likesCount": "{{count}} leuk",
+      "likesCount_plural": "{{count}} vind-ik-leuks",
+      "beFirst": "Wees de eerste die dit leuk vindt",
+      "showMore": "Laat meer zien",
+      "showLess": "Laat minder zien",
+      "viewComments": "Bekijk alle {{count}} reacties",
+      "viewComments_plural": "Bekijk alle {{count}} reacties",
+      "unknownUser": "Anoniem",
+      "unknownSpecies": "Onbekende soort",
+      "likeError": "Kan bericht niet leuk vinden."
+    },
+    "relativeTime": {
+      "justNow": "Zojuist",
+      "minutes": "{{count}}m geleden",
+      "hours": "{{count}}u geleden",
+      "days": "{{count}}d geleden"
+    }
+  },
+  "settings": {
+    "title": "Instellingen",
+    "account": "Rekening",
+    "guestMode": "Gastmodus",
+    "signedIn": "Ingelogd",
+    "username": "Gebruikersnaam",
+    "editUsername": "Gebruikersnaam bewerken",
+    "currentUsername": "Huidige gebruikersnaam",
+    "newUsername": "Nieuwe gebruikersnaam",
+    "usernameUpdated": "Gebruikersnaam succesvol bijgewerkt!",
+    "usernameUpdateError": "Kan gebruikersnaam niet updaten",
+    "usernameUpdateFailed": "Update van de gebruikersnaam is mislukt",
+    "usernameRequired": "Gebruikersnaam is vereist",
+    "usernameTooShort": "De gebruikersnaam moet minimaal 3 tekens lang zijn",
+    "usernameTooLong": "De gebruikersnaam moet 20 tekens of minder bevatten",
+    "usernameInvalidChars": "De gebruikersnaam mag alleen letters, cijfers, onderstrepingstekens en koppeltekens bevatten",
+    "language": "Taal",
+    "selectLanguage": "Selecteer Taal",
+    "logout": "Uitloggen",
+    "logoutError": "Uitloggen is mislukt.",
+    "about": "Over",
+    "appName": "BladNest",
+    "yourPlan": "Jouw plan",
+    "leafNestFree": "BladNest Vrij",
+    "help": "Hulp",
+    "sendFeedback": "Feedback verzenden",
+    "faq": "Veelgestelde vragen",
+    "termsOfUse": "Gebruiksvoorwaarden",
+    "generalSection": "Algemeen",
+    "supportSection": "Steun",
+    "legalSection": "Legaal"
+  },
+  "profile": {
+    "title": "Profiel",
+    "editUsername": "Gebruikersnaam bewerken",
+    "signOut": "Uitloggen",
+    "leaveAccount": "Verlaat uw account",
+    "signIn": "Inloggen",
+    "accessFullFeatures": "Toegang tot alle functies",
+    "createAccount": "Account aanmaken",
+    "joinLeafNest": "Sluit je aan bij LeafNest",
+    "guestUser": "Gastgebruiker",
+    "statsTitle": "Scanstatistieken",
+    "viewAll": "Bekijk alles",
+    "guestPromptTitle": "Volg uw voortgang",
+    "guestPromptText": "Log in om scans bij te houden, soorten te ontdekken en prestaties te ontgrendelen.",
+    "badgeNew": "Nieuw",
+    "editPlaceholder": "Voer gebruikersnaam in",
+    "stats": {
+      "total": "Totaal aantal scans",
+      "week": "Deze week",
+      "species": "Soort"
+    },
+    "sections": {
+      "account": "Accountinstellingen"
+    },
+    "menu": {
+      "planTitle": "Jouw plan",
+      "planSubtitle": "BladNest Vrij",
+      "notificationsTitle": "Meldingen",
+      "notificationsSubtitle": "Beheer uw meldingen",
+      "passwordTitle": "Wachtwoord vergeten",
+      "passwordSubtitle": "Reset uw wachtwoord",
+      "signOutTitle": "Uitloggen",
+      "signOutSubtitle": "Meld u af bij uw account",
+      "signInTitle": "Inloggen",
+      "signInSubtitle": "Toegang tot alle functies",
+      "createAccountTitle": "Account aanmaken",
+      "createAccountSubtitle": "Sluit u vandaag nog aan bij LeafNest"
+    },
+    "alerts": {
+      "syncSuccess": "Gesynchroniseerd {{count}} scan in behandeling",
+      "syncSuccess_plural": "{{count}} scans in behandeling gesynchroniseerd",
+      "usernameUpdated": "Gebruikersnaam succesvol bijgewerkt!",
+      "usernameUpdateError": "Kan gebruikersnaam niet updaten.",
+      "signOutTitle": "Uitloggen",
+      "signOutMessage": "Weet u zeker dat u zich wilt afmelden?",
+      "signOutConfirm": "Uitloggen",
+      "signOutError": "Afmelden is mislukt. Probeer het opnieuw."
+    }
+  },
+  "languages": {
+    "ar": "Arabisch",
+    "zh-CN": "Chinees (vereenvoudigd)",
+    "zh-TW": "Chinees (traditioneel)",
+    "hr": "Kroatisch",
+    "cs": "Tsjechisch",
+    "da": "Deens",
+    "nl": "Nederlands",
+    "en": "Engels",
+    "fi": "Fins",
+    "fr": "Frans",
+    "de": "Duits",
+    "el": "Grieks",
+    "hi": "Hindi",
+    "hu": "Hongaars",
+    "id": "Indonesisch",
+    "it": "Italiaans",
+    "ja": "Japanse",
+    "ko": "Koreaans",
+    "ms": "Maleis",
+    "no": "Noors",
+    "fa": "Perzisch",
+    "pl": "Pools",
+    "pt": "Portugees",
+    "ro": "Roemeense",
+    "ru": "Russisch",
+    "sk": "Slowaaks",
+    "es": "Spaans",
+    "sv": "Zweeds",
+    "tl": "Tagalog",
+    "th": "Thais",
+    "tr": "Turks",
+    "uk": "Oekraïens",
+    "vi": "Vietnamees"
+  },
+  "tabs": {
+    "home": "Thuis",
+    "scan": "Scannen",
+    "history": "Geschiedenis",
+    "settings": "Instellingen"
+  },
+  "animals": {
+    "title": "Dieren van de dag",
+    "lion": {
+      "name": "Leeuw",
+      "scientificName": "Panthera leo",
+      "description": "De leeuw is een grote kat van het geslacht Panthera afkomstig uit Afrika en India. Het heeft een gespierd lichaam met een brede bovenlijf, een korte ronde kop, ronde oren en een harig plukje aan het uiteinde van zijn staart.",
+      "habitat": "Savannes, graslanden en open bossen",
+      "diet": "Vleesetend - voornamelijk grote zoogdieren zoals zebra's, wildebeesten en buffels",
+      "lifespan": "10-14 jaar in het wild, tot 20 jaar in gevangenschap",
+      "conservationStatus": "Kwetsbaar"
+    },
+    "elephant": {
+      "name": "Olifant",
+      "scientificName": "Olifanten",
+      "description": "Olifanten zijn de grootste bestaande landdieren, gekenmerkt door hun lange slurf, zuilvormige poten en enorme hoofden met slaapklieren en brede, platte oren.",
+      "habitat": "Savannes, bossen, woestijnen en moerassen",
+      "diet": "Herbivoor - grassen, bladeren, schors, fruit en aarde",
+      "lifespan": "60-70 jaar",
+      "conservationStatus": "Bedreigd"
+    },
+    "panda": {
+      "name": "Reuzenpanda",
+      "scientificName": "Ailuropoda melanoleuca",
+      "description": "De reuzenpanda is een beer afkomstig uit Zuid-Centraal-China. Het wordt gekenmerkt door zijn gedurfde zwart-witte vacht en ronde lichaam.",
+      "habitat": "Bergketens in centraal China met dichte bamboebossen",
+      "diet": "Voornamelijk bamboe (99% van het dieet), af en toe kleine dieren",
+      "lifespan": "20 jaar in het wild, tot 30 jaar in gevangenschap",
+      "conservationStatus": "Kwetsbaar"
+    },
+    "loading": "Dieren laden...",
+    "errorLoading": "Kan dieren niet laden",
+    "addToFavorites": "Toevoegen aan Favorieten",
+    "removeFromFavorites": "Verwijderen uit Favorieten",
+    "learnMore": "Meer informatie",
+    "share": "Deel dier"
+  },
+  "signup": {
+    "title": "Account aanmaken",
+    "username": "Gebruikersnaam",
+    "email": "E-mail",
+    "password": "Wachtwoord",
+    "confirmPassword": "Bevestig wachtwoord",
+    "register": "Register",
+    "alreadyHaveAccount": "Heeft u al een account? Inloggen",
+    "passwordsDontMatch": "Wachtwoorden komen niet overeen!",
+    "fillAllFields": "Vul alle velden in.",
+    "verificationEmailSent": "Er is een verificatie-e-mail naar uw e-mailadres verzonden.",
+    "emailAlreadyInUse": "Het e-mailadres is al in gebruik.",
+    "invalidEmail": "Het e-mailadres is niet geldig.",
+    "subtitle": "Ga met ons mee om de natuur te verkennen",
+    "processing": "Verwerken...",
+    "dividerOr": "of",
+    "alreadyMember": "Ben je al lid?",
+    "signInLink": "Inloggen"
+  },
+  "signin": {
+    "title": "Inloggen",
+    "email": "E-mail",
+    "password": "Wachtwoord",
+    "signIn": "Inloggen",
+    "signInWithGoogle": "Log in met Google",
+    "dontHaveAccount": "Heeft u geen account? Aanmelden",
+    "fillAllFields": "Vul alle velden in.",
+    "signInSuccessful": "Inloggen is gelukt",
+    "welcomeBack": "Welkom terug",
+    "userNotFound": "Geen gebruiker gevonden met dit e-mailadres.",
+    "wrongPassword": "Onjuist wachtwoord.",
+    "invalidEmail": "Ongeldig e-mailadres.",
+    "subtitle": "Meld u aan om uw reis voort te zetten",
+    "forgotPasswordLink": "Wachtwoord vergeten?",
+    "dividerOr": "of",
+    "noAccountPrompt": "Heeft u geen account?",
+    "signUpLink": "Aanmelden"
+  },
+  "scan": {
+    "loadingCamera": "Camera laden...",
+    "needPermission": "Om de camera te laten zien, hebben wij uw toestemming nodig",
+    "grantPermission": "Toestemming verlenen",
+    "preparingCamera": "Camera voorbereiden..."
+  },
+  "favorites": {
+    "title": "Favorieten",
+    "all": "Alle",
+    "plants": "Planten",
+    "animals": "Dieren",
+    "removeFavorite": "Favoriet verwijderen",
+    "remove": "Verwijderen",
+    "cancel": "Annuleren",
+    "removed": "VERWIJDERD",
+    "removedMessage": "is verwijderd uit uw favorieten.",
+    "error": "Fout",
+    "failedToRemove": "Kan niet uit favorieten verwijderen.",
+    "clearFavorites": "Wis favorieten",
+    "removeAllFavorites": "Alle favorieten verwijderen?",
+    "removeAll": "Verwijder alles",
+    "failedToClear": "Kan favorieten niet wissen.",
+    "plant": "Plant",
+    "animal": "Dier",
+    "noFavoritesYet": "Nog geen favorieten",
+    "addFromDaily": "Voeg wat toe van Planten of Dieren van de Dag."
+  },
+  "about": {
+    "title": "Over",
+    "developedBy": "Ontwikkeld en ontworpen door het LeafNest-team",
+    "teamTitle": "LeafNest-team",
+    "specialThanks": "Speciale dank",
+    "mentor": "De heer Joshua R. Lasac",
+    "credits": "Oorspronkelijk gemaakt door het LeafNest-team met steun van Pinamalayan Maritime Foundation And Technological College INC. (PMFTCI) en de School of Computer Studies.",
+    "privacyPolicy": "Privacybeleid",
+    "version": "Versie 0.0.1 (1)",
+    "help": "Voor hulp: leafnest.capstone@gmail.com",
+    "tagline": "Identificatie van planten en dieren",
+    "institutionalSupport": "Institutionele ondersteuning",
+    "mentorRole": "Projectmentor en adviseur"
+  },
+  "plan": {
+    "title": "Plannen",
+    "upgradeTitle": "Upgrade naar Premium",
+    "upgradeSubtitle": "Ontgrendel alle functies en haal het meeste uit onze app.",
+    "free": "Vrij",
+    "freePrice": "₱0 / maand",
+    "freeFeature1": "Scan een beperkt aantal planten en dieren",
+    "freeFeature2": "Basis dagelijkse ontdekkingen",
+    "freeFeature3": "Geen offline toegang tot Geschiedenis",
+    "freeFeature4": "Advertenties inbegrepen",
+    "premium": "Premie",
+    "premiumPrice": "₱ 129,00 / maand",
+    "premiumFeature1": "Onbeperkte scans",
+    "premiumFeature2": "Exclusieve dagelijkse ontdekkingen",
+    "premiumFeature3": "Offline toegang tot Geschiedenis",
+    "premiumFeature4": "Advertentievrije ervaring",
+    "subscribeNow": "Abonneer je nu",
+    "selectedPlan": "Je hebt het {{plan}} abonnement geselecteerd!"
+  },
+  "legal": {
+    "cookies": {
+      "title": "Cookiebeleid",
+      "subtitle": "Hoe wij cookies gebruiken om uw ervaring te verbeteren",
+      "effectiveDate": "Ingangsdatum: 1 juli 2025",
+      "intro": "In dit Cookiebeleid wordt uitgelegd hoe we cookies gebruiken om uw ervaring te verbeteren wanneer u onze app bezoekt en de functies ervan gebruikt. Door deze app te gebruiken, stemt u in met het gebruik van cookies zoals beschreven in dit beleid.",
+      "sections": [
+        {
+          "title": "Wat zijn cookies?",
+          "content": "Cookies zijn kleine tekstbestanden die op uw apparaat worden opgeslagen wanneer u websites bezoekt of apps gebruikt. Ze helpen ons te begrijpen hoe u met onze service omgaat en stellen ons in staat u een betere, persoonlijkere ervaring te bieden."
+        },
+        {
+          "title": "Hoe wij cookies gebruiken",
+          "content": "Wij gebruiken cookies voor verschillende essentiële doeleinden:",
+          "list": [
+            "Om inhoud en advertenties te personaliseren",
+            "Om verkeerspatronen te analyseren en de gebruikerservaring te verbeteren",
+            "Om bepaalde functies en functionaliteit van onze app in te schakelen",
+            "Om uw voorkeuren en instellingen te onthouden",
+            "Om veilige toegang tot uw account te bieden"
+          ]
+        },
+        {
+          "title": "Soorten cookies die we gebruiken",
+          "content": "We gebruiken verschillende soorten cookies om uw ervaring te verbeteren:",
+          "list": [
+            "Essentiële cookies: vereist voor de basisfunctionaliteit van de app",
+            "Prestatiecookies: helpen ons begrijpen hoe u de app gebruikt",
+            "Functionele cookies: onthouden uw voorkeuren en keuzes",
+            "Analytics-cookies: bieden inzicht in app-gebruikspatronen"
+          ]
+        },
+        {
+          "title": "Cookies beheren",
+          "content": "U kunt cookies controleren en beheren via uw apparaatinstellingen. Houd er echter rekening mee dat het uitschakelen van bepaalde cookies uw ervaring kan beïnvloeden en de functionaliteit van de app kan beperken."
+        },
+        {
+          "title": "Cookieduur",
+          "content": "Sommige cookies zijn tijdelijk (sessiecookies) en worden verwijderd wanneer u de app sluit. Anderen blijven gedurende een bepaalde periode op uw apparaat staan ​​om uw voorkeuren voor sessies te onthouden."
+        },
+        {
+          "title": "Wijzigingen in dit beleid",
+          "content": "We kunnen dit Cookiebeleid van tijd tot tijd bijwerken om veranderingen in de technologie of wettelijke vereisten weer te geven. Eventuele wijzigingen worden op deze pagina geplaatst met een bijgewerkte revisiedatum."
+        },
+        {
+          "title": "Neem contact met ons op",
+          "content": "Als u vragen, opmerkingen of feedback heeft over dit cookiebeleid, neem dan contact met ons op via leafnest.capstone@gmail.com."
+        }
+      ],
+      "footerTitle": "Uw privacy is belangrijk",
+      "footerText": "Wij streven naar transparantie over de manier waarop wij cookies gebruiken. Als u onze app blijft gebruiken, geeft u aan dat u dit beleid accepteert.",
+      "copyright": "© 2025 BladNest. Alle rechten voorbehouden.",
+      "lastUpdated": "Laatst bijgewerkt: 1 juli 2025"
+    },
+    "privacy": {
+      "title": "Privacybeleid",
+      "subtitle": "Uw privacy is belangrijk voor ons",
+      "effectiveDate": "Ingangsdatum: 1 juli 2025",
+      "intro": "Bij LeafNest doen we er alles aan om uw privacy te beschermen en de veiligheid van uw persoonlijke gegevens te waarborgen.",
+      "sections": [
+        {
+          "title": "Informatie die we verzamelen",
+          "content": "We verzamelen informatie die u rechtstreeks aan ons verstrekt, bijvoorbeeld wanneer u een account aanmaakt, foto's uploadt of contact met ons opneemt voor ondersteuning. Dit kan uw naam, e-mailadres en andere informatie zijn die u verstrekt."
+        },
+        {
+          "title": "Hoe wij uw gegevens gebruiken",
+          "content": "We gebruiken de informatie die we verzamelen om onze diensten te leveren, te onderhouden en te verbeteren, om met u te communiceren en om nieuwe functies te ontwikkelen. Wij verkopen uw persoonlijke gegevens niet aan derden."
+        },
+        {
+          "title": "Gegevensbeveiliging",
+          "content": "Wij implementeren passende technische en organisatorische maatregelen om uw persoonlijke gegevens te beschermen tegen ongeoorloofde toegang, wijziging, openbaarmaking of vernietiging."
+        },
+        {
+          "title": "Uw rechten",
+          "content": "U heeft het recht om uw persoonlijke gegevens in te zien, bij te werken of te verwijderen. U kunt dit doen via uw accountinstellingen of door rechtstreeks contact met ons op te nemen."
+        },
+        {
+          "title": "Diensten van derden",
+          "content": "Onze app kan links naar websites en diensten van derden bevatten. Wij zijn niet verantwoordelijk voor hun privacypraktijken. Wij raden u aan hun privacybeleid te lezen."
+        },
+        {
+          "title": "Wijzigingen in het privacybeleid",
+          "content": "Wij behouden ons het recht voor om dit privacybeleid op elk moment bij te werken. Wijzigingen worden op deze pagina geplaatst met een bijgewerkte ingangsdatum. Als u doorgaat met het gebruik ervan, betekent dit dat u de wijzigingen accepteert."
+        },
+        {
+          "title": "Neem contact met ons op",
+          "content": "Als u vragen heeft over dit privacybeleid of onze privacypraktijken, neem dan contact met ons op via privacy@leafnest.com."
+        }
+      ],
+      "footerTitle": "Wij geven om jou",
+      "footerText": "Uw vertrouwen is belangrijk voor ons. Wij streven naar transparante gegevenspraktijken en uw recht op privacy.",
+      "copyright": "© 2025 BladNest. Alle rechten voorbehouden.",
+      "lastUpdated": "Laatst bijgewerkt: 1 juli 2025"
+    },
+    "terms": {
+      "title": "Gebruiksvoorwaarden",
+      "subtitle": "Lees dit zorgvuldig door voordat u het gebruikt",
+      "effectiveDate": "Ingangsdatum: 1 juli 2025",
+      "intro": "Deze Gebruiksvoorwaarden zijn van toepassing op het gebruik van de LeafNest-app en -diensten. Door onze app te gebruiken, gaat u akkoord met deze algemene voorwaarden.",
+      "sections": [
+        {
+          "title": "Acceptatie van voorwaarden",
+          "content": "Door de LeafNest-app te openen of te gebruiken, gaat u ermee akkoord gebonden te zijn aan deze gebruiksvoorwaarden. Als u niet akkoord gaat met deze voorwaarden, mag u de app niet gebruiken."
+        },
+        {
+          "title": "Verantwoordelijkheden van gebruikers",
+          "content": "U stemt ermee in de app alleen voor wettige doeleinden te gebruiken en op een manier die geen inbreuk maakt op de rechten van anderen. U bent verantwoordelijk voor het handhaven van de vertrouwelijkheid van uw accountgegevens."
+        },
+        {
+          "title": "Intellectueel eigendom",
+          "content": "Alle inhoud, handelsmerken, logo's en intellectuele eigendommen binnen de app zijn eigendom van LeafNest of zijn aan ons in licentie gegeven. Ongeoorloofd gebruik van ons intellectueel eigendom is ten strengste verboden."
+        },
+        {
+          "title": "Privacy en gegevensverzameling",
+          "content": "Wij verzamelen en verwerken persoonlijke informatie zoals beschreven in ons privacybeleid. Door onze app te gebruiken, stemt u in met onze gegevensverzameling, opslag en verwerkingspraktijken."
+        },
+        {
+          "title": "Beperking van aansprakelijkheid",
+          "content": "LeafNest is niet aansprakelijk voor enige schade, verlies of letsel voortvloeiend uit het gebruik van de app of haar diensten. U gebruikt de app op eigen risico en discretie."
+        },
+        {
+          "title": "Wijzigingen in de voorwaarden",
+          "content": "Wij behouden ons het recht voor om deze gebruiksvoorwaarden op elk moment bij te werken. Eventuele wijzigingen worden op deze pagina geplaatst met een bijgewerkte ingangsdatum. Voortgezet gebruik betekent acceptatie van wijzigingen."
+        },
+        {
+          "title": "Neem contact met ons op",
+          "content": "Als u vragen, opmerkingen of feedback heeft over deze gebruiksvoorwaarden, neem dan contact met ons op via leafnest.capstone@gmail.com."
+        }
+      ],
+      "footerTitle": "Bedankt",
+      "footerText": "Bedankt dat u de tijd heeft genomen om onze Gebruiksvoorwaarden te lezen. Uw vertrouwen en naleving helpen ons een betere ervaring voor iedereen te creëren.",
+      "copyright": "© 2025 BladNest. Alle rechten voorbehouden.",
+      "lastUpdated": "Laatst bijgewerkt: 1 juli 2025"
+    }
+  },
+  "faq": {
+    "title": "Hulp en veelgestelde vragen",
+    "subtitle": "Vind antwoorden op veelgestelde vragen",
+    "categories": [
+      {
+        "title": "Aan de slag",
+        "items": [
+          {
+            "question": "Wat is LeafNest?",
+            "answer": "LeafNest is een app voor plantenidentificatie en -informatie die AI-technologie gebruikt om u te helpen planten en dieren te identificeren en zo kennis over de natuur te verschaffen."
+          },
+          {
+            "question": "Hoe begin ik?",
+            "answer": "Open de app, tik op het scanpictogram en richt deze op een plant of dier. De AI zal het identificeren en gedetailleerde informatie over die soort verstrekken."
+          }
+        ]
+      },
+      {
+        "title": "De scanner gebruiken",
+        "items": [
+          {
+            "question": "Hoe scan ik een soort?",
+            "answer": "Tik op het scanpictogram op het startscherm, richt uw camera op de soort en maak een duidelijke foto. De app identificeert het automatisch."
+          },
+          {
+            "question": "Wat maakt een goede scan?",
+            "answer": "Zorg voor goede verlichting, focus op onderscheidende kenmerken en houd de camera stil voor de beste resultaten."
+          },
+          {
+            "question": "Kan ik vanuit mijn fotogalerij scannen?",
+            "answer": "Ja. U kunt bestaande foto's uit uw galerij uploaden door de galerijoptie in het scannerscherm te selecteren."
+          }
+        ]
+      },
+      {
+        "title": "Nauwkeurigheid en functies",
+        "items": [
+          {
+            "question": "Hoe nauwkeurig is de identificatie?",
+            "answer": "LeafNest maakt gebruik van geavanceerde machine learning-modellen. De nauwkeurigheid varieert afhankelijk van de belichting en de beeldkwaliteit, maar bedraagt ​​doorgaans meer dan 90%."
+          },
+          {
+            "question": "Kan ik mijn favoriete planten bewaren?",
+            "answer": "Ja. Tik op het hartpictogram op een geïdentificeerde soort om deze aan je favorieten toe te voegen, zodat je er later snel toegang toe hebt."
+          }
+        ]
+      },
+      {
+        "title": "Ondersteuning en hulp",
+        "items": [
+          {
+            "question": "Hoe neem ik contact op met ondersteuning?",
+            "answer": "Open het menu Instellingen en selecteer Help en ondersteuning, of e-mail ons op leafnest.capstone@gmail.com."
+          }
+        ]
+      }
+    ]
+  },
+  "help": {
+    "title": "Hulp en ondersteuning",
+    "subtitle": "Tips voor het scannen van planten en dieren met AI – en waar u meer hulp kunt krijgen.",
+    "quickStart": {
+      "title": "Snel beginnen",
+      "bullets": [
+        "Tik op de knop Scannen op het startscherm.",
+        "Centreer de plant of het dier in het frame.",
+        "Blijf stabiel staan ​​en maak vervolgens een duidelijke foto."
+      ],
+      "cta": "Scanner openen"
+    },
+    "bestResults": {
+      "title": "Hoe u betere resultaten kunt behalen",
+      "bullets": [
+        "Gebruik goede verlichting en vermijd fel tegenlicht.",
+        "Vul het kader met het onderwerp en focus op onderscheidende details.",
+        "Probeer meerdere hoeken, zoals bladeren, bloemen, schors of profielfoto's."
+      ]
+    },
+    "troubleshooting": {
+      "title": "Problemen oplossen",
+      "bullets": [
+        "Dagelijkse hoogtepunten zien er hetzelfde uit? Trek om de app na middernacht (Filippijnse tijd) te vernieuwen of opnieuw te openen.",
+        "Geen internet? Controleer uw verbinding, want beeldherkenning heeft een netwerkverbinding nodig.",
+        "Lage nauwkeurigheid? Maak een duidelijkere foto van dichterbij met betere verlichting."
+      ]
+    },
+    "links": {
+      "faq": "Veelgestelde vragen",
+      "feedback": "Feedback verzenden",
+      "about": "Over LeafNest",
+      "privacy": "Privacybeleid",
+      "terms": "Gebruiksvoorwaarden",
+      "contact": "Neem contact op met ondersteuning"
+    },
+    "alerts": {
+      "noEmailTitle": "Kan e-mailapp niet openen",
+      "noEmailBody": "Stuur ons een e-mail op {{email}}."
+    }
+  },
+  "feedback": {
+    "title": "Feedback verzenden",
+    "subtitle": "Vertel ons wat goed werkt of wat verbeterd kan worden. Wij lezen elk bericht.",
+    "topicLabel": "Onderwerp",
+    "topics": {
+      "bug": "Rapporteer een bug",
+      "idea": "Functieverzoek",
+      "ux": "Ontwerp / UX",
+      "content": "Soort / Inhoud",
+      "account": "Account / Inloggen",
+      "other": "Ander"
+    },
+    "subjectLabel": "Onderwerp",
+    "subjectPlaceholder": "Korte samenvatting (de scanner bestempelt een blad bijvoorbeeld verkeerd als esdoorn)",
+    "messageLabel": "Bericht",
+    "messagePlaceholder": "Beschrijf wat er is gebeurd, de stappen om te reproduceren en de verwachtingen.",
+    "emailLabel": "Uw e-mailadres (optioneel)",
+    "emailPlaceholder": "Indien nodig zullen wij hier antwoorden",
+    "includeDiagnostics": "Inclusief diagnostiek",
+    "diagnosticsHint": "Helpt ons problemen op te lossen (alleen platform en besturingssysteem).",
+    "submit": "Feedback verzenden",
+    "submitting": "Verzenden...",
+    "footerText": "Of e-mail ons rechtstreeks op {{email}}",
+    "alerts": {
+      "missingInfoTitle": "Ontbrekende informatie",
+      "missingInfoMessage": "Voeg een onderwerp en bericht toe.",
+      "invalidEmailTitle": "Ongeldig e-mailadres",
+      "invalidEmailMessage": "Voer een geldig e-mailadres in of laat het leeg.",
+      "noEmailAppTitle": "Kan geen feedback verzenden",
+      "noEmailAppMessage": "Probeer het later opnieuw of stuur ons een e-mail op {{email}}.",
+      "successTitle": "Feedback verzonden",
+      "successMessage": "Bedankt voor uw feedback! We zullen het binnenkort beoordelen.",
+      "genericErrorTitle": "Er is iets misgegaan",
+      "genericErrorMessage": "Probeer het later opnieuw of stuur ons een e-mail op {{email}}."
+    }
+  },
+  "comments": {
+    "title": "Opmerkingen",
+    "noComments": "Nog geen opmerkingen",
+    "beFirstToComment": "Wees de eerste die reageert!",
+    "addComment": "Voeg een reactie toe...",
+    "deleteComment": "Reactie verwijderen",
+    "deleteConfirm": "Weet je zeker dat je deze reactie wilt verwijderen?",
+    "delete": "Verwijderen",
+    "failedToDelete": "Kan reactie niet verwijderen",
+    "failedToLike": "Kan reactie niet leuk vinden",
+    "loginRequired": "Inloggen vereist",
+    "loginToComment": "Om te kunnen reageren moet u ingelogd zijn",
+    "loginToLike": "Je moet ingelogd zijn om reacties leuk te vinden",
+    "justNow": "Zojuist"
+  },
+  "notification": {
+    "title": "Meldingen",
+    "noNotifications": "Nog geen meldingen",
+    "markAsRead": "Markeer als gelezen",
+    "markAllAsRead": "Markeer alles als gelezen",
+    "delete": "Verwijderen",
+    "deleteAll": "Alles verwijderen"
+  },
+  "commentsModal": {
+    "title": "Opmerkingen",
+    "inputPlaceholder": "Voeg een reactie toe...",
+    "empty": {
+      "title": "Nog geen opmerkingen",
+      "subtitle": "Wees de eerste die reageert!"
+    },
+    "actions": {
+      "cancel": "Annuleren",
+      "delete": "Verwijderen"
+    },
+    "alerts": {
+      "loadErrorTitle": "Fout",
+      "loadErrorBody": "Kan reacties niet laden.",
+      "loginRequiredTitle": "Inloggen vereist",
+      "loginRequiredCommentBody": "Om te kunnen reageren moet u ingelogd zijn.",
+      "loginRequiredLikeBody": "Je moet ingelogd zijn om reacties leuk te vinden.",
+      "addErrorTitle": "Fout",
+      "addErrorBody": "Kan reactie niet toevoegen.",
+      "likeErrorTitle": "Fout",
+      "likeErrorBody": "Kan reactie niet leuk vinden.",
+      "deleteTitle": "Reactie verwijderen",
+      "deleteConfirmBody": "Weet je zeker dat je deze reactie wilt verwijderen?",
+      "deleteErrorTitle": "Fout",
+      "deleteErrorBody": "Kan reactie niet verwijderen."
+    }
+  },
+  "premiumGate": {
+    "offline": {
+      "title": "Offlinetoegang vereist",
+      "historySubtitle": "Abonneer u om offline toegang te krijgen tot de geschiedenis",
+      "historyDescription": "Offline toegang tot uw scangeschiedenis is een premiumfunctie. Upgrade om uw geschiedenis altijd en overal te bekijken.",
+      "favoritesSubtitle": "Abonneer u om offline toegang te krijgen tot favorieten",
+      "favoritesDescription": "Offline toegang tot uw favorieten is een premiumfunctie. Upgrade om uw favorieten altijd en overal te bekijken."
+    },
+    "limits": {
+      "scanTitle": "Scanlimiet bereikt",
+      "scanSubtitle": "Je hebt alle {{limit}} scans gebruikt",
+      "scanDescription": "Upgrade naar Premium voor onbeperkte scans en meer functies!",
+      "downloadTitle": "Downloadlimiet bereikt",
+      "downloadSubtitle": "Je hebt alle {{limit}} downloads gebruikt",
+      "downloadDescription": "Upgrade naar Premium voor onbeperkte downloads!"
+    },
+    "timer": {
+      "resetsInHours": "Wordt over {{count}} uur gereset",
+      "resetsInHours_plural": "Wordt over {{count}} uur gereset"
+    },
+    "usage": {
+      "scans": "Scannen:",
+      "downloads": "Downloads:"
+    },
+    "features": {
+      "title": "Premiumvoordelen:",
+      "offlineHistory": "Offline geschiedenistoegang",
+      "offlineFavorites": "Toegang tot offline favorieten",
+      "unlimitedScans": "Onbeperkte scans",
+      "unlimitedDownloads": "Onbeperkte downloads"
+    },
+    "pricing": {
+      "amount": "{{amount}}",
+      "period": "gedurende {{days}} dagen"
+    },
+    "actions": {
+      "upgrade": "Upgrade naar Premium",
+      "later": "Misschien later"
+    }
+  },
+  "manageNotifications": {
+    "title": "Beheer meldingen",
+    "pushNotifications": "Pushmeldingen",
+    "emailNotifications": "E-mailmeldingen",
+    "likeNotifications": "Zoals meldingen",
+    "commentNotifications": "Opmerkingsmeldingen",
+    "followNotifications": "Volg meldingen",
+    "enabled": "Ingeschakeld",
+    "disabled": "Gehandicapt",
+    "save": "Instellingen opslaan"
+  },
+  "history": {
+    "title": "Geschiedenis",
+    "loading": "Geschiedenis laden...",
+    "loadingMore": "Meer laden...",
+    "signInRequiredTitle": "Inloggen vereist",
+    "signInRequiredBody": "Maak een account aan of log in om uw scangeschiedenis te bekijken.",
+    "selection": {
+      "selectedCount": "{{count}} geselecteerd",
+      "deleteButton": "Verwijder {{count}} record",
+      "deleteButton_plural": "Verwijder {{count}} records"
+    },
+    "offlineBanner": {
+      "premium": "Offlinemodus (Premium)",
+      "locked": "Voor de offlinemodus is Premium vereist"
+    },
+    "search": {
+      "placeholder": "Zoek op naam..."
+    },
+    "filters": {
+      "all": "Alle",
+      "plants": "Planten",
+      "animals": "Dieren"
+    },
+    "empty": {
+      "noHistoryTitle": "Nog geen geschiedenis",
+      "noHistoryBody": "Uw soortscangeschiedenis verschijnt hier zodra u planten en dieren begint te identificeren.",
+      "noResultsTitle": "Geen resultaten gevonden",
+      "noResultsBody": "Er zijn geen records die overeenkomen met uw zoek- of filtercriteria. Probeer uw filters aan te passen."
+    },
+    "actions": {
+      "signIn": "Log in",
+      "delete": "Verwijderen",
+      "clearAll": "Alles wissen",
+      "clearFilters": "Filters wissen"
+    },
+    "alerts": {
+      "visibilityNow": "Scannen is nu {{status}}",
+      "visibilityUpdateFailed": "Kan de zichtbaarheid niet updaten.",
+      "visibilityNeedsSync": "Deze scan moet eerst worden gesynchroniseerd. Probeer het over enkele ogenblikken opnieuw.",
+      "visibilityOffline": "Kan de zichtbaarheid niet wijzigen terwijl u offline bent. Controleer uw verbinding.",
+      "visibilityNotSynced": "Deze scan is nog niet gesynchroniseerd met de cloud. Wacht tot de synchronisatie is voltooid en probeer het opnieuw.",
+      "visibilityPermissionDenied": "U heeft geen toestemming om deze scan te wijzigen.",
+      "visibilityNetworkError": "Netwerkfout. Controleer uw verbinding en probeer het opnieuw.",
+      "errorWithMessage": "Fout: {{message}}",
+      "deleteRecordTitle": "Opname verwijderen",
+      "deleteRecordMessage": "'{{name}}' uit de geschiedenis verwijderen?",
+      "deleteRecordSuccess": "Opname verwijderd.",
+      "deleteRecordError": "Kan record niet verwijderen.",
+      "deleteSelectedTitle": "Geselecteerde verwijderen",
+      "deleteSelectedMessage": "{{count}} record uit de geschiedenis verwijderen?",
+      "deleteSelectedMessage_plural": "{{count}} records uit de geschiedenis verwijderen?",
+      "deleteSelectedSuccess": "{{count}} record verwijderd.",
+      "deleteSelectedSuccess_plural": "{{count}} records verwijderd.",
+      "deleteSelectedError": "Kan geselecteerde records niet verwijderen.",
+      "clearAllTitle": "Wis de hele geschiedenis",
+      "clearAllMessage": "Weet u zeker dat u alle geschiedenisrecords wilt verwijderen? Deze actie kan niet ongedaan worden gemaakt.",
+      "clearAllSuccess": "Alle geschiedenis gewist.",
+      "clearAllError": "Kan de geschiedenis niet wissen."
+    },
+    "visibility": {
+      "public": "publiek",
+      "private": "privé"
+    },
+    "unknownSpecies": "Onbekende soort",
+    "details": {
+      "commonName": "Algemene naam",
+      "scientificName": "Wetenschappelijke naam",
+      "taxonomicRank": "Taxonomische rang",
+      "type": "Type",
+      "conservationStatus": "Staat van instandhouding",
+      "timesScanned": "Tijden gescand",
+      "timeCount": "{{count}} tijd",
+      "timeCount_plural": "{{count}} keer",
+      "globalAppScans": "Globale app-scans",
+      "scanCount": "{{count}} scannen",
+      "scanCount_plural": "{{count}} scant",
+      "scannedOn": "Gescand op"
+    },
+    "premiumGate": {
+      "title": "Abonneer u om toegang te krijgen tot de offlinemodus",
+      "message": "Offline toegang tot uw geschiedenis is een premiumfunctie. Abonneer u om uw scangeschiedenis te bekijken wanneer u offline bent."
+    },
+    "noHistory": "Nog geen geschiedenis",
+    "startScanning": "Begin met scannen om uw geschiedenis op te bouwen",
+    "delete": "Verwijderen",
+    "deleteAll": "Alles verwijderen",
+    "deleteConfirm": "Weet u zeker dat u dit item wilt verwijderen?",
+    "deleteAllConfirm": "Weet je zeker dat je de hele geschiedenis wilt verwijderen?",
+    "scannedOn": "Gescand op {{date}}"
+  },
+  "postDetail": {
+    "title": "Na",
+    "aboutLabel": "Over",
+    "emptyTitle": "Bericht niet gevonden",
+    "alerts": {
+      "postNotFoundTitle": "Fout",
+      "postNotFoundBody": "Bericht niet gevonden.",
+      "loadErrorTitle": "Fout",
+      "loadErrorBody": "Kan bericht niet laden.",
+      "likeErrorBody": "Kan bericht niet leuk vinden."
+    }
+  },
+  "speciesGallery": {
+    "title": "Galerij",
+    "noResults": "Geen resultaten gevonden",
+    "loadMore": "Laad meer",
+    "error": "Kan de galerij niet laden"
+  },
+  "speciesLanding": {
+    "title": "Soortdetails",
+    "scientificName": "Wetenschappelijke naam",
+    "commonName": "Algemene naam",
+    "description": "Beschrijving",
+    "habitat": "Habitat",
+    "diet": "Dieet",
+    "lifespan": "Levensduur",
+    "conservationStatus": "Staat van instandhouding",
+    "addToFavorites": "Toevoegen aan Favorieten",
+    "removeFromFavorites": "Verwijderen uit Favorieten",
+    "share": "Deel",
+    "viewMore": "Bekijk meer",
+    "error": "Kan soortdetails niet laden"
+  },
+  "manualPayment": {
+    "title": "Handmatige betaling",
+    "uploadProof": "Betalingsbewijs uploaden",
+    "selectImage": "Selecteer Afbeelding",
+    "takePhoto": "Maak een foto",
+    "chooseFromGallery": "Kies uit Galerij",
+    "uploadImage": "Afbeelding uploaden",
+    "uploading": "Uploaden...",
+    "submit": "Betaling indienen",
+    "submitting": "Verzenden...",
+    "successTitle": "Succes",
+    "successMessage": "Betaling succesvol verzonden. We zullen het binnenkort verifiëren.",
+    "errorTitle": "Fout",
+    "errorMessage": "Kan de betaling niet verzenden. Probeer het opnieuw.",
+    "selectImageFirst": "Selecteer eerst een afbeelding"
+  },
+  "scanStats": {
+    "title": "Scanstatistieken",
+    "totalScans": "Totaal aantal scans",
+    "thisWeek": "Deze week",
+    "thisMonth": "Deze maand",
+    "plants": "Planten",
+    "animals": "Dieren",
+    "noData": "Er zijn nog geen scangegevens beschikbaar"
+  }
+}

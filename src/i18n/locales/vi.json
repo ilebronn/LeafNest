@@ -1,0 +1,895 @@
+{
+  "common": {
+    "welcome": "Chào mừng",
+    "guest": "Khách",
+    "loading": "Đang tải...",
+    "error": "Lỗi",
+    "success": "Thành công",
+    "cancel": "Hủy",
+    "ok": "Đồng ý",
+    "save": "Lưu",
+    "back": "Quay lại",
+    "edit": "Sửa",
+    "username": "Tên người dùng",
+    "and": "và"
+  },
+  "login": {
+    "title": "LeafNest",
+    "signInWithGoogle": "Đăng nhập bằng Google",
+    "signInAsGuest": "Đăng nhập với tư cách Khách",
+    "signInFailed": "Đăng nhập thất bại",
+    "googleAuthError": "Lỗi xác thực Google",
+    "unexpectedError": "Lỗi không mong muốn",
+    "unknownError": "Lỗi không xác định",
+    "termsText": "Bằng cách đăng ký, bạn xác nhận đã đọc và đồng ý với",
+    "termsOfUse": "Điều khoản sử dụng",
+    "privacyPolicy": "Chính sách bảo mật",
+    "cookiesPolicy": "Chính sách Cookie",
+    "signIn": "Đăng nhập",
+    "welcomeTitle": "Chào mừng đến với LeafNest",
+    "welcomeSubtitle": "Khám phá vẻ đẹp của thiên nhiên",
+    "signInWithEmailButton": "Đăng nhập bằng Email",
+    "dividerOr": "hoặc",
+    "continueAsGuest": "Tiếp tục với tư cách Khách",
+    "continueAgreement": "Tiếp tục, bạn đồng ý với"
+  },
+  "home": {
+    "welcomeGuest": "Chào mừng, Khách",
+    "welcomeUser": "Chào mừng, {{name}}",
+    "guestModeSubtitle": "Bạn đang ở chế độ khách. Đăng nhập để mở khóa tất cả tính năng.",
+    "welcomeBackSubtitle": "Thật vui khi gặp lại bạn!",
+    "scanPlantsTitle": "Quét cây ngay lập tức",
+    "scanPlantsSubtitle": "Chụp ảnh và nhận dạng thực vật chỉ trong vài giây.",
+    "scanAnimalsTitle": "Quét động vật ngay lập tức",
+    "scanAnimalsSubtitle": "Nhận dạng động vật chỉ trong vài giây.",
+    "learnNatureTitle": "Tìm hiểu về thiên nhiên",
+    "learnNatureSubtitle": "Khám phá thêm với văn bản thành giọng nói và thông tin nhanh.",
+    "scanningStats": "Thống kê quét",
+    "plantsScanned": "Cây đã quét",
+    "animalsIdentified": "Động vật đã nhận dạng",
+    "dailyDiscovery": "Khám phá hàng ngày",
+    "dailyDiscoverySubtitle": "Học điều mới mỗi ngày",
+    "plantOfTheDay": "Cây của ngày",
+    "animalOfTheDay": "Động vật của ngày",
+    "scientificName": "Tên khoa học",
+    "habitat": "Môi trường sống",
+    "diet": "Chế độ ăn",
+    "lifespan": "Tuổi thọ",
+    "weight": "Cân nặng",
+    "cycle": "Vòng đời",
+    "watering": "Tưới nước",
+    "sunlight": "Ánh sáng mặt trời",
+    "loadingDaily": "Đang tải nội dung hàng ngày...",
+    "errorLoadingDaily": "Không thể tải nội dung hàng ngày",
+    "pullToRefresh": "Kéo để làm mới",
+    "offlineMode": "Nội dung ngoại tuyến",
+    "funFact": "Sự thật thú vị",
+    "newFact": "Sự thật mới",
+    "trendingPlants": "Cây phổ biến",
+    "trendingAnimals": "Động vật phổ biến",
+    "alerts": {
+      "authRequiredTitle": "Yêu cầu xác thực",
+      "authRequiredBody": "Vui lòng đăng nhập để tải PDF.",
+      "pdfSuccessTitle": "Thành công",
+      "pdfSuccessBody": "PDF đã được tạo và gửi đến email của bạn.",
+      "pdfErrorTitle": "Lỗi",
+      "pdfErrorBody": "Không thể tạo PDF. Vui lòng thử lại.",
+      "signInRequiredTitle": "Yêu cầu đăng nhập",
+      "signInLikeBody": "Vui lòng đăng nhập để thích bài viết.",
+      "signInCommentBody": "Vui lòng đăng nhập để bình luận.",
+      "downloadsUnavailableTitle": "Không thể tải xuống",
+      "downloadsUnavailableBody": "Vui lòng đăng ký tài khoản miễn phí để tải thông tin loài.",
+      "downloadLimitCheckErrorBody": "Không thể kiểm tra giới hạn tải xuống. Vui lòng thử lại."
+    },
+    "pdf": {
+      "defaultCommon": "Không xác định",
+      "defaultScientific": "Không xác định",
+      "defaultRank": "Cấp bậc không xác định",
+      "defaultTaxon": "Không xác định",
+      "noDescription": "Không có mô tả.",
+      "infoUnavailable": "Thông tin không có sẵn.",
+      "notEvaluated": "Chưa được đánh giá"
+    },
+    "trending": {
+      "title": "Các loài phổ biến"
+    },
+    "emptyState": {
+      "title": "Chào mừng đến với Cộng đồng",
+      "subtitle": "Bắt đầu khám phá và chia sẻ những khám phá thiên nhiên của bạn.",
+      "cta": "Quét loài đầu tiên của bạn"
+    },
+    "feed": {
+      "likesCount": "{{count}} lượt thích",
+      "likesCount_plural": "{{count}} lượt thích",
+      "beFirst": "Hãy là người đầu tiên thích điều này",
+      "showMore": "Hiển thị thêm",
+      "showLess": "Hiển thị bớt",
+      "viewComments": "Xem tất cả {{count}} bình luận",
+      "viewComments_plural": "Xem tất cả {{count}} bình luận",
+      "unknownUser": "Ẩn danh",
+      "unknownSpecies": "Loài không xác định",
+      "likeError": "Không thể thích bài viết."
+    },
+    "relativeTime": {
+      "justNow": "Vừa xong",
+      "minutes": "{{count}} phút trước",
+      "hours": "{{count}} giờ trước",
+      "days": "{{count}} ngày trước"
+    }
+  },
+  "settings": {
+    "title": "Cài đặt",
+    "account": "Tài khoản",
+    "guestMode": "Chế độ khách",
+    "signedIn": "Đã đăng nhập",
+    "username": "Tên người dùng",
+    "editUsername": "Sửa tên người dùng",
+    "currentUsername": "Tên hiện tại",
+    "newUsername": "Tên mới",
+    "usernameUpdated": "Cập nhật tên người dùng thành công!",
+    "usernameUpdateError": "Không thể cập nhật tên người dùng",
+    "usernameUpdateFailed": "Cập nhật tên thất bại",
+    "usernameRequired": "Tên người dùng là bắt buộc",
+    "usernameTooShort": "Tên phải có ít nhất 3 ký tự",
+    "usernameTooLong": "Tên không được vượt quá 20 ký tự",
+    "usernameInvalidChars": "Tên chỉ có thể chứa chữ cái, số, dấu gạch dưới và dấu gạch ngang",
+    "language": "Ngôn ngữ",
+    "selectLanguage": "Chọn ngôn ngữ",
+    "logout": "Đăng xuất",
+    "logoutError": "Đăng xuất thất bại.",
+    "about": "Giới thiệu",
+    "appName": "LeafNest",
+    "yourPlan": "Gói của bạn",
+    "leafNestFree": "LeafNest Miễn phí",
+    "help": "Trợ giúp",
+    "sendFeedback": "Gửi phản hồi",
+    "faq": "Câu hỏi thường gặp",
+    "termsOfUse": "Điều khoản sử dụng",
+    "generalSection": "Chung",
+    "supportSection": "Hỗ trợ",
+    "legalSection": "Pháp lý"
+  },
+  "profile": {
+    "title": "Hồ sơ",
+    "editUsername": "Sửa tên người dùng",
+    "signOut": "Đăng xuất",
+    "leaveAccount": "Rời khỏi tài khoản",
+    "signIn": "Đăng nhập",
+    "accessFullFeatures": "Truy cập tất cả tính năng",
+    "createAccount": "Tạo tài khoản",
+    "joinLeafNest": "Tham gia LeafNest",
+    "guestUser": "Người dùng Khách",
+    "statsTitle": "Thống kê quét",
+    "viewAll": "Xem tất cả",
+    "guestPromptTitle": "Theo dõi tiến trình của bạn",
+    "guestPromptText": "Đăng nhập để theo dõi lượt quét, khám phá loài và mở khóa thành tích.",
+    "badgeNew": "Mới",
+    "editPlaceholder": "Nhập tên người dùng",
+    "stats": {
+      "total": "Tổng số lần quét",
+      "week": "Tuần này",
+      "species": "Loài"
+    },
+    "sections": {
+      "account": "Cài đặt tài khoản"
+    },
+    "menu": {
+      "planTitle": "Gói của bạn",
+      "planSubtitle": "LeafNest Miễn phí",
+      "notificationsTitle": "Thông báo",
+      "notificationsSubtitle": "Quản lý thông báo của bạn",
+      "passwordTitle": "Quên mật khẩu",
+      "passwordSubtitle": "Đặt lại mật khẩu",
+      "signOutTitle": "Đăng xuất",
+      "signOutSubtitle": "Đăng xuất khỏi tài khoản",
+      "signInTitle": "Đăng nhập",
+      "signInSubtitle": "Truy cập tất cả tính năng",
+      "createAccountTitle": "Tạo tài khoản",
+      "createAccountSubtitle": "Tham gia LeafNest hôm nay"
+    },
+    "alerts": {
+      "syncSuccess": "Đã đồng bộ {{count}} lần quét đang chờ xử lý",
+      "syncSuccess_plural": "Đã đồng bộ {{count}} lần quét đang chờ xử lý",
+      "usernameUpdated": "Cập nhật tên người dùng thành công!",
+      "usernameUpdateError": "Không thể cập nhật tên người dùng.",
+      "signOutTitle": "Đăng xuất",
+      "signOutMessage": "Bạn có chắc chắn muốn đăng xuất không?",
+      "signOutConfirm": "Đăng xuất",
+      "signOutError": "Đăng xuất thất bại. Vui lòng thử lại."
+    }
+  },
+  "languages": {
+    "ar": "Tiếng Ả Rập",
+    "zh-CN": "Tiếng Trung (Giản thể)",
+    "zh-TW": "Tiếng Trung (Phồn thể)",
+    "hr": "Tiếng Croatia",
+    "cs": "Tiếng Séc",
+    "da": "Tiếng Đan Mạch",
+    "nl": "Tiếng Hà Lan",
+    "en": "Tiếng Anh",
+    "fi": "Tiếng Phần Lan",
+    "fr": "Tiếng Pháp",
+    "de": "Tiếng Đức",
+    "el": "Tiếng Hy Lạp",
+    "hi": "Tiếng Hindi",
+    "hu": "Tiếng Hungary",
+    "id": "Tiếng Indonesia",
+    "it": "Tiếng Ý",
+    "ja": "Tiếng Nhật",
+    "ko": "Tiếng Hàn",
+    "ms": "Tiếng Mã Lai",
+    "no": "Tiếng Na Uy",
+    "fa": "Tiếng Ba Tư",
+    "pl": "Tiếng Ba Lan",
+    "pt": "Tiếng Bồ Đào Nha",
+    "ro": "Tiếng Romania",
+    "ru": "Tiếng Nga",
+    "sk": "Tiếng Slovak",
+    "es": "Tiếng Tây Ban Nha",
+    "sv": "Tiếng Thụy Điển",
+    "tl": "Tiếng Tagalog",
+    "th": "Tiếng Thái",
+    "tr": "Tiếng Thổ Nhĩ Kỳ",
+    "uk": "Tiếng Ukraina",
+    "vi": "Tiếng Việt"
+  },
+  "tabs": {
+    "home": "Trang chủ",
+    "scan": "Quét",
+    "history": "Lịch sử",
+    "settings": "Cài đặt"
+  },
+  "animals": {
+    "title": "Động vật của ngày",
+    "lion": {
+      "name": "Sư tử",
+      "scientificName": "Panthera leo",
+      "description": "Sư tử là loài mèo lớn thuộc chi Panthera có nguồn gốc từ Châu Phi và Ấn Độ. Nó có thân hình cơ bắp, ngực rộng, đầu tròn ngắn, tai tròn và chùm lông ở cuối đuôi.",
+      "habitat": "Thảo nguyên, đồng cỏ và rừng thưa",
+      "diet": "Ăn thịt - chủ yếu là động vật có vú lớn như ngựa vằn, linh dương đầu bò và trâu",
+      "lifespan": "10-14 năm trong tự nhiên, lên đến 20 năm trong điều kiện nuôi nhốt",
+      "conservationStatus": "Dễ bị tổn thương"
+    },
+    "elephant": {
+      "name": "Voi",
+      "scientificName": "Elephantidae",
+      "description": "Voi là loài động vật trên cạn lớn nhất còn tồn tại, đặc trưng bởi vòi dài, chân hình cột và đầu rất lớn với tuyến thái dương và tai rộng, phẳng.",
+      "habitat": "Thảo nguyên, rừng, sa mạc và đầm lầy",
+      "diet": "Ăn cỏ - cỏ, lá, vỏ cây, trái cây và đất",
+      "lifespan": "60-70 năm",
+      "conservationStatus": "Nguy cấp"
+    },
+    "panda": {
+      "name": "Gấu trúc lớn",
+      "scientificName": "Ailuropoda melanoleuca",
+      "description": "Gấu trúc lớn là một loài gấu có nguồn gốc từ miền Nam Trung Quốc. Nó được đặc trưng bởi bộ lông đen trắng nổi bật và thân hình tròn trịa.",
+      "habitat": "Các dãy núi ở trung tâm Trung Quốc với rừng tre rậm rạp",
+      "diet": "Chủ yếu là tre (99% khẩu phần ăn), thỉnh thoảng là động vật nhỏ",
+      "lifespan": "20 năm trong tự nhiên, lên đến 30 năm trong điều kiện nuôi nhốt",
+      "conservationStatus": "Dễ bị tổn thương"
+    },
+    "loading": "Đang tải động vật...",
+    "errorLoading": "Không thể tải động vật",
+    "addToFavorites": "Thêm vào Yêu thích",
+    "removeFromFavorites": "Xóa khỏi Yêu thích",
+    "learnMore": "Tìm hiểu thêm",
+    "share": "Chia sẻ động vật"
+  },
+  "signup": {
+    "title": "Tạo tài khoản",
+    "username": "Tên người dùng",
+    "email": "Email",
+    "password": "Mật khẩu",
+    "confirmPassword": "Xác nhận mật khẩu",
+    "register": "Đăng ký",
+    "alreadyHaveAccount": "Đã có tài khoản? Đăng nhập",
+    "passwordsDontMatch": "Mật khẩu không khớp!",
+    "fillAllFields": "Vui lòng điền vào tất cả các trường.",
+    "verificationEmailSent": "Email xác minh đã được gửi đến địa chỉ email của bạn.",
+    "emailAlreadyInUse": "Địa chỉ email đã được sử dụng.",
+    "invalidEmail": "Địa chỉ email không hợp lệ.",
+    "subtitle": "Tham gia cùng chúng tôi để khám phá thiên nhiên",
+    "processing": "Đang xử lý...",
+    "dividerOr": "hoặc",
+    "alreadyMember": "Đã là thành viên?",
+    "signInLink": "Đăng nhập"
+  },
+  "signin": {
+    "title": "Đăng nhập",
+    "email": "Email",
+    "password": "Mật khẩu",
+    "signIn": "Đăng nhập",
+    "signInWithGoogle": "Đăng nhập bằng Google",
+    "dontHaveAccount": "Chưa có tài khoản? Đăng ký",
+    "fillAllFields": "Vui lòng điền vào tất cả các trường.",
+    "signInSuccessful": "Đăng nhập thành công",
+    "welcomeBack": "Chào mừng trở lại",
+    "userNotFound": "Không tìm thấy người dùng với email này.",
+    "wrongPassword": "Sai mật khẩu.",
+    "invalidEmail": "Địa chỉ email không hợp lệ.",
+    "subtitle": "Đăng nhập để tiếp tục hành trình của bạn",
+    "forgotPasswordLink": "Quên mật khẩu?",
+    "dividerOr": "hoặc",
+    "noAccountPrompt": "Chưa có tài khoản?",
+    "signUpLink": "Đăng ký"
+  },
+  "scan": {
+    "loadingCamera": "Đang tải camera...",
+    "needPermission": "Chúng tôi cần quyền của bạn để hiển thị camera",
+    "grantPermission": "Cấp quyền",
+    "preparingCamera": "Đang chuẩn bị camera..."
+  },
+  "favorites": {
+    "title": "Yêu thích",
+    "all": "Tất cả",
+    "plants": "Cây",
+    "animals": "Động vật",
+    "removeFavorite": "Xóa khỏi Yêu thích",
+    "remove": "Xóa",
+    "cancel": "Hủy",
+    "removed": "Đã xóa",
+    "removedMessage": "đã được xóa khỏi mục yêu thích của bạn.",
+    "error": "Lỗi",
+    "failedToRemove": "Không thể xóa khỏi mục yêu thích.",
+    "clearFavorites": "Xóa tất cả Yêu thích",
+    "removeAllFavorites": "Xóa tất cả mục yêu thích?",
+    "removeAll": "Xóa tất cả",
+    "failedToClear": "Không thể xóa mục yêu thích.",
+    "plant": "Cây",
+    "animal": "Động vật",
+    "noFavoritesYet": "Chưa có mục yêu thích nào",
+    "addFromDaily": "Thêm từ Cây hoặc Động vật của ngày."
+  },
+  "about": {
+    "title": "Giới thiệu",
+    "developedBy": "Được phát triển & Thiết kế bởi Nhóm LeafNest",
+    "teamTitle": "Nhóm LeafNest",
+    "specialThanks": "Đặc biệt cảm ơn",
+    "mentor": "Ông Joshua R. Lasac",
+    "credits": "Được tạo ra bởi nhóm LeafNest với sự hỗ trợ từ Pinamalayan Maritime Foundation And Technological College INC. (PMFTCI) và Trường Nghiên cứu Máy tính.",
+    "privacyPolicy": "Chính sách bảo mật",
+    "version": "Phiên bản 0.0.1 (1)",
+    "help": "Để được trợ giúp: leafnest.capstone@gmail.com",
+    "tagline": "Nhận dạng Thực vật & Động vật",
+    "institutionalSupport": "Hỗ trợ từ Tổ chức",
+    "mentorRole": "Người hướng dẫn & Cố vấn Dự án"
+  },
+  "plan": {
+    "title": "Gói dịch vụ",
+    "upgradeTitle": "Nâng cấp lên Premium",
+    "upgradeSubtitle": "Mở khóa tất cả tính năng và tận dụng tối đa ứng dụng của chúng tôi.",
+    "free": "Miễn phí",
+    "freePrice": "₱0 / tháng",
+    "freeFeature1": "Quét giới hạn thực vật & động vật",
+    "freeFeature2": "Khám phá hàng ngày cơ bản",
+    "freeFeature3": "Không có quyền truy cập ngoại tuyến vào Lịch sử",
+    "freeFeature4": "Có quảng cáo",
+    "premium": "Premium",
+    "premiumPrice": "₱129.00 / tháng",
+    "premiumFeature1": "Quét không giới hạn",
+    "premiumFeature2": "Khám phá hàng ngày độc quyền",
+    "premiumFeature3": "Quyền truy cập ngoại tuyến vào Lịch sử",
+    "premiumFeature4": "Trải nghiệm không quảng cáo",
+    "subscribeNow": "Đăng ký ngay",
+    "selectedPlan": "Bạn đã chọn gói {{plan}}!"
+  },
+  "legal": {
+    "cookies": {
+      "title": "Chính sách Cookie",
+      "subtitle": "Cách chúng tôi sử dụng cookie để nâng cao trải nghiệm của bạn",
+      "effectiveDate": "Ngày có hiệu lực: 1 tháng 7 năm 2025",
+      "intro": "Chính sách Cookie này giải thích cách chúng tôi sử dụng cookie để nâng cao trải nghiệm của bạn khi bạn truy cập ứng dụng của chúng tôi và sử dụng các tính năng của nó. Bằng cách sử dụng ứng dụng này, bạn đồng ý với việc sử dụng cookie như được mô tả trong chính sách này.",
+      "sections": [
+        {
+          "title": "Cookie là gì?",
+          "content": "Cookie là các tệp văn bản nhỏ được lưu trữ trên thiết bị của bạn khi bạn truy cập trang web hoặc sử dụng ứng dụng. Chúng giúp chúng tôi hiểu cách bạn tương tác với dịch vụ của mình và cho phép chúng tôi cung cấp cho bạn trải nghiệm tốt hơn, được cá nhân hóa hơn."
+        },
+        {
+          "title": "Cách chúng tôi sử dụng Cookie",
+          "content": "Chúng tôi sử dụng cookie cho một số mục đích thiết yếu:",
+          "list": [
+            "Để cá nhân hóa nội dung và quảng cáo",
+            "Để phân tích mô hình lưu lượng truy cập và cải thiện trải nghiệm người dùng",
+            "Để cho phép một số tính năng và chức năng nhất định của ứng dụng",
+            "Để ghi nhớ tùy chọn và cài đặt của bạn",
+            "Để cung cấp quyền truy cập an toàn vào tài khoản của bạn"
+          ]
+        },
+        {
+          "title": "Các loại Cookie chúng tôi sử dụng",
+          "content": "Chúng tôi sử dụng các loại cookie khác nhau để nâng cao trải nghiệm của bạn:",
+          "list": [
+            "Cookie cần thiết: Cần thiết cho chức năng cơ bản của ứng dụng",
+            "Cookie hiệu suất: Giúp chúng tôi hiểu cách bạn sử dụng ứng dụng",
+            "Cookie chức năng: Ghi nhớ tùy chọn và lựa chọn của bạn",
+            "Cookie phân tích: Cung cấp thông tin chi tiết về mô hình sử dụng ứng dụng"
+          ]
+        },
+        {
+          "title": "Quản lý Cookie",
+          "content": "Bạn có thể kiểm soát và quản lý cookie thông qua cài đặt thiết bị của mình. Tuy nhiên, xin lưu ý rằng việc vô hiệu hóa một số cookie nhất định có thể ảnh hưởng đến trải nghiệm của bạn và hạn chế chức năng của ứng dụng."
+        },
+        {
+          "title": "Thời hạn của Cookie",
+          "content": "Một số cookie là tạm thời (cookie phiên) và bị xóa khi bạn đóng ứng dụng. Một số khác vẫn còn trên thiết bị của bạn trong một khoảng thời gian nhất định để ghi nhớ tùy chọn của bạn qua các phiên."
+        },
+        {
+          "title": "Thay đổi đối với Chính sách này",
+          "content": "Chúng tôi có thể cập nhật Chính sách Cookie này theo thời gian để phản ánh những thay đổi về công nghệ hoặc yêu cầu pháp lý. Mọi thay đổi sẽ được đăng trên trang này với ngày sửa đổi cập nhật."
+        },
+        {
+          "title": "Liên hệ chúng tôi",
+          "content": "Nếu bạn có bất kỳ câu hỏi, thắc mắc hoặc phản hồi nào liên quan đến Chính sách Cookie này, vui lòng liên hệ với chúng tôi theo địa chỉ leafnest.capstone@gmail.com."
+        }
+      ],
+      "footerTitle": "Quyền riêng tư của bạn rất quan trọng",
+      "footerText": "Chúng tôi cam kết minh bạch về cách chúng tôi sử dụng cookie. Việc bạn tiếp tục sử dụng ứng dụng của chúng tôi cho thấy bạn chấp nhận chính sách này.",
+      "copyright": "© 2025 LeafNest. Mọi quyền được bảo lưu.",
+      "lastUpdated": "Cập nhật lần cuối: 1 tháng 7 năm 2025"
+    },
+    "privacy": {
+      "title": "Chính sách bảo mật",
+      "subtitle": "Quyền riêng tư của bạn rất quan trọng với chúng tôi",
+      "effectiveDate": "Ngày có hiệu lực: 1 tháng 7 năm 2025",
+      "intro": "Tại LeafNest, chúng tôi cam kết bảo vệ quyền riêng tư của bạn và đảm bảo an toàn cho thông tin cá nhân của bạn.",
+      "sections": [
+        {
+          "title": "Thông tin chúng tôi thu thập",
+          "content": "Chúng tôi thu thập thông tin bạn cung cấp trực tiếp cho chúng tôi, chẳng hạn như khi bạn tạo tài khoản, tải ảnh lên hoặc liên hệ với chúng tôi để được hỗ trợ. Thông tin này có thể bao gồm tên, địa chỉ email của bạn và bất kỳ thông tin nào khác bạn chọn cung cấp."
+        },
+        {
+          "title": "Cách chúng tôi sử dụng thông tin của bạn",
+          "content": "Chúng tôi sử dụng thông tin chúng tôi thu thập để cung cấp, duy trì và cải thiện dịch vụ của mình, để liên lạc với bạn và để phát triển các tính năng mới. Chúng tôi không bán thông tin cá nhân của bạn cho bên thứ ba."
+        },
+        {
+          "title": "Bảo mật dữ liệu",
+          "content": "Chúng tôi thực hiện các biện pháp kỹ thuật và tổ chức thích hợp để bảo vệ thông tin cá nhân của bạn khỏi bị truy cập, thay đổi, tiết lộ hoặc phá hủy trái phép."
+        },
+        {
+          "title": "Quyền của bạn",
+          "content": "Bạn có quyền truy cập, cập nhật hoặc xóa thông tin cá nhân của mình. Bạn có thể thực hiện việc này thông qua cài đặt tài khoản của mình hoặc bằng cách liên hệ trực tiếp với chúng tôi."
+        },
+        {
+          "title": "Dịch vụ của bên thứ ba",
+          "content": "Ứng dụng của chúng tôi có thể chứa các liên kết đến trang web và dịch vụ của bên thứ ba. Chúng tôi không chịu trách nhiệm về các biện pháp bảo mật của họ. Chúng tôi khuyến khích bạn xem xét các chính sách bảo mật của họ."
+        },
+        {
+          "title": "Thay đổi đối với Chính sách bảo mật",
+          "content": "Chúng tôi có quyền cập nhật Chính sách bảo mật này bất cứ lúc nào. Các thay đổi sẽ được đăng trên trang này với ngày có hiệu lực cập nhật. Việc bạn tiếp tục sử dụng cấu thành sự chấp nhận các thay đổi."
+        },
+        {
+          "title": "Liên hệ chúng tôi",
+          "content": "Nếu bạn có bất kỳ câu hỏi nào về Chính sách bảo mật này hoặc các biện pháp bảo mật của chúng tôi, vui lòng liên hệ với chúng tôi theo địa chỉ privacy@leafnest.com."
+        }
+      ],
+      "footerTitle": "Chúng tôi quan tâm đến bạn",
+      "footerText": "Sự tin tưởng của bạn rất quan trọng với chúng tôi. Chúng tôi cam kết thực hiện các biện pháp minh bạch về dữ liệu và quyền riêng tư của bạn.",
+      "copyright": "© 2025 LeafNest. Mọi quyền được bảo lưu.",
+      "lastUpdated": "Cập nhật lần cuối: 1 tháng 7 năm 2025"
+    },
+    "terms": {
+      "title": "Điều khoản sử dụng",
+      "subtitle": "Vui lòng đọc kỹ trước khi sử dụng",
+      "effectiveDate": "Ngày có hiệu lực: 1 tháng 7 năm 2025",
+      "intro": "Các Điều khoản sử dụng này điều chỉnh việc sử dụng ứng dụng và dịch vụ LeafNest. Bằng cách sử dụng ứng dụng của chúng tôi, bạn đồng ý với các điều khoản và điều kiện này.",
+      "sections": [
+        {
+          "title": "Chấp nhận Điều khoản",
+          "content": "Bằng cách truy cập hoặc sử dụng ứng dụng LeafNest, bạn đồng ý bị ràng buộc bởi các Điều khoản sử dụng này. Nếu bạn không đồng ý với các điều khoản này, bạn không nên sử dụng ứng dụng."
+        },
+        {
+          "title": "Trách nhiệm của Người dùng",
+          "content": "Bạn đồng ý chỉ sử dụng ứng dụng cho các mục đích hợp pháp và theo cách không xâm phạm quyền của người khác. Bạn chịu trách nhiệm duy trì tính bảo mật của thông tin tài khoản của mình."
+        },
+        {
+          "title": "Sở hữu trí tuệ",
+          "content": "Tất cả nội dung, nhãn hiệu, logo và tài sản trí tuệ trong ứng dụng đều thuộc sở hữu của LeafNest hoặc được cấp phép cho chúng tôi. Việc sử dụng trái phép tài sản trí tuệ của chúng tôi bị nghiêm cấm."
+        },
+        {
+          "title": "Quyền riêng tư và Thu thập Dữ liệu",
+          "content": "Chúng tôi thu thập và xử lý thông tin cá nhân như được mô tả trong Chính sách bảo mật của chúng tôi. Bằng cách sử dụng ứng dụng của chúng tôi, bạn đồng ý với các biện pháp thu thập, lưu trữ và xử lý dữ liệu của chúng tôi."
+        },
+        {
+          "title": "Giới hạn Trách nhiệm pháp lý",
+          "content": "LeafNest không chịu trách nhiệm pháp lý đối với bất kỳ thiệt hại, mất mát hoặc thương tích nào phát sinh từ việc sử dụng ứng dụng hoặc dịch vụ của nó. Bạn sử dụng ứng dụng với rủi ro và quyết định của riêng mình."
+        },
+        {
+          "title": "Thay đổi Điều khoản",
+          "content": "Chúng tôi có quyền cập nhật các Điều khoản sử dụng này bất cứ lúc nào. Mọi thay đổi sẽ được đăng trên trang này với ngày có hiệu lực cập nhật. Việc tiếp tục sử dụng cấu thành sự chấp nhận các thay đổi."
+        },
+        {
+          "title": "Liên hệ chúng tôi",
+          "content": "Nếu bạn có bất kỳ câu hỏi, thắc mắc hoặc phản hồi nào về các Điều khoản sử dụng này, vui lòng liên hệ với chúng tôi theo địa chỉ leafnest.capstone@gmail.com."
+        }
+      ],
+      "footerTitle": "Cảm ơn bạn",
+      "footerText": "Cảm ơn bạn đã dành thời gian xem xét Điều khoản sử dụng của chúng tôi. Sự tin tưởng và tuân thủ của bạn giúp chúng tôi tạo ra trải nghiệm tốt hơn cho mọi người.",
+      "copyright": "© 2025 LeafNest. Mọi quyền được bảo lưu.",
+      "lastUpdated": "Cập nhật lần cuối: 1 tháng 7 năm 2025"
+    }
+  },
+  "faq": {
+    "title": "Trợ giúp & Câu hỏi thường gặp",
+    "subtitle": "Tìm câu trả lời cho các câu hỏi phổ biến",
+    "categories": [
+      {
+        "title": "Bắt đầu",
+        "items": [
+          {
+            "question": "LeafNest là gì?",
+            "answer": "LeafNest là ứng dụng nhận dạng và cung cấp thông tin về thực vật, sử dụng công nghệ AI để giúp bạn nhận dạng thực vật và động vật nhằm cung cấp kiến thức về thiên nhiên."
+          },
+          {
+            "question": "Làm thế nào để bắt đầu?",
+            "answer": "Mở ứng dụng, nhấn vào biểu tượng quét và hướng nó vào bất kỳ cây hoặc động vật nào. AI sẽ nhận dạng nó và cung cấp thông tin chi tiết về loài đó."
+          }
+        ]
+      },
+      {
+        "title": "Sử dụng Máy quét",
+        "items": [
+          {
+            "question": "Làm thế nào để quét một loài?",
+            "answer": "Nhấn vào biểu tượng quét trên màn hình chính, hướng camera vào loài đó và chụp một bức ảnh rõ nét. Ứng dụng sẽ tự động nhận dạng nó."
+          },
+          {
+            "question": "Điều gì tạo nên một lần quét tốt?",
+            "answer": "Đảm bảo ánh sáng tốt, tập trung vào các đặc điểm nổi bật và giữ camera ổn định để có kết quả tốt nhất."
+          },
+          {
+            "question": "Tôi có thể quét từ thư viện ảnh của mình không?",
+            "answer": "Có. Bạn có thể tải ảnh có sẵn từ thư viện của mình bằng cách chọn tùy chọn thư viện trong màn hình quét."
+          }
+        ]
+      },
+      {
+        "title": "Độ chính xác & Tính năng",
+        "items": [
+          {
+            "question": "Nhận dạng chính xác đến mức nào?",
+            "answer": "LeafNest sử dụng các mô hình học máy tiên tiến. Độ chính xác thay đổi tùy theo ánh sáng và chất lượng hình ảnh, nhưng thường vượt quá 90%."
+          },
+          {
+            "question": "Tôi có thể lưu cây yêu thích của mình không?",
+            "answer": "Có. Nhấn vào biểu tượng trái tim trên bất kỳ loài nào đã được nhận dạng để thêm vào mục yêu thích của bạn để truy cập nhanh sau này."
+          }
+        ]
+      },
+      {
+        "title": "Hỗ trợ & Trợ giúp",
+        "items": [
+          {
+            "question": "Làm thế nào để liên hệ bộ phận hỗ trợ?",
+            "answer": "Mở menu Cài đặt và chọn Trợ giúp & Hỗ trợ, hoặc gửi email cho chúng tôi theo địa chỉ leafnest.capstone@gmail.com."
+          }
+        ]
+      }
+    ]
+  },
+  "help": {
+    "title": "Trợ giúp & Hỗ trợ",
+    "subtitle": "Mẹo để quét thực vật & động vật bằng AI — và nơi nhận thêm trợ giúp.",
+    "quickStart": {
+      "title": "Bắt đầu nhanh",
+      "bullets": [
+        "Nhấn nút Quét từ màn hình chính.",
+        "Đặt cây hoặc động vật vào giữa khung hình.",
+        "Giữ ổn định, sau đó chụp ảnh rõ nét."
+      ],
+      "cta": "Mở Máy quét"
+    },
+    "bestResults": {
+      "title": "Cách đạt kết quả tốt hơn",
+      "bullets": [
+        "Sử dụng ánh sáng tốt và tránh ánh sáng ngược mạnh.",
+        "Lấp đầy khung hình với chủ thể, tập trung vào các chi tiết đặc biệt.",
+        "Thử nhiều góc độ như lá, hoa, vỏ cây hoặc ảnh nghiêng."
+      ]
+    },
+    "troubleshooting": {
+      "title": "Xử lý sự cố",
+      "bullets": [
+        "Điểm nổi bật hàng ngày trông giống nhau? Kéo để làm mới hoặc mở lại ứng dụng sau nửa đêm (giờ Philippines).",
+        "Không có internet? Kiểm tra kết nối của bạn vì nhận dạng hình ảnh cần kết nối mạng.",
+        "Độ chính xác thấp? Chụp ảnh rõ hơn, gần hơn với ánh sáng tốt hơn."
+      ]
+    },
+    "links": {
+      "faq": "Câu hỏi thường gặp",
+      "feedback": "Gửi phản hồi",
+      "about": "Giới thiệu về LeafNest",
+      "privacy": "Chính sách bảo mật",
+      "terms": "Điều khoản sử dụng",
+      "contact": "Liên hệ Hỗ trợ"
+    },
+    "alerts": {
+      "noEmailTitle": "Không thể mở ứng dụng email",
+      "noEmailBody": "Vui lòng gửi email cho chúng tôi theo địa chỉ {{email}}."
+    }
+  },
+  "feedback": {
+    "title": "Gửi phản hồi",
+    "subtitle": "Hãy cho chúng tôi biết điều gì đang hoạt động tốt hoặc điều gì có thể cải thiện. Chúng tôi đọc mọi tin nhắn.",
+    "topicLabel": "Chủ đề",
+    "topics": {
+      "bug": "Báo cáo lỗi",
+      "idea": "Yêu cầu tính năng",
+      "ux": "Thiết kế / UX",
+      "content": "Loài / Nội dung",
+      "account": "Tài khoản / Đăng nhập",
+      "other": "Khác"
+    },
+    "subjectLabel": "Tiêu đề",
+    "subjectPlaceholder": "Tóm tắt ngắn (ví dụ: Máy quét gắn nhãn sai lá cây phong)",
+    "messageLabel": "Nội dung",
+    "messagePlaceholder": "Mô tả những gì đã xảy ra, các bước để tái tạo và mong đợi.",
+    "emailLabel": "Email của bạn (không bắt buộc)",
+    "emailPlaceholder": "Chúng tôi sẽ trả lời tại đây nếu cần",
+    "includeDiagnostics": "Bao gồm chẩn đoán",
+    "diagnosticsHint": "Giúp chúng tôi gỡ lỗi sự cố (chỉ nền tảng & HĐH).",
+    "submit": "Gửi phản hồi",
+    "submitting": "Đang gửi...",
+    "footerText": "Hoặc gửi email trực tiếp cho chúng tôi theo địa chỉ {{email}}",
+    "alerts": {
+      "missingInfoTitle": "Thiếu thông tin",
+      "missingInfoMessage": "Vui lòng thêm tiêu đề và nội dung.",
+      "invalidEmailTitle": "Email không hợp lệ",
+      "invalidEmailMessage": "Vui lòng nhập địa chỉ email hợp lệ hoặc để trống.",
+      "noEmailAppTitle": "Không thể gửi phản hồi",
+      "noEmailAppMessage": "Vui lòng thử lại sau hoặc gửi email cho chúng tôi theo địa chỉ {{email}}.",
+      "successTitle": "Đã gửi phản hồi",
+      "successMessage": "Cảm ơn phản hồi của bạn! Chúng tôi sẽ xem xét sớm.",
+      "genericErrorTitle": "Đã xảy ra lỗi",
+      "genericErrorMessage": "Vui lòng thử lại sau hoặc gửi email cho chúng tôi theo địa chỉ {{email}}."
+    }
+  },
+  "comments": {
+    "title": "Bình luận",
+    "noComments": "Chưa có bình luận nào",
+    "beFirstToComment": "Hãy là người đầu tiên bình luận!",
+    "addComment": "Thêm bình luận...",
+    "deleteComment": "Xóa bình luận",
+    "deleteConfirm": "Bạn có chắc chắn muốn xóa bình luận này không?",
+    "delete": "Xóa",
+    "failedToDelete": "Không thể xóa bình luận",
+    "failedToLike": "Không thể thích bình luận",
+    "loginRequired": "Yêu cầu đăng nhập",
+    "loginToComment": "Bạn phải đăng nhập để bình luận",
+    "loginToLike": "Bạn phải đăng nhập để thích bình luận",
+    "justNow": "Vừa xong"
+  },
+  "notification": {
+    "title": "Thông báo",
+    "noNotifications": "Chưa có thông báo nào",
+    "markAsRead": "Đánh dấu đã đọc",
+    "markAllAsRead": "Đánh dấu tất cả đã đọc",
+    "delete": "Xóa",
+    "deleteAll": "Xóa tất cả"
+  },
+  "commentsModal": {
+    "title": "Bình luận",
+    "inputPlaceholder": "Thêm bình luận...",
+    "empty": {
+      "title": "Chưa có bình luận nào",
+      "subtitle": "Hãy là người đầu tiên bình luận!"
+    },
+    "actions": {
+      "cancel": "Hủy",
+      "delete": "Xóa"
+    },
+    "alerts": {
+      "loadErrorTitle": "Lỗi",
+      "loadErrorBody": "Không thể tải bình luận.",
+      "loginRequiredTitle": "Yêu cầu đăng nhập",
+      "loginRequiredCommentBody": "Bạn phải đăng nhập để bình luận.",
+      "loginRequiredLikeBody": "Bạn phải đăng nhập để thích bình luận.",
+      "addErrorTitle": "Lỗi",
+      "addErrorBody": "Không thể thêm bình luận.",
+      "likeErrorTitle": "Lỗi",
+      "likeErrorBody": "Không thể thích bình luận.",
+      "deleteTitle": "Xóa bình luận",
+      "deleteConfirmBody": "Bạn có chắc chắn muốn xóa bình luận này không?",
+      "deleteErrorTitle": "Lỗi",
+      "deleteErrorBody": "Không thể xóa bình luận."
+    }
+  },
+  "premiumGate": {
+    "offline": {
+      "title": "Yêu cầu truy cập ngoại tuyến",
+      "historySubtitle": "Đăng ký để truy cập lịch sử ngoại tuyến",
+      "historyDescription": "Truy cập ngoại tuyến vào lịch sử quét của bạn là một tính năng cao cấp. Nâng cấp để xem lịch sử của bạn mọi lúc, mọi nơi.",
+      "favoritesSubtitle": "Đăng ký để truy cập mục yêu thích ngoại tuyến",
+      "favoritesDescription": "Truy cập ngoại tuyến vào mục yêu thích của bạn là một tính năng cao cấp. Nâng cấp để xem mục yêu thích của bạn mọi lúc, mọi nơi."
+    },
+    "limits": {
+      "scanTitle": "Đã đạt giới hạn quét",
+      "scanSubtitle": "Bạn đã sử dụng tất cả {{limit}} lần quét",
+      "scanDescription": "Nâng cấp lên Premium để có số lần quét không giới hạn và nhiều tính năng hơn!",
+      "downloadTitle": "Đã đạt giới hạn tải xuống",
+      "downloadSubtitle": "Bạn đã sử dụng tất cả {{limit}} lượt tải xuống",
+      "downloadDescription": "Nâng cấp lên Premium để tải xuống không giới hạn!"
+    },
+    "timer": {
+      "resetsInHours": "Đặt lại sau {{count}} giờ nữa",
+      "resetsInHours_plural": "Đặt lại sau {{count}} giờ nữa"
+    },
+    "usage": {
+      "scans": "Lượt quét:",
+      "downloads": "Lượt tải xuống:"
+    },
+    "features": {
+      "title": "Lợi ích Premium:",
+      "offlineHistory": "Truy cập lịch sử ngoại tuyến",
+      "offlineFavorites": "Truy cập mục yêu thích ngoại tuyến",
+      "unlimitedScans": "Quét không giới hạn",
+      "unlimitedDownloads": "Tải xuống không giới hạn"
+    },
+    "pricing": {
+      "amount": "{{amount}}",
+      "period": "trong {{days}} ngày"
+    },
+    "actions": {
+      "upgrade": "Nâng cấp lên Premium",
+      "later": "Để sau"
+    }
+  },
+  "manageNotifications": {
+    "title": "Quản lý Thông báo",
+    "pushNotifications": "Thông báo đẩy",
+    "emailNotifications": "Thông báo Email",
+    "likeNotifications": "Thông báo Thích",
+    "commentNotifications": "Thông báo Bình luận",
+    "followNotifications": "Thông báo Theo dõi",
+    "enabled": "Đã bật",
+    "disabled": "Đã tắt",
+    "save": "Lưu Cài đặt"
+  },
+  "history": {
+    "title": "Lịch sử",
+    "loading": "Đang tải lịch sử...",
+    "loadingMore": "Đang tải thêm...",
+    "signInRequiredTitle": "Yêu cầu đăng nhập",
+    "signInRequiredBody": "Tạo tài khoản hoặc đăng nhập để xem lịch sử quét của bạn.",
+    "selection": {
+      "selectedCount": "Đã chọn {{count}}",
+      "deleteButton": "Xóa {{count}} bản ghi",
+      "deleteButton_plural": "Xóa {{count}} bản ghi"
+    },
+    "offlineBanner": {
+      "premium": "Chế độ ngoại tuyến (Premium)",
+      "locked": "Chế độ ngoại tuyến yêu cầu Premium"
+    },
+    "search": {
+      "placeholder": "Tìm kiếm theo tên..."
+    },
+    "filters": {
+      "all": "Tất cả",
+      "plants": "Thực vật",
+      "animals": "Động vật"
+    },
+    "empty": {
+      "noHistoryTitle": "Chưa có lịch sử",
+      "noHistoryBody": "Lịch sử quét loài của bạn sẽ xuất hiện ở đây sau khi bạn bắt đầu nhận dạng thực vật và động vật.",
+      "noResultsTitle": "Không tìm thấy kết quả",
+      "noResultsBody": "Không có bản ghi nào phù hợp với tiêu chí tìm kiếm hoặc bộ lọc của bạn. Hãy thử điều chỉnh bộ lọc."
+    },
+    "actions": {
+      "signIn": "Đăng nhập",
+      "delete": "Xóa",
+      "clearAll": "Xóa tất cả",
+      "clearFilters": "Xóa bộ lọc"
+    },
+    "alerts": {
+      "visibilityNow": "Lần quét hiện {{status}}",
+      "visibilityUpdateFailed": "Không thể cập nhật chế độ hiển thị.",
+      "visibilityNeedsSync": "Lần quét này cần đồng bộ trước. Vui lòng thử lại trong giây lát.",
+      "visibilityOffline": "Không thể thay đổi chế độ hiển thị khi ngoại tuyến. Vui lòng kiểm tra kết nối của bạn.",
+      "visibilityNotSynced": "Lần quét này chưa được đồng bộ lên đám mây. Vui lòng đợi đồng bộ hoàn tất và thử lại.",
+      "visibilityPermissionDenied": "Bạn không có quyền sửa đổi lần quét này.",
+      "visibilityNetworkError": "Lỗi mạng. Vui lòng kiểm tra kết nối của bạn và thử lại.",
+      "errorWithMessage": "Lỗi: {{message}}",
+      "deleteRecordTitle": "Xóa bản ghi",
+      "deleteRecordMessage": "Xóa \"{{name}}\" khỏi lịch sử?",
+      "deleteRecordSuccess": "Đã xóa bản ghi.",
+      "deleteRecordError": "Không thể xóa bản ghi.",
+      "deleteSelectedTitle": "Xóa mục đã chọn",
+      "deleteSelectedMessage": "Xóa {{count}} bản ghi khỏi lịch sử?",
+      "deleteSelectedMessage_plural": "Xóa {{count}} bản ghi khỏi lịch sử?",
+      "deleteSelectedSuccess": "Đã xóa {{count}} bản ghi.",
+      "deleteSelectedSuccess_plural": "Đã xóa {{count}} bản ghi.",
+      "deleteSelectedError": "Không thể xóa các bản ghi đã chọn.",
+      "clearAllTitle": "Xóa tất cả lịch sử",
+      "clearAllMessage": "Bạn có chắc chắn muốn xóa tất cả bản ghi lịch sử không? Hành động này không thể hoàn tác.",
+      "clearAllSuccess": "Đã xóa tất cả lịch sử.",
+      "clearAllError": "Không thể xóa lịch sử."
+    },
+    "visibility": {
+      "public": "công khai",
+      "private": "riêng tư"
+    },
+    "unknownSpecies": "Loài không xác định",
+    "details": {
+      "commonName": "Tên thường gọi",
+      "scientificName": "Tên khoa học",
+      "taxonomicRank": "Cấp bậc phân loại",
+      "type": "Loại",
+      "conservationStatus": "Tình trạng bảo tồn",
+      "timesScanned": "Số lần quét",
+      "timeCount": "{{count}} lần",
+      "timeCount_plural": "{{count}} lần",
+      "globalAppScans": "Số lần quét toàn ứng dụng",
+      "scanCount": "{{count}} lần quét",
+      "scanCount_plural": "{{count}} lần quét",
+      "scannedOn": "Đã quét vào"
+    },
+    "premiumGate": {
+      "title": "Đăng ký để truy cập chế độ ngoại tuyến",
+      "message": "Truy cập ngoại tuyến vào lịch sử của bạn là một tính năng cao cấp. Đăng ký để xem lịch sử quét của bạn khi bạn ngoại tuyến."
+    },
+    "noHistory": "Chưa có lịch sử",
+    "startScanning": "Bắt đầu quét để xây dựng lịch sử của bạn",
+    "delete": "Xóa",
+    "deleteAll": "Xóa tất cả",
+    "deleteConfirm": "Bạn có chắc chắn muốn xóa mục này không?",
+    "deleteAllConfirm": "Bạn có chắc chắn muốn xóa tất cả lịch sử không?",
+    "scannedOn": "Đã quét vào {{date}}"
+  },
+  "postDetail": {
+    "title": "Bài viết",
+    "aboutLabel": "Giới thiệu",
+    "emptyTitle": "Không tìm thấy bài viết",
+    "alerts": {
+      "postNotFoundTitle": "Lỗi",
+      "postNotFoundBody": "Không tìm thấy bài viết.",
+      "loadErrorTitle": "Lỗi",
+      "loadErrorBody": "Không thể tải bài viết.",
+      "likeErrorBody": "Không thể thích bài viết."
+    }
+  },
+  "speciesGallery": {
+    "title": "Thư viện",
+    "noResults": "Không tìm thấy kết quả",
+    "loadMore": "Tải thêm",
+    "error": "Không thể tải thư viện"
+  },
+  "speciesLanding": {
+    "title": "Chi tiết Loài",
+    "scientificName": "Tên khoa học",
+    "commonName": "Tên thường gọi",
+    "description": "Mô tả",
+    "habitat": "Môi trường sống",
+    "diet": "Chế độ ăn",
+    "lifespan": "Tuổi thọ",
+    "conservationStatus": "Tình trạng bảo tồn",
+    "addToFavorites": "Thêm vào Yêu thích",
+    "removeFromFavorites": "Xóa khỏi Yêu thích",
+    "share": "Chia sẻ",
+    "viewMore": "Xem thêm",
+    "error": "Không thể tải chi tiết loài"
+  },
+  "manualPayment": {
+    "title": "Thanh toán thủ công",
+    "uploadProof": "Tải lên Bằng chứng Thanh toán",
+    "selectImage": "Chọn ảnh",
+    "takePhoto": "Chụp ảnh",
+    "chooseFromGallery": "Chọn từ Thư viện",
+    "uploadImage": "Tải ảnh lên",
+    "uploading": "Đang tải lên...",
+    "submit": "Gửi Thanh toán",
+    "submitting": "Đang gửi...",
+    "successTitle": "Thành công",
+    "successMessage": "Đã gửi thanh toán thành công. Chúng tôi sẽ xác minh sớm.",
+    "errorTitle": "Lỗi",
+    "errorMessage": "Không thể gửi thanh toán. Vui lòng thử lại.",
+    "selectImageFirst": "Vui lòng chọn ảnh trước"
+  },
+  "scanStats": {
+    "title": "Thống kê Quét",
+    "totalScans": "Tổng số lần quét",
+    "thisWeek": "Tuần này",
+    "thisMonth": "Tháng này",
+    "plants": "Thực vật",
+    "animals": "Động vật",
+    "noData": "Chưa có dữ liệu quét"
+  }
+}

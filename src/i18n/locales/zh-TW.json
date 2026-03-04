@@ -1,0 +1,895 @@
+{
+  "common": {
+    "welcome": "歡迎",
+    "guest": "客人",
+    "loading": "載入中...",
+    "error": "錯誤",
+    "success": "成功",
+    "cancel": "取消",
+    "ok": "好的",
+    "save": "節省",
+    "back": "後退",
+    "edit": "編輯",
+    "username": "使用者名稱",
+    "and": "和"
+  },
+  "login": {
+    "title": "葉巢",
+    "signInWithGoogle": "使用 Google 登入",
+    "signInAsGuest": "以訪客身分登入",
+    "signInFailed": "登入失敗",
+    "googleAuthError": "谷歌驗證錯誤",
+    "unexpectedError": "意外錯誤",
+    "unknownError": "未知錯誤",
+    "termsText": "註冊即表示您已閱讀並承認",
+    "termsOfUse": "使用條款",
+    "privacyPolicy": "隱私權政策",
+    "cookiesPolicy": "Cookie 政策",
+    "signIn": "登入",
+    "welcomeTitle": "歡迎來到葉巢",
+    "welcomeSubtitle": "發現自然之美",
+    "signInWithEmailButton": "使用電子郵件登入",
+    "dividerOr": "或者",
+    "continueAsGuest": "繼續以訪客身份",
+    "continueAgreement": "繼續，即表示您同意我們的"
+  },
+  "home": {
+    "welcomeGuest": "歡迎，客人",
+    "welcomeUser": "歡迎，{{name}}",
+    "guestModeSubtitle": "您處於訪客模式。登入以解鎖所有功能。",
+    "welcomeBackSubtitle": "很高興見到你回來！",
+    "scanPlantsTitle": "即時掃描植物",
+    "scanPlantsSubtitle": "在幾秒鐘內瞄準、射擊並識別植物群。",
+    "scanAnimalsTitle": "即時掃描動物",
+    "scanAnimalsSubtitle": "在幾秒鐘內識別動物。",
+    "learnNatureTitle": "了解大自然",
+    "learnNatureSubtitle": "透過文字轉語音和速覽了解更多。",
+    "scanningStats": "掃描統計",
+    "plantsScanned": "掃描植物",
+    "animalsIdentified": "已識別的動物",
+    "dailyDiscovery": "每日發現",
+    "dailyDiscoverySubtitle": "每天學習新事物",
+    "plantOfTheDay": "今日植物",
+    "animalOfTheDay": "今日動物",
+    "scientificName": "學名",
+    "habitat": "棲息地",
+    "diet": "飲食",
+    "lifespan": "壽命",
+    "weight": "重量",
+    "cycle": "生命週期",
+    "watering": "澆水",
+    "sunlight": "陽光",
+    "loadingDaily": "正在加載每日內容...",
+    "errorLoadingDaily": "無法加載每日內容",
+    "pullToRefresh": "拉動重新整理",
+    "offlineMode": "離線內容",
+    "funFact": "有趣的事實",
+    "newFact": "新事實",
+    "trendingPlants": "流行植物",
+    "trendingAnimals": "熱門動物",
+    "alerts": {
+      "authRequiredTitle": "需要身份驗證",
+      "authRequiredBody": "請登入以下載 PDF。",
+      "pdfSuccessTitle": "成功",
+      "pdfSuccessBody": "PDF 已產生並傳送到您的電子郵件。",
+      "pdfErrorTitle": "錯誤",
+      "pdfErrorBody": "產生 PDF 失敗。請再試一次。",
+      "signInRequiredTitle": "需要登入",
+      "signInLikeBody": "請登入才能按讚貼文。",
+      "signInCommentBody": "請登入後發表評論。",
+      "downloadsUnavailableTitle": "無法下載",
+      "downloadsUnavailableBody": "請註冊免費帳戶以下載物種資訊。",
+      "downloadLimitCheckErrorBody": "無法檢查下載限制。請再試一次。"
+    },
+    "pdf": {
+      "defaultCommon": "未知",
+      "defaultScientific": "未知",
+      "defaultRank": "軍階未知",
+      "defaultTaxon": "未知",
+      "noDescription": "沒有可用的描述。",
+      "infoUnavailable": "資訊不可用。",
+      "notEvaluated": "未評價"
+    },
+    "trending": {
+      "title": "熱門種"
+    },
+    "emptyState": {
+      "title": "歡迎來到社區",
+      "subtitle": "開始探索並分享您的自然發現。",
+      "cta": "掃描你的第一個物種"
+    },
+    "feed": {
+      "likesCount": "{{count}} 喜歡",
+      "likesCount_plural": "{{count}} 喜歡",
+      "beFirst": "成為第一個喜歡這個的人",
+      "showMore": "顯示更多",
+      "showLess": "顯示較少",
+      "viewComments": "查看所有 {{count}} 評論",
+      "viewComments_plural": "查看所有 {{count}} 評論",
+      "unknownUser": "匿名的",
+      "unknownSpecies": "未知物種",
+      "likeError": "未能喜歡該貼文。"
+    },
+    "relativeTime": {
+      "justNow": "現在",
+      "minutes": "{{count}} 分鐘前",
+      "hours": "{{count}} 小時前",
+      "days": "{{count}} 天前"
+    }
+  },
+  "settings": {
+    "title": "設定",
+    "account": "帳戶",
+    "guestMode": "訪客模式",
+    "signedIn": "已登入",
+    "username": "使用者名稱",
+    "editUsername": "編輯使用者名稱",
+    "currentUsername": "目前使用者名稱",
+    "newUsername": "新用戶名",
+    "usernameUpdated": "使用者名稱更新成功！",
+    "usernameUpdateError": "更新使用者名稱失敗",
+    "usernameUpdateFailed": "使用者名稱更新失敗",
+    "usernameRequired": "使用者名稱是必需的",
+    "usernameTooShort": "使用者名稱必須至少 3 個字符",
+    "usernameTooLong": "使用者名稱不得超過 20 個字符",
+    "usernameInvalidChars": "使用者名稱只能包含字母、數字、底線和連字符",
+    "language": "語言",
+    "selectLanguage": "選擇語言",
+    "logout": "退出",
+    "logoutError": "退出失敗。",
+    "about": "關於",
+    "appName": "葉巢",
+    "yourPlan": "你的計劃",
+    "leafNestFree": "葉巢免費",
+    "help": "幫助",
+    "sendFeedback": "傳送回饋",
+    "faq": "常問問題",
+    "termsOfUse": "使用條款",
+    "generalSection": "一般的",
+    "supportSection": "支援",
+    "legalSection": "合法的"
+  },
+  "profile": {
+    "title": "輪廓",
+    "editUsername": "編輯使用者名稱",
+    "signOut": "登出",
+    "leaveAccount": "留下您的帳戶",
+    "signIn": "登入",
+    "accessFullFeatures": "存取所有功能",
+    "createAccount": "建立帳戶",
+    "joinLeafNest": "加入葉巢",
+    "guestUser": "訪客用戶",
+    "statsTitle": "掃描統計",
+    "viewAll": "看全部",
+    "guestPromptTitle": "追蹤您的進度",
+    "guestPromptText": "登入以追蹤掃描、發現物種並解鎖成就。",
+    "badgeNew": "新的",
+    "editPlaceholder": "輸入使用者名稱",
+    "stats": {
+      "total": "總掃描次數",
+      "week": "本星期",
+      "species": "種"
+    },
+    "sections": {
+      "account": "帳戶設定"
+    },
+    "menu": {
+      "planTitle": "你的計劃",
+      "planSubtitle": "葉巢免費",
+      "notificationsTitle": "通知",
+      "notificationsSubtitle": "管理您的通知",
+      "passwordTitle": "忘記密碼",
+      "passwordSubtitle": "重設您的密碼",
+      "signOutTitle": "登出",
+      "signOutSubtitle": "從您的帳戶註銷",
+      "signInTitle": "登入",
+      "signInSubtitle": "存取所有功能",
+      "createAccountTitle": "建立帳戶",
+      "createAccountSubtitle": "立即加入葉巢"
+    },
+    "alerts": {
+      "syncSuccess": "已同步 {{count}} 待掃描",
+      "syncSuccess_plural": "已同步 {{count}} 待處理掃描",
+      "usernameUpdated": "使用者名稱更新成功！",
+      "usernameUpdateError": "更新使用者名稱失敗。",
+      "signOutTitle": "登出",
+      "signOutMessage": "您確定要退出嗎？",
+      "signOutConfirm": "登出",
+      "signOutError": "退出失敗。請再試一次。"
+    }
+  },
+  "languages": {
+    "ar": "阿拉伯",
+    "zh-CN": "中文（簡體）",
+    "zh-TW": "中文（繁體）",
+    "hr": "克羅埃西亞語",
+    "cs": "捷克語",
+    "da": "丹麥語",
+    "nl": "荷蘭語",
+    "en": "英語",
+    "fi": "芬蘭",
+    "fr": "法語",
+    "de": "德文",
+    "el": "希臘文",
+    "hi": "印地語",
+    "hu": "匈牙利",
+    "id": "印尼",
+    "it": "義大利語",
+    "ja": "日本人",
+    "ko": "韓國人",
+    "ms": "馬來語",
+    "no": "挪威",
+    "fa": "波斯語",
+    "pl": "拋光",
+    "pt": "葡萄牙語",
+    "ro": "羅馬尼亞語",
+    "ru": "俄文",
+    "sk": "斯洛伐克語",
+    "es": "西班牙語",
+    "sv": "瑞典",
+    "tl": "他加祿語",
+    "th": "泰國",
+    "tr": "土耳其",
+    "uk": "烏克蘭",
+    "vi": "越南語"
+  },
+  "tabs": {
+    "home": "家",
+    "scan": "掃描",
+    "history": "歷史",
+    "settings": "設定"
+  },
+  "animals": {
+    "title": "今日動物",
+    "lion": {
+      "name": "獅子",
+      "scientificName": "獅子座豹",
+      "description": "獅子是豹屬的大型貓科動物，原產於非洲和印度。它的身體肌肉發達，胸部寬闊，頭部短而圓，耳朵圓，尾巴末端有一簇毛。",
+      "habitat": "稀樹草原、草原和開闊的林地",
+      "diet": "肉食性 - 主要是大型哺乳動物，如斑馬、角馬和水牛",
+      "lifespan": "野外可保存10-14年，人工飼養可保存長達20年",
+      "conservationStatus": "易受傷害的"
+    },
+    "elephant": {
+      "name": "大象",
+      "scientificName": "象科",
+      "description": "大像是現存最大的陸地動物，其特徵是長長的鼻子（軀幹）、柱狀腿、巨大的頭部、顳腺和寬而扁平的耳朵。",
+      "habitat": "稀樹草原、森林、沙漠和沼澤",
+      "diet": "草食性 - 草、樹葉、樹皮、水果和土壤",
+      "lifespan": "60-70歲",
+      "conservationStatus": "瀕危"
+    },
+    "panda": {
+      "name": "大貓熊",
+      "scientificName": "大貓熊",
+      "description": "大熊貓是一種原產於中國中南部的熊。它的特徵是大膽的黑白皮毛和圓滾滾的身體。",
+      "habitat": "中國中部山脈，竹林茂密",
+      "diet": "主要以竹子（99% 的飲食）為主，偶爾有小動物",
+      "lifespan": "野外可保存20年，人工飼養可保存長達30年",
+      "conservationStatus": "易受傷害的"
+    },
+    "loading": "正在加載動物...",
+    "errorLoading": "載入動物失敗",
+    "addToFavorites": "加入收藏夾",
+    "removeFromFavorites": "從收藏夾中刪除",
+    "learnMore": "了解更多",
+    "share": "分享動物"
+  },
+  "signup": {
+    "title": "建立帳戶",
+    "username": "使用者名稱",
+    "email": "電子郵件",
+    "password": "密碼",
+    "confirmPassword": "確認密碼",
+    "register": "登記",
+    "alreadyHaveAccount": "已經有帳戶？登入",
+    "passwordsDontMatch": "密碼不匹配！",
+    "fillAllFields": "請填寫所有欄位。",
+    "verificationEmailSent": "驗證郵件已寄至您的信箱。",
+    "emailAlreadyInUse": "該電子郵件地址已被使用。",
+    "invalidEmail": "該電子郵件地址無效。",
+    "subtitle": "和我們一起探索大自然",
+    "processing": "加工...",
+    "dividerOr": "或者",
+    "alreadyMember": "已經是會員了？",
+    "signInLink": "登入"
+  },
+  "signin": {
+    "title": "登入",
+    "email": "電子郵件",
+    "password": "密碼",
+    "signIn": "登入",
+    "signInWithGoogle": "使用 Google 登入",
+    "dontHaveAccount": "沒有帳戶？報名",
+    "fillAllFields": "請填寫所有欄位。",
+    "signInSuccessful": "登入成功",
+    "welcomeBack": "歡迎回來",
+    "userNotFound": "未找到使用此電子郵件的使用者。",
+    "wrongPassword": "密碼不正確。",
+    "invalidEmail": "電子郵件地址無效。",
+    "subtitle": "登入以繼續您的旅程",
+    "forgotPasswordLink": "忘記密碼？",
+    "dividerOr": "或者",
+    "noAccountPrompt": "沒有帳戶？",
+    "signUpLink": "報名"
+  },
+  "scan": {
+    "loadingCamera": "正在加載相機...",
+    "needPermission": "我們需要您的許可才能展示相機",
+    "grantPermission": "授予許可",
+    "preparingCamera": "準備相機..."
+  },
+  "favorites": {
+    "title": "收藏夾",
+    "all": "全部",
+    "plants": "植物",
+    "animals": "動物",
+    "removeFavorite": "刪除收藏夾",
+    "remove": "消除",
+    "cancel": "取消",
+    "removed": "已刪除",
+    "removedMessage": "已從您的收藏夾中刪除。",
+    "error": "錯誤",
+    "failedToRemove": "無法從收藏夾中刪除。",
+    "clearFavorites": "清除收藏夾",
+    "removeAllFavorites": "刪除所有收藏？",
+    "removeAll": "全部刪除",
+    "failedToClear": "無法清除收藏。",
+    "plant": "植物",
+    "animal": "動物",
+    "noFavoritesYet": "還沒有收藏夾",
+    "addFromDaily": "添加一些來自每日植物或動物的內容。"
+  },
+  "about": {
+    "title": "關於",
+    "developedBy": "由 LeafNest 團隊開發和設計",
+    "teamTitle": "葉巢團隊",
+    "specialThanks": "特別感謝",
+    "mentor": "約書亞·拉薩克先生",
+    "credits": "最初由 LeafNest 團隊在 Pinamalayan Maritime Foundation And Technological College INC. (PMFTCI) 和電腦研究學院的支持下創建。",
+    "privacyPolicy": "隱私權政策",
+    "version": "版本0.0.1 (1)",
+    "help": "如需協助：leafnest.capstone@gmail.com",
+    "tagline": "植物和動物鑑定",
+    "institutionalSupport": "機構支持",
+    "mentorRole": "專案導師及顧問"
+  },
+  "plan": {
+    "title": "計劃",
+    "upgradeTitle": "升級至高級版",
+    "upgradeSubtitle": "解鎖所有功能並充分利用我們的應用程式。",
+    "free": "自由的",
+    "freePrice": "₱0 / 月",
+    "freeFeature1": "掃描有限的植物和動物",
+    "freeFeature2": "基本日常發現",
+    "freeFeature3": "無法離線存取歷史記錄",
+    "freeFeature4": "包含廣告",
+    "premium": "優質的",
+    "premiumPrice": "₱129.00 / 月",
+    "premiumFeature1": "無限次掃描",
+    "premiumFeature2": "每日獨家發現",
+    "premiumFeature3": "離線存取歷史記錄",
+    "premiumFeature4": "無廣告體驗",
+    "subscribeNow": "立即訂閱",
+    "selectedPlan": "您選擇了 {{plan}} 計畫！"
+  },
+  "legal": {
+    "cookies": {
+      "title": "Cookie 政策",
+      "subtitle": "我們如何使用 cookie 來增強您的體驗",
+      "effectiveDate": "生效日期：2025 年 7 月 1 日",
+      "intro": "本 Cookie 政策解釋了我們如何使用 Cookie 來增強您在存取我們的應用程式並使用其功能時的體驗。使用此應用程式即表示您同意使用本政策中所述的 cookie。",
+      "sections": [
+        {
+          "title": "什麼是 Cookie？",
+          "content": "Cookie 是您造訪網站或使用應用程式時儲存在您裝置上的小型文字檔案。它們幫助我們了解您如何與我們的服務互動，並使我們能夠為您提供更好、更個人化的體驗。"
+        },
+        {
+          "title": "我們如何使用 Cookie",
+          "content": "我們將 cookie 用於幾個基本目的：",
+          "list": [
+            "個人化內容和廣告",
+            "分析流量模式並改善使用者體驗",
+            "啟用我們應用程式的某些特性和功能",
+            "記住您的偏好和設置",
+            "提供對您帳戶的安全訪問"
+          ]
+        },
+        {
+          "title": "我們使用的 Cookie 類型",
+          "content": "我們使用不同類型的 cookie 來增強您的體驗：",
+          "list": [
+            "基本 Cookie：基本應用程式功能所需",
+            "效能 Cookie：幫助我們了解您如何使用應用程式",
+            "功能性 Cookie：記住您的偏好和選擇",
+            "分析 Cookie：提供應用程式使用模式的見解"
+          ]
+        },
+        {
+          "title": "管理 Cookie",
+          "content": "您可以透過裝置設定來控制和管理 cookie。但請注意，停用某些 Cookie 可能會影響您的體驗並限制應用程式的功能。"
+        },
+        {
+          "title": "Cookie 持續時間",
+          "content": "有些 cookie 是暫時的（會話 cookie），當您關閉應用程式時會被刪除。其他人會在您的裝置上保留一段設定的時間，以記住您在會話期間的偏好。"
+        },
+        {
+          "title": "本政策的變更",
+          "content": "我們可能會不時更新本 Cookie 政策，以反映技術或法律要求的變更。任何變更都將在此頁面上發布，並附有更新的修訂日期。"
+        },
+        {
+          "title": "聯絡我們",
+          "content": "如果您對本 Cookie 政策有任何問題、疑慮或回饋，請透過 leafnest.capstone@gmail.com 與我們聯繫。"
+        }
+      ],
+      "footerTitle": "您的隱私很重要",
+      "footerText": "我們致力於維持 cookie 使用方式的透明度。您繼續使用我們的應用程式即表示您接受本政策。",
+      "copyright": "© 2025 葉巢。版權所有。",
+      "lastUpdated": "最後更新時間：2025 年 7 月 1 日"
+    },
+    "privacy": {
+      "title": "隱私權政策",
+      "subtitle": "您的隱私對我們很重要",
+      "effectiveDate": "生效日期：2025 年 7 月 1 日",
+      "intro": "在LeafNest，我們致力於保護您的隱私並確保您的個人資訊的安全。",
+      "sections": [
+        {
+          "title": "我們收集的資訊",
+          "content": "我們收集您直接提供給我們的信息，例如當您建立帳戶、上傳照片或聯絡我們尋求支援時。這可能包括您的姓名、電子郵件地址以及您選擇提供的任何其他資訊。"
+        },
+        {
+          "title": "我們如何使用您的訊息",
+          "content": "我們使用收集的資訊來提供、維護和改進我們的服務，與您溝通以及開發新功能。我們不會將您的個人資訊出售給第三方。"
+        },
+        {
+          "title": "資料安全",
+          "content": "我們採取適當的技術和組織措施來保護您的個人資訊免遭未經授權的存取、變更、揭露或破壞。"
+        },
+        {
+          "title": "您的權利",
+          "content": "您有權存取、更新或刪除您的個人資訊。您可以透過帳戶設定或直接聯絡我們來執行此操作。"
+        },
+        {
+          "title": "第三方服務",
+          "content": "我們的應用程式可能包含第三方網站和服務的連結。我們不對他們的隱私做法負責。我們鼓勵您查看他們的隱私權政策。"
+        },
+        {
+          "title": "隱私權政策的變更",
+          "content": "我們保留隨時更新本隱私權政策的權利。變更將發佈在此頁面上，並附有更新的生效日期。您繼續使用即表示接受變更。"
+        },
+        {
+          "title": "聯絡我們",
+          "content": "如果您對本隱私權政策或我們的隱私權慣例有任何疑問，請透過privacy@leafnest.com 與我們聯絡。"
+        }
+      ],
+      "footerTitle": "我們關心您",
+      "footerText": "您的信任對我們很重要。我們致力於透明的資料實務和您的隱私權。",
+      "copyright": "© 2025 葉巢。版權所有。",
+      "lastUpdated": "最後更新時間：2025 年 7 月 1 日"
+    },
+    "terms": {
+      "title": "使用條款",
+      "subtitle": "使用前請仔細閱讀",
+      "effectiveDate": "生效日期：2025 年 7 月 1 日",
+      "intro": "這些使用條款管轄 LeafNest 應用程式和服務的使用。使用我們的應用程式即表示您同意這些條款和條件。",
+      "sections": [
+        {
+          "title": "接受條款",
+          "content": "透過造訪或使用 LeafNest 應用程序，您同意受這些使用條款的約束。如果您不同意這些條款，則不應使用該應用程式。"
+        },
+        {
+          "title": "使用者的責任",
+          "content": "您同意僅出於合法目的並以不侵犯他人權利的方式使用該應用程式。您有責任維護您的帳戶資訊的機密性。"
+        },
+        {
+          "title": "智慧財產",
+          "content": "應用程式內的所有內容、商標、標誌和智慧財產權均歸 LeafNest 所有或授權給我們。嚴禁未經授權使用我們的智慧財產權。"
+        },
+        {
+          "title": "隱私和資料收集",
+          "content": "我們按照隱私權政策中的規定收集和處理個人資訊。使用我們的應用程序，即表示您同意我們的資料收集、儲存和處理做法。"
+        },
+        {
+          "title": "責任限制",
+          "content": "LeafNest 對因使用該應用程式或其服務而造成的任何損害、損失或傷害不承擔任何責任。您使用該應用程式的風險由您自行承擔。"
+        },
+        {
+          "title": "條款變更",
+          "content": "我們保留隨時更新這些使用條款的權利。任何變更都將在此頁面上發布，並附有更新的生效日期。繼續使用即表示接受變更。"
+        },
+        {
+          "title": "聯絡我們",
+          "content": "如果您對這些使用條款有任何問題、疑慮或回饋，請透過 leafnest.capstone@gmail.com 與我們聯繫。"
+        }
+      ],
+      "footerTitle": "謝謝",
+      "footerText": "感謝您花時間查看我們的使用條款。您的信任和合規性幫助我們為每個人創造更好的體驗。",
+      "copyright": "© 2025 葉巢。版權所有。",
+      "lastUpdated": "最後更新時間：2025 年 7 月 1 日"
+    }
+  },
+  "faq": {
+    "title": "幫助和常見問題解答",
+    "subtitle": "尋找常見問題的答案",
+    "categories": [
+      {
+        "title": "入門",
+        "items": [
+          {
+            "question": "什麼是葉巢？",
+            "answer": "LeafNest是一款植物識別和資訊應用程序，利用AI技術幫助您識別植物和動物，提供有關自然的知識。"
+          },
+          {
+            "question": "我該如何開始？",
+            "answer": "打開應用程序，點擊掃描圖標，然後將其指向任何植物或動物。人工智慧將識別它並提供有關該物種的詳細資訊。"
+          }
+        ]
+      },
+      {
+        "title": "使用掃描儀",
+        "items": [
+          {
+            "question": "如何掃描物種？",
+            "answer": "點擊主畫面上的掃描圖標，將相機對準物種，然後拍攝清晰的照片。該應用程式將自動識別它。"
+          },
+          {
+            "question": "怎樣才是好的掃描？",
+            "answer": "確保良好的照明，專注於獨特的特徵，並保持相機穩定以獲得最佳效果。"
+          },
+          {
+            "question": "我可以從我的照片庫進行掃描嗎？",
+            "answer": "是的。您可以透過選擇掃描器畫面中的圖庫選項來上傳圖庫中的現有照片。"
+          }
+        ]
+      },
+      {
+        "title": "準確性和特點",
+        "items": [
+          {
+            "question": "辨識準確率如何？",
+            "answer": "LeafNest 使用先進的機器學習模型。準確度因照明和影像品質而異，但通常超過 90%。"
+          },
+          {
+            "question": "我可以保存我最喜歡的植物嗎？",
+            "answer": "是的。點擊任何已識別物種上的心形圖標，將其添加到您的收藏夾中，以便稍後快速訪問。"
+          }
+        ]
+      },
+      {
+        "title": "支持與幫助",
+        "items": [
+          {
+            "question": "如何聯絡支援人員？",
+            "answer": "打開“設定”選單並選擇“協助和支援”，或發送電子郵件至 leafnest.capstone@gmail.com。"
+          }
+        ]
+      }
+    ]
+  },
+  "help": {
+    "title": "幫助與支持",
+    "subtitle": "使用人工智慧掃描植物和動物的提示 - 以及從哪裡獲得更多幫助。",
+    "quickStart": {
+      "title": "快速入門",
+      "bullets": [
+        "點選主畫面上的掃描按鈕。",
+        "將植物或動物置於框架中央。",
+        "保持穩定，然後拍攝清晰的照片。"
+      ],
+      "cta": "打開掃描儀"
+    },
+    "bestResults": {
+      "title": "如何獲得更好的結果",
+      "bullets": [
+        "使用良好的照明並避免刺眼的背光。",
+        "以主題填滿畫面，並專注於獨特的細節。",
+        "嘗試多種角度，例如樹葉、花朵、樹皮或側面照片。"
+      ]
+    },
+    "troubleshooting": {
+      "title": "故障排除",
+      "bullets": [
+        "每日亮點看起來都一樣嗎？午夜（菲律賓時間）後拉動以刷新或重新打開應用程式。",
+        "沒有網路？檢查您的連接，因為影像辨識需要網路連接。",
+        "準確率低？使用更好的光線拍攝更清晰、更近的照片。"
+      ]
+    },
+    "links": {
+      "faq": "常問問題",
+      "feedback": "傳送回饋",
+      "about": "關於葉巢",
+      "privacy": "隱私權政策",
+      "terms": "使用條款",
+      "contact": "聯繫支援人員"
+    },
+    "alerts": {
+      "noEmailTitle": "無法開啟電子郵件應用程式",
+      "noEmailBody": "請發送電子郵件至 {{email}}。"
+    }
+  },
+  "feedback": {
+    "title": "傳送回饋",
+    "subtitle": "告訴我們什麼是有效的或什麼可以改進。我們閱讀每一則訊息。",
+    "topicLabel": "話題",
+    "topics": {
+      "bug": "報告錯誤",
+      "idea": "功能請求",
+      "ux": "設計/使用者體驗",
+      "content": "種類/含量",
+      "account": "帳號/登入",
+      "other": "其他"
+    },
+    "subjectLabel": "主題",
+    "subjectPlaceholder": "簡短摘要（例如，掃描器將一片葉子錯誤標記為楓樹）",
+    "messageLabel": "訊息",
+    "messagePlaceholder": "描述發生的情況、重現步驟和期望。",
+    "emailLabel": "您的電子郵件（可選）",
+    "emailPlaceholder": "如果需要我們會在這裡回复",
+    "includeDiagnostics": "包括診斷",
+    "diagnosticsHint": "幫助我們調試問題（僅限平台和作業系統）。",
+    "submit": "傳送回饋",
+    "submitting": "正在發送...",
+    "footerText": "或直接發送電子郵件至 {{email}}",
+    "alerts": {
+      "missingInfoTitle": "缺少訊息",
+      "missingInfoMessage": "請新增主題和訊息。",
+      "invalidEmailTitle": "電子郵件無效",
+      "invalidEmailMessage": "請輸入有效的電子郵件地址或將其留空。",
+      "noEmailAppTitle": "無法發送回饋",
+      "noEmailAppMessage": "請稍後重試或發送電子郵件至 {{email}}。",
+      "successTitle": "已發送回饋",
+      "successMessage": "感謝您的回饋！我們會盡快審核。",
+      "genericErrorTitle": "出了點問題",
+      "genericErrorMessage": "請稍後重試或發送電子郵件至 {{email}}。"
+    }
+  },
+  "comments": {
+    "title": "評論",
+    "noComments": "還沒有評論",
+    "beFirstToComment": "成為第一個發表評論的人！",
+    "addComment": "新增評論...",
+    "deleteComment": "刪除評論",
+    "deleteConfirm": "您確定要刪除此評論嗎？",
+    "delete": "刪除",
+    "failedToDelete": "刪除評論失敗",
+    "failedToLike": "無法按讚評論",
+    "loginRequired": "需要登入",
+    "loginToComment": "您必須登入才能發表評論",
+    "loginToLike": "您必須登入才能按讚評論",
+    "justNow": "現在"
+  },
+  "notification": {
+    "title": "通知",
+    "noNotifications": "還沒有通知",
+    "markAsRead": "標記為已讀",
+    "markAllAsRead": "全部標記為已讀",
+    "delete": "刪除",
+    "deleteAll": "全部刪除"
+  },
+  "commentsModal": {
+    "title": "評論",
+    "inputPlaceholder": "新增評論...",
+    "empty": {
+      "title": "還沒有評論",
+      "subtitle": "成為第一個發表評論的人！"
+    },
+    "actions": {
+      "cancel": "取消",
+      "delete": "刪除"
+    },
+    "alerts": {
+      "loadErrorTitle": "錯誤",
+      "loadErrorBody": "無法加載評論。",
+      "loginRequiredTitle": "需要登入",
+      "loginRequiredCommentBody": "您必須登入才能發表評論。",
+      "loginRequiredLikeBody": "您必須登入才能喜歡評論。",
+      "addErrorTitle": "錯誤",
+      "addErrorBody": "新增評論失敗。",
+      "likeErrorTitle": "錯誤",
+      "likeErrorBody": "未能按讚評論。",
+      "deleteTitle": "刪除評論",
+      "deleteConfirmBody": "您確定要刪除此評論嗎？",
+      "deleteErrorTitle": "錯誤",
+      "deleteErrorBody": "刪除評論失敗。"
+    }
+  },
+  "premiumGate": {
+    "offline": {
+      "title": "需要離線訪問",
+      "historySubtitle": "訂閱離線存取歷史記錄",
+      "historyDescription": "離線存取掃描歷史記錄是一項進階功能。升級後即可隨時隨地查看您的歷史記錄。",
+      "favoritesSubtitle": "訂閱以離線存取收藏夾",
+      "favoritesDescription": "離線存取您的收藏夾是一項高級功能。升級後即可隨時隨地查看您的最愛。"
+    },
+    "limits": {
+      "scanTitle": "已達掃描限制",
+      "scanSubtitle": "您已使用所有 {{limit}} 掃描",
+      "scanDescription": "升級到高級版可無限次掃描和更多功能！",
+      "downloadTitle": "達到下載限制",
+      "downloadSubtitle": "您已使用所有 {{limit}} 下載內容",
+      "downloadDescription": "升級到高級版即可無限下載！"
+    },
+    "timer": {
+      "resetsInHours": "{{count}} 小時後重置",
+      "resetsInHours_plural": "{{count}} 小時後重置"
+    },
+    "usage": {
+      "scans": "掃描：",
+      "downloads": "下載次數："
+    },
+    "features": {
+      "title": "高級福利：",
+      "offlineHistory": "離線歷史記錄訪談",
+      "offlineFavorites": "離線收藏夾訪問",
+      "unlimitedScans": "無限次掃描",
+      "unlimitedDownloads": "無限下載"
+    },
+    "pricing": {
+      "amount": "{{amount}}",
+      "period": "{{days}} 天"
+    },
+    "actions": {
+      "upgrade": "升級至高級版",
+      "later": "也許稍後"
+    }
+  },
+  "manageNotifications": {
+    "title": "管理通知",
+    "pushNotifications": "推播通知",
+    "emailNotifications": "電子郵件通知",
+    "likeNotifications": "喜歡通知",
+    "commentNotifications": "評論通知",
+    "followNotifications": "注意通知",
+    "enabled": "啟用",
+    "disabled": "殘障人士",
+    "save": "儲存設定"
+  },
+  "history": {
+    "title": "歷史",
+    "loading": "載入歷史記錄...",
+    "loadingMore": "加載更多...",
+    "signInRequiredTitle": "需要登入",
+    "signInRequiredBody": "建立帳戶或登入以查看您的掃描記錄。",
+    "selection": {
+      "selectedCount": "已選擇 {{count}}",
+      "deleteButton": "刪除 {{count}} 記錄",
+      "deleteButton_plural": "刪除 {{count}} 筆記錄"
+    },
+    "offlineBanner": {
+      "premium": "離線模式（進階）",
+      "locked": "離線模式需要高級版"
+    },
+    "search": {
+      "placeholder": "按名稱搜尋..."
+    },
+    "filters": {
+      "all": "全部",
+      "plants": "植物",
+      "animals": "動物"
+    },
+    "empty": {
+      "noHistoryTitle": "還沒有歷史記錄",
+      "noHistoryBody": "一旦您開始識別植物和動物，您的物種掃描歷史記錄將顯示在此。",
+      "noResultsTitle": "沒有找到結果",
+      "noResultsBody": "沒有記錄符合您的搜尋或篩選條件。嘗試調整你的濾鏡。"
+    },
+    "actions": {
+      "signIn": "登入",
+      "delete": "刪除",
+      "clearAll": "全部清除",
+      "clearFilters": "清除過濾器"
+    },
+    "alerts": {
+      "visibilityNow": "掃描時間現在為 {{status}}",
+      "visibilityUpdateFailed": "無法更新可見性。",
+      "visibilityNeedsSync": "此掃描需要先同步。請稍後重試。",
+      "visibilityOffline": "離線時無法變更可見性。請檢查您的連線。",
+      "visibilityNotSynced": "此掃描尚未同步到雲端。請等待同步完成，然後再試一次。",
+      "visibilityPermissionDenied": "您無權修改此掃描。",
+      "visibilityNetworkError": "網路錯誤。請檢查您的連線並重試。",
+      "errorWithMessage": "錯誤：{{message}}",
+      "deleteRecordTitle": "刪除記錄",
+      "deleteRecordMessage": "從歷史記錄中刪除“{{name}}”？",
+      "deleteRecordSuccess": "記錄已刪除。",
+      "deleteRecordError": "刪除記錄失敗。",
+      "deleteSelectedTitle": "刪除所選內容",
+      "deleteSelectedMessage": "從歷史記錄中刪除 {{count}} 記錄嗎？",
+      "deleteSelectedMessage_plural": "從歷史記錄中刪除 {{count}} 記錄嗎？",
+      "deleteSelectedSuccess": "{{count}} 記錄已刪除。",
+      "deleteSelectedSuccess_plural": "{{count}} 記錄已刪除。",
+      "deleteSelectedError": "無法刪除選定的記錄。",
+      "clearAllTitle": "清除所有歷史記錄",
+      "clearAllMessage": "您確定要刪除所有歷史記錄嗎？此操作無法撤銷。",
+      "clearAllSuccess": "所有歷史記錄都被清除。",
+      "clearAllError": "清除歷史記錄失敗。"
+    },
+    "visibility": {
+      "public": "民眾",
+      "private": "私人的"
+    },
+    "unknownSpecies": "未知物種",
+    "details": {
+      "commonName": "通用名",
+      "scientificName": "學名",
+      "taxonomicRank": "分類等級",
+      "type": "類型",
+      "conservationStatus": "保護狀況",
+      "timesScanned": "掃描次數",
+      "timeCount": "{{count}} 時間",
+      "timeCount_plural": "{{count}} 次",
+      "globalAppScans": "全球應用掃描",
+      "scanCount": "{{count}} 掃描",
+      "scanCount_plural": "{{count}} 掃描",
+      "scannedOn": "掃描於"
+    },
+    "premiumGate": {
+      "title": "訂閱即可存取離線模式",
+      "message": "離線存取您的歷史記錄是一項進階功能。訂閱以在離線時查看您的掃描記錄。"
+    },
+    "noHistory": "還沒有歷史記錄",
+    "startScanning": "開始掃描以建立您的歷史",
+    "delete": "刪除",
+    "deleteAll": "全部刪除",
+    "deleteConfirm": "您確定要刪除該項目嗎？",
+    "deleteAllConfirm": "您確定要刪除所有歷史記錄嗎？",
+    "scannedOn": "掃描於 {{date}}"
+  },
+  "postDetail": {
+    "title": "郵政",
+    "aboutLabel": "關於",
+    "emptyTitle": "找不到貼文",
+    "alerts": {
+      "postNotFoundTitle": "錯誤",
+      "postNotFoundBody": "找不到貼文。",
+      "loadErrorTitle": "錯誤",
+      "loadErrorBody": "無法載入帖子。",
+      "likeErrorBody": "未能喜歡該貼文。"
+    }
+  },
+  "speciesGallery": {
+    "title": "畫廊",
+    "noResults": "沒有找到結果",
+    "loadMore": "加載更多",
+    "error": "載入圖庫失敗"
+  },
+  "speciesLanding": {
+    "title": "物種詳情",
+    "scientificName": "學名",
+    "commonName": "通用名",
+    "description": "描述",
+    "habitat": "棲息地",
+    "diet": "飲食",
+    "lifespan": "壽命",
+    "conservationStatus": "保護狀況",
+    "addToFavorites": "加入收藏夾",
+    "removeFromFavorites": "從收藏夾中刪除",
+    "share": "分享",
+    "viewMore": "看更多",
+    "error": "無法加載物種詳細信息"
+  },
+  "manualPayment": {
+    "title": "手動付款",
+    "uploadProof": "上傳付款證明",
+    "selectImage": "選擇影像",
+    "takePhoto": "拍照",
+    "chooseFromGallery": "從圖庫中選擇",
+    "uploadImage": "上傳圖片",
+    "uploading": "正在上傳...",
+    "submit": "提交付款",
+    "submitting": "正在提交...",
+    "successTitle": "成功",
+    "successMessage": "付款提交成功。我們將盡快驗證。",
+    "errorTitle": "錯誤",
+    "errorMessage": "提交付款失敗。請再試一次。",
+    "selectImageFirst": "請先選擇一張圖片"
+  },
+  "scanStats": {
+    "title": "掃描統計",
+    "totalScans": "總掃描次數",
+    "thisWeek": "本星期",
+    "thisMonth": "本月",
+    "plants": "植物",
+    "animals": "動物",
+    "noData": "尚無可用的掃描數據"
+  }
+}

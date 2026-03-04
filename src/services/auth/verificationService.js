@@ -52,6 +52,62 @@ const generateVerificationCode = () => {
   return Math.floor(100000 + Math.random() * 900000).toString();
 };
 
+const getRegistrationValidationErrorMessage = (error) => {
+  const code = String(error?.code || '').toLowerCase();
+  const message = String(error?.message || '').trim();
+  const details = typeof error?.details === 'string' ? error.details.trim() : '';
+  const normalizedMessage = message.toLowerCase();
+
+  if (code === 'functions/invalid-argument') {
+    return details || 'Please enter a valid and active email address.';
+  }
+
+  if (
+    code === 'functions/not-found' ||
+    normalizedMessage === 'not-found' ||
+    normalizedMessage.includes('not-found')
+  ) {
+    return 'Email validation service is temporarily unavailable. Please try again in a moment.';
+  }
+
+  if (code === 'functions/unavailable') {
+    return 'Unable to validate email right now. Please try again later.';
+  }
+
+  if (code === 'functions/failed-precondition') {
+    return 'Email validation is not configured correctly. Please contact support.';
+  }
+
+  return details || message || 'Failed to validate email';
+};
+
+/**
+ * Validate registration email deliverability before creating account
+ * @param {string} email - Email to validate
+ * @returns {Promise<Object>}
+ */
+export const validateRegistrationEmail = async (email) => {
+  try {
+    const normalizedEmail = String(email || '').trim();
+
+    if (!normalizedEmail) {
+      return { success: false, error: 'Email is required.' };
+    }
+
+    const validateEmail = httpsCallable(functions, 'validateRegistrationEmail');
+    const result = await validateEmail({ email: normalizedEmail });
+
+    return { success: true, data: result.data };
+  } catch (error) {
+    console.error('Error validating registration email:', {
+      code: error?.code,
+      message: error?.message,
+      details: error?.details,
+    });
+    return { success: false, error: getRegistrationValidationErrorMessage(error) };
+  }
+};
+
 /**
  * Send verification code to user's email
  * @param {string} userId - Firebase user ID

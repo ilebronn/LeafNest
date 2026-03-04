@@ -24,6 +24,7 @@ LogBox.ignoreLogs([
   'shouldShowAlert is deprecated',
   'auth/invalid-email',
   'auth/weak-password',
+  'functions/invalid-argument',
 ]);
 
 // Import i18n configuration

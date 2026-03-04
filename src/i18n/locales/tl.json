@@ -1,0 +1,895 @@
+{
+  "common": {
+    "welcome": "Maligayang pagdating",
+    "guest": "panauhin",
+    "loading": "Naglo-load...",
+    "error": "Error",
+    "success": "Tagumpay",
+    "cancel": "Kanselahin",
+    "ok": "OK",
+    "save": "I-save",
+    "back": "Bumalik",
+    "edit": "I-edit",
+    "username": "Username",
+    "and": "at"
+  },
+  "login": {
+    "title": "LeafNest",
+    "signInWithGoogle": "Mag-sign in gamit ang Google",
+    "signInAsGuest": "Mag-sign in bilang Bisita",
+    "signInFailed": "Nabigo ang pag-sign in",
+    "googleAuthError": "Error sa Google Auth",
+    "unexpectedError": "Hindi inaasahang error",
+    "unknownError": "Hindi kilalang error",
+    "termsText": "Sa pamamagitan ng pag-sign up, ipinapahiwatig mo na nabasa mo at kinikilala mo ang",
+    "termsOfUse": "Mga Tuntunin sa Paggamit",
+    "privacyPolicy": "Patakaran sa Privacy",
+    "cookiesPolicy": "Patakaran sa Cookies",
+    "signIn": "Mag-sign In",
+    "welcomeTitle": "Maligayang pagdating sa LeafNest",
+    "welcomeSubtitle": "Tuklasin ang kagandahan ng kalikasan",
+    "signInWithEmailButton": "Mag-sign in gamit ang Email",
+    "dividerOr": "o",
+    "continueAsGuest": "Magpatuloy bilang Bisita",
+    "continueAgreement": "Sa pagpapatuloy, sumasang-ayon ka sa aming"
+  },
+  "home": {
+    "welcomeGuest": "Maligayang pagdating, Bisita",
+    "welcomeUser": "Maligayang pagdating, {{name}}",
+    "guestModeSubtitle": "Nasa guest mode ka. Mag-sign in para i-unlock ang lahat ng feature.",
+    "welcomeBackSubtitle": "Masaya akong makita kang muli!",
+    "scanPlantsTitle": "I-scan ang mga Halaman Agad",
+    "scanPlantsSubtitle": "Ituro, kunan, at kilalanin ang mga flora sa loob ng ilang segundo.",
+    "scanAnimalsTitle": "I-scan ang mga Hayop Agad",
+    "scanAnimalsSubtitle": "Kilalanin ang mga hayop sa ilang segundo.",
+    "learnNatureTitle": "Matuto Tungkol sa Kalikasan",
+    "learnNatureSubtitle": "Tumuklas ng higit pa gamit ang text-to-speech at mabilisang mga katotohanan.",
+    "scanningStats": "Pag-scan ng Istatistika",
+    "plantsScanned": "Na-scan ang mga halaman",
+    "animalsIdentified": "Nakilala ang mga Hayop",
+    "dailyDiscovery": "Pang-araw-araw na Pagtuklas",
+    "dailyDiscoverySubtitle": "Matuto ng bago araw-araw",
+    "plantOfTheDay": "Halaman ng Araw",
+    "animalOfTheDay": "Hayop ng Araw",
+    "scientificName": "Pangalan ng Siyentipiko",
+    "habitat": "Habitat",
+    "diet": "Diet",
+    "lifespan": "habang-buhay",
+    "weight": "Timbang",
+    "cycle": "Ikot ng Buhay",
+    "watering": "Pagdidilig",
+    "sunlight": "Sikat ng araw",
+    "loadingDaily": "Nilo-load ang pang-araw-araw na nilalaman...",
+    "errorLoadingDaily": "Hindi ma-load ang pang-araw-araw na nilalaman",
+    "pullToRefresh": "Hilahin para i-refresh",
+    "offlineMode": "Offline na nilalaman",
+    "funFact": "Nakakatuwang Katotohanan",
+    "newFact": "Bagong Katotohanan",
+    "trendingPlants": "Mga Trending na Halaman",
+    "trendingAnimals": "Trending na Hayop",
+    "alerts": {
+      "authRequiredTitle": "Kinakailangan ang Authentication",
+      "authRequiredBody": "Mangyaring mag-sign in upang i-download ang PDF.",
+      "pdfSuccessTitle": "Tagumpay",
+      "pdfSuccessBody": "Ang PDF ay nabuo at ipinadala sa iyong email.",
+      "pdfErrorTitle": "Error",
+      "pdfErrorBody": "Nabigong bumuo ng PDF. Pakisubukang muli.",
+      "signInRequiredTitle": "Kailangang mag-sign in",
+      "signInLikeBody": "Mangyaring mag-sign in upang i-like ang mga post.",
+      "signInCommentBody": "Mangyaring mag-sign in upang magkomento.",
+      "downloadsUnavailableTitle": "Hindi Available ang mga Download",
+      "downloadsUnavailableBody": "Mangyaring mag-sign up para sa isang libreng account upang mag-download ng impormasyon ng species.",
+      "downloadLimitCheckErrorBody": "Nabigong suriin ang limitasyon sa pag-download. Pakisubukang muli."
+    },
+    "pdf": {
+      "defaultCommon": "Hindi alam",
+      "defaultScientific": "Hindi alam",
+      "defaultRank": "Hindi kilalang ranggo",
+      "defaultTaxon": "Hindi alam",
+      "noDescription": "Walang available na paglalarawan.",
+      "infoUnavailable": "Hindi available ang impormasyon.",
+      "notEvaluated": "Hindi sinusuri"
+    },
+    "trending": {
+      "title": "Trending Species"
+    },
+    "emptyState": {
+      "title": "Maligayang pagdating sa Komunidad",
+      "subtitle": "Simulan ang paggalugad at pagbabahagi ng iyong mga natuklasan sa kalikasan.",
+      "cta": "I-scan ang Iyong Unang Species"
+    },
+    "feed": {
+      "likesCount": "{{count}} gusto",
+      "likesCount_plural": "{{count}} gusto",
+      "beFirst": "Maging una sa gusto nito",
+      "showMore": "Magpakita ng higit pa",
+      "showLess": "Magpakita ng mas kaunti",
+      "viewComments": "Tingnan ang lahat ng {{count}} komento",
+      "viewComments_plural": "Tingnan ang lahat ng {{count}} komento",
+      "unknownUser": "Anonymous",
+      "unknownSpecies": "Hindi kilalang species",
+      "likeError": "Nabigong i-like ang post."
+    },
+    "relativeTime": {
+      "justNow": "Ngayon lang",
+      "minutes": "{{count}}m ang nakalipas",
+      "hours": "{{count}}h ang nakalipas",
+      "days": "{{count}}d ang nakalipas"
+    }
+  },
+  "settings": {
+    "title": "Mga setting",
+    "account": "Account",
+    "guestMode": "Guest mode",
+    "signedIn": "Naka-sign in",
+    "username": "Username",
+    "editUsername": "I-edit ang Username",
+    "currentUsername": "Kasalukuyang Username",
+    "newUsername": "Bagong Username",
+    "usernameUpdated": "Matagumpay na na-update ang username!",
+    "usernameUpdateError": "Nabigong i-update ang username",
+    "usernameUpdateFailed": "Nabigo ang pag-update ng username",
+    "usernameRequired": "Kinakailangan ang username",
+    "usernameTooShort": "Dapat na hindi bababa sa 3 character ang username",
+    "usernameTooLong": "Ang username ay dapat na 20 character o mas kaunti",
+    "usernameInvalidChars": "Ang username ay maaari lamang maglaman ng mga titik, numero, underscore, at gitling",
+    "language": "Wika",
+    "selectLanguage": "Piliin ang Wika",
+    "logout": "Log Out",
+    "logoutError": "Nabigong mag-log out.",
+    "about": "Tungkol sa",
+    "appName": "LeafNest",
+    "yourPlan": "Iyong Plano",
+    "leafNestFree": "Libre ang LeafNest",
+    "help": "Tulong",
+    "sendFeedback": "Magpadala ng Feedback",
+    "faq": "FAQ",
+    "termsOfUse": "Mga Tuntunin sa Paggamit",
+    "generalSection": "Heneral",
+    "supportSection": "Suporta",
+    "legalSection": "Legal"
+  },
+  "profile": {
+    "title": "Profile",
+    "editUsername": "I-edit ang Username",
+    "signOut": "Mag-sign Out",
+    "leaveAccount": "Iwanan ang iyong account",
+    "signIn": "Mag-sign In",
+    "accessFullFeatures": "I-access ang lahat ng mga tampok",
+    "createAccount": "Lumikha ng Account",
+    "joinLeafNest": "Sumali sa LeafNest",
+    "guestUser": "Guest User",
+    "statsTitle": "I-scan ang Istatistika",
+    "viewAll": "Tingnan Lahat",
+    "guestPromptTitle": "Subaybayan ang Iyong Pag-unlad",
+    "guestPromptText": "Mag-sign in upang subaybayan ang mga pag-scan, tumuklas ng mga species, at i-unlock ang mga nagawa.",
+    "badgeNew": "Bago",
+    "editPlaceholder": "Ipasok ang username",
+    "stats": {
+      "total": "Kabuuang mga Pag-scan",
+      "week": "Ngayong Linggo",
+      "species": "Mga species"
+    },
+    "sections": {
+      "account": "Mga Setting ng Account"
+    },
+    "menu": {
+      "planTitle": "Iyong Plano",
+      "planSubtitle": "Libre ang LeafNest",
+      "notificationsTitle": "Mga abiso",
+      "notificationsSubtitle": "Pamahalaan ang iyong mga notification",
+      "passwordTitle": "Nakalimutan ang Password",
+      "passwordSubtitle": "I-reset ang iyong password",
+      "signOutTitle": "Mag-sign Out",
+      "signOutSubtitle": "Mag-sign out mula sa iyong account",
+      "signInTitle": "Mag-sign In",
+      "signInSubtitle": "I-access ang lahat ng mga tampok",
+      "createAccountTitle": "Lumikha ng Account",
+      "createAccountSubtitle": "Sumali sa LeafNest ngayon"
+    },
+    "alerts": {
+      "syncSuccess": "Naka-sync {{count}} nakabinbing pag-scan",
+      "syncSuccess_plural": "Naka-sync {{count}} nakabinbing pag-scan",
+      "usernameUpdated": "Matagumpay na na-update ang username!",
+      "usernameUpdateError": "Nabigong i-update ang username.",
+      "signOutTitle": "Mag-sign Out",
+      "signOutMessage": "Sigurado ka bang gusto mong mag-sign out?",
+      "signOutConfirm": "Mag-sign Out",
+      "signOutError": "Nabigong mag-sign out. Pakisubukang muli."
+    }
+  },
+  "languages": {
+    "ar": "Arabic",
+    "zh-CN": "Chinese (Pinasimple)",
+    "zh-TW": "Chinese (Tradisyonal)",
+    "hr": "Croatian",
+    "cs": "Czech",
+    "da": "Danish",
+    "nl": "Dutch",
+    "en": "Ingles",
+    "fi": "Finnish",
+    "fr": "Pranses",
+    "de": "Aleman",
+    "el": "Griyego",
+    "hi": "Hindi",
+    "hu": "Hungarian",
+    "id": "Indonesian",
+    "it": "Italyano",
+    "ja": "Hapon",
+    "ko": "Koreano",
+    "ms": "Malay",
+    "no": "Norwegian",
+    "fa": "Persian",
+    "pl": "Polish",
+    "pt": "Portuges",
+    "ro": "Romanian",
+    "ru": "Ruso",
+    "sk": "Slovak",
+    "es": "Espanyol",
+    "sv": "Swedish",
+    "tl": "Tagalog",
+    "th": "Thai",
+    "tr": "Turkish",
+    "uk": "Ukrainian",
+    "vi": "Vietnamese"
+  },
+  "tabs": {
+    "home": "Bahay",
+    "scan": "I-scan",
+    "history": "Kasaysayan",
+    "settings": "Mga setting"
+  },
+  "animals": {
+    "title": "Mga Hayop ng Araw",
+    "lion": {
+      "name": "leon",
+      "scientificName": "Panthera leo",
+      "description": "Ang leon ay isang malaking pusa ng genus Panthera na katutubong sa Africa at India. Ito ay may maskulado, malawak na dibdib na katawan, maikling bilugan na ulo, bilog na mga tainga, at mabalahibong tuft sa dulo ng buntot nito.",
+      "habitat": "Savannas, damuhan, at bukas na kakahuyan",
+      "diet": "Carnivorous - pangunahing mga malalaking mammal tulad ng mga zebra, wildebeest, at kalabaw",
+      "lifespan": "10-14 taon sa ligaw, hanggang 20 taon sa pagkabihag",
+      "conservationStatus": "Mahina"
+    },
+    "elephant": {
+      "name": "Elepante",
+      "scientificName": "Elephantidae",
+      "description": "Ang mga elepante ay ang pinakamalaking umiiral na mga hayop sa lupa, na nailalarawan sa pamamagitan ng kanilang mahabang proboscis (puno ng kahoy), columnar legs, at malalaking ulo na may temporal na mga glandula at malapad, patag na mga tainga.",
+      "habitat": "Savannas, kagubatan, disyerto, at latian",
+      "diet": "Herbivorous - mga damo, dahon, balat, prutas, at lupa",
+      "lifespan": "60-70 taon",
+      "conservationStatus": "Nanganganib"
+    },
+    "panda": {
+      "name": "Giant Panda",
+      "scientificName": "Ailuropoda melanoleuca",
+      "description": "Ang higanteng panda ay isang oso na katutubong sa South Central China. Ito ay nailalarawan sa pamamagitan ng kanyang matapang na itim-at-puting amerikana at bulok na katawan.",
+      "habitat": "Mga bulubundukin sa gitnang Tsina na may makakapal na kagubatan ng kawayan",
+      "diet": "Pangunahing kawayan (99% ng diyeta), kung minsan ay maliliit na hayop",
+      "lifespan": "20 taon sa ligaw, hanggang 30 taon sa pagkabihag",
+      "conservationStatus": "Mahina"
+    },
+    "loading": "Naglo-load ng mga hayop...",
+    "errorLoading": "Nabigong i-load ang mga hayop",
+    "addToFavorites": "Idagdag sa Mga Paborito",
+    "removeFromFavorites": "Alisin sa Mga Paborito",
+    "learnMore": "Matuto pa",
+    "share": "Ibahagi ang Hayop"
+  },
+  "signup": {
+    "title": "Lumikha ng Account",
+    "username": "Username",
+    "email": "Email",
+    "password": "Password",
+    "confirmPassword": "Kumpirmahin ang Password",
+    "register": "Magrehistro",
+    "alreadyHaveAccount": "Mayroon ka nang Account? Mag-sign In",
+    "passwordsDontMatch": "Hindi tugma ang mga password!",
+    "fillAllFields": "Mangyaring punan ang lahat ng mga patlang.",
+    "verificationEmailSent": "Naipadala ang isang email sa pagpapatunay sa iyong email.",
+    "emailAlreadyInUse": "Ginagamit na ang email address.",
+    "invalidEmail": "Ang email address ay hindi wasto.",
+    "subtitle": "Samahan mo kaming tuklasin ang kalikasan",
+    "processing": "Pinoproseso...",
+    "dividerOr": "o",
+    "alreadyMember": "miyembro na?",
+    "signInLink": "Mag-sign In"
+  },
+  "signin": {
+    "title": "Mag-sign In",
+    "email": "Email",
+    "password": "Password",
+    "signIn": "Mag-sign In",
+    "signInWithGoogle": "Mag-sign in gamit ang Google",
+    "dontHaveAccount": "Walang Account? Mag-sign Up",
+    "fillAllFields": "Mangyaring punan ang lahat ng mga patlang.",
+    "signInSuccessful": "Matagumpay ang Pag-sign-In",
+    "welcomeBack": "Maligayang pagbabalik",
+    "userNotFound": "Walang nahanap na user sa email na ito.",
+    "wrongPassword": "Maling password.",
+    "invalidEmail": "Di-wastong email address.",
+    "subtitle": "Mag-sign in upang ipagpatuloy ang iyong paglalakbay",
+    "forgotPasswordLink": "Nakalimutan ang Password?",
+    "dividerOr": "o",
+    "noAccountPrompt": "Walang account?",
+    "signUpLink": "Mag-sign Up"
+  },
+  "scan": {
+    "loadingCamera": "Nilo-load ang camera...",
+    "needPermission": "Kailangan namin ang iyong pahintulot na ipakita ang camera",
+    "grantPermission": "Magbigay ng Pahintulot",
+    "preparingCamera": "Inihahanda ang camera..."
+  },
+  "favorites": {
+    "title": "Mga paborito",
+    "all": "Lahat",
+    "plants": "Mga halaman",
+    "animals": "Mga hayop",
+    "removeFavorite": "Alisin ang Paborito",
+    "remove": "Alisin",
+    "cancel": "Kanselahin",
+    "removed": "Inalis",
+    "removedMessage": "ay tinanggal mula sa iyong mga paborito.",
+    "error": "Error",
+    "failedToRemove": "Nabigong alisin sa mga paborito.",
+    "clearFavorites": "I-clear ang Mga Paborito",
+    "removeAllFavorites": "Alisin ang lahat ng paborito?",
+    "removeAll": "Alisin lahat",
+    "failedToClear": "Nabigong i-clear ang mga paborito.",
+    "plant": "Halaman",
+    "animal": "Hayop",
+    "noFavoritesYet": "Wala pang paborito",
+    "addFromDaily": "Magdagdag ng ilan mula sa Mga Halaman o Hayop ng Araw."
+  },
+  "about": {
+    "title": "Tungkol sa",
+    "developedBy": "Binuo at Dinisenyo ng LeafNest Team",
+    "teamTitle": "Koponan ng LeafNest",
+    "specialThanks": "Espesyal na Salamat",
+    "mentor": "G. Joshua R. Lasac",
+    "credits": "Orihinal na nilikha ng LeafNest team na may suporta mula sa Pinamalayan Maritime Foundation And Technological College INC. (PMFTCI) at ng School of Computer Studies.",
+    "privacyPolicy": "Patakaran sa Privacy",
+    "version": "Bersyon 0.0.1 (1)",
+    "help": "Para sa tulong: leafnest.capstone@gmail.com",
+    "tagline": "Pagkilala sa Halaman at Hayop",
+    "institutionalSupport": "Suporta sa Institusyon",
+    "mentorRole": "Project Mentor at Tagapayo"
+  },
+  "plan": {
+    "title": "Mga plano",
+    "upgradeTitle": "Mag-upgrade sa Premium",
+    "upgradeSubtitle": "I-unlock ang lahat ng feature at sulitin ang aming app.",
+    "free": "Libre",
+    "freePrice": "₱0 / buwan",
+    "freeFeature1": "I-scan ang limitadong mga halaman at hayop",
+    "freeFeature2": "Mga pangunahing pagtuklas sa araw-araw",
+    "freeFeature3": "Walang offline na access sa History",
+    "freeFeature4": "Kasama ang mga ad",
+    "premium": "Premium",
+    "premiumPrice": "₱129.00 / buwan",
+    "premiumFeature1": "Walang limitasyong pag-scan",
+    "premiumFeature2": "Eksklusibong pang-araw-araw na pagtuklas",
+    "premiumFeature3": "Offline na access sa History",
+    "premiumFeature4": "Karanasan na walang ad",
+    "subscribeNow": "Mag-subscribe na",
+    "selectedPlan": "Pinili mo ang {{plan}} na plano!"
+  },
+  "legal": {
+    "cookies": {
+      "title": "Patakaran sa Cookies",
+      "subtitle": "Paano namin ginagamit ang cookies para mapahusay ang iyong karanasan",
+      "effectiveDate": "Petsa ng Bisa: Hulyo 1, 2025",
+      "intro": "Ipinapaliwanag ng Patakaran sa Cookies na ito kung paano namin ginagamit ang cookies upang mapahusay ang iyong karanasan kapag binisita mo ang aming app at ginamit ang mga feature nito. Sa paggamit ng app na ito, pumapayag ka sa paggamit ng cookies gaya ng inilarawan sa patakarang ito.",
+      "sections": [
+        {
+          "title": "Ano ang Cookies?",
+          "content": "Ang cookies ay maliliit na text file na nakaimbak sa iyong device kapag bumisita ka sa mga website o gumamit ng mga app. Tinutulungan nila kaming maunawaan kung paano ka nakikipag-ugnayan sa aming serbisyo at nagbibigay-daan sa amin na bigyan ka ng mas mahusay, mas personalized na karanasan."
+        },
+        {
+          "title": "Paano Namin Gumamit ng Cookies",
+          "content": "Gumagamit kami ng cookies para sa ilang mahahalagang layunin:",
+          "list": [
+            "Upang i-personalize ang nilalaman at mga ad",
+            "Upang suriin ang mga pattern ng trapiko at pagbutihin ang karanasan ng user",
+            "Upang paganahin ang ilang partikular na feature at functionality ng aming app",
+            "Upang matandaan ang iyong mga kagustuhan at mga setting",
+            "Upang magbigay ng secure na access sa iyong account"
+          ]
+        },
+        {
+          "title": "Mga Uri ng Cookies na Ginagamit Namin",
+          "content": "Gumagamit kami ng iba't ibang uri ng cookies upang mapahusay ang iyong karanasan:",
+          "list": [
+            "Mahahalagang Cookies: Kinakailangan para sa pangunahing pagpapagana ng app",
+            "Performance Cookies: Tulungan kaming maunawaan kung paano mo ginagamit ang app",
+            "Functional Cookies: Tandaan ang iyong mga kagustuhan at mga pagpipilian",
+            "Analytics Cookies: Magbigay ng mga insight sa mga pattern ng paggamit ng app"
+          ]
+        },
+        {
+          "title": "Pamamahala ng Cookies",
+          "content": "Maaari mong kontrolin at pamahalaan ang cookies sa pamamagitan ng mga setting ng iyong device. Gayunpaman, pakitandaan na ang hindi pagpapagana ng ilang cookies ay maaaring makaapekto sa iyong karanasan at limitahan ang functionality ng app."
+        },
+        {
+          "title": "Tagal ng Cookie",
+          "content": "Ang ilang cookies ay pansamantala (session cookies) at tatanggalin kapag isinara mo ang app. Ang iba ay mananatili sa iyong device para sa isang nakatakdang panahon upang matandaan ang iyong mga kagustuhan sa mga session."
+        },
+        {
+          "title": "Mga Pagbabago sa Patakarang Ito",
+          "content": "Maaari naming i-update ang Patakaran sa Cookies na ito paminsan-minsan upang ipakita ang mga pagbabago sa teknolohiya o legal na mga kinakailangan. Ang anumang mga pagbabago ay ipo-post sa pahinang ito na may na-update na petsa ng pagbabago."
+        },
+        {
+          "title": "Makipag-ugnayan sa Amin",
+          "content": "Kung mayroon kang anumang mga tanong, alalahanin, o feedback tungkol sa Patakaran sa Cookies na ito, mangyaring makipag-ugnayan sa amin sa leafnest.capstone@gmail.com."
+        }
+      ],
+      "footerTitle": "Mahalaga ang Iyong Privacy",
+      "footerText": "Nakatuon kami sa transparency tungkol sa kung paano namin ginagamit ang cookies. Ang iyong patuloy na paggamit ng aming app ay nagpapahiwatig ng iyong pagtanggap sa patakarang ito.",
+      "copyright": "© 2025 LeafNest. Lahat ng karapatan ay nakalaan.",
+      "lastUpdated": "Huling na-update: Hulyo 1, 2025"
+    },
+    "privacy": {
+      "title": "Patakaran sa Privacy",
+      "subtitle": "Mahalaga sa amin ang iyong privacy",
+      "effectiveDate": "Petsa ng Bisa: Hulyo 1, 2025",
+      "intro": "Sa LeafNest, nakatuon kami sa pagprotekta sa iyong privacy at pagtiyak ng seguridad ng iyong personal na impormasyon.",
+      "sections": [
+        {
+          "title": "Impormasyon na Kinokolekta Namin",
+          "content": "Kinokolekta namin ang impormasyong ibinibigay mo nang direkta sa amin, tulad ng kapag gumawa ka ng account, nag-upload ng mga larawan, o makipag-ugnayan sa amin para sa suporta. Maaaring kabilang dito ang iyong pangalan, email address, at anumang iba pang impormasyong pipiliin mong ibigay."
+        },
+        {
+          "title": "Paano Namin Ginagamit ang Iyong Impormasyon",
+          "content": "Ginagamit namin ang impormasyong kinokolekta namin upang ibigay, panatilihin, at pahusayin ang aming mga serbisyo, para makipag-ugnayan sa iyo, at para bumuo ng mga bagong feature. Hindi namin ibinebenta ang iyong personal na impormasyon sa mga ikatlong partido."
+        },
+        {
+          "title": "Seguridad ng Data",
+          "content": "Nagpapatupad kami ng naaangkop na teknikal at organisasyonal na mga hakbang upang protektahan ang iyong personal na impormasyon laban sa hindi awtorisadong pag-access, pagbabago, pagsisiwalat, o pagkasira."
+        },
+        {
+          "title": "Ang iyong mga Karapatan",
+          "content": "May karapatan kang i-access, i-update, o tanggalin ang iyong personal na impormasyon. Magagawa mo ito sa pamamagitan ng mga setting ng iyong account o sa pamamagitan ng direktang pakikipag-ugnayan sa amin."
+        },
+        {
+          "title": "Mga Serbisyo ng Third-Party",
+          "content": "Maaaring naglalaman ang aming app ng mga link sa mga third-party na website at serbisyo. Hindi kami mananagot para sa kanilang mga kasanayan sa privacy. Hinihikayat ka naming suriin ang kanilang mga patakaran sa privacy."
+        },
+        {
+          "title": "Mga Pagbabago sa Patakaran sa Privacy",
+          "content": "Inilalaan namin ang karapatang i-update ang Patakaran sa Privacy na ito anumang oras. Ang mga pagbabago ay ipo-post sa pahinang ito na may na-update na petsa ng bisa. Ang iyong patuloy na paggamit ay bumubuo ng pagtanggap ng mga pagbabago."
+        },
+        {
+          "title": "Makipag-ugnayan sa Amin",
+          "content": "Kung mayroon kang anumang mga katanungan tungkol sa Patakaran sa Privacy na ito o sa aming mga kasanayan sa privacy, mangyaring makipag-ugnay sa amin sa privacy@leafnest.com."
+        }
+      ],
+      "footerTitle": "Nagmamalasakit Kami sa Iyo",
+      "footerText": "Ang iyong tiwala ay mahalaga sa amin. Kami ay nakatuon sa transparent na mga kasanayan sa data at ang iyong karapatan sa privacy.",
+      "copyright": "© 2025 LeafNest. Lahat ng karapatan ay nakalaan.",
+      "lastUpdated": "Huling na-update: Hulyo 1, 2025"
+    },
+    "terms": {
+      "title": "Mga Tuntunin sa Paggamit",
+      "subtitle": "Mangyaring basahin nang mabuti bago gamitin",
+      "effectiveDate": "Petsa ng Bisa: Hulyo 1, 2025",
+      "intro": "Ang Mga Tuntunin ng Paggamit na ito ay namamahala sa paggamit ng LeafNest app at mga serbisyo. Sa pamamagitan ng paggamit sa aming app, sumasang-ayon ka sa mga tuntunin at kundisyon na ito.",
+      "sections": [
+        {
+          "title": "Pagtanggap ng Mga Tuntunin",
+          "content": "Sa pamamagitan ng pag-access o paggamit sa LeafNest app, sumasang-ayon kang sumailalim sa Mga Tuntunin ng Paggamit na ito. Kung hindi ka sumasang-ayon sa mga tuntuning ito, hindi mo dapat gamitin ang app."
+        },
+        {
+          "title": "Mga Responsibilidad ng Gumagamit",
+          "content": "Sumasang-ayon kang gamitin ang app para lamang sa mga layuning ayon sa batas at sa paraang hindi lumalabag sa mga karapatan ng iba. Responsibilidad mong panatilihin ang pagiging kumpidensyal ng impormasyon ng iyong account."
+        },
+        {
+          "title": "Intelektwal na Ari-arian",
+          "content": "Ang lahat ng content, trademark, logo, at intelektwal na ari-arian sa loob ng app ay pagmamay-ari ng LeafNest o lisensyado sa amin. Ang hindi awtorisadong paggamit ng aming intelektwal na ari-arian ay mahigpit na ipinagbabawal."
+        },
+        {
+          "title": "Privacy at Pangongolekta ng Data",
+          "content": "Kinokolekta at pinoproseso namin ang personal na impormasyon tulad ng inilarawan sa aming Patakaran sa Privacy. Sa pamamagitan ng paggamit sa aming app, pumapayag ka sa aming mga kasanayan sa pangongolekta, imbakan, at pagproseso ng data."
+        },
+        {
+          "title": "Limitasyon ng Pananagutan",
+          "content": "Walang pananagutan ang LeafNest para sa anumang pinsala, pagkalugi, o pinsalang dulot ng paggamit ng app o mga serbisyo nito. Ginagamit mo ang app sa iyong sariling peligro at pagpapasya."
+        },
+        {
+          "title": "Mga Pagbabago sa Mga Tuntunin",
+          "content": "Inilalaan namin ang karapatang i-update ang Mga Tuntunin ng Paggamit na ito anumang oras. Ang anumang mga pagbabago ay ipo-post sa pahinang ito na may na-update na petsa ng bisa. Ang patuloy na paggamit ay bumubuo ng pagtanggap ng mga pagbabago."
+        },
+        {
+          "title": "Makipag-ugnayan sa Amin",
+          "content": "Kung mayroon kang anumang mga tanong, alalahanin, o feedback tungkol sa Mga Tuntunin ng Paggamit na ito, mangyaring makipag-ugnayan sa amin sa leafnest.capstone@gmail.com."
+        }
+      ],
+      "footerTitle": "Salamat po",
+      "footerText": "Salamat sa paglalaan ng oras upang suriin ang aming Mga Tuntunin ng Paggamit. Ang iyong tiwala at pagsunod ay nakakatulong sa amin na lumikha ng mas magandang karanasan para sa lahat.",
+      "copyright": "© 2025 LeafNest. Lahat ng karapatan ay nakalaan.",
+      "lastUpdated": "Huling na-update: Hulyo 1, 2025"
+    }
+  },
+  "faq": {
+    "title": "Tulong at FAQ",
+    "subtitle": "Maghanap ng mga sagot sa mga karaniwang tanong",
+    "categories": [
+      {
+        "title": "Pagsisimula",
+        "items": [
+          {
+            "question": "Ano ang LeafNest?",
+            "answer": "Ang LeafNest ay isang plant identification at information app na gumagamit ng AI technology para tulungan kang matukoy ang mga halaman at hayop para magbigay ng kaalaman tungkol sa kalikasan."
+          },
+          {
+            "question": "Paano ako magsisimula?",
+            "answer": "Buksan ang app, i-tap ang icon ng pag-scan, at ituro ito sa anumang halaman o hayop. Tutukuyin ito ng AI at magbibigay ng detalyadong impormasyon tungkol sa species na iyon."
+          }
+        ]
+      },
+      {
+        "title": "Gamit ang Scanner",
+        "items": [
+          {
+            "question": "Paano ko i-scan ang isang species?",
+            "answer": "I-tap ang icon ng pag-scan sa home screen, ituro ang iyong camera sa species, at kumuha ng malinaw na larawan. Awtomatikong makikilala ito ng app."
+          },
+          {
+            "question": "Ano ang gumagawa ng magandang pag-scan?",
+            "answer": "Tiyakin ang magandang liwanag, tumuon sa mga natatanging feature, at panatilihing matatag ang camera para sa pinakamahusay na mga resulta."
+          },
+          {
+            "question": "Maaari ba akong mag-scan mula sa aking photo gallery?",
+            "answer": "Oo. Maaari kang mag-upload ng mga kasalukuyang larawan mula sa iyong gallery sa pamamagitan ng pagpili sa opsyon ng gallery sa screen ng scanner."
+          }
+        ]
+      },
+      {
+        "title": "Katumpakan at Mga Tampok",
+        "items": [
+          {
+            "question": "Gaano katumpak ang pagkakakilanlan?",
+            "answer": "Gumagamit ang LeafNest ng mga advanced na modelo ng machine learning. Nag-iiba-iba ang katumpakan sa pamamagitan ng pag-iilaw at kalidad ng larawan, ngunit karaniwang lumalampas sa 90%."
+          },
+          {
+            "question": "Maaari ko bang iligtas ang aking mga paboritong halaman?",
+            "answer": "Oo. I-tap ang icon ng puso sa anumang natukoy na species upang idagdag ito sa iyong mga paborito para sa mabilis na pag-access sa ibang pagkakataon."
+          }
+        ]
+      },
+      {
+        "title": "Suporta at Tulong",
+        "items": [
+          {
+            "question": "Paano ako makikipag-ugnayan sa suporta?",
+            "answer": "Buksan ang menu ng Mga Setting at piliin ang Tulong at Suporta, o mag-email sa amin sa leafnest.capstone@gmail.com."
+          }
+        ]
+      }
+    ]
+  },
+  "help": {
+    "title": "Tulong at Suporta",
+    "subtitle": "Mga tip para sa pag-scan ng mga halaman at hayop gamit ang AI — at kung saan makakakuha ng higit pang tulong.",
+    "quickStart": {
+      "title": "Mabilis na Pagsisimula",
+      "bullets": [
+        "I-tap ang Scan button mula sa home screen.",
+        "Igitna ang halaman o hayop sa frame.",
+        "Manatiling matatag, pagkatapos ay kumuha ng malinaw na larawan."
+      ],
+      "cta": "Buksan ang Scanner"
+    },
+    "bestResults": {
+      "title": "Paano makakuha ng mas mahusay na mga resulta",
+      "bullets": [
+        "Gumamit ng magandang ilaw at iwasan ang malupit na backlight.",
+        "Punan ang frame ng paksa, na tumutuon sa mga natatanging detalye.",
+        "Subukan ang maraming anggulo gaya ng mga dahon, bulaklak, bark, o profile shot."
+      ]
+    },
+    "troubleshooting": {
+      "title": "Pag-troubleshoot",
+      "bullets": [
+        "Pareho ang hitsura ng mga pang-araw-araw na highlight? Hilahin upang i-refresh o muling buksan ang app pagkalipas ng hatinggabi (oras sa Pilipinas).",
+        "Walang internet? Suriin ang iyong koneksyon dahil ang pagkilala ng imahe ay nangangailangan ng koneksyon sa network.",
+        "Mababang katumpakan? Kumuha ng mas malinaw, mas malapit na larawan na may mas magandang liwanag."
+      ]
+    },
+    "links": {
+      "faq": "FAQ",
+      "feedback": "Magpadala ng Feedback",
+      "about": "Tungkol sa LeafNest",
+      "privacy": "Patakaran sa Privacy",
+      "terms": "Mga Tuntunin sa Paggamit",
+      "contact": "Makipag-ugnayan sa Suporta"
+    },
+    "alerts": {
+      "noEmailTitle": "Hindi mabuksan ang email app",
+      "noEmailBody": "Mangyaring mag-email sa amin sa {{email}}."
+    }
+  },
+  "feedback": {
+    "title": "Magpadala ng Feedback",
+    "subtitle": "Sabihin sa amin kung ano ang mahusay na gumagana o kung ano ang maaaring mapabuti. Binabasa namin ang bawat mensahe.",
+    "topicLabel": "Paksa",
+    "topics": {
+      "bug": "Mag-ulat ng Bug",
+      "idea": "Kahilingan sa Tampok",
+      "ux": "Disenyo / UX",
+      "content": "Uri / Nilalaman",
+      "account": "Account / Login",
+      "other": "Iba pa"
+    },
+    "subjectLabel": "Paksa",
+    "subjectPlaceholder": "Maikling buod (hal., na-mislabel ng Scanner ang isang dahon bilang maple)",
+    "messageLabel": "Mensahe",
+    "messagePlaceholder": "Ilarawan kung ano ang nangyari, mga hakbang sa pagpaparami, at mga inaasahan.",
+    "emailLabel": "Iyong Email (opsyonal)",
+    "emailPlaceholder": "Sasagot kami dito kung kinakailangan",
+    "includeDiagnostics": "Isama ang mga diagnostic",
+    "diagnosticsHint": "Tumutulong sa amin sa pag-debug ng mga isyu (platform at OS lang).",
+    "submit": "Magpadala ng Feedback",
+    "submitting": "Ipinapadala...",
+    "footerText": "O direktang mag-email sa amin sa {{email}}",
+    "alerts": {
+      "missingInfoTitle": "Nawawalang impormasyon",
+      "missingInfoMessage": "Mangyaring magdagdag ng paksa at mensahe.",
+      "invalidEmailTitle": "Di-wastong email",
+      "invalidEmailMessage": "Mangyaring magpasok ng wastong email address o iwanan itong blangko.",
+      "noEmailAppTitle": "Hindi makapagpadala ng feedback",
+      "noEmailAppMessage": "Pakisubukang muli mamaya o mag-email sa amin sa {{email}}.",
+      "successTitle": "Ipinadala ang feedback",
+      "successMessage": "Salamat sa iyong feedback! Susuriin namin ito sa lalong madaling panahon.",
+      "genericErrorTitle": "Nagkaproblema",
+      "genericErrorMessage": "Pakisubukang muli mamaya o mag-email sa amin sa {{email}}."
+    }
+  },
+  "comments": {
+    "title": "Mga komento",
+    "noComments": "Wala pang komento",
+    "beFirstToComment": "Maunang magkomento!",
+    "addComment": "Magdagdag ng komento...",
+    "deleteComment": "Tanggalin ang Komento",
+    "deleteConfirm": "Sigurado ka bang gusto mong tanggalin ang komentong ito?",
+    "delete": "Tanggalin",
+    "failedToDelete": "Nabigong tanggalin ang komento",
+    "failedToLike": "Nabigong i-like ang komento",
+    "loginRequired": "Kinakailangan ang Pag-login",
+    "loginToComment": "Dapat kang naka-log in upang makapagkomento",
+    "loginToLike": "Dapat ay naka-log in ka para i-like ang mga komento",
+    "justNow": "Ngayon lang"
+  },
+  "notification": {
+    "title": "Mga abiso",
+    "noNotifications": "Wala pang notification",
+    "markAsRead": "Markahan bilang nabasa",
+    "markAllAsRead": "Markahan ang lahat bilang nabasa na",
+    "delete": "Tanggalin",
+    "deleteAll": "Tanggalin lahat"
+  },
+  "commentsModal": {
+    "title": "Mga komento",
+    "inputPlaceholder": "Magdagdag ng komento...",
+    "empty": {
+      "title": "Wala pang komento",
+      "subtitle": "Maunang magkomento!"
+    },
+    "actions": {
+      "cancel": "Kanselahin",
+      "delete": "Tanggalin"
+    },
+    "alerts": {
+      "loadErrorTitle": "Error",
+      "loadErrorBody": "Nabigong i-load ang mga komento.",
+      "loginRequiredTitle": "Kinakailangan ang pag-login",
+      "loginRequiredCommentBody": "Dapat kang naka-log in para makapagkomento.",
+      "loginRequiredLikeBody": "Dapat ay naka-log in ka para i-like ang mga komento.",
+      "addErrorTitle": "Error",
+      "addErrorBody": "Nabigong magdagdag ng komento.",
+      "likeErrorTitle": "Error",
+      "likeErrorBody": "Nabigong i-like ang komento.",
+      "deleteTitle": "Tanggalin ang komento",
+      "deleteConfirmBody": "Sigurado ka bang gusto mong tanggalin ang komentong ito?",
+      "deleteErrorTitle": "Error",
+      "deleteErrorBody": "Nabigong tanggalin ang komento."
+    }
+  },
+  "premiumGate": {
+    "offline": {
+      "title": "Kinakailangan ang offline na access",
+      "historySubtitle": "Mag-subscribe upang ma-access ang kasaysayan offline",
+      "historyDescription": "Ang offline na pag-access sa iyong kasaysayan ng pag-scan ay isang premium na tampok. Mag-upgrade upang tingnan ang iyong kasaysayan anumang oras, kahit saan.",
+      "favoritesSubtitle": "Mag-subscribe upang ma-access ang mga paborito offline",
+      "favoritesDescription": "Ang offline na pag-access sa iyong mga paborito ay isang premium na tampok. Mag-upgrade upang tingnan ang iyong mga paborito anumang oras, kahit saan."
+    },
+    "limits": {
+      "scanTitle": "Naabot na ang limitasyon sa pag-scan",
+      "scanSubtitle": "Nagamit mo na ang lahat ng {{limit}} na pag-scan",
+      "scanDescription": "Mag-upgrade sa Premium para sa walang limitasyong pag-scan at higit pang mga feature!",
+      "downloadTitle": "Naabot na ang limitasyon sa pag-download",
+      "downloadSubtitle": "Nagamit mo na ang lahat ng {{limit}} download",
+      "downloadDescription": "Mag-upgrade sa Premium para sa walang limitasyong pag-download!"
+    },
+    "timer": {
+      "resetsInHours": "Nire-reset sa {{count}} oras",
+      "resetsInHours_plural": "Nire-reset sa loob ng {{count}} na oras"
+    },
+    "usage": {
+      "scans": "Mga pag-scan:",
+      "downloads": "Mga download:"
+    },
+    "features": {
+      "title": "Mga premium na benepisyo:",
+      "offlineHistory": "Offline na access sa kasaysayan",
+      "offlineFavorites": "Pag-access sa mga offline na paborito",
+      "unlimitedScans": "Walang limitasyong pag-scan",
+      "unlimitedDownloads": "Walang limitasyong pag-download"
+    },
+    "pricing": {
+      "amount": "{{amount}}",
+      "period": "sa loob ng {{days}} araw"
+    },
+    "actions": {
+      "upgrade": "Mag-upgrade sa Premium",
+      "later": "Baka mamaya"
+    }
+  },
+  "manageNotifications": {
+    "title": "Pamahalaan ang Mga Notification",
+    "pushNotifications": "Mga Push Notification",
+    "emailNotifications": "Mga Notification sa Email",
+    "likeNotifications": "Tulad ng Mga Notification",
+    "commentNotifications": "Mga Notification sa Komento",
+    "followNotifications": "Sundin ang Mga Notification",
+    "enabled": "Pinagana",
+    "disabled": "Hindi pinagana",
+    "save": "I-save ang Mga Setting"
+  },
+  "history": {
+    "title": "Kasaysayan",
+    "loading": "Nilo-load ang history...",
+    "loadingMore": "Naglo-load ng higit pa...",
+    "signInRequiredTitle": "Kailangang mag-sign in",
+    "signInRequiredBody": "Gumawa ng account o mag-sign in para tingnan ang iyong kasaysayan ng pag-scan.",
+    "selection": {
+      "selectedCount": "{{count}} ang napili",
+      "deleteButton": "Tanggalin ang {{count}} na tala",
+      "deleteButton_plural": "Tanggalin ang {{count}} na mga tala"
+    },
+    "offlineBanner": {
+      "premium": "Offline mode (Premium)",
+      "locked": "Nangangailangan ng Premium ang offline mode"
+    },
+    "search": {
+      "placeholder": "Maghanap ayon sa pangalan..."
+    },
+    "filters": {
+      "all": "Lahat",
+      "plants": "Mga halaman",
+      "animals": "Mga hayop"
+    },
+    "empty": {
+      "noHistoryTitle": "Wala pang history",
+      "noHistoryBody": "Lalabas dito ang iyong kasaysayan ng pag-scan ng mga species kapag sinimulan mong tukuyin ang mga halaman at hayop.",
+      "noResultsTitle": "Walang nakitang resulta",
+      "noResultsBody": "Walang mga tala na tumutugma sa iyong pamantayan sa paghahanap o filter. Subukang ayusin ang iyong mga filter."
+    },
+    "actions": {
+      "signIn": "Mag-sign in",
+      "delete": "Tanggalin",
+      "clearAll": "I-clear lahat",
+      "clearFilters": "I-clear ang mga filter"
+    },
+    "alerts": {
+      "visibilityNow": "Ang pag-scan ay {{status}} na ngayon",
+      "visibilityUpdateFailed": "Nabigong i-update ang visibility.",
+      "visibilityNeedsSync": "Kailangang mag-sync muna ang pag-scan na ito. Pakisubukang muli sa isang sandali.",
+      "visibilityOffline": "Hindi mababago ang visibility habang offline. Pakisuri ang iyong koneksyon.",
+      "visibilityNotSynced": "Ang pag-scan na ito ay hindi pa naka-sync sa cloud. Pakihintay na makumpleto ang pag-sync at subukang muli.",
+      "visibilityPermissionDenied": "Wala kang pahintulot na baguhin ang pag-scan na ito.",
+      "visibilityNetworkError": "Error sa network. Pakisuri ang iyong koneksyon at subukang muli.",
+      "errorWithMessage": "Error: {{message}}",
+      "deleteRecordTitle": "Tanggalin ang tala",
+      "deleteRecordMessage": "Tanggalin ang \"{{name}}\" sa kasaysayan?",
+      "deleteRecordSuccess": "Tinanggal ang record.",
+      "deleteRecordError": "Nabigong tanggalin ang tala.",
+      "deleteSelectedTitle": "Tanggalin ang napili",
+      "deleteSelectedMessage": "Tanggalin ang {{count}} na tala sa kasaysayan?",
+      "deleteSelectedMessage_plural": "Tanggalin ang {{count}} na mga tala sa kasaysayan?",
+      "deleteSelectedSuccess": "{{count}} record ang tinanggal.",
+      "deleteSelectedSuccess_plural": "{{count}} talaan ang tinanggal.",
+      "deleteSelectedError": "Nabigong tanggalin ang mga napiling tala.",
+      "clearAllTitle": "I-clear ang lahat ng kasaysayan",
+      "clearAllMessage": "Sigurado ka bang gusto mong tanggalin ang lahat ng mga tala ng kasaysayan? Ang pagkilos na ito ay hindi maaaring i-undo.",
+      "clearAllSuccess": "Na-clear ang lahat ng kasaysayan.",
+      "clearAllError": "Nabigong i-clear ang kasaysayan."
+    },
+    "visibility": {
+      "public": "pampubliko",
+      "private": "pribado"
+    },
+    "unknownSpecies": "Hindi kilalang species",
+    "details": {
+      "commonName": "Karaniwang pangalan",
+      "scientificName": "Pang-agham na pangalan",
+      "taxonomicRank": "Ranggo ng taxonomic",
+      "type": "Uri",
+      "conservationStatus": "Katayuan ng konserbasyon",
+      "timesScanned": "Na-scan ang mga oras",
+      "timeCount": "{{count}} oras",
+      "timeCount_plural": "{{count}} beses",
+      "globalAppScans": "Pandaigdigang pag-scan ng app",
+      "scanCount": "{{count}} scan",
+      "scanCount_plural": "{{count}} pag-scan",
+      "scannedOn": "Naka-scan"
+    },
+    "premiumGate": {
+      "title": "Mag-subscribe upang ma-access ang offline mode",
+      "message": "Ang offline na pag-access sa iyong kasaysayan ay isang premium na tampok. Mag-subscribe upang tingnan ang iyong kasaysayan ng pag-scan kapag offline ka."
+    },
+    "noHistory": "Wala pang history",
+    "startScanning": "Simulan ang pag-scan upang buuin ang iyong kasaysayan",
+    "delete": "Tanggalin",
+    "deleteAll": "Tanggalin lahat",
+    "deleteConfirm": "Sigurado ka bang gusto mong tanggalin ang item na ito?",
+    "deleteAllConfirm": "Sigurado ka bang gusto mong tanggalin ang lahat ng kasaysayan?",
+    "scannedOn": "Na-scan sa {{date}}"
+  },
+  "postDetail": {
+    "title": "Post",
+    "aboutLabel": "Tungkol sa",
+    "emptyTitle": "Hindi nahanap ang post",
+    "alerts": {
+      "postNotFoundTitle": "Error",
+      "postNotFoundBody": "Hindi nahanap ang post.",
+      "loadErrorTitle": "Error",
+      "loadErrorBody": "Nabigong i-load ang post.",
+      "likeErrorBody": "Nabigong i-like ang post."
+    }
+  },
+  "speciesGallery": {
+    "title": "Gallery",
+    "noResults": "Walang nakitang resulta",
+    "loadMore": "Mag-load pa",
+    "error": "Nabigong i-load ang gallery"
+  },
+  "speciesLanding": {
+    "title": "Mga Detalye ng Species",
+    "scientificName": "Pangalan ng Siyentipiko",
+    "commonName": "Karaniwang Pangalan",
+    "description": "Paglalarawan",
+    "habitat": "Habitat",
+    "diet": "Diet",
+    "lifespan": "habang-buhay",
+    "conservationStatus": "Katayuan ng Conservation",
+    "addToFavorites": "Idagdag sa Mga Paborito",
+    "removeFromFavorites": "Alisin sa Mga Paborito",
+    "share": "Ibahagi",
+    "viewMore": "Tingnan ang Higit Pa",
+    "error": "Nabigong i-load ang mga detalye ng species"
+  },
+  "manualPayment": {
+    "title": "Manu-manong Pagbabayad",
+    "uploadProof": "Mag-upload ng Patunay ng Pagbabayad",
+    "selectImage": "Piliin ang Imahe",
+    "takePhoto": "Kumuha ng Larawan",
+    "chooseFromGallery": "Pumili mula sa Gallery",
+    "uploadImage": "Mag-upload ng Larawan",
+    "uploading": "Ina-upload...",
+    "submit": "Isumite ang Pagbabayad",
+    "submitting": "Isinusumite...",
+    "successTitle": "Tagumpay",
+    "successMessage": "Matagumpay na naisumite ang pagbabayad. Ive-verify namin ito sa ilang sandali.",
+    "errorTitle": "Error",
+    "errorMessage": "Nabigong magsumite ng bayad. Pakisubukang muli.",
+    "selectImageFirst": "Mangyaring pumili muna ng larawan"
+  },
+  "scanStats": {
+    "title": "I-scan ang Istatistika",
+    "totalScans": "Kabuuang mga Pag-scan",
+    "thisWeek": "Ngayong Linggo",
+    "thisMonth": "Ngayong Buwan",
+    "plants": "Mga halaman",
+    "animals": "Mga hayop",
+    "noData": "Wala pang available na data sa pag-scan"
+  }
+}

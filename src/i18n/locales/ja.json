@@ -1,0 +1,895 @@
+{
+  "common": {
+    "welcome": "いらっしゃいませ",
+    "guest": "ゲスト",
+    "loading": "読み込み中...",
+    "error": "エラー",
+    "success": "成功",
+    "cancel": "キャンセル",
+    "ok": "わかりました",
+    "save": "保存",
+    "back": "戻る",
+    "edit": "編集",
+    "username": "ユーザー名",
+    "and": "そして"
+  },
+  "login": {
+    "title": "リーフネスト",
+    "signInWithGoogle": "Googleでサインイン",
+    "signInAsGuest": "ゲストとしてサインインする",
+    "signInFailed": "サインインに失敗しました",
+    "googleAuthError": "Google認証エラー",
+    "unexpectedError": "予期しないエラー",
+    "unknownError": "不明なエラー",
+    "termsText": "サインアップすると、以下の内容を読んで同意したことになります。",
+    "termsOfUse": "利用規約",
+    "privacyPolicy": "プライバシーポリシー",
+    "cookiesPolicy": "クッキーポリシー",
+    "signIn": "サインイン",
+    "welcomeTitle": "リーフネストへようこそ",
+    "welcomeSubtitle": "自然の美しさを発見する",
+    "signInWithEmailButton": "電子メールでサインインする",
+    "dividerOr": "または",
+    "continueAsGuest": "ゲストとして続行",
+    "continueAgreement": "続行すると、次のことに同意したことになります"
+  },
+  "home": {
+    "welcomeGuest": "ようこそ、ゲストさん",
+    "welcomeUser": "ようこそ、{{name}}",
+    "guestModeSubtitle": "ゲストモードになっています。サインインしてすべての機能のロックを解除します。",
+    "welcomeBackSubtitle": "また会えて嬉しいです!",
+    "scanPlantsTitle": "植物を即座にスキャン",
+    "scanPlantsSubtitle": "指を向けて撮影し、数秒で植物を識別します。",
+    "scanAnimalsTitle": "動物を瞬時にスキャン",
+    "scanAnimalsSubtitle": "数秒で動物を識別します。",
+    "learnNatureTitle": "自然について学ぶ",
+    "learnNatureSubtitle": "テキスト読み上げと簡単な事実を使用して、さらに多くのことを発見します。",
+    "scanningStats": "スキャン統計",
+    "plantsScanned": "スキャンされた植物",
+    "animalsIdentified": "確認された動物",
+    "dailyDiscovery": "日々の発見",
+    "dailyDiscoverySubtitle": "毎日何か新しいことを学びましょう",
+    "plantOfTheDay": "今日の植物",
+    "animalOfTheDay": "今日の動物",
+    "scientificName": "学名",
+    "habitat": "生息地",
+    "diet": "ダイエット",
+    "lifespan": "寿命",
+    "weight": "重さ",
+    "cycle": "ライフサイクル",
+    "watering": "水やり",
+    "sunlight": "日光",
+    "loadingDaily": "毎日のコンテンツを読み込み中...",
+    "errorLoadingDaily": "毎日のコンテンツを読み込めません",
+    "pullToRefresh": "プルして更新",
+    "offlineMode": "オフラインコンテンツ",
+    "funFact": "楽しい事実",
+    "newFact": "新事実",
+    "trendingPlants": "トレンドの植物",
+    "trendingAnimals": "トレンドの動物",
+    "alerts": {
+      "authRequiredTitle": "認証が必要です",
+      "authRequiredBody": "PDFをダウンロードするにはサインインしてください。",
+      "pdfSuccessTitle": "成功",
+      "pdfSuccessBody": "PDF が生成され、電子メールに送信されました。",
+      "pdfErrorTitle": "エラー",
+      "pdfErrorBody": "PDFの生成に失敗しました。もう一度試してください。",
+      "signInRequiredTitle": "サインインが必要です",
+      "signInLikeBody": "投稿に「いいね！」をするにはサインインしてください。",
+      "signInCommentBody": "コメントするにはサインインしてください。",
+      "downloadsUnavailableTitle": "ダウンロードは利用できません",
+      "downloadsUnavailableBody": "種情報をダウンロードするには、無料のアカウントにサインアップしてください。",
+      "downloadLimitCheckErrorBody": "ダウンロード制限の確認に失敗しました。もう一度試してください。"
+    },
+    "pdf": {
+      "defaultCommon": "未知",
+      "defaultScientific": "未知",
+      "defaultRank": "ランク不明",
+      "defaultTaxon": "未知",
+      "noDescription": "説明はありません。",
+      "infoUnavailable": "情報がありません。",
+      "notEvaluated": "評価されていない"
+    },
+    "trending": {
+      "title": "トレンドの種"
+    },
+    "emptyState": {
+      "title": "コミュニティへようこそ",
+      "subtitle": "自然を探索し、発見したことを共有しましょう。",
+      "cta": "初めての種をスキャンする"
+    },
+    "feed": {
+      "likesCount": "{{count}} いいね",
+      "likesCount_plural": "{{count}} 件のいいね",
+      "beFirst": "最初に「いいね」を押しましょう",
+      "showMore": "もっと見る",
+      "showLess": "表示を少なくする",
+      "viewComments": "{{count}} のコメントをすべて表示",
+      "viewComments_plural": "{{count}} のコメントをすべて表示",
+      "unknownUser": "匿名",
+      "unknownSpecies": "未知の種",
+      "likeError": "投稿に「いいね！」を付けることができませんでした。"
+    },
+    "relativeTime": {
+      "justNow": "ちょうど今",
+      "minutes": "{{count}}分前",
+      "hours": "{{count}}時間前",
+      "days": "{{count}}日前"
+    }
+  },
+  "settings": {
+    "title": "設定",
+    "account": "アカウント",
+    "guestMode": "ゲストモード",
+    "signedIn": "サインインしました",
+    "username": "ユーザー名",
+    "editUsername": "ユーザー名の編集",
+    "currentUsername": "現在のユーザー名",
+    "newUsername": "新しいユーザー名",
+    "usernameUpdated": "ユーザー名が正常に更新されました。",
+    "usernameUpdateError": "ユーザー名の更新に失敗しました",
+    "usernameUpdateFailed": "ユーザー名の更新に失敗しました",
+    "usernameRequired": "ユーザー名は必須です",
+    "usernameTooShort": "ユーザー名は少なくとも 3 文字である必要があります",
+    "usernameTooLong": "ユーザー名は 20 文字以下である必要があります",
+    "usernameInvalidChars": "ユーザー名には文字、数字、アンダースコア、ハイフンのみを含めることができます",
+    "language": "言語",
+    "selectLanguage": "言語の選択",
+    "logout": "ログアウト",
+    "logoutError": "ログアウトに失敗しました。",
+    "about": "について",
+    "appName": "リーフネスト",
+    "yourPlan": "あなたの計画",
+    "leafNestFree": "リーフネスト無料",
+    "help": "ヘルプ",
+    "sendFeedback": "フィードバックを送信する",
+    "faq": "よくある質問",
+    "termsOfUse": "利用規約",
+    "generalSection": "一般的な",
+    "supportSection": "サポート",
+    "legalSection": "法律上の"
+  },
+  "profile": {
+    "title": "プロフィール",
+    "editUsername": "ユーザー名の編集",
+    "signOut": "サインアウト",
+    "leaveAccount": "アカウントを離れる",
+    "signIn": "サインイン",
+    "accessFullFeatures": "すべての機能にアクセスする",
+    "createAccount": "アカウントを作成する",
+    "joinLeafNest": "リーフネストに参加する",
+    "guestUser": "ゲストユーザー",
+    "statsTitle": "スキャン統計",
+    "viewAll": "すべて見る",
+    "guestPromptTitle": "進捗状況を追跡する",
+    "guestPromptText": "サインインしてスキャンを追跡し、種を発見し、実績のロックを解除します。",
+    "badgeNew": "新しい",
+    "editPlaceholder": "ユーザー名を入力してください",
+    "stats": {
+      "total": "合計スキャン数",
+      "week": "今週",
+      "species": "種"
+    },
+    "sections": {
+      "account": "アカウント設定"
+    },
+    "menu": {
+      "planTitle": "あなたの計画",
+      "planSubtitle": "リーフネスト無料",
+      "notificationsTitle": "通知",
+      "notificationsSubtitle": "通知を管理する",
+      "passwordTitle": "パスワードをお忘れですか",
+      "passwordSubtitle": "パスワードをリセットする",
+      "signOutTitle": "サインアウト",
+      "signOutSubtitle": "アカウントからサインアウトする",
+      "signInTitle": "サインイン",
+      "signInSubtitle": "すべての機能にアクセスする",
+      "createAccountTitle": "アカウントを作成する",
+      "createAccountSubtitle": "今すぐリーフネストに参加してください"
+    },
+    "alerts": {
+      "syncSuccess": "同期された {{count}} スキャンが保留中です",
+      "syncSuccess_plural": "同期された{{count}}個の保留中のスキャン",
+      "usernameUpdated": "ユーザー名が正常に更新されました。",
+      "usernameUpdateError": "ユーザー名の更新に失敗しました。",
+      "signOutTitle": "サインアウト",
+      "signOutMessage": "サインアウトしてもよろしいですか?",
+      "signOutConfirm": "サインアウト",
+      "signOutError": "サインアウトに失敗しました。もう一度試してください。"
+    }
+  },
+  "languages": {
+    "ar": "アラビア語",
+    "zh-CN": "中国語（簡体字）",
+    "zh-TW": "中国語（繁体字）",
+    "hr": "クロアチア語",
+    "cs": "チェコ語",
+    "da": "デンマーク語",
+    "nl": "オランダ語",
+    "en": "英語",
+    "fi": "フィンランド語",
+    "fr": "フランス語",
+    "de": "ドイツ語",
+    "el": "ギリシャ語",
+    "hi": "ヒンディー語",
+    "hu": "ハンガリー語",
+    "id": "インドネシア語",
+    "it": "イタリア語",
+    "ja": "日本語",
+    "ko": "韓国人",
+    "ms": "マレー語",
+    "no": "ノルウェー語",
+    "fa": "ペルシア語",
+    "pl": "研磨",
+    "pt": "ポルトガル語",
+    "ro": "ルーマニア語",
+    "ru": "ロシア",
+    "sk": "スロバキア語",
+    "es": "スペイン語",
+    "sv": "スウェーデン語",
+    "tl": "タガログ語",
+    "th": "タイ語",
+    "tr": "トルコ語",
+    "uk": "ウクライナ語",
+    "vi": "ベトナム語"
+  },
+  "tabs": {
+    "home": "家",
+    "scan": "スキャン",
+    "history": "歴史",
+    "settings": "設定"
+  },
+  "animals": {
+    "title": "今日の動物たち",
+    "lion": {
+      "name": "ライオン",
+      "scientificName": "パンテーラ レオ",
+      "description": "ライオンは、アフリカとインドに生息するパンテーラ属の大型のネコ科動物です。筋肉質で胸の広い体、短く丸い頭、丸い耳、そして尾の端には毛深い房が付いています。",
+      "habitat": "サバンナ、草原、開けた森林地帯",
+      "diet": "肉食 - 主にシマウマ、ヌー、バッファローなどの大型哺乳類",
+      "lifespan": "野生では10～14年、飼育下では最長20年",
+      "conservationStatus": "脆弱"
+    },
+    "elephant": {
+      "name": "象",
+      "scientificName": "ゾウ科",
+      "description": "ゾウは現存する最大の陸上動物であり、長い口吻 (胴体)、円柱状の脚、側頭腺と幅広で平らな耳を備えた巨大な頭部が特徴です。",
+      "habitat": "サバンナ、森林、砂漠、湿地",
+      "diet": "草食性 - 草、葉、樹皮、果物、土壌",
+      "lifespan": "60～70年",
+      "conservationStatus": "絶滅危惧種"
+    },
+    "panda": {
+      "name": "ジャイアントパンダ",
+      "scientificName": "アイルロポダ メラノルーカ",
+      "description": "ジャイアントパンダは中国中南部に生息するクマです。大胆な白黒の毛並みと丸っこい体が特徴です。",
+      "habitat": "竹林が鬱蒼と茂る中国中部の山脈",
+      "diet": "主に竹（食事の99％）、時々小動物",
+      "lifespan": "野生下では20年、飼育下では最長30年",
+      "conservationStatus": "脆弱"
+    },
+    "loading": "動物を読み込んでいます...",
+    "errorLoading": "動物の読み込みに失敗しました",
+    "addToFavorites": "お気に入りに追加",
+    "removeFromFavorites": "お気に入りから削除",
+    "learnMore": "もっと詳しく知る",
+    "share": "動物をシェアする"
+  },
+  "signup": {
+    "title": "アカウントを作成する",
+    "username": "ユーザー名",
+    "email": "電子メール",
+    "password": "パスワード",
+    "confirmPassword": "パスワードを認証する",
+    "register": "登録する",
+    "alreadyHaveAccount": "すでにアカウントをお持ちですか?サインイン",
+    "passwordsDontMatch": "パスワードが一致しません!",
+    "fillAllFields": "すべてのフィールドに入力してください。",
+    "verificationEmailSent": "確認メールがあなたのメールアドレスに送信されました。",
+    "emailAlreadyInUse": "メールアドレスはすでに使用されています。",
+    "invalidEmail": "電子メール アドレスが無効です。",
+    "subtitle": "自然探索に参加しましょう",
+    "processing": "処理...",
+    "dividerOr": "または",
+    "alreadyMember": "すでに会員ですか?",
+    "signInLink": "サインイン"
+  },
+  "signin": {
+    "title": "サインイン",
+    "email": "電子メール",
+    "password": "パスワード",
+    "signIn": "サインイン",
+    "signInWithGoogle": "Googleでサインイン",
+    "dontHaveAccount": "アカウントをお持ちでない場合は、サインアップ",
+    "fillAllFields": "すべてのフィールドに入力してください。",
+    "signInSuccessful": "サインインに成功しました",
+    "welcomeBack": "おかえり",
+    "userNotFound": "このメールを使用したユーザーは見つかりませんでした。",
+    "wrongPassword": "パスワードが間違っています。",
+    "invalidEmail": "メールアドレスが無効です。",
+    "subtitle": "サインインして旅を続けましょう",
+    "forgotPasswordLink": "パスワードをお忘れですか？",
+    "dividerOr": "または",
+    "noAccountPrompt": "アカウントをお持ちでない場合は、",
+    "signUpLink": "サインアップ"
+  },
+  "scan": {
+    "loadingCamera": "カメラを読み込んでいます...",
+    "needPermission": "カメラを見せるにはあなたの許可が必要です",
+    "grantPermission": "許可を与える",
+    "preparingCamera": "カメラを準備しています..."
+  },
+  "favorites": {
+    "title": "お気に入り",
+    "all": "全て",
+    "plants": "植物",
+    "animals": "動物",
+    "removeFavorite": "お気に入りを削除",
+    "remove": "取り除く",
+    "cancel": "キャンセル",
+    "removed": "削除されました",
+    "removedMessage": "はお気に入りから削除されました。",
+    "error": "エラー",
+    "failedToRemove": "お気に入りから削除できませんでした。",
+    "clearFavorites": "お気に入りをクリア",
+    "removeAllFavorites": "お気に入りをすべて削除しますか?",
+    "removeAll": "すべて削除する",
+    "failedToClear": "お気に入りのクリアに失敗しました。",
+    "plant": "植物",
+    "animal": "動物",
+    "noFavoritesYet": "まだお気に入りはありません",
+    "addFromDaily": "その日の植物や動物からいくつか追加します。"
+  },
+  "about": {
+    "title": "について",
+    "developedBy": "LeafNest チームによって開発および設計されました",
+    "teamTitle": "リーフネストチーム",
+    "specialThanks": "特別な感謝の気持ち",
+    "mentor": "ジョシュア・R・ラサック氏",
+    "credits": "元々は、Pinamalayan Maritime Foundation And Technological College INC. (PMFTCI) および School of Computer Studies の支援を受けて LeafNest チームによって作成されました。",
+    "privacyPolicy": "プライバシーポリシー",
+    "version": "バージョン0.0.1 (1)",
+    "help": "サポートが必要な場合:leafnest.capstone@gmail.com",
+    "tagline": "植物と動物の識別",
+    "institutionalSupport": "制度的サポート",
+    "mentorRole": "プロジェクトのメンター兼アドバイザー"
+  },
+  "plan": {
+    "title": "予定",
+    "upgradeTitle": "プレミアムにアップグレード",
+    "upgradeSubtitle": "すべての機能のロックを解除して、アプリを最大限に活用してください。",
+    "free": "無料",
+    "freePrice": "₱0/月",
+    "freeFeature1": "限定された植物と動物をスキャンする",
+    "freeFeature2": "基本的な日常の発見",
+    "freeFeature3": "履歴にオフラインでアクセスできない",
+    "freeFeature4": "広告が含まれています",
+    "premium": "プレミアム",
+    "premiumPrice": "₱129.00 / 月",
+    "premiumFeature1": "無制限のスキャン",
+    "premiumFeature2": "毎日の特別な発見",
+    "premiumFeature3": "履歴へのオフラインアクセス",
+    "premiumFeature4": "広告なしのエクスペリエンス",
+    "subscribeNow": "今すぐ購読する",
+    "selectedPlan": "{{plan}} プランを選択しました。"
+  },
+  "legal": {
+    "cookies": {
+      "title": "クッキーポリシー",
+      "subtitle": "お客様のエクスペリエンスを向上させるための Cookie の使用方法",
+      "effectiveDate": "発効日: 2025 年 7 月 1 日",
+      "intro": "この Cookie ポリシーでは、お客様が当社のアプリにアクセスしてその機能を使用する際のエクスペリエンスを向上させるために、当社が Cookie を使用する方法について説明します。このアプリを使用すると、このポリシーに記載されている Cookie の使用に同意したことになります。",
+      "sections": [
+        {
+          "title": "クッキーとは何ですか?",
+          "content": "Cookie は、Web サイトにアクセスしたりアプリを使用したりするときにデバイスに保存される小さなテキスト ファイルです。これらは、お客様が当社のサービスとどのようにやり取りするかを当社が理解するのに役立ち、より優れた、よりパーソナライズされたエクスペリエンスを提供できるようになります。"
+        },
+        {
+          "title": "クッキーの使用方法",
+          "content": "当社はいくつかの重要な目的で Cookie を使用します。",
+          "list": [
+            "コンテンツと広告をパーソナライズするため",
+            "トラフィックパターンを分析し、ユーザーエクスペリエンスを向上させるため",
+            "アプリの特定の機能を有効にするため",
+            "好みや設定を記憶するには",
+            "アカウントへの安全なアクセスを提供するため"
+          ]
+        },
+        {
+          "title": "当社が使用する Cookie の種類",
+          "content": "お客様のエクスペリエンスを向上させるために、さまざまな種類の Cookie を使用します。",
+          "list": [
+            "必須 Cookie: アプリの基本的な機能に必要です",
+            "パフォーマンス Cookie: アプリの使用方法を理解するのに役立ちます",
+            "ファンクショナル Cookie: 設定と選択を記憶します",
+            "分析 Cookie: アプリの使用パターンに関する洞察を提供します"
+          ]
+        },
+        {
+          "title": "Cookieの管理",
+          "content": "デバイスの設定を通じて Cookie を制御および管理できます。ただし、特定の Cookie を無効にするとエクスペリエンスに影響が生じ、アプリの機能が制限される可能性があることに注意してください。"
+        },
+        {
+          "title": "クッキーの有効期間",
+          "content": "一部の Cookie は一時的なもの (セッション Cookie) であり、アプリを閉じると削除されます。他のものは、セッション間で設定を記憶するために、一定期間デバイス上に残ります。"
+        },
+        {
+          "title": "このポリシーの変更",
+          "content": "当社は、技術または法的要件の変更を反映するために、この Cookie ポリシーを随時更新することがあります。変更があった場合は、更新日とともにこのページに掲載されます。"
+        },
+        {
+          "title": "お問い合わせ",
+          "content": "この Cookie ポリシーに関してご質問、懸念事項、フィードバックがある場合は、leafnest.capstone@gmail.com までご連絡ください。"
+        }
+      ],
+      "footerTitle": "あなたのプライバシーは重要です",
+      "footerText": "当社は Cookie の使用方法について透明性を保つことに取り組んでいます。アプリを継続的に使用することは、このポリシーに同意したことを意味します。",
+      "copyright": "© 2025 リーフネスト。無断転載を禁じます。",
+      "lastUpdated": "最終更新日: 2025 年 7 月 1 日"
+    },
+    "privacy": {
+      "title": "プライバシーポリシー",
+      "subtitle": "私たちにとってあなたのプライバシーは重要です",
+      "effectiveDate": "発効日: 2025 年 7 月 1 日",
+      "intro": "LeafNest では、お客様のプライバシーを保護し、個人情報のセキュリティを確保することに尽力しています。",
+      "sections": [
+        {
+          "title": "当社が収集する情報",
+          "content": "当社は、お客様がアカウントを作成するとき、写真をアップロードするとき、またはサポートのために当社に連絡するときなど、お客様が当社に直接提供する情報を収集します。これには、お客様の名前、電子メール アドレス、およびお客様が提供することを選択したその他の情報が含まれる場合があります。"
+        },
+        {
+          "title": "お客様の情報の使用方法",
+          "content": "当社は収集した情報を使用して、サービスの提供、維持、改善、お客様とのコミュニケーション、および新機能の開発を行います。当社はお客様の個人情報を第三者に販売しません。"
+        },
+        {
+          "title": "データセキュリティ",
+          "content": "当社は、お客様の個人情報を不正なアクセス、改ざん、開示、または破壊から保護するために、適切な技術的および組織的対策を実施します。"
+        },
+        {
+          "title": "あなたの権利",
+          "content": "あなたには、自分の個人情報にアクセス、更新、または削除する権利があります。これは、アカウント設定を通じて行うか、当社に直接連絡することで行うことができます。"
+        },
+        {
+          "title": "サードパーティのサービス",
+          "content": "当社のアプリには、サードパーティの Web サイトやサービスへのリンクが含まれている場合があります。当社は、彼らのプライバシー慣行については責任を負いません。プライバシー ポリシーを確認することをお勧めします。"
+        },
+        {
+          "title": "プライバシーポリシーの変更",
+          "content": "当社は、このプライバシー ポリシーをいつでも更新する権利を留保します。変更内容は、最新の発効日とともにこのページに掲載されます。継続して使用すると、変更を承諾したことになります。"
+        },
+        {
+          "title": "お問い合わせ",
+          "content": "このプライバシー ポリシーまたは当社のプライバシー慣行についてご質問がある場合は、privacy@leafnest.com までお問い合わせください。"
+        }
+      ],
+      "footerTitle": "私たちはあなたのことを大切にしています",
+      "footerText": "あなたの信頼は私たちにとって重要です。当社は透明性のあるデータ慣行とプライバシーの権利に取り組んでいます。",
+      "copyright": "© 2025 リーフネスト。無断転載を禁じます。",
+      "lastUpdated": "最終更新日: 2025 年 7 月 1 日"
+    },
+    "terms": {
+      "title": "利用規約",
+      "subtitle": "ご使用前に必ずお読みください",
+      "effectiveDate": "発効日: 2025 年 7 月 1 日",
+      "intro": "これらの利用規約は、LeafNest アプリとサービスの使用に適用されます。当社のアプリを使用すると、これらの利用規約に同意したものとみなされます。",
+      "sections": [
+        {
+          "title": "規約への同意",
+          "content": "LeafNest アプリにアクセスまたは使用すると、これらの利用規約に拘束されることに同意したことになります。これらの規約に同意しない場合は、アプリを使用しないでください。"
+        },
+        {
+          "title": "ユーザーの責任",
+          "content": "あなたは、合法的な目的にのみ、他人の権利を侵害しない方法でアプリを使用することに同意します。あなたには、自分のアカウント情報の機密性を維持する責任があります。"
+        },
+        {
+          "title": "知的財産",
+          "content": "アプリ内のすべてのコンテンツ、商標、ロゴ、および知的財産は、LeafNest が所有するか、LeafNest にライセンスされています。当社の知的財産を無断で使用することは固く禁じられています。"
+        },
+        {
+          "title": "プライバシーとデータ収集",
+          "content": "当社は、プライバシー ポリシーに記載されているとおりに個人情報を収集および処理します。当社のアプリを使用することにより、当社のデータ収集、保存、および処理の慣行に同意したものとみなされます。"
+        },
+        {
+          "title": "責任の制限",
+          "content": "LeafNest は、アプリまたはそのサービスの使用から生じるいかなる損害、損失、傷害についても責任を負いません。アプリはご自身のリスクと裁量で使用してください。"
+        },
+        {
+          "title": "規約の変更",
+          "content": "当社は、本利用規約をいつでも更新する権利を留保します。変更があった場合は、最新の発効日とともにこのページに掲載されます。継続して使用すると、変更を受け入れたとみなされます。"
+        },
+        {
+          "title": "お問い合わせ",
+          "content": "これらの利用規約に関してご質問、懸念事項、フィードバックがある場合は、leafnest.capstone@gmail.com までご連絡ください。"
+        }
+      ],
+      "footerTitle": "ありがとう",
+      "footerText": "利用規約をご覧いただきありがとうございます。お客様の信頼とコンプライアンスは、すべての人にとってより良いエクスペリエンスを生み出すのに役立ちます。",
+      "copyright": "© 2025 リーフネスト。無断転載を禁じます。",
+      "lastUpdated": "最終更新日: 2025 年 7 月 1 日"
+    }
+  },
+  "faq": {
+    "title": "ヘルプとよくある質問",
+    "subtitle": "よくある質問への回答を見つける",
+    "categories": [
+      {
+        "title": "はじめる",
+        "items": [
+          {
+            "question": "リーフネストとは何ですか？",
+            "answer": "LeafNest は、AI テクノロジーを使用して植物や動物を識別し、自然に関する知識を提供する植物識別および情報アプリです。"
+          },
+          {
+            "question": "どうやって始めればいいですか?",
+            "answer": "アプリを開き、スキャン アイコンをタップし、植物または動物にポイントします。 AIがそれを識別し、その種に関する詳細な情報を提供します。"
+          }
+        ]
+      },
+      {
+        "title": "スキャナーを使用する",
+        "items": [
+          {
+            "question": "種をスキャンするにはどうすればよいですか?",
+            "answer": "ホーム画面でスキャン アイコンをタップし、カメラを種に向けて、鮮明な写真を撮影します。アプリが自動的に識別します。"
+          },
+          {
+            "question": "良いスキャンとは何でしょうか?",
+            "answer": "最良の結果を得るために、適切な照明を確保し、特徴的な特徴に焦点を当て、カメラを安定させてください。"
+          },
+          {
+            "question": "フォトギャラリーからスキャンできますか?",
+            "answer": "はい。スキャナー画面でギャラリー オプションを選択すると、ギャラリーから既存の写真をアップロードできます。"
+          }
+        ]
+      },
+      {
+        "title": "精度と機能",
+        "items": [
+          {
+            "question": "識別はどの程度正確ですか?",
+            "answer": "LeafNest は高度な機械学習モデルを使用します。精度は照明や画質によって異なりますが、通常は 90% を超えます。"
+          },
+          {
+            "question": "お気に入りの植物を保存できますか?",
+            "answer": "はい。識別された種のハートのアイコンをタップしてお気に入りに追加し、後ですぐにアクセスできるようにします。"
+          }
+        ]
+      },
+      {
+        "title": "サポートとヘルプ",
+        "items": [
+          {
+            "question": "サポートに連絡するにはどうすればよいですか?",
+            "answer": "[設定] メニューを開いて [ヘルプとサポート] を選択するか、leafnest.capstone@gmail.com までメールでお問い合わせください。"
+          }
+        ]
+      }
+    ]
+  },
+  "help": {
+    "title": "ヘルプとサポート",
+    "subtitle": "AI を使用して植物や動物をスキャンするためのヒントと、さらに詳しいサポートが得られる場所。",
+    "quickStart": {
+      "title": "クイックスタート",
+      "bullets": [
+        "ホーム画面から「スキャン」ボタンをタップします。",
+        "植物や動物をフレームの中央に配置します。",
+        "しっかりと構えて、鮮明な写真を撮ります。"
+      ],
+      "cta": "スキャナーを開く"
+    },
+    "bestResults": {
+      "title": "より良い結果を得る方法",
+      "bullets": [
+        "適切な照明を使用し、強い逆光を避けてください。",
+        "特徴的な細部に焦点を当てて、フレームを被写体で埋め尽くします。",
+        "葉、花、樹皮、横顔などの複数のアングルを試してください。"
+      ]
+    },
+    "troubleshooting": {
+      "title": "トラブルシューティング",
+      "bullets": [
+        "毎日のハイライトは同じように見えますか？深夜 (フィリピン時間) 以降にプルして更新するか、アプリを再度開きます。",
+        "インターネットがありませんか?画像認識にはネットワーク接続が必要なため、接続を確認してください。",
+        "精度が低い？より良い照明を使用して、より鮮明で近づいた写真を撮影します。"
+      ]
+    },
+    "links": {
+      "faq": "よくある質問",
+      "feedback": "フィードバックを送信する",
+      "about": "リーフネストについて",
+      "privacy": "プライバシーポリシー",
+      "terms": "利用規約",
+      "contact": "サポートに連絡する"
+    },
+    "alerts": {
+      "noEmailTitle": "メールアプリが開けない",
+      "noEmailBody": "{{email}}までメールでお問い合わせください。"
+    }
+  },
+  "feedback": {
+    "title": "フィードバックを送信する",
+    "subtitle": "うまく機能している点、または改善の余地がある点を教えてください。私たちはすべてのメッセージを読みます。",
+    "topicLabel": "トピック",
+    "topics": {
+      "bug": "バグを報告する",
+      "idea": "機能リクエスト",
+      "ux": "デザイン/UX",
+      "content": "種類・内容",
+      "account": "アカウント/ログイン",
+      "other": "他の"
+    },
+    "subjectLabel": "主題",
+    "subjectPlaceholder": "短い概要 (例: スキャナーが葉をカエデと誤ってラベル付けする)",
+    "messageLabel": "メッセージ",
+    "messagePlaceholder": "何が起こったのか、再現手順、期待されることを説明します。",
+    "emailLabel": "あなたのメールアドレス (オプション)",
+    "emailPlaceholder": "必要に応じてこちらから返信させていただきます",
+    "includeDiagnostics": "診断を含める",
+    "diagnosticsHint": "問題のデバッグに役立ちます (プラットフォームと OS のみ)。",
+    "submit": "フィードバックを送信する",
+    "submitting": "送信中...",
+    "footerText": "または、{{email}} まで直接メールでお問い合わせください。",
+    "alerts": {
+      "missingInfoTitle": "不足している情報",
+      "missingInfoMessage": "件名とメッセージを追加してください。",
+      "invalidEmailTitle": "無効な電子メール",
+      "invalidEmailMessage": "有効な電子メール アドレスを入力するか、空白のままにしてください。",
+      "noEmailAppTitle": "フィードバックを送信できません",
+      "noEmailAppMessage": "後でもう一度お試しいただくか、{{email}} までメールでお問い合わせください。",
+      "successTitle": "フィードバックが送信されました",
+      "successMessage": "フィードバックをお寄せいただきありがとうございます。すぐにレビューします。",
+      "genericErrorTitle": "何か問題が発生しました",
+      "genericErrorMessage": "後でもう一度お試しいただくか、{{email}} までメールでお問い合わせください。"
+    }
+  },
+  "comments": {
+    "title": "コメント",
+    "noComments": "まだコメントはありません",
+    "beFirstToComment": "最初にコメントしてみませんか!",
+    "addComment": "コメントを追加...",
+    "deleteComment": "コメントの削除",
+    "deleteConfirm": "このコメントを削除してもよろしいですか?",
+    "delete": "消去",
+    "failedToDelete": "コメントの削除に失敗しました",
+    "failedToLike": "コメントに「いいね」を付けることができませんでした",
+    "loginRequired": "ログインが必要です",
+    "loginToComment": "コメントするにはログインする必要があります",
+    "loginToLike": "コメントに「いいね！」をするにはログインする必要があります",
+    "justNow": "ちょうど今"
+  },
+  "notification": {
+    "title": "通知",
+    "noNotifications": "まだ通知はありません",
+    "markAsRead": "既読としてマークする",
+    "markAllAsRead": "すべて既読としてマークする",
+    "delete": "消去",
+    "deleteAll": "すべて削除"
+  },
+  "commentsModal": {
+    "title": "コメント",
+    "inputPlaceholder": "コメントを追加...",
+    "empty": {
+      "title": "まだコメントはありません",
+      "subtitle": "最初にコメントしてみませんか!"
+    },
+    "actions": {
+      "cancel": "キャンセル",
+      "delete": "消去"
+    },
+    "alerts": {
+      "loadErrorTitle": "エラー",
+      "loadErrorBody": "コメントの読み込みに失敗しました。",
+      "loginRequiredTitle": "ログインが必要です",
+      "loginRequiredCommentBody": "コメントするにはログインする必要があります。",
+      "loginRequiredLikeBody": "コメントに「いいね！」をするにはログインする必要があります。",
+      "addErrorTitle": "エラー",
+      "addErrorBody": "コメントの追加に失敗しました。",
+      "likeErrorTitle": "エラー",
+      "likeErrorBody": "コメントに「いいね」を付けることができませんでした。",
+      "deleteTitle": "コメントの削除",
+      "deleteConfirmBody": "このコメントを削除してもよろしいですか?",
+      "deleteErrorTitle": "エラー",
+      "deleteErrorBody": "コメントの削除に失敗しました。"
+    }
+  },
+  "premiumGate": {
+    "offline": {
+      "title": "オフラインアクセスが必要です",
+      "historySubtitle": "アクセス履歴をオフラインで購読する",
+      "historyDescription": "スキャン履歴へのオフライン アクセスはプレミアム機能です。アップグレードすると、いつでもどこでも履歴を表示できます。",
+      "favoritesSubtitle": "購読してお気に入りにオフラインでアクセスする",
+      "favoritesDescription": "お気に入りへのオフライン アクセスはプレミアム機能です。アップグレードすると、いつでもどこでもお気に入りを表示できます。"
+    },
+    "limits": {
+      "scanTitle": "スキャン制限に達しました",
+      "scanSubtitle": "{{limit}} 件のスキャンをすべて使用しました",
+      "scanDescription": "無制限のスキャンとより多くの機能を利用するには、プレミアムにアップグレードしてください。",
+      "downloadTitle": "ダウンロード制限に達しました",
+      "downloadSubtitle": "{{limit}} 個のダウンロードをすべて使用しました",
+      "downloadDescription": "プレミアムにアップグレードすると無制限にダウンロードできます!"
+    },
+    "timer": {
+      "resetsInHours": "{{count}} 時間後にリセットされます",
+      "resetsInHours_plural": "{{count}} 時間後にリセットされます"
+    },
+    "usage": {
+      "scans": "スキャン:",
+      "downloads": "ダウンロード:"
+    },
+    "features": {
+      "title": "プレミアム特典:",
+      "offlineHistory": "オフライン履歴アクセス",
+      "offlineFavorites": "オフラインのお気に入りへのアクセス",
+      "unlimitedScans": "無制限のスキャン",
+      "unlimitedDownloads": "無制限のダウンロード"
+    },
+    "pricing": {
+      "amount": "{{amount}}",
+      "period": "{{days}}日間"
+    },
+    "actions": {
+      "upgrade": "プレミアムにアップグレード",
+      "later": "たぶん後で"
+    }
+  },
+  "manageNotifications": {
+    "title": "通知の管理",
+    "pushNotifications": "プッシュ通知",
+    "emailNotifications": "電子メール通知",
+    "likeNotifications": "いいね通知",
+    "commentNotifications": "コメント通知",
+    "followNotifications": "通知をフォローする",
+    "enabled": "有効",
+    "disabled": "無効",
+    "save": "設定の保存"
+  },
+  "history": {
+    "title": "歴史",
+    "loading": "履歴を読み込んでいます...",
+    "loadingMore": "さらに読み込み中...",
+    "signInRequiredTitle": "サインインが必要です",
+    "signInRequiredBody": "アカウントを作成するかサインインして、スキャン履歴を表示します。",
+    "selection": {
+      "selectedCount": "{{count}} が選択されました",
+      "deleteButton": "{{count}} レコードを削除",
+      "deleteButton_plural": "{{count}} レコードを削除"
+    },
+    "offlineBanner": {
+      "premium": "オフラインモード（プレミアム）",
+      "locked": "オフラインモードにはプレミアムが必要です"
+    },
+    "search": {
+      "placeholder": "名前で検索..."
+    },
+    "filters": {
+      "all": "全て",
+      "plants": "植物",
+      "animals": "動物"
+    },
+    "empty": {
+      "noHistoryTitle": "まだ履歴がありません",
+      "noHistoryBody": "動植物の識別を開始すると、種のスキャン履歴がここに表示されます。",
+      "noResultsTitle": "結果が見つかりませんでした",
+      "noResultsBody": "検索条件またはフィルタ条件に一致するレコードがありません。フィルターを調整してみてください。"
+    },
+    "actions": {
+      "signIn": "サインイン",
+      "delete": "消去",
+      "clearAll": "すべてクリア",
+      "clearFilters": "フィルターをクリアする"
+    },
+    "alerts": {
+      "visibilityNow": "スキャンは{{status}}になりました",
+      "visibilityUpdateFailed": "可視性を更新できませんでした。",
+      "visibilityNeedsSync": "このスキャンは最初に同期する必要があります。しばらくしてからもう一度お試しください。",
+      "visibilityOffline": "オフライン中は表示設定を変更できません。接続を確認してください。",
+      "visibilityNotSynced": "このスキャンはまだクラウドに同期されていません。同期が完了するまで待って、もう一度試してください。",
+      "visibilityPermissionDenied": "このスキャンを変更する権限がありません。",
+      "visibilityNetworkError": "ネットワークエラー。接続を確認して、もう一度試してください。",
+      "errorWithMessage": "エラー: {{message}}",
+      "deleteRecordTitle": "レコードの削除",
+      "deleteRecordMessage": "「{{name}}」を履歴から削除しますか?",
+      "deleteRecordSuccess": "記録が削除されました。",
+      "deleteRecordError": "レコードの削除に失敗しました。",
+      "deleteSelectedTitle": "選択したものを削除",
+      "deleteSelectedMessage": "{{count}} レコードを履歴から削除しますか?",
+      "deleteSelectedMessage_plural": "{{count}} レコードを履歴から削除しますか?",
+      "deleteSelectedSuccess": "{{count}} レコードが削除されました。",
+      "deleteSelectedSuccess_plural": "{{count}} レコードが削除されました。",
+      "deleteSelectedError": "選択したレコードの削除に失敗しました。",
+      "clearAllTitle": "すべての履歴をクリアする",
+      "clearAllMessage": "すべての履歴レコードを削除してもよろしいですか?この操作は元に戻すことができません。",
+      "clearAllSuccess": "すべての履歴がクリアされました。",
+      "clearAllError": "履歴のクリアに失敗しました。"
+    },
+    "visibility": {
+      "public": "公共",
+      "private": "プライベート"
+    },
+    "unknownSpecies": "未知の種",
+    "details": {
+      "commonName": "通称",
+      "scientificName": "学名",
+      "taxonomicRank": "分類上のランク",
+      "type": "タイプ",
+      "conservationStatus": "保存状況",
+      "timesScanned": "スキャン回数",
+      "timeCount": "{{count}}時間",
+      "timeCount_plural": "{{count}}回",
+      "globalAppScans": "グローバルアプリスキャン",
+      "scanCount": "{{count}} スキャン",
+      "scanCount_plural": "{{count}} 回のスキャン",
+      "scannedOn": "スキャンした日"
+    },
+    "premiumGate": {
+      "title": "オフライン モードにアクセスするために購読する",
+      "message": "履歴へのオフライン アクセスはプレミアム機能です。購読すると、オフライン時にスキャン履歴が表示されます。"
+    },
+    "noHistory": "まだ履歴がありません",
+    "startScanning": "スキャンを開始して履歴を構築します",
+    "delete": "消去",
+    "deleteAll": "すべて削除",
+    "deleteConfirm": "この項目を削除してもよろしいですか?",
+    "deleteAllConfirm": "すべての履歴を削除してもよろしいですか?",
+    "scannedOn": "{{date}} にスキャンされました"
+  },
+  "postDetail": {
+    "title": "役職",
+    "aboutLabel": "について",
+    "emptyTitle": "投稿が見つかりません",
+    "alerts": {
+      "postNotFoundTitle": "エラー",
+      "postNotFoundBody": "投稿が見つかりません。",
+      "loadErrorTitle": "エラー",
+      "loadErrorBody": "投稿の読み込みに失敗しました。",
+      "likeErrorBody": "投稿に「いいね！」を付けることができませんでした。"
+    }
+  },
+  "speciesGallery": {
+    "title": "ギャラリー",
+    "noResults": "結果が見つかりませんでした",
+    "loadMore": "さらにロードする",
+    "error": "ギャラリーの読み込みに失敗しました"
+  },
+  "speciesLanding": {
+    "title": "種の詳細",
+    "scientificName": "学名",
+    "commonName": "通称",
+    "description": "説明",
+    "habitat": "生息地",
+    "diet": "ダイエット",
+    "lifespan": "寿命",
+    "conservationStatus": "保存状況",
+    "addToFavorites": "お気に入りに追加",
+    "removeFromFavorites": "お気に入りから削除",
+    "share": "共有",
+    "viewMore": "もっと見る",
+    "error": "種の詳細をロードできませんでした"
+  },
+  "manualPayment": {
+    "title": "手動支払い",
+    "uploadProof": "支払い証明書をアップロードする",
+    "selectImage": "画像の選択",
+    "takePhoto": "写真を撮る",
+    "chooseFromGallery": "ギャラリーから選ぶ",
+    "uploadImage": "画像をアップロードする",
+    "uploading": "アップロード中...",
+    "submit": "支払いを送信する",
+    "submitting": "送信中...",
+    "successTitle": "成功",
+    "successMessage": "支払いは正常に送信されました。すぐに確認させていただきます。",
+    "errorTitle": "エラー",
+    "errorMessage": "支払いの送信に失敗しました。もう一度試してください。",
+    "selectImageFirst": "最初に画像を選択してください"
+  },
+  "scanStats": {
+    "title": "スキャン統計",
+    "totalScans": "合計スキャン数",
+    "thisWeek": "今週",
+    "thisMonth": "今月",
+    "plants": "植物",
+    "animals": "動物",
+    "noData": "スキャンデータはまだありません"
+  }
+}

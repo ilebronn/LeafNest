@@ -1,0 +1,895 @@
+{
+  "common": {
+    "welcome": "Velkomst",
+    "guest": "Gæst",
+    "loading": "Indlæser...",
+    "error": "Fejl",
+    "success": "Succes",
+    "cancel": "Ophæve",
+    "ok": "OK",
+    "save": "Spare",
+    "back": "Tilbage",
+    "edit": "Redigere",
+    "username": "Brugernavn",
+    "and": "og"
+  },
+  "login": {
+    "title": "LeafNest",
+    "signInWithGoogle": "Log ind med Google",
+    "signInAsGuest": "Log ind som gæst",
+    "signInFailed": "Login mislykkedes",
+    "googleAuthError": "Google Auth-fejl",
+    "unexpectedError": "Uventet fejl",
+    "unknownError": "Ukendt fejl",
+    "termsText": "Ved at tilmelde dig angiver du, at du har læst og anerkender",
+    "termsOfUse": "Vilkår for brug",
+    "privacyPolicy": "Privatlivspolitik",
+    "cookiesPolicy": "Cookies politik",
+    "signIn": "Log ind",
+    "welcomeTitle": "Velkommen til LeafNest",
+    "welcomeSubtitle": "Oplev naturens skønhed",
+    "signInWithEmailButton": "Log ind med e-mail",
+    "dividerOr": "eller",
+    "continueAsGuest": "Fortsæt som gæst",
+    "continueAgreement": "Ved at fortsætte accepterer du vores"
+  },
+  "home": {
+    "welcomeGuest": "Velkommen, gæst",
+    "welcomeUser": "Velkommen, {{name}}",
+    "guestModeSubtitle": "Du er i gæstetilstand. Log ind for at låse op for alle funktioner.",
+    "welcomeBackSubtitle": "Dejligt at se dig tilbage!",
+    "scanPlantsTitle": "Scan planter med det samme",
+    "scanPlantsSubtitle": "Peg, skyd og identificer flora på få sekunder.",
+    "scanAnimalsTitle": "Scan dyr med det samme",
+    "scanAnimalsSubtitle": "Identificer dyr på få sekunder.",
+    "learnNatureTitle": "Lær om naturen",
+    "learnNatureSubtitle": "Oplev mere med tekst-til-tale og hurtige fakta.",
+    "scanningStats": "Scanning af statistik",
+    "plantsScanned": "Planter scannede",
+    "animalsIdentified": "Identificerede dyr",
+    "dailyDiscovery": "Daglig opdagelse",
+    "dailyDiscoverySubtitle": "Lær noget nyt hver dag",
+    "plantOfTheDay": "Dagens plante",
+    "animalOfTheDay": "Dagens Dyr",
+    "scientificName": "videnskabeligt navn",
+    "habitat": "Habitat",
+    "diet": "Kost",
+    "lifespan": "Levetid",
+    "weight": "Vægt",
+    "cycle": "Livscyklus",
+    "watering": "Vanding",
+    "sunlight": "Sollys",
+    "loadingDaily": "Indlæser dagligt indhold...",
+    "errorLoadingDaily": "Kan ikke indlæse dagligt indhold",
+    "pullToRefresh": "Træk for at opdatere",
+    "offlineMode": "Offline indhold",
+    "funFact": "Sjov fakta",
+    "newFact": "Nyt faktum",
+    "trendingPlants": "Trendende planter",
+    "trendingAnimals": "Trendende dyr",
+    "alerts": {
+      "authRequiredTitle": "Godkendelse påkrævet",
+      "authRequiredBody": "Log venligst ind for at downloade PDF'en.",
+      "pdfSuccessTitle": "Succes",
+      "pdfSuccessBody": "PDF'en er blevet genereret og sendt til din e-mail.",
+      "pdfErrorTitle": "Fejl",
+      "pdfErrorBody": "Kunne ikke generere PDF. Prøv venligst igen.",
+      "signInRequiredTitle": "Log ind påkrævet",
+      "signInLikeBody": "Log venligst ind for at synes godt om opslag.",
+      "signInCommentBody": "Log venligst ind for at kommentere.",
+      "downloadsUnavailableTitle": "Downloads ikke tilgængelig",
+      "downloadsUnavailableBody": "Tilmeld dig en gratis konto for at downloade artinformation.",
+      "downloadLimitCheckErrorBody": "Kunne ikke kontrollere downloadgrænsen. Prøv venligst igen."
+    },
+    "pdf": {
+      "defaultCommon": "Ukendt",
+      "defaultScientific": "Ukendt",
+      "defaultRank": "Ukendt rang",
+      "defaultTaxon": "Ukendt",
+      "noDescription": "Ingen beskrivelse tilgængelig.",
+      "infoUnavailable": "Information ikke tilgængelig.",
+      "notEvaluated": "Ikke vurderet"
+    },
+    "trending": {
+      "title": "Trendende arter"
+    },
+    "emptyState": {
+      "title": "Velkommen til Fællesskabet",
+      "subtitle": "Begynd at udforske og dele dine naturopdagelser.",
+      "cta": "Scan din første art"
+    },
+    "feed": {
+      "likesCount": "{{count}} synes godt om",
+      "likesCount_plural": "{{count}} synes godt om",
+      "beFirst": "Vær den første til at kunne lide dette",
+      "showMore": "Vis mere",
+      "showLess": "Vis mindre",
+      "viewComments": "Se alle {{count}} kommentarer",
+      "viewComments_plural": "Se alle {{count}} kommentarer",
+      "unknownUser": "Anonym",
+      "unknownSpecies": "Ukendt art",
+      "likeError": "Opslaget kunne ikke likes."
+    },
+    "relativeTime": {
+      "justNow": "Lige nu",
+      "minutes": "{{count}}m siden",
+      "hours": "{{count}}t siden",
+      "days": "{{count}}d siden"
+    }
+  },
+  "settings": {
+    "title": "Indstillinger",
+    "account": "Konto",
+    "guestMode": "Gæstetilstand",
+    "signedIn": "Logget ind",
+    "username": "Brugernavn",
+    "editUsername": "Rediger brugernavn",
+    "currentUsername": "Nuværende brugernavn",
+    "newUsername": "Nyt brugernavn",
+    "usernameUpdated": "Brugernavnet blev opdateret!",
+    "usernameUpdateError": "Kunne ikke opdatere brugernavnet",
+    "usernameUpdateFailed": "Opdatering af brugernavn mislykkedes",
+    "usernameRequired": "Brugernavn er påkrævet",
+    "usernameTooShort": "Brugernavn skal være på mindst 3 tegn",
+    "usernameTooLong": "Brugernavnet skal være på 20 tegn eller mindre",
+    "usernameInvalidChars": "Brugernavn kan kun indeholde bogstaver, tal, understregninger og bindestreger",
+    "language": "Sprog",
+    "selectLanguage": "Vælg sprog",
+    "logout": "Log ud",
+    "logoutError": "Kunne ikke logge ud.",
+    "about": "Om",
+    "appName": "LeafNest",
+    "yourPlan": "Din plan",
+    "leafNestFree": "LeafNest gratis",
+    "help": "Hjælp",
+    "sendFeedback": "Send feedback",
+    "faq": "FAQ",
+    "termsOfUse": "Vilkår for brug",
+    "generalSection": "Generel",
+    "supportSection": "Støtte",
+    "legalSection": "Legal"
+  },
+  "profile": {
+    "title": "Profil",
+    "editUsername": "Rediger brugernavn",
+    "signOut": "Log ud",
+    "leaveAccount": "Forlad din konto",
+    "signIn": "Log ind",
+    "accessFullFeatures": "Få adgang til alle funktioner",
+    "createAccount": "Opret konto",
+    "joinLeafNest": "Tilmeld dig LeafNest",
+    "guestUser": "Gæstebruger",
+    "statsTitle": "Scan statistik",
+    "viewAll": "Se alle",
+    "guestPromptTitle": "Følg dine fremskridt",
+    "guestPromptText": "Log ind for at spore scanninger, opdage arter og låse op for præstationer.",
+    "badgeNew": "Ny",
+    "editPlaceholder": "Indtast brugernavn",
+    "stats": {
+      "total": "Samlede scanninger",
+      "week": "Denne uge",
+      "species": "Arter"
+    },
+    "sections": {
+      "account": "Kontoindstillinger"
+    },
+    "menu": {
+      "planTitle": "Din plan",
+      "planSubtitle": "LeafNest gratis",
+      "notificationsTitle": "Meddelelser",
+      "notificationsSubtitle": "Administrer dine notifikationer",
+      "passwordTitle": "Glemt adgangskode",
+      "passwordSubtitle": "Nulstil din adgangskode",
+      "signOutTitle": "Log ud",
+      "signOutSubtitle": "Log ud fra din konto",
+      "signInTitle": "Log ind",
+      "signInSubtitle": "Få adgang til alle funktioner",
+      "createAccountTitle": "Opret konto",
+      "createAccountSubtitle": "Tilmeld dig LeafNest i dag"
+    },
+    "alerts": {
+      "syncSuccess": "Synkroniseret {{count}} afventer scanning",
+      "syncSuccess_plural": "Synkroniserede {{count}} afventende scanninger",
+      "usernameUpdated": "Brugernavnet blev opdateret!",
+      "usernameUpdateError": "Kunne ikke opdatere brugernavnet.",
+      "signOutTitle": "Log ud",
+      "signOutMessage": "Er du sikker på, at du vil logge ud?",
+      "signOutConfirm": "Log ud",
+      "signOutError": "Kunne ikke logge ud. Prøv venligst igen."
+    }
+  },
+  "languages": {
+    "ar": "arabisk",
+    "zh-CN": "kinesisk (forenklet)",
+    "zh-TW": "kinesisk (traditionel)",
+    "hr": "kroatisk",
+    "cs": "tjekkisk",
+    "da": "dansk",
+    "nl": "hollandsk",
+    "en": "engelsk",
+    "fi": "finsk",
+    "fr": "fransk",
+    "de": "tysk",
+    "el": "græsk",
+    "hi": "hindi",
+    "hu": "ungarsk",
+    "id": "indonesisk",
+    "it": "italiensk",
+    "ja": "japansk",
+    "ko": "koreansk",
+    "ms": "malaysisk",
+    "no": "norsk",
+    "fa": "persisk",
+    "pl": "Polere",
+    "pt": "portugisisk",
+    "ro": "rumænsk",
+    "ru": "russisk",
+    "sk": "slovakisk",
+    "es": "spansk",
+    "sv": "svensk",
+    "tl": "Tagalog",
+    "th": "Thai",
+    "tr": "tyrkisk",
+    "uk": "ukrainsk",
+    "vi": "vietnamesisk"
+  },
+  "tabs": {
+    "home": "Hjem",
+    "scan": "Scan",
+    "history": "Historie",
+    "settings": "Indstillinger"
+  },
+  "animals": {
+    "title": "Dagens dyr",
+    "lion": {
+      "name": "Løve",
+      "scientificName": "Panthera leo",
+      "description": "Løven er en stor kat af slægten Panthera, der er hjemmehørende i Afrika og Indien. Den har en muskuløs krop med bred bryst, kort afrundet hoved, runde ører og en behåret tote for enden af ​​halen.",
+      "habitat": "Savanne, græsarealer og åbne skove",
+      "diet": "Kødædende - primært store pattedyr som zebraer, gnuer og bøfler",
+      "lifespan": "10-14 år i naturen, op til 20 år i fangenskab",
+      "conservationStatus": "Sårbar"
+    },
+    "elephant": {
+      "name": "Elefant",
+      "scientificName": "Elephantidae",
+      "description": "Elefanter er de største eksisterende landdyr, kendetegnet ved deres lange snabel (snabel), søjleformede ben og enorme hoveder med temporale kirtler og brede, flade ører.",
+      "habitat": "Savanne, skove, ørkener og moser",
+      "diet": "Planteædende - græsser, blade, bark, frugt og jord",
+      "lifespan": "60-70 år",
+      "conservationStatus": "truet"
+    },
+    "panda": {
+      "name": "Kæmpe Panda",
+      "scientificName": "Ailuropoda melanoleuca",
+      "description": "Kæmpepandaen er en bjørn hjemmehørende i det sydlige centrale Kina. Den er kendetegnet ved sin dristige sort-hvide pels og runde krop.",
+      "habitat": "Bjergkæder i det centrale Kina med tætte bambusskove",
+      "diet": "Primært bambus (99% af kosten), lejlighedsvis små dyr",
+      "lifespan": "20 år i naturen, op til 30 år i fangenskab",
+      "conservationStatus": "Sårbar"
+    },
+    "loading": "Indlæser dyr...",
+    "errorLoading": "Kunne ikke indlæse dyr",
+    "addToFavorites": "Føj til favoritter",
+    "removeFromFavorites": "Fjern fra favoritter",
+    "learnMore": "Lær mere",
+    "share": "Del dyr"
+  },
+  "signup": {
+    "title": "Opret konto",
+    "username": "Brugernavn",
+    "email": "E-mail",
+    "password": "Adgangskode",
+    "confirmPassword": "Bekræft adgangskode",
+    "register": "Register",
+    "alreadyHaveAccount": "Har du allerede en konto? Log ind",
+    "passwordsDontMatch": "Adgangskoder stemmer ikke overens!",
+    "fillAllFields": "Udfyld venligst alle felter.",
+    "verificationEmailSent": "En bekræftelses-e-mail er blevet sendt til din e-mail.",
+    "emailAlreadyInUse": "E-mailadressen er allerede i brug.",
+    "invalidEmail": "E-mailadressen er ikke gyldig.",
+    "subtitle": "Vær med til at udforske naturen",
+    "processing": "Forarbejdning...",
+    "dividerOr": "eller",
+    "alreadyMember": "Allerede medlem?",
+    "signInLink": "Log ind"
+  },
+  "signin": {
+    "title": "Log ind",
+    "email": "E-mail",
+    "password": "Adgangskode",
+    "signIn": "Log ind",
+    "signInWithGoogle": "Log ind med Google",
+    "dontHaveAccount": "Har du ikke en konto? Tilmeld dig",
+    "fillAllFields": "Udfyld venligst alle felter.",
+    "signInSuccessful": "Login lykkedes",
+    "welcomeBack": "Velkommen tilbage",
+    "userNotFound": "Ingen bruger fundet med denne e-mail.",
+    "wrongPassword": "Forkert adgangskode.",
+    "invalidEmail": "Ugyldig e-mailadresse.",
+    "subtitle": "Log ind for at fortsætte din rejse",
+    "forgotPasswordLink": "Glemt adgangskode?",
+    "dividerOr": "eller",
+    "noAccountPrompt": "Har du ikke en konto?",
+    "signUpLink": "Tilmeld dig"
+  },
+  "scan": {
+    "loadingCamera": "Indlæser kamera...",
+    "needPermission": "Vi har brug for din tilladelse til at vise kameraet",
+    "grantPermission": "Giv tilladelse",
+    "preparingCamera": "Forbereder kamera..."
+  },
+  "favorites": {
+    "title": "Favoritter",
+    "all": "Alle",
+    "plants": "Planter",
+    "animals": "Dyr",
+    "removeFavorite": "Fjern favorit",
+    "remove": "Fjerne",
+    "cancel": "Ophæve",
+    "removed": "Fjernet",
+    "removedMessage": "er blevet fjernet fra dine favoritter.",
+    "error": "Fejl",
+    "failedToRemove": "Kunne ikke fjerne fra favoritter.",
+    "clearFavorites": "Ryd favoritter",
+    "removeAllFavorites": "Vil du fjerne alle favoritter?",
+    "removeAll": "Fjern alle",
+    "failedToClear": "Det lykkedes ikke at rydde favoritter.",
+    "plant": "Plante",
+    "animal": "Dyr",
+    "noFavoritesYet": "Ingen favoritter endnu",
+    "addFromDaily": "Tilføj nogle fra Plants or Animals of the Day."
+  },
+  "about": {
+    "title": "Om",
+    "developedBy": "Udviklet og designet af LeafNest-teamet",
+    "teamTitle": "LeafNest Team",
+    "specialThanks": "Særlig tak",
+    "mentor": "Mr. Joshua R. Lasac",
+    "credits": "Oprindeligt skabt af LeafNest-teamet med støtte fra Pinamalayan Maritime Foundation And Technological College INC. (PMFTCI) og School of Computer Studies.",
+    "privacyPolicy": "Privatlivspolitik",
+    "version": "Version 0.0.1 (1)",
+    "help": "For hjælp: leafnest.capstone@gmail.com",
+    "tagline": "Plante- og dyreidentifikation",
+    "institutionalSupport": "Institutionel støtte",
+    "mentorRole": "Projektmentor og rådgiver"
+  },
+  "plan": {
+    "title": "Planer",
+    "upgradeTitle": "Opgrader til Premium",
+    "upgradeSubtitle": "Lås op for alle funktioner og få mest muligt ud af vores app.",
+    "free": "Gratis",
+    "freePrice": "₱0 / måned",
+    "freeFeature1": "Scan begrænsede planter og dyr",
+    "freeFeature2": "Grundlæggende daglige opdagelser",
+    "freeFeature3": "Ingen offlineadgang til historik",
+    "freeFeature4": "Annoncer inkluderet",
+    "premium": "Præmie",
+    "premiumPrice": "₱129,00/måned",
+    "premiumFeature1": "Ubegrænsede scanninger",
+    "premiumFeature2": "Eksklusive daglige opdagelser",
+    "premiumFeature3": "Offline adgang til historie",
+    "premiumFeature4": "Annoncefri oplevelse",
+    "subscribeNow": "Abonner nu",
+    "selectedPlan": "Du valgte abonnementet {{plan}}!"
+  },
+  "legal": {
+    "cookies": {
+      "title": "Cookies politik",
+      "subtitle": "Hvordan vi bruger cookies til at forbedre din oplevelse",
+      "effectiveDate": "Ikrafttrædelsesdato: 1. juli 2025",
+      "intro": "Denne cookiepolitik forklarer, hvordan vi bruger cookies til at forbedre din oplevelse, når du besøger vores app og bruger dens funktioner. Ved at bruge denne app giver du samtykke til brugen af ​​cookies som beskrevet i denne politik.",
+      "sections": [
+        {
+          "title": "Hvad er cookies?",
+          "content": "Cookies er små tekstfiler, der gemmes på din enhed, når du besøger websteder eller bruger apps. De hjælper os med at forstå, hvordan du interagerer med vores service og giver os mulighed for at give dig en bedre, mere personlig oplevelse."
+        },
+        {
+          "title": "Hvordan vi bruger cookies",
+          "content": "Vi bruger cookies til flere væsentlige formål:",
+          "list": [
+            "At personalisere indhold og reklamer",
+            "At analysere trafikmønstre og forbedre brugeroplevelsen",
+            "For at aktivere visse funktioner og funktionalitet i vores app",
+            "For at huske dine præferencer og indstillinger",
+            "For at give sikker adgang til din konto"
+          ]
+        },
+        {
+          "title": "Typer af cookies, vi bruger",
+          "content": "Vi bruger forskellige typer cookies for at forbedre din oplevelse:",
+          "list": [
+            "Væsentlige cookies: Påkrævet for grundlæggende appfunktionalitet",
+            "Ydelsescookies: Hjælp os med at forstå, hvordan du bruger appen",
+            "Funktionelle cookies: Husk dine præferencer og valg",
+            "Analytics-cookies: Giver indsigt i appbrugsmønstre"
+          ]
+        },
+        {
+          "title": "Håndtering af cookies",
+          "content": "Du kan kontrollere og administrere cookies gennem dine enhedsindstillinger. Bemærk dog, at deaktivering af visse cookies kan påvirke din oplevelse og begrænse appens funktionalitet."
+        },
+        {
+          "title": "Cookie-varighed",
+          "content": "Nogle cookies er midlertidige (sessionscookies) og slettes, når du lukker appen. Andre forbliver på din enhed i en bestemt periode for at huske dine præferencer på tværs af sessioner."
+        },
+        {
+          "title": "Ændringer til denne politik",
+          "content": "Vi kan opdatere denne cookiepolitik fra tid til anden for at afspejle ændringer i teknologi eller juridiske krav. Eventuelle ændringer vil blive offentliggjort på denne side med en opdateret revisionsdato."
+        },
+        {
+          "title": "Kontakt os",
+          "content": "Hvis du har spørgsmål, bekymringer eller feedback vedrørende denne cookiepolitik, bedes du kontakte os på leafnest.capstone@gmail.com."
+        }
+      ],
+      "footerTitle": "Dit privatliv er vigtigt",
+      "footerText": "Vi er forpligtet til gennemsigtighed om, hvordan vi bruger cookies. Din fortsatte brug af vores app indikerer din accept af denne politik.",
+      "copyright": "© 2025 LeafNest. Alle rettigheder forbeholdes.",
+      "lastUpdated": "Sidst opdateret: 1. juli 2025"
+    },
+    "privacy": {
+      "title": "Privatlivspolitik",
+      "subtitle": "Dit privatliv er vigtigt for os",
+      "effectiveDate": "Ikrafttrædelsesdato: 1. juli 2025",
+      "intro": "Hos LeafNest er vi forpligtet til at beskytte dit privatliv og sikre sikkerheden af ​​dine personlige oplysninger.",
+      "sections": [
+        {
+          "title": "Oplysninger, vi indsamler",
+          "content": "Vi indsamler oplysninger, du giver direkte til os, såsom når du opretter en konto, uploader billeder eller kontakter os for at få support. Dette kan omfatte dit navn, din e-mailadresse og enhver anden information, du vælger at give."
+        },
+        {
+          "title": "Hvordan vi bruger dine oplysninger",
+          "content": "Vi bruger de oplysninger, vi indsamler, til at levere, vedligeholde og forbedre vores tjenester, til at kommunikere med dig og til at udvikle nye funktioner. Vi sælger ikke dine personlige oplysninger til tredjepart."
+        },
+        {
+          "title": "Datasikkerhed",
+          "content": "Vi implementerer passende tekniske og organisatoriske foranstaltninger for at beskytte dine personlige oplysninger mod uautoriseret adgang, ændring, offentliggørelse eller ødelæggelse."
+        },
+        {
+          "title": "Dine rettigheder",
+          "content": "Du har ret til at få adgang til, opdatere eller slette dine personlige oplysninger. Du kan gøre dette via dine kontoindstillinger eller ved at kontakte os direkte."
+        },
+        {
+          "title": "Tredjepartstjenester",
+          "content": "Vores app kan indeholde links til tredjeparters websteder og tjenester. Vi er ikke ansvarlige for deres privatlivspraksis. Vi opfordrer dig til at gennemgå deres privatlivspolitikker."
+        },
+        {
+          "title": "Ændringer i privatlivspolitikken",
+          "content": "Vi forbeholder os retten til at opdatere denne fortrolighedspolitik til enhver tid. Ændringer vil blive offentliggjort på denne side med en opdateret ikrafttrædelsesdato. Din fortsatte brug udgør accept af ændringer."
+        },
+        {
+          "title": "Kontakt os",
+          "content": "Hvis du har spørgsmål om denne fortrolighedspolitik eller vores privatlivspraksis, bedes du kontakte os på privacy@leafnest.com."
+        }
+      ],
+      "footerTitle": "Vi holder af dig",
+      "footerText": "Din tillid er vigtig for os. Vi er forpligtet til gennemsigtig datapraksis og din ret til privatliv.",
+      "copyright": "© 2025 LeafNest. Alle rettigheder forbeholdes.",
+      "lastUpdated": "Sidst opdateret: 1. juli 2025"
+    },
+    "terms": {
+      "title": "Vilkår for brug",
+      "subtitle": "Læs venligst omhyggeligt før brug",
+      "effectiveDate": "Ikrafttrædelsesdato: 1. juli 2025",
+      "intro": "Disse vilkår for brug regulerer brugen af ​​LeafNest-appen og -tjenesterne. Ved at bruge vores app accepterer du disse vilkår og betingelser.",
+      "sections": [
+        {
+          "title": "Accept af vilkår",
+          "content": "Ved at tilgå eller bruge LeafNest-appen accepterer du at være bundet af disse vilkår for brug. Hvis du ikke accepterer disse vilkår, bør du ikke bruge appen."
+        },
+        {
+          "title": "Brugeransvar",
+          "content": "Du accepterer kun at bruge appen til lovlige formål og på en måde, der ikke krænker andres rettigheder. Du er ansvarlig for at opretholde fortroligheden af ​​dine kontooplysninger."
+        },
+        {
+          "title": "Intellektuel ejendomsret",
+          "content": "Alt indhold, varemærker, logoer og intellektuel ejendom i appen er ejet af LeafNest eller licenseret til os. Uautoriseret brug af vores intellektuelle ejendom er strengt forbudt."
+        },
+        {
+          "title": "Privatliv og dataindsamling",
+          "content": "Vi indsamler og behandler personoplysninger som beskrevet i vores privatlivspolitik. Ved at bruge vores app giver du dit samtykke til vores dataindsamling, opbevaring og behandlingspraksis."
+        },
+        {
+          "title": "Ansvarsbegrænsning",
+          "content": "LeafNest er ikke ansvarlig for skader, tab eller skader, der opstår som følge af brugen af ​​appen eller dens tjenester. Du bruger appen på eget ansvar og eget skøn."
+        },
+        {
+          "title": "Ændringer af vilkår",
+          "content": "Vi forbeholder os retten til at opdatere disse vilkår for brug til enhver tid. Eventuelle ændringer vil blive offentliggjort på denne side med en opdateret ikrafttrædelsesdato. Fortsat brug udgør accept af ændringer."
+        },
+        {
+          "title": "Kontakt os",
+          "content": "Hvis du har spørgsmål, bekymringer eller feedback om disse vilkår for brug, bedes du kontakte os på leafnest.capstone@gmail.com."
+        }
+      ],
+      "footerTitle": "Tak",
+      "footerText": "Tak fordi du tog dig tid til at gennemgå vores vilkår for brug. Din tillid og overholdelse hjælper os med at skabe en bedre oplevelse for alle.",
+      "copyright": "© 2025 LeafNest. Alle rettigheder forbeholdes.",
+      "lastUpdated": "Sidst opdateret: 1. juli 2025"
+    }
+  },
+  "faq": {
+    "title": "Hjælp & FAQ",
+    "subtitle": "Find svar på almindelige spørgsmål",
+    "categories": [
+      {
+        "title": "Kom godt i gang",
+        "items": [
+          {
+            "question": "Hvad er LeafNest?",
+            "answer": "LeafNest er en planteidentifikations- og informationsapp, der bruger AI-teknologi til at hjælpe dig med at identificere planter og dyr for at give viden om naturen."
+          },
+          {
+            "question": "Hvordan kommer jeg i gang?",
+            "answer": "Åbn appen, tryk på scanningsikonet, og peg den mod enhver plante eller ethvert dyr. AI vil identificere den og give detaljerede oplysninger om den pågældende art."
+          }
+        ]
+      },
+      {
+        "title": "Brug af scanneren",
+        "items": [
+          {
+            "question": "Hvordan scanner jeg en art?",
+            "answer": "Tryk på scanningsikonet på startskærmen, peg dit kamera mod arten, og tag et klart billede. Appen vil automatisk identificere det."
+          },
+          {
+            "question": "Hvad gør en god scanning?",
+            "answer": "Sørg for god belysning, fokuser på karakteristiske træk, og hold kameraet stabilt for de bedste resultater."
+          },
+          {
+            "question": "Kan jeg scanne fra mit fotogalleri?",
+            "answer": "Ja. Du kan uploade eksisterende billeder fra dit galleri ved at vælge galleriindstillingen på scannerskærmen."
+          }
+        ]
+      },
+      {
+        "title": "Nøjagtighed og funktioner",
+        "items": [
+          {
+            "question": "Hvor nøjagtig er identifikationen?",
+            "answer": "LeafNest bruger avancerede maskinlæringsmodeller. Nøjagtigheden varierer afhængigt af belysning og billedkvalitet, men overstiger typisk 90 %."
+          },
+          {
+            "question": "Kan jeg gemme mine yndlingsplanter?",
+            "answer": "Ja. Tryk på hjerteikonet på enhver identificeret art for at tilføje den til dine favoritter for hurtig adgang senere."
+          }
+        ]
+      },
+      {
+        "title": "Support & Hjælp",
+        "items": [
+          {
+            "question": "Hvordan kontakter jeg support?",
+            "answer": "Åbn menuen Indstillinger, og vælg Hjælp og support, eller send os en e-mail på leafnest.capstone@gmail.com."
+          }
+        ]
+      }
+    ]
+  },
+  "help": {
+    "title": "Hjælp & Support",
+    "subtitle": "Tips til at scanne planter og dyr med kunstig intelligens – og hvor du kan få mere hjælp.",
+    "quickStart": {
+      "title": "Hurtig start",
+      "bullets": [
+        "Tryk på knappen Scan fra startskærmen.",
+        "Centrer planten eller dyret i rammen.",
+        "Hold stille, og tag derefter et klart billede."
+      ],
+      "cta": "Åbn Scanner"
+    },
+    "bestResults": {
+      "title": "Sådan får du bedre resultater",
+      "bullets": [
+        "Brug god belysning og undgå hårdt modlys.",
+        "Fyld rammen med motivet med fokus på karakteristiske detaljer.",
+        "Prøv flere vinkler såsom blade, blomster, bark eller profilbilleder."
+      ]
+    },
+    "troubleshooting": {
+      "title": "Fejlfinding",
+      "bullets": [
+        "Ser daglige højdepunkter ens ud? Træk for at opdatere eller genåbn appen efter midnat (filippinsk tid).",
+        "Intet internet? Tjek din forbindelse, fordi billedgenkendelse kræver en netværksforbindelse.",
+        "Lav nøjagtighed? Tag et klarere, tættere billede med bedre belysning."
+      ]
+    },
+    "links": {
+      "faq": "FAQ",
+      "feedback": "Send feedback",
+      "about": "Om LeafNest",
+      "privacy": "Privatlivspolitik",
+      "terms": "Vilkår for brug",
+      "contact": "Kontakt support"
+    },
+    "alerts": {
+      "noEmailTitle": "Kan ikke åbne e-mail-appen",
+      "noEmailBody": "Send os en e-mail på {{email}}."
+    }
+  },
+  "feedback": {
+    "title": "Send feedback",
+    "subtitle": "Fortæl os, hvad der fungerer godt, eller hvad der kunne forbedres. Vi læser hver besked.",
+    "topicLabel": "Emne",
+    "topics": {
+      "bug": "Rapporter en fejl",
+      "idea": "Funktionsanmodning",
+      "ux": "Design / UX",
+      "content": "Arter / Indhold",
+      "account": "Konto / Login",
+      "other": "Andre"
+    },
+    "subjectLabel": "Emne",
+    "subjectPlaceholder": "Kort oversigt (f.eks. fejlmærker scanneren et blad som ahorn)",
+    "messageLabel": "Besked",
+    "messagePlaceholder": "Beskriv hvad der skete, trin til at reproducere og forventninger.",
+    "emailLabel": "Din e-mail (valgfrit)",
+    "emailPlaceholder": "Vi svarer her, hvis det er nødvendigt",
+    "includeDiagnostics": "Inkluder diagnostik",
+    "diagnosticsHint": "Hjælper os med at fejlfinde problemer (kun platform & OS).",
+    "submit": "Send feedback",
+    "submitting": "Sender...",
+    "footerText": "Eller send os en e-mail direkte på {{email}}",
+    "alerts": {
+      "missingInfoTitle": "Manglende info",
+      "missingInfoMessage": "Tilføj et emne og en besked.",
+      "invalidEmailTitle": "Ugyldig e-mail",
+      "invalidEmailMessage": "Indtast venligst en gyldig e-mailadresse, eller lad den stå tom.",
+      "noEmailAppTitle": "Kan ikke sende feedback",
+      "noEmailAppMessage": "Prøv venligst igen senere, eller send os en e-mail på {{email}}.",
+      "successTitle": "Feedback sendt",
+      "successMessage": "Tak for din feedback! Vi gennemgår det snart.",
+      "genericErrorTitle": "Noget gik galt",
+      "genericErrorMessage": "Prøv venligst igen senere, eller send os en e-mail på {{email}}."
+    }
+  },
+  "comments": {
+    "title": "Kommentarer",
+    "noComments": "Ingen kommentarer endnu",
+    "beFirstToComment": "Vær den første til at kommentere!",
+    "addComment": "Tilføj en kommentar...",
+    "deleteComment": "Slet kommentar",
+    "deleteConfirm": "Er du sikker på, at du vil slette denne kommentar?",
+    "delete": "Slet",
+    "failedToDelete": "Kommentaren kunne ikke slettes",
+    "failedToLike": "Kommentaren kunne ikke lides",
+    "loginRequired": "Login påkrævet",
+    "loginToComment": "Du skal være logget ind for at kommentere",
+    "loginToLike": "Du skal være logget ind for at kunne lide kommentarer",
+    "justNow": "Lige nu"
+  },
+  "notification": {
+    "title": "Meddelelser",
+    "noNotifications": "Ingen notifikationer endnu",
+    "markAsRead": "Markér som læst",
+    "markAllAsRead": "Marker alle som læst",
+    "delete": "Slet",
+    "deleteAll": "Slet alle"
+  },
+  "commentsModal": {
+    "title": "Kommentarer",
+    "inputPlaceholder": "Tilføj en kommentar...",
+    "empty": {
+      "title": "Ingen kommentarer endnu",
+      "subtitle": "Vær den første til at kommentere!"
+    },
+    "actions": {
+      "cancel": "Ophæve",
+      "delete": "Slet"
+    },
+    "alerts": {
+      "loadErrorTitle": "Fejl",
+      "loadErrorBody": "Kunne ikke indlæse kommentarer.",
+      "loginRequiredTitle": "Login påkrævet",
+      "loginRequiredCommentBody": "Du skal være logget ind for at kommentere.",
+      "loginRequiredLikeBody": "Du skal være logget ind for at kunne lide kommentarer.",
+      "addErrorTitle": "Fejl",
+      "addErrorBody": "Kunne ikke tilføje kommentar.",
+      "likeErrorTitle": "Fejl",
+      "likeErrorBody": "Kommentaren kunne ikke likes.",
+      "deleteTitle": "Slet kommentar",
+      "deleteConfirmBody": "Er du sikker på, at du vil slette denne kommentar?",
+      "deleteErrorTitle": "Fejl",
+      "deleteErrorBody": "Kommentaren kunne ikke slettes."
+    }
+  },
+  "premiumGate": {
+    "offline": {
+      "title": "Offline adgang påkrævet",
+      "historySubtitle": "Abonner for at få adgang til historik offline",
+      "historyDescription": "Offlineadgang til din scanningshistorik er en premium-funktion. Opgrader for at se din historie når som helst og hvor som helst.",
+      "favoritesSubtitle": "Abonner for at få adgang til favoritter offline",
+      "favoritesDescription": "Offlineadgang til dine favoritter er en premium-funktion. Opgrader for at se dine favoritter når som helst og hvor som helst."
+    },
+    "limits": {
+      "scanTitle": "Scanningsgrænsen er nået",
+      "scanSubtitle": "Du har brugt alle {{limit}} scanninger",
+      "scanDescription": "Opgrader til Premium for ubegrænsede scanninger og flere funktioner!",
+      "downloadTitle": "Downloadgrænsen er nået",
+      "downloadSubtitle": "Du har brugt alle {{limit}} downloads",
+      "downloadDescription": "Opgrader til Premium for ubegrænsede downloads!"
+    },
+    "timer": {
+      "resetsInHours": "Nulstilles om {{count}} time",
+      "resetsInHours_plural": "Nulstilles om {{count}} timer"
+    },
+    "usage": {
+      "scans": "Scanninger:",
+      "downloads": "Downloads:"
+    },
+    "features": {
+      "title": "Premium fordele:",
+      "offlineHistory": "Offline historikadgang",
+      "offlineFavorites": "Offline favoritter adgang",
+      "unlimitedScans": "Ubegrænsede scanninger",
+      "unlimitedDownloads": "Ubegrænsede downloads"
+    },
+    "pricing": {
+      "amount": "{{amount}}",
+      "period": "i {{days}} dage"
+    },
+    "actions": {
+      "upgrade": "Opgrader til Premium",
+      "later": "Måske senere"
+    }
+  },
+  "manageNotifications": {
+    "title": "Administrer meddelelser",
+    "pushNotifications": "Push-meddelelser",
+    "emailNotifications": "E-mail-meddelelser",
+    "likeNotifications": "Ligesom meddelelser",
+    "commentNotifications": "Kommentarmeddelelser",
+    "followNotifications": "Følg meddelelser",
+    "enabled": "Aktiveret",
+    "disabled": "Handicappet",
+    "save": "Gem indstillinger"
+  },
+  "history": {
+    "title": "Historie",
+    "loading": "Indlæser historik...",
+    "loadingMore": "Indlæser mere...",
+    "signInRequiredTitle": "Log ind påkrævet",
+    "signInRequiredBody": "Opret en konto eller log ind for at se din scanningshistorik.",
+    "selection": {
+      "selectedCount": "{{count}} valgt",
+      "deleteButton": "Slet {{count}} post",
+      "deleteButton_plural": "Slet {{count}} poster"
+    },
+    "offlineBanner": {
+      "premium": "Offlinetilstand (Premium)",
+      "locked": "Offlinetilstand kræver Premium"
+    },
+    "search": {
+      "placeholder": "Søg på navn..."
+    },
+    "filters": {
+      "all": "Alle",
+      "plants": "Planter",
+      "animals": "Dyr"
+    },
+    "empty": {
+      "noHistoryTitle": "Ingen historie endnu",
+      "noHistoryBody": "Din artsscanningshistorie vises her, når du begynder at identificere planter og dyr.",
+      "noResultsTitle": "Ingen resultater fundet",
+      "noResultsBody": "Ingen poster matcher dine søge- eller filterkriterier. Prøv at justere dine filtre."
+    },
+    "actions": {
+      "signIn": "Log ind",
+      "delete": "Slet",
+      "clearAll": "Ryd alle",
+      "clearFilters": "Ryd filtre"
+    },
+    "alerts": {
+      "visibilityNow": "Scanningen er nu {{status}}",
+      "visibilityUpdateFailed": "Synlighed kunne ikke opdateres.",
+      "visibilityNeedsSync": "Denne scanning skal synkroniseres først. Prøv venligst igen om et øjeblik.",
+      "visibilityOffline": "Kan ikke ændre synlighed, mens du er offline. Tjek venligst din forbindelse.",
+      "visibilityNotSynced": "Denne scanning er endnu ikke blevet synkroniseret til skyen. Vent venligst på, at synkroniseringen er fuldført, og prøv igen.",
+      "visibilityPermissionDenied": "Du har ikke tilladelse til at ændre denne scanning.",
+      "visibilityNetworkError": "Netværksfejl. Tjek venligst din forbindelse og prøv igen.",
+      "errorWithMessage": "Fejl: {{message}}",
+      "deleteRecordTitle": "Slet post",
+      "deleteRecordMessage": "Vil du slette \"{{name}}\" fra historikken?",
+      "deleteRecordSuccess": "Record slettet.",
+      "deleteRecordError": "Registreringen kunne ikke slettes.",
+      "deleteSelectedTitle": "Slet valgte",
+      "deleteSelectedMessage": "Vil du slette {{count}} post fra historikken?",
+      "deleteSelectedMessage_plural": "Vil du slette {{count}} poster fra historikken?",
+      "deleteSelectedSuccess": "{{count}} post slettet.",
+      "deleteSelectedSuccess_plural": "{{count}} poster slettet.",
+      "deleteSelectedError": "Kunne ikke slette valgte poster.",
+      "clearAllTitle": "Ryd al historik",
+      "clearAllMessage": "Er du sikker på, at du vil slette alle historikposter? Denne handling kan ikke fortrydes.",
+      "clearAllSuccess": "Al historik er ryddet.",
+      "clearAllError": "Kunne ikke rydde historikken."
+    },
+    "visibility": {
+      "public": "offentlig",
+      "private": "privat"
+    },
+    "unknownSpecies": "Ukendt art",
+    "details": {
+      "commonName": "Fælles navn",
+      "scientificName": "Videnskabeligt navn",
+      "taxonomicRank": "Taksonomisk rang",
+      "type": "Type",
+      "conservationStatus": "Bevaringsstatus",
+      "timesScanned": "Tider scannet",
+      "timeCount": "{{count}} tid",
+      "timeCount_plural": "{{count}} gange",
+      "globalAppScans": "Globale app-scanninger",
+      "scanCount": "{{count}} scanning",
+      "scanCount_plural": "{{count}} scanninger",
+      "scannedOn": "Scannet videre"
+    },
+    "premiumGate": {
+      "title": "Abonner for at få adgang til offlinetilstand",
+      "message": "Offlineadgang til din historie er en premium-funktion. Abonner for at se din scanningshistorik, når du er offline."
+    },
+    "noHistory": "Ingen historie endnu",
+    "startScanning": "Begynd at scanne for at opbygge din historie",
+    "delete": "Slet",
+    "deleteAll": "Slet alle",
+    "deleteConfirm": "Er du sikker på, at du vil slette dette element?",
+    "deleteAllConfirm": "Er du sikker på, at du vil slette al historik?",
+    "scannedOn": "Scannet den {{date}}"
+  },
+  "postDetail": {
+    "title": "Stolpe",
+    "aboutLabel": "Om",
+    "emptyTitle": "Indlægget blev ikke fundet",
+    "alerts": {
+      "postNotFoundTitle": "Fejl",
+      "postNotFoundBody": "Indlægget blev ikke fundet.",
+      "loadErrorTitle": "Fejl",
+      "loadErrorBody": "Indlægget kunne ikke indlæses.",
+      "likeErrorBody": "Opslaget kunne ikke likes."
+    }
+  },
+  "speciesGallery": {
+    "title": "Galleri",
+    "noResults": "Ingen resultater fundet",
+    "loadMore": "Indlæs mere",
+    "error": "Kunne ikke indlæse galleriet"
+  },
+  "speciesLanding": {
+    "title": "Artsdetaljer",
+    "scientificName": "videnskabeligt navn",
+    "commonName": "Fælles navn",
+    "description": "Beskrivelse",
+    "habitat": "Habitat",
+    "diet": "Kost",
+    "lifespan": "Levetid",
+    "conservationStatus": "Bevaringsstatus",
+    "addToFavorites": "Føj til favoritter",
+    "removeFromFavorites": "Fjern fra favoritter",
+    "share": "Dele",
+    "viewMore": "Se mere",
+    "error": "Artsoplysningerne kunne ikke indlæses"
+  },
+  "manualPayment": {
+    "title": "Manuel betaling",
+    "uploadProof": "Upload betalingsbevis",
+    "selectImage": "Vælg Billede",
+    "takePhoto": "Tag billede",
+    "chooseFromGallery": "Vælg fra Galleri",
+    "uploadImage": "Upload billede",
+    "uploading": "Uploader...",
+    "submit": "Indsend betaling",
+    "submitting": "Indsender...",
+    "successTitle": "Succes",
+    "successMessage": "Betalingen blev indsendt. Vi bekræfter det snart.",
+    "errorTitle": "Fejl",
+    "errorMessage": "Kunne ikke indsende betaling. Prøv venligst igen.",
+    "selectImageFirst": "Vælg venligst et billede først"
+  },
+  "scanStats": {
+    "title": "Scan statistik",
+    "totalScans": "Samlede scanninger",
+    "thisWeek": "Denne uge",
+    "thisMonth": "Denne måned",
+    "plants": "Planter",
+    "animals": "Dyr",
+    "noData": "Ingen tilgængelige scanningsdata endnu"
+  }
+}

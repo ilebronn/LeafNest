@@ -6,7 +6,7 @@ import { LinearGradient } from 'expo-linear-gradient';
 import { createUserWithEmailAndPassword, sendEmailVerification, updateProfile } from 'firebase/auth';
 import { auth } from '@config/firebase';
 import { createUserProfile } from '@services/firebase';
-import { sendVerificationCode } from '@services/auth/verificationService';
+import { sendVerificationCode, validateRegistrationEmail } from '@services/auth/verificationService';
 import { setUsername, clearAllUserData } from '@utils/auth';
 import { resetGuestScanCount } from '@utils/guest';
 import { CommonActions } from '@react-navigation/native';
@@ -47,6 +47,15 @@ export default function SignUpScreen({ navigation }) {
 
     try {
       console.log('📝 Creating new account...');
+
+      const emailValidationResult = await validateRegistrationEmail(email);
+      if (!emailValidationResult.success) {
+        Alert.alert(
+          t('common.error'),
+          emailValidationResult.error || 'Please use an existing active email address.'
+        );
+        return;
+      }
       
       await clearAllUserData();
       
@@ -83,13 +92,30 @@ export default function SignUpScreen({ navigation }) {
       
     } catch (error) {
       console.error('❌ Signup error:', error);
+      const errorCode = String(error?.code || '').toLowerCase();
+      const errorMessage = String(error?.message || '').trim();
+      const normalizedMessage = errorMessage.toLowerCase();
       
       if (error.code === 'auth/email-already-in-use') {
         Alert.alert(t('common.error'), t('signup.emailAlreadyInUse'));
       } else if (error.code === 'auth/invalid-email') {
         Alert.alert(t('common.error'), t('signup.invalidEmail'));
+      } else if (
+        errorCode === 'functions/not-found' ||
+        normalizedMessage === 'not-found' ||
+        normalizedMessage.includes('not-found')
+      ) {
+        Alert.alert(
+          t('common.error'),
+          'Email validation service is temporarily unavailable. Please try again in a moment.'
+        );
+      } else if (errorCode === 'functions/unavailable') {
+        Alert.alert(
+          t('common.error'),
+          'Unable to validate email right now. Please try again later.'
+        );
       } else {
-        Alert.alert(t('common.error'), error.message);
+        Alert.alert(t('common.error'), errorMessage || 'Something went wrong. Please try again.');
       }
     } finally {
       setIsLoading(false);

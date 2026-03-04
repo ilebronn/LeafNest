@@ -7,7 +7,9 @@
     "start": "expo start",
     "android": "expo run:android",
     "ios": "expo run:ios",
-    "web": "expo start --web"
+    "web": "expo start --web",
+    "i18n:init-locales": "node scripts/init-locales-from-en.mjs",
+    "i18n:translate": "node scripts/translate-locales.mjs"
   },
   "dependencies": {
     "@expo-google-fonts/lato": "^0.4.1",

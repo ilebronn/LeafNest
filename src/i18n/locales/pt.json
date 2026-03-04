@@ -1,0 +1,895 @@
+{
+  "common": {
+    "welcome": "Bem-vindo",
+    "guest": "Convidado",
+    "loading": "Carregando...",
+    "error": "Erro",
+    "success": "Sucesso",
+    "cancel": "Cancelar",
+    "ok": "OK",
+    "save": "Salvar",
+    "back": "Voltar",
+    "edit": "Editar",
+    "username": "Nome de usuário",
+    "and": "e"
+  },
+  "login": {
+    "title": "LeafNest",
+    "signInWithGoogle": "Faça login com o Google",
+    "signInAsGuest": "Faça login como convidado",
+    "signInFailed": "Falha no login",
+    "googleAuthError": "Erro de autenticação do Google",
+    "unexpectedError": "Erro inesperado",
+    "unknownError": "Erro desconhecido",
+    "termsText": "Ao se inscrever, você indica que leu e reconhece o",
+    "termsOfUse": "Termos de Uso",
+    "privacyPolicy": "política de Privacidade",
+    "cookiesPolicy": "Política de Cookies",
+    "signIn": "Entrar",
+    "welcomeTitle": "Bem-vindo ao LeafNest",
+    "welcomeSubtitle": "Descubra a beleza da natureza",
+    "signInWithEmailButton": "Faça login com e-mail",
+    "dividerOr": "ou",
+    "continueAsGuest": "Continuar como convidado",
+    "continueAgreement": "Ao continuar, você concorda com nossos"
+  },
+  "home": {
+    "welcomeGuest": "Bem-vindo, convidado",
+    "welcomeUser": "Bem-vindo, {{name}}",
+    "guestModeSubtitle": "Você está no modo visitante. Faça login para desbloquear todos os recursos.",
+    "welcomeBackSubtitle": "Que bom ver você de volta!",
+    "scanPlantsTitle": "Digitalize plantas instantaneamente",
+    "scanPlantsSubtitle": "Aponte, dispare e identifique a flora em segundos.",
+    "scanAnimalsTitle": "Digitalize animais instantaneamente",
+    "scanAnimalsSubtitle": "Identifique animais em segundos.",
+    "learnNatureTitle": "Aprenda sobre a natureza",
+    "learnNatureSubtitle": "Descubra mais com conversão de texto em fala e fatos rápidos.",
+    "scanningStats": "Estatísticas de verificação",
+    "plantsScanned": "Plantas escaneadas",
+    "animalsIdentified": "Animais identificados",
+    "dailyDiscovery": "Descoberta diária",
+    "dailyDiscoverySubtitle": "Aprenda algo novo todos os dias",
+    "plantOfTheDay": "Planta do dia",
+    "animalOfTheDay": "Animal do Dia",
+    "scientificName": "Nome Científico",
+    "habitat": "Habitat",
+    "diet": "Dieta",
+    "lifespan": "Vida útil",
+    "weight": "Peso",
+    "cycle": "Vida útil",
+    "watering": "Rega",
+    "sunlight": "Luz solar",
+    "loadingDaily": "Carregando conteúdo diário...",
+    "errorLoadingDaily": "Não foi possível carregar o conteúdo diário",
+    "pullToRefresh": "Puxe para atualizar",
+    "offlineMode": "Conteúdo off-line",
+    "funFact": "Curiosidade",
+    "newFact": "Novo fato",
+    "trendingPlants": "Tendências de plantas",
+    "trendingAnimals": "Animais em alta",
+    "alerts": {
+      "authRequiredTitle": "Autenticação necessária",
+      "authRequiredBody": "Faça login para baixar o PDF.",
+      "pdfSuccessTitle": "Sucesso",
+      "pdfSuccessBody": "O PDF foi gerado e enviado para seu e-mail.",
+      "pdfErrorTitle": "Erro",
+      "pdfErrorBody": "Falha ao gerar PDF. Por favor, tente novamente.",
+      "signInRequiredTitle": "É necessário fazer login",
+      "signInLikeBody": "Faça login para curtir postagens.",
+      "signInCommentBody": "Faça login para comentar.",
+      "downloadsUnavailableTitle": "Downloads indisponíveis",
+      "downloadsUnavailableBody": "Por favor, cadastre-se para uma conta gratuita para baixar informações sobre espécies.",
+      "downloadLimitCheckErrorBody": "Falha ao verificar o limite de download. Por favor, tente novamente."
+    },
+    "pdf": {
+      "defaultCommon": "Desconhecido",
+      "defaultScientific": "Desconhecido",
+      "defaultRank": "Classificação desconhecida",
+      "defaultTaxon": "Desconhecido",
+      "noDescription": "Nenhuma descrição disponível.",
+      "infoUnavailable": "Informação não disponível.",
+      "notEvaluated": "Não avaliado"
+    },
+    "trending": {
+      "title": "Espécies Tendências"
+    },
+    "emptyState": {
+      "title": "Bem-vindo à comunidade",
+      "subtitle": "Comece a explorar e compartilhar suas descobertas na natureza.",
+      "cta": "Digitalize sua primeira espécie"
+    },
+    "feed": {
+      "likesCount": "{{count}} gosto",
+      "likesCount_plural": "{{count}} curtidas",
+      "beFirst": "Seja o primeiro a curtir isso",
+      "showMore": "Mostrar mais",
+      "showLess": "Mostrar menos",
+      "viewComments": "Ver todos os comentários de {{count}}",
+      "viewComments_plural": "Ver todos os comentários de {{count}}",
+      "unknownUser": "Anônimo",
+      "unknownSpecies": "Espécies desconhecidas",
+      "likeError": "Falha ao curtir a postagem."
+    },
+    "relativeTime": {
+      "justNow": "Agora mesmo",
+      "minutes": "{{count}}m atrás",
+      "hours": "{{count}}h atrás",
+      "days": "{{count}}d atrás"
+    }
+  },
+  "settings": {
+    "title": "Configurações",
+    "account": "Conta",
+    "guestMode": "Modo visitante",
+    "signedIn": "Conectado",
+    "username": "Nome de usuário",
+    "editUsername": "Editar nome de usuário",
+    "currentUsername": "Nome de usuário atual",
+    "newUsername": "Novo nome de usuário",
+    "usernameUpdated": "Nome de usuário atualizado com sucesso!",
+    "usernameUpdateError": "Falha ao atualizar o nome de usuário",
+    "usernameUpdateFailed": "Falha na atualização do nome de usuário",
+    "usernameRequired": "O nome de usuário é obrigatório",
+    "usernameTooShort": "O nome de usuário deve ter pelo menos 3 caracteres",
+    "usernameTooLong": "O nome de usuário deve ter 20 caracteres ou menos",
+    "usernameInvalidChars": "O nome de usuário só pode conter letras, números, sublinhados e hifens",
+    "language": "Linguagem",
+    "selectLanguage": "Selecione o idioma",
+    "logout": "Sair",
+    "logoutError": "Falha ao sair.",
+    "about": "Sobre",
+    "appName": "LeafNest",
+    "yourPlan": "Seu plano",
+    "leafNestFree": "LeafNest grátis",
+    "help": "Ajuda",
+    "sendFeedback": "Enviar comentários",
+    "faq": "Perguntas frequentes",
+    "termsOfUse": "Termos de Uso",
+    "generalSection": "Em geral",
+    "supportSection": "Apoiar",
+    "legalSection": "Jurídico"
+  },
+  "profile": {
+    "title": "Perfil",
+    "editUsername": "Editar nome de usuário",
+    "signOut": "Sair",
+    "leaveAccount": "Deixe sua conta",
+    "signIn": "Entrar",
+    "accessFullFeatures": "Acesse todos os recursos",
+    "createAccount": "Criar uma conta",
+    "joinLeafNest": "Junte-se ao LeafNest",
+    "guestUser": "Usuário convidado",
+    "statsTitle": "Estatísticas de verificação",
+    "viewAll": "Ver tudo",
+    "guestPromptTitle": "Acompanhe seu progresso",
+    "guestPromptText": "Faça login para rastrear varreduras, descobrir espécies e desbloquear conquistas.",
+    "badgeNew": "Novo",
+    "editPlaceholder": "Digite o nome de usuário",
+    "stats": {
+      "total": "Total de verificações",
+      "week": "Essa semana",
+      "species": "Espécies"
+    },
+    "sections": {
+      "account": "Configurações de Conta"
+    },
+    "menu": {
+      "planTitle": "Seu plano",
+      "planSubtitle": "LeafNest grátis",
+      "notificationsTitle": "Notificações",
+      "notificationsSubtitle": "Gerencie suas notificações",
+      "passwordTitle": "Esqueceu sua senha",
+      "passwordSubtitle": "Redefinir sua senha",
+      "signOutTitle": "Sair",
+      "signOutSubtitle": "Saia da sua conta",
+      "signInTitle": "Entrar",
+      "signInSubtitle": "Acesse todos os recursos",
+      "createAccountTitle": "Criar uma conta",
+      "createAccountSubtitle": "Junte-se ao LeafNest hoje"
+    },
+    "alerts": {
+      "syncSuccess": "Verificação pendente {{count}} sincronizada",
+      "syncSuccess_plural": "{{count}} verificações pendentes sincronizadas",
+      "usernameUpdated": "Nome de usuário atualizado com sucesso!",
+      "usernameUpdateError": "Falha ao atualizar o nome de usuário.",
+      "signOutTitle": "Sair",
+      "signOutMessage": "Tem certeza de que deseja sair?",
+      "signOutConfirm": "Sair",
+      "signOutError": "Falha ao sair. Por favor, tente novamente."
+    }
+  },
+  "languages": {
+    "ar": "árabe",
+    "zh-CN": "Chinês (simplificado)",
+    "zh-TW": "Chinês (tradicional)",
+    "hr": "croata",
+    "cs": "Tcheco",
+    "da": "dinamarquês",
+    "nl": "Holandês",
+    "en": "Inglês",
+    "fi": "finlandês",
+    "fr": "Francês",
+    "de": "Alemão",
+    "el": "grego",
+    "hi": "hindi",
+    "hu": "húngaro",
+    "id": "indonésio",
+    "it": "italiano",
+    "ja": "japonês",
+    "ko": "coreano",
+    "ms": "malaio",
+    "no": "norueguês",
+    "fa": "persa",
+    "pl": "polonês",
+    "pt": "Português",
+    "ro": "romeno",
+    "ru": "russo",
+    "sk": "Eslovaco",
+    "es": "Espanhol",
+    "sv": "sueco",
+    "tl": "tagalo",
+    "th": "Tailandês",
+    "tr": "turco",
+    "uk": "ucraniano",
+    "vi": "vietnamita"
+  },
+  "tabs": {
+    "home": "Lar",
+    "scan": "Digitalizar",
+    "history": "História",
+    "settings": "Configurações"
+  },
+  "animals": {
+    "title": "Animais do dia",
+    "lion": {
+      "name": "Leão",
+      "scientificName": "Pantera leo",
+      "description": "O leão é um grande felino do gênero Panthera, nativo da África e da Índia. Possui corpo musculoso e de peito largo, cabeça curta e arredondada, orelhas redondas e um tufo peludo na ponta da cauda.",
+      "habitat": "Savanas, pastagens e florestas abertas",
+      "diet": "Carnívoros - principalmente grandes mamíferos como zebras, gnus e búfalos",
+      "lifespan": "10-14 anos na natureza, até 20 anos em cativeiro",
+      "conservationStatus": "Vulnerável"
+    },
+    "elephant": {
+      "name": "Elefante",
+      "scientificName": "Elefantidae",
+      "description": "Os elefantes são os maiores animais terrestres existentes, caracterizados por sua longa tromba (tronco), pernas colunares e cabeças enormes com glândulas temporais e orelhas largas e achatadas.",
+      "habitat": "Savanas, florestas, desertos e pântanos",
+      "diet": "Herbívoro - gramíneas, folhas, cascas, frutas e solo",
+      "lifespan": "60-70 anos",
+      "conservationStatus": "Em perigo"
+    },
+    "panda": {
+      "name": "Panda Gigante",
+      "scientificName": "Ailuropoda melanoleuca",
+      "description": "O panda gigante é um urso nativo do centro-sul da China. É caracterizado por sua pelagem preta e branca e corpo rotundo.",
+      "habitat": "Cordilheiras no centro da China com densas florestas de bambu",
+      "diet": "Principalmente bambu (99% da dieta), ocasionalmente pequenos animais",
+      "lifespan": "20 anos na natureza, até 30 anos em cativeiro",
+      "conservationStatus": "Vulnerável"
+    },
+    "loading": "Carregando animais...",
+    "errorLoading": "Falha ao carregar animais",
+    "addToFavorites": "Adicionar aos Favoritos",
+    "removeFromFavorites": "Remover dos Favoritos",
+    "learnMore": "Saber mais",
+    "share": "Compartilhar animal"
+  },
+  "signup": {
+    "title": "Criar uma conta",
+    "username": "Nome de usuário",
+    "email": "E-mail",
+    "password": "Senha",
+    "confirmPassword": "Confirme sua senha",
+    "register": "Cadastre-se",
+    "alreadyHaveAccount": "Já tem uma conta? Entrar",
+    "passwordsDontMatch": "As senhas não coincidem!",
+    "fillAllFields": "Por favor preencha todos os campos.",
+    "verificationEmailSent": "Um e-mail de verificação foi enviado para seu e-mail.",
+    "emailAlreadyInUse": "O endereço de e-mail já está em uso.",
+    "invalidEmail": "O endereço de e-mail não é válido.",
+    "subtitle": "Junte-se a nós para explorar a natureza",
+    "processing": "Processamento...",
+    "dividerOr": "ou",
+    "alreadyMember": "Já é membro?",
+    "signInLink": "Entrar"
+  },
+  "signin": {
+    "title": "Entrar",
+    "email": "E-mail",
+    "password": "Senha",
+    "signIn": "Entrar",
+    "signInWithGoogle": "Faça login com o Google",
+    "dontHaveAccount": "Não tem uma conta? Inscrever-se",
+    "fillAllFields": "Por favor preencha todos os campos.",
+    "signInSuccessful": "Login bem-sucedido",
+    "welcomeBack": "bem vindo de volta",
+    "userNotFound": "Nenhum usuário encontrado com este e-mail.",
+    "wrongPassword": "Senha incorreta.",
+    "invalidEmail": "Endereço de e-mail inválido.",
+    "subtitle": "Faça login para continuar sua jornada",
+    "forgotPasswordLink": "Esqueceu sua senha?",
+    "dividerOr": "ou",
+    "noAccountPrompt": "Não tem uma conta?",
+    "signUpLink": "Inscrever-se"
+  },
+  "scan": {
+    "loadingCamera": "Carregando câmera...",
+    "needPermission": "Precisamos da sua permissão para mostrar a câmera",
+    "grantPermission": "Conceder permissão",
+    "preparingCamera": "Preparando câmera..."
+  },
+  "favorites": {
+    "title": "Favoritos",
+    "all": "Todos",
+    "plants": "Plantas",
+    "animals": "Animais",
+    "removeFavorite": "Remover favorito",
+    "remove": "Remover",
+    "cancel": "Cancelar",
+    "removed": "Removido",
+    "removedMessage": "foi removido dos seus favoritos.",
+    "error": "Erro",
+    "failedToRemove": "Falha ao remover dos favoritos.",
+    "clearFavorites": "Limpar favoritos",
+    "removeAllFavorites": "Remover todos os favoritos?",
+    "removeAll": "Remover tudo",
+    "failedToClear": "Falha ao limpar favoritos.",
+    "plant": "Plantar",
+    "animal": "Animal",
+    "noFavoritesYet": "Ainda não há favoritos",
+    "addFromDaily": "Adicione alguns de Plantas ou Animais do Dia."
+  },
+  "about": {
+    "title": "Sobre",
+    "developedBy": "Desenvolvido e projetado pela equipe LeafNest",
+    "teamTitle": "Equipe LeafNest",
+    "specialThanks": "Agradecimentos especiais",
+    "mentor": "Sr.",
+    "credits": "Originalmente criado pela equipe LeafNest com o apoio da Pinamalayan Maritime Foundation And Technological College INC. (PMFTCI) e da School of Computer Studies.",
+    "privacyPolicy": "política de Privacidade",
+    "version": "Versão 0.0.1 (1)",
+    "help": "Para obter ajuda: leafnest.capstone@gmail.com",
+    "tagline": "Identificação de Plantas e Animais",
+    "institutionalSupport": "Apoio Institucional",
+    "mentorRole": "Mentor e Consultor de Projetos"
+  },
+  "plan": {
+    "title": "Planos",
+    "upgradeTitle": "Atualizar para Premium",
+    "upgradeSubtitle": "Desbloqueie todos os recursos e aproveite ao máximo nosso aplicativo.",
+    "free": "Livre",
+    "freePrice": "₱0/mês",
+    "freeFeature1": "Digitalize plantas e animais limitados",
+    "freeFeature2": "Descobertas diárias básicas",
+    "freeFeature3": "Sem acesso offline ao histórico",
+    "freeFeature4": "Anúncios incluídos",
+    "premium": "Prêmio",
+    "premiumPrice": "₱ 129,00 / mês",
+    "premiumFeature1": "Verificações ilimitadas",
+    "premiumFeature2": "Descobertas diárias exclusivas",
+    "premiumFeature3": "Acesso offline ao histórico",
+    "premiumFeature4": "Experiência sem anúncios",
+    "subscribeNow": "Assine agora",
+    "selectedPlan": "Você selecionou o plano {{plan}}!"
+  },
+  "legal": {
+    "cookies": {
+      "title": "Política de Cookies",
+      "subtitle": "Como usamos cookies para melhorar sua experiência",
+      "effectiveDate": "Data de vigência: 1º de julho de 2025",
+      "intro": "Esta Política de Cookies explica como usamos cookies para melhorar sua experiência quando você visita nosso aplicativo e usa seus recursos. Ao utilizar este aplicativo, você concorda com o uso de cookies conforme descrito nesta política.",
+      "sections": [
+        {
+          "title": "O que são biscoitos?",
+          "content": "Cookies são pequenos arquivos de texto armazenados no seu dispositivo quando você visita sites ou usa aplicativos. Eles nos ajudam a entender como você interage com nosso serviço e nos permitem oferecer uma experiência melhor e mais personalizada."
+        },
+        {
+          "title": "Como usamos cookies",
+          "content": "Utilizamos cookies para vários fins essenciais:",
+          "list": [
+            "Para personalizar conteúdo e anúncios",
+            "Para analisar padrões de tráfego e melhorar a experiência do usuário",
+            "Para ativar certos recursos e funcionalidades do nosso aplicativo",
+            "Para lembrar suas preferências e configurações",
+            "Para fornecer acesso seguro à sua conta"
+          ]
+        },
+        {
+          "title": "Tipos de cookies que usamos",
+          "content": "Utilizamos diferentes tipos de cookies para melhorar a sua experiência:",
+          "list": [
+            "Cookies essenciais: necessários para funcionalidades básicas do aplicativo",
+            "Cookies de desempenho: ajudam-nos a entender como você usa o aplicativo",
+            "Cookies funcionais: lembram suas preferências e escolhas",
+            "Cookies analíticos: fornecem insights sobre padrões de uso de aplicativos"
+          ]
+        },
+        {
+          "title": "Gerenciando Cookies",
+          "content": "Você pode controlar e gerenciar cookies através das configurações do seu dispositivo. No entanto, tenha em atenção que a desativação de determinados cookies pode afetar a sua experiência e limitar a funcionalidade da aplicação."
+        },
+        {
+          "title": "Duração do cookie",
+          "content": "Alguns cookies são temporários (cookies de sessão) e são eliminados quando fecha a aplicação. Outros permanecem no seu dispositivo por um determinado período para lembrar suas preferências durante as sessões."
+        },
+        {
+          "title": "Mudanças nesta política",
+          "content": "Poderemos atualizar esta Política de Cookies de tempos em tempos para refletir mudanças na tecnologia ou requisitos legais. Quaisquer alterações serão publicadas nesta página com uma data de revisão atualizada."
+        },
+        {
+          "title": "Contate-nos",
+          "content": "Se você tiver alguma dúvida, preocupação ou feedback sobre esta Política de Cookies, entre em contato conosco pelo e-mail leafnest.capstone@gmail.com."
+        }
+      ],
+      "footerTitle": "Sua privacidade é importante",
+      "footerText": "Estamos comprometidos com a transparência sobre como usamos cookies. O uso continuado de nosso aplicativo indica sua aceitação desta política.",
+      "copyright": "© 2025 LeafNest. Todos os direitos reservados.",
+      "lastUpdated": "Última atualização: 1º de julho de 2025"
+    },
+    "privacy": {
+      "title": "política de Privacidade",
+      "subtitle": "Sua privacidade é importante para nós",
+      "effectiveDate": "Data de vigência: 1º de julho de 2025",
+      "intro": "Na LeafNest, temos o compromisso de proteger sua privacidade e garantir a segurança de suas informações pessoais.",
+      "sections": [
+        {
+          "title": "Informações que coletamos",
+          "content": "Coletamos informações que você nos fornece diretamente, como quando você cria uma conta, carrega fotos ou entra em contato conosco para obter suporte. Isso pode incluir seu nome, endereço de e-mail e qualquer outra informação que você decida fornecer."
+        },
+        {
+          "title": "Como usamos suas informações",
+          "content": "Usamos as informações que coletamos para fornecer, manter e melhorar nossos serviços, para nos comunicarmos com você e para desenvolver novos recursos. Não vendemos suas informações pessoais a terceiros."
+        },
+        {
+          "title": "Segurança de dados",
+          "content": "Implementamos medidas técnicas e organizacionais adequadas para proteger as suas informações pessoais contra acesso não autorizado, alteração, divulgação ou destruição."
+        },
+        {
+          "title": "Seus direitos",
+          "content": "Você tem o direito de acessar, atualizar ou excluir suas informações pessoais. Você pode fazer isso através das configurações da sua conta ou entrando em contato conosco diretamente."
+        },
+        {
+          "title": "Serviços de terceiros",
+          "content": "Nosso aplicativo pode conter links para sites e serviços de terceiros. Não somos responsáveis ​​por suas práticas de privacidade. Nós encorajamos você a revisar suas políticas de privacidade."
+        },
+        {
+          "title": "Mudanças na Política de Privacidade",
+          "content": "Reservamo-nos o direito de atualizar esta Política de Privacidade a qualquer momento. As alterações serão publicadas nesta página com uma data efetiva atualizada. Seu uso continuado constitui aceitação das alterações."
+        },
+        {
+          "title": "Contate-nos",
+          "content": "Se você tiver alguma dúvida sobre esta Política de Privacidade ou nossas práticas de privacidade, entre em contato conosco pelo e-mail privacy@leafnest.com."
+        }
+      ],
+      "footerTitle": "Nós nos preocupamos com você",
+      "footerText": "Sua confiança é importante para nós. Estamos comprometidos com práticas transparentes de dados e com o seu direito à privacidade.",
+      "copyright": "© 2025 LeafNest. Todos os direitos reservados.",
+      "lastUpdated": "Última atualização: 1º de julho de 2025"
+    },
+    "terms": {
+      "title": "Termos de Uso",
+      "subtitle": "Por favor leia atentamente antes de usar",
+      "effectiveDate": "Data de vigência: 1º de julho de 2025",
+      "intro": "Estes Termos de Uso regem o uso do aplicativo e dos serviços LeafNest. Ao usar nosso aplicativo, você concorda com estes termos e condições.",
+      "sections": [
+        {
+          "title": "Aceitação dos Termos",
+          "content": "Ao acessar ou usar o aplicativo LeafNest, você concorda em obedecer a estes Termos de Uso. Se você não concordar com estes termos, não deverá usar o aplicativo."
+        },
+        {
+          "title": "Responsabilidades do usuário",
+          "content": "Você concorda em usar o aplicativo apenas para fins legais e de uma maneira que não infrinja os direitos de terceiros. Você é responsável por manter a confidencialidade das informações da sua conta."
+        },
+        {
+          "title": "Propriedade intelectual",
+          "content": "Todo o conteúdo, marcas registradas, logotipos e propriedade intelectual do aplicativo são de propriedade da LeafNest ou licenciados para nós. O uso não autorizado de nossa propriedade intelectual é estritamente proibido."
+        },
+        {
+          "title": "Privacidade e coleta de dados",
+          "content": "Coletamos e processamos informações pessoais conforme descrito em nossa Política de Privacidade. Ao usar nosso aplicativo, você concorda com nossas práticas de coleta, armazenamento e processamento de dados."
+        },
+        {
+          "title": "Limitação de responsabilidade",
+          "content": "LeafNest não se responsabiliza por quaisquer danos, perdas ou lesões decorrentes do uso do aplicativo ou de seus serviços. Você usa o aplicativo por sua própria conta e risco."
+        },
+        {
+          "title": "Mudanças nos Termos",
+          "content": "Reservamo-nos o direito de atualizar estes Termos de Uso a qualquer momento. Quaisquer alterações serão publicadas nesta página com uma data efetiva atualizada. O uso continuado constitui aceitação das alterações."
+        },
+        {
+          "title": "Contate-nos",
+          "content": "Se você tiver alguma dúvida, preocupação ou feedback sobre estes Termos de Uso, entre em contato conosco pelo e-mail leafnest.capstone@gmail.com."
+        }
+      ],
+      "footerTitle": "Obrigado",
+      "footerText": "Obrigado por reservar um tempo para revisar nossos Termos de Uso. Sua confiança e conformidade nos ajudam a criar uma experiência melhor para todos.",
+      "copyright": "© 2025 LeafNest. Todos os direitos reservados.",
+      "lastUpdated": "Última atualização: 1º de julho de 2025"
+    }
+  },
+  "faq": {
+    "title": "Ajuda e perguntas frequentes",
+    "subtitle": "Encontre respostas para perguntas comuns",
+    "categories": [
+      {
+        "title": "Começando",
+        "items": [
+          {
+            "question": "O que é LeafNest?",
+            "answer": "LeafNest é um aplicativo de identificação e informação de plantas que usa tecnologia de IA para ajudá-lo a identificar plantas e animais para fornecer conhecimento sobre a natureza."
+          },
+          {
+            "question": "Como posso começar?",
+            "answer": "Abra o aplicativo, toque no ícone de digitalização e aponte para qualquer planta ou animal. A IA irá identificá-lo e fornecer informações detalhadas sobre essa espécie."
+          }
+        ]
+      },
+      {
+        "title": "Usando o Scanner",
+        "items": [
+          {
+            "question": "Como faço para digitalizar uma espécie?",
+            "answer": "Toque no ícone de digitalização na tela inicial, aponte sua câmera para as espécies e tire uma foto nítida. O aplicativo irá identificá-lo automaticamente."
+          },
+          {
+            "question": "O que constitui uma boa digitalização?",
+            "answer": "Garanta uma boa iluminação, concentre-se em recursos distintos e mantenha a câmera estável para obter os melhores resultados."
+          },
+          {
+            "question": "Posso digitalizar da minha galeria de fotos?",
+            "answer": "Sim. Você pode fazer upload de fotos existentes da sua galeria selecionando a opção de galeria na tela do scanner."
+          }
+        ]
+      },
+      {
+        "title": "Precisão e recursos",
+        "items": [
+          {
+            "question": "Quão precisa é a identificação?",
+            "answer": "LeafNest usa modelos avançados de aprendizado de máquina. A precisão varia de acordo com a iluminação e a qualidade da imagem, mas normalmente excede 90%."
+          },
+          {
+            "question": "Posso salvar minhas plantas favoritas?",
+            "answer": "Sim. Toque no ícone de coração em qualquer espécie identificada para adicioná-la aos seus favoritos para acesso rápido mais tarde."
+          }
+        ]
+      },
+      {
+        "title": "Suporte e Ajuda",
+        "items": [
+          {
+            "question": "Como entro em contato com o suporte?",
+            "answer": "Abra o menu Configurações e selecione Ajuda e suporte ou envie um email para leafnest.capstone@gmail.com."
+          }
+        ]
+      }
+    ]
+  },
+  "help": {
+    "title": "Ajuda e suporte",
+    "subtitle": "Dicas para escanear plantas e animais com IA — e onde obter mais ajuda.",
+    "quickStart": {
+      "title": "Início rápido",
+      "bullets": [
+        "Toque no botão Digitalizar na tela inicial.",
+        "Centralize a planta ou animal na moldura.",
+        "Mantenha-se firme e tire uma foto nítida."
+      ],
+      "cta": "Abrir scanner"
+    },
+    "bestResults": {
+      "title": "Como obter melhores resultados",
+      "bullets": [
+        "Use uma boa iluminação e evite luz de fundo forte.",
+        "Preencha o enquadramento com o motivo, concentrando-se nos detalhes distintivos.",
+        "Experimente vários ângulos, como folhas, flores, cascas de árvores ou fotos de perfil."
+      ]
+    },
+    "troubleshooting": {
+      "title": "Solução de problemas",
+      "bullets": [
+        "Os destaques diários parecem iguais? Puxe para atualizar ou reabrir o aplicativo depois da meia-noite (horário das Filipinas).",
+        "Sem internet? Verifique sua conexão porque o reconhecimento de imagem precisa de uma conexão de rede.",
+        "Baixa precisão? Tire uma foto mais nítida e próxima com melhor iluminação."
+      ]
+    },
+    "links": {
+      "faq": "Perguntas frequentes",
+      "feedback": "Enviar comentários",
+      "about": "Sobre LeafNest",
+      "privacy": "política de Privacidade",
+      "terms": "Termos de Uso",
+      "contact": "Contate o suporte"
+    },
+    "alerts": {
+      "noEmailTitle": "Não é possível abrir o aplicativo de e-mail",
+      "noEmailBody": "Envie-nos um e-mail para {{email}}."
+    }
+  },
+  "feedback": {
+    "title": "Enviar comentários",
+    "subtitle": "Diga-nos o que está funcionando bem ou o que poderia ser melhorado. Lemos todas as mensagens.",
+    "topicLabel": "Tópico",
+    "topics": {
+      "bug": "Reportar um bug",
+      "idea": "Solicitação de recurso",
+      "ux": "Design/UX",
+      "content": "Espécie/Conteúdo",
+      "account": "Conta / Login",
+      "other": "Outro"
+    },
+    "subjectLabel": "Assunto",
+    "subjectPlaceholder": "Breve resumo (por exemplo, o Scanner rotula incorretamente uma folha como bordo)",
+    "messageLabel": "Mensagem",
+    "messagePlaceholder": "Descreva o que aconteceu, etapas para reproduzir e expectativas.",
+    "emailLabel": "Seu e-mail (opcional)",
+    "emailPlaceholder": "Responderemos aqui se necessário",
+    "includeDiagnostics": "Incluir diagnósticos",
+    "diagnosticsHint": "Ajuda-nos a depurar problemas (somente plataforma e sistema operacional).",
+    "submit": "Enviar comentários",
+    "submitting": "Enviando...",
+    "footerText": "Ou envie-nos um e-mail diretamente para {{email}}",
+    "alerts": {
+      "missingInfoTitle": "Informações ausentes",
+      "missingInfoMessage": "Adicione um assunto e uma mensagem.",
+      "invalidEmailTitle": "E-mail inválido",
+      "invalidEmailMessage": "Insira um endereço de e-mail válido ou deixe em branco.",
+      "noEmailAppTitle": "Não é possível enviar comentários",
+      "noEmailAppMessage": "Tente novamente mais tarde ou envie-nos um e-mail para {{email}}.",
+      "successTitle": "Feedback enviado",
+      "successMessage": "Obrigado pelo seu feedback! Iremos revisá-lo em breve.",
+      "genericErrorTitle": "Algo deu errado",
+      "genericErrorMessage": "Tente novamente mais tarde ou envie-nos um e-mail para {{email}}."
+    }
+  },
+  "comments": {
+    "title": "Comentários",
+    "noComments": "Ainda não há comentários",
+    "beFirstToComment": "Seja o primeiro a comentar!",
+    "addComment": "Adicione um comentário...",
+    "deleteComment": "Excluir comentário",
+    "deleteConfirm": "Tem certeza de que deseja excluir este comentário?",
+    "delete": "Excluir",
+    "failedToDelete": "Falha ao excluir o comentário",
+    "failedToLike": "Falha ao curtir o comentário",
+    "loginRequired": "Login obrigatório",
+    "loginToComment": "Você deve estar logado para comentar",
+    "loginToLike": "Você deve estar logado para curtir comentários",
+    "justNow": "Agora mesmo"
+  },
+  "notification": {
+    "title": "Notificações",
+    "noNotifications": "Nenhuma notificação ainda",
+    "markAsRead": "Marcar como lido",
+    "markAllAsRead": "Marcar tudo como lido",
+    "delete": "Excluir",
+    "deleteAll": "Excluir tudo"
+  },
+  "commentsModal": {
+    "title": "Comentários",
+    "inputPlaceholder": "Adicione um comentário...",
+    "empty": {
+      "title": "Ainda não há comentários",
+      "subtitle": "Seja o primeiro a comentar!"
+    },
+    "actions": {
+      "cancel": "Cancelar",
+      "delete": "Excluir"
+    },
+    "alerts": {
+      "loadErrorTitle": "Erro",
+      "loadErrorBody": "Falha ao carregar comentários.",
+      "loginRequiredTitle": "Login necessário",
+      "loginRequiredCommentBody": "Você deve estar logado para comentar.",
+      "loginRequiredLikeBody": "Você deve estar logado para curtir comentários.",
+      "addErrorTitle": "Erro",
+      "addErrorBody": "Falha ao adicionar comentário.",
+      "likeErrorTitle": "Erro",
+      "likeErrorBody": "Falha ao curtir o comentário.",
+      "deleteTitle": "Excluir comentário",
+      "deleteConfirmBody": "Tem certeza de que deseja excluir este comentário?",
+      "deleteErrorTitle": "Erro",
+      "deleteErrorBody": "Falha ao excluir o comentário."
+    }
+  },
+  "premiumGate": {
+    "offline": {
+      "title": "Acesso off-line necessário",
+      "historySubtitle": "Inscreva-se para acessar o histórico off-line",
+      "historyDescription": "O acesso offline ao seu histórico de varredura é um recurso premium. Atualize para ver seu histórico a qualquer hora e em qualquer lugar.",
+      "favoritesSubtitle": "Inscreva-se para acessar os favoritos off-line",
+      "favoritesDescription": "O acesso offline aos seus favoritos é um recurso premium. Atualize para ver seus favoritos a qualquer hora e em qualquer lugar."
+    },
+    "limits": {
+      "scanTitle": "Limite de verificação atingido",
+      "scanSubtitle": "Você usou todas as verificações de {{limit}}",
+      "scanDescription": "Atualize para Premium para verificações ilimitadas e mais recursos!",
+      "downloadTitle": "Limite de download atingido",
+      "downloadSubtitle": "Você usou todos os {{limit}} downloads",
+      "downloadDescription": "Atualize para Premium para downloads ilimitados!"
+    },
+    "timer": {
+      "resetsInHours": "Reinicia em {{count}} hora",
+      "resetsInHours_plural": "Reinicia em {{count}} horas"
+    },
+    "usage": {
+      "scans": "Verificações:",
+      "downloads": "Transferências:"
+    },
+    "features": {
+      "title": "Benefícios premium:",
+      "offlineHistory": "Acesso ao histórico off-line",
+      "offlineFavorites": "Acesso offline aos favoritos",
+      "unlimitedScans": "Verificações ilimitadas",
+      "unlimitedDownloads": "Downloads ilimitados"
+    },
+    "pricing": {
+      "amount": "{{amount}}",
+      "period": "por {{days}} dias"
+    },
+    "actions": {
+      "upgrade": "Atualizar para Premium",
+      "later": "Talvez mais tarde"
+    }
+  },
+  "manageNotifications": {
+    "title": "Gerenciar notificações",
+    "pushNotifications": "Notificações push",
+    "emailNotifications": "Notificações por e-mail",
+    "likeNotifications": "Curtir notificações",
+    "commentNotifications": "Notificações de comentários",
+    "followNotifications": "Siga as notificações",
+    "enabled": "Habilitado",
+    "disabled": "Desabilitado",
+    "save": "Salvar configurações"
+  },
+  "history": {
+    "title": "História",
+    "loading": "Carregando histórico...",
+    "loadingMore": "Carregando mais...",
+    "signInRequiredTitle": "É necessário fazer login",
+    "signInRequiredBody": "Crie uma conta ou faça login para visualizar seu histórico de varredura.",
+    "selection": {
+      "selectedCount": "{{count}} selecionado",
+      "deleteButton": "Excluir registro {{count}}",
+      "deleteButton_plural": "Excluir registros {{count}}"
+    },
+    "offlineBanner": {
+      "premium": "Modo off-line (Premium)",
+      "locked": "O modo offline requer Premium"
+    },
+    "search": {
+      "placeholder": "Pesquise por nome..."
+    },
+    "filters": {
+      "all": "Todos",
+      "plants": "Plantas",
+      "animals": "Animais"
+    },
+    "empty": {
+      "noHistoryTitle": "Ainda não há histórico",
+      "noHistoryBody": "Seu histórico de varredura de espécies aparecerá aqui assim que você começar a identificar plantas e animais.",
+      "noResultsTitle": "Nenhum resultado encontrado",
+      "noResultsBody": "Nenhum registro corresponde aos seus critérios de pesquisa ou filtro. Tente ajustar seus filtros."
+    },
+    "actions": {
+      "signIn": "Entrar",
+      "delete": "Excluir",
+      "clearAll": "Limpar tudo",
+      "clearFilters": "Limpar filtros"
+    },
+    "alerts": {
+      "visibilityNow": "A verificação agora é {{status}}",
+      "visibilityUpdateFailed": "Falha ao atualizar a visibilidade.",
+      "visibilityNeedsSync": "Esta verificação precisa ser sincronizada primeiro. Por favor, tente novamente em alguns instantes.",
+      "visibilityOffline": "Não é possível alterar a visibilidade enquanto estiver off-line. Por favor, verifique sua conexão.",
+      "visibilityNotSynced": "Esta verificação ainda não foi sincronizada com a nuvem. Aguarde a conclusão da sincronização e tente novamente.",
+      "visibilityPermissionDenied": "Você não tem permissão para modificar esta verificação.",
+      "visibilityNetworkError": "Erro de rede. Verifique sua conexão e tente novamente.",
+      "errorWithMessage": "Erro: {{message}}",
+      "deleteRecordTitle": "Excluir registro",
+      "deleteRecordMessage": "Excluir \"{{name}}\" do histórico?",
+      "deleteRecordSuccess": "Registro excluído.",
+      "deleteRecordError": "Falha ao excluir registro.",
+      "deleteSelectedTitle": "Excluir selecionado",
+      "deleteSelectedMessage": "Excluir registro {{count}} do histórico?",
+      "deleteSelectedMessage_plural": "Excluir registros {{count}} do histórico?",
+      "deleteSelectedSuccess": "{{count}} registro excluído.",
+      "deleteSelectedSuccess_plural": "{{count}} registros excluídos.",
+      "deleteSelectedError": "Falha ao excluir registros selecionados.",
+      "clearAllTitle": "Limpar todo o histórico",
+      "clearAllMessage": "Tem certeza de que deseja excluir todos os registros do histórico? Esta ação não pode ser desfeita.",
+      "clearAllSuccess": "Todo o histórico foi apagado.",
+      "clearAllError": "Falha ao limpar o histórico."
+    },
+    "visibility": {
+      "public": "público",
+      "private": "privado"
+    },
+    "unknownSpecies": "Espécies desconhecidas",
+    "details": {
+      "commonName": "Nome comum",
+      "scientificName": "Nome científico",
+      "taxonomicRank": "Classificação taxonômica",
+      "type": "Tipo",
+      "conservationStatus": "Estado de conservação",
+      "timesScanned": "Tempos verificados",
+      "timeCount": "{{count}} hora",
+      "timeCount_plural": "{{count}} vezes",
+      "globalAppScans": "Verificações globais de aplicativos",
+      "scanCount": "{{count}} verificação",
+      "scanCount_plural": "{{count}} verificações",
+      "scannedOn": "Digitalizado em"
+    },
+    "premiumGate": {
+      "title": "Inscreva-se para acessar o modo offline",
+      "message": "O acesso offline ao seu histórico é um recurso premium. Inscreva-se para ver seu histórico de varredura quando estiver offline."
+    },
+    "noHistory": "Ainda não há histórico",
+    "startScanning": "Comece a digitalizar para construir seu histórico",
+    "delete": "Excluir",
+    "deleteAll": "Excluir tudo",
+    "deleteConfirm": "Tem certeza de que deseja excluir este item?",
+    "deleteAllConfirm": "Tem certeza de que deseja excluir todo o histórico?",
+    "scannedOn": "Digitalizado em {{date}}"
+  },
+  "postDetail": {
+    "title": "Publicar",
+    "aboutLabel": "Sobre",
+    "emptyTitle": "Postagem não encontrada",
+    "alerts": {
+      "postNotFoundTitle": "Erro",
+      "postNotFoundBody": "Postagem não encontrada.",
+      "loadErrorTitle": "Erro",
+      "loadErrorBody": "Falha ao carregar postagem.",
+      "likeErrorBody": "Falha ao curtir a postagem."
+    }
+  },
+  "speciesGallery": {
+    "title": "Galeria",
+    "noResults": "Nenhum resultado encontrado",
+    "loadMore": "Carregar mais",
+    "error": "Falha ao carregar a galeria"
+  },
+  "speciesLanding": {
+    "title": "Detalhes da espécie",
+    "scientificName": "Nome Científico",
+    "commonName": "Nome Comum",
+    "description": "Descrição",
+    "habitat": "Habitat",
+    "diet": "Dieta",
+    "lifespan": "Vida útil",
+    "conservationStatus": "Estado de Conservação",
+    "addToFavorites": "Adicionar aos Favoritos",
+    "removeFromFavorites": "Remover dos Favoritos",
+    "share": "Compartilhar",
+    "viewMore": "Ver mais",
+    "error": "Falha ao carregar detalhes da espécie"
+  },
+  "manualPayment": {
+    "title": "Pagamento Manual",
+    "uploadProof": "Carregar comprovante de pagamento",
+    "selectImage": "Selecione a imagem",
+    "takePhoto": "Tirar foto",
+    "chooseFromGallery": "Escolha na Galeria",
+    "uploadImage": "Carregar imagem",
+    "uploading": "Carregando...",
+    "submit": "Enviar pagamento",
+    "submitting": "Enviando...",
+    "successTitle": "Sucesso",
+    "successMessage": "Pagamento enviado com sucesso. Iremos verificar isso em breve.",
+    "errorTitle": "Erro",
+    "errorMessage": "Falha ao enviar o pagamento. Por favor, tente novamente.",
+    "selectImageFirst": "Selecione uma imagem primeiro"
+  },
+  "scanStats": {
+    "title": "Estatísticas de verificação",
+    "totalScans": "Total de verificações",
+    "thisWeek": "Essa semana",
+    "thisMonth": "Este mês",
+    "plants": "Plantas",
+    "animals": "Animais",
+    "noData": "Ainda não há dados de digitalização disponíveis"
+  }
+}

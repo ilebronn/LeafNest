@@ -15,6 +15,7 @@ import {
 } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import { getAuth, updateProfile, signOut } from 'firebase/auth';
+import NetInfo from '@react-native-community/netinfo';
 import { auth } from '@config/firebase';
 import { clearAllUserData } from '@utils/auth';
 import { useTranslation } from 'react-i18next';
@@ -261,6 +262,16 @@ export default function ProfileScreen({ route, navigation }) {
     }
   };
 
+  const isOnlineForSignOut = async () => {
+    try {
+      const netState = await NetInfo.fetch();
+      return netState.isConnected && netState.isInternetReachable !== false;
+    } catch (error) {
+      console.warn('⚠️ Failed to check internet before sign out:', error);
+      return false;
+    }
+  };
+
   const handleSignOut = async () => {
     Alert.alert(
       t('profile.alerts.signOutTitle'),
@@ -272,6 +283,17 @@ export default function ProfileScreen({ route, navigation }) {
           style: 'destructive',
           onPress: async () => {
             try {
+              const online = await isOnlineForSignOut();
+              if (!online) {
+                Alert.alert(
+                  t('common.error'),
+                  t('profile.alerts.signOutOfflineError', {
+                    defaultValue: "Can't sign out. Please check your internet connection.",
+                  })
+                );
+                return;
+              }
+
               console.log('🔓 Logging out user...');
               
               // Sign out from Firebase

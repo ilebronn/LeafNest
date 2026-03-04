@@ -1,0 +1,895 @@
+{
+  "common": {
+    "welcome": "Hoş Geldiniz",
+    "guest": "Misafir",
+    "loading": "Yükleniyor...",
+    "error": "Hata",
+    "success": "Başarılı",
+    "cancel": "İptal",
+    "ok": "Tamam",
+    "save": "Kaydet",
+    "back": "Geri",
+    "edit": "Düzenle",
+    "username": "Kullanıcı Adı",
+    "and": "ve"
+  },
+  "login": {
+    "title": "LeafNest",
+    "signInWithGoogle": "Google ile Giriş Yap",
+    "signInAsGuest": "Misafir Olarak Giriş Yap",
+    "signInFailed": "Giriş başarısız",
+    "googleAuthError": "Google Kimlik Doğrulama Hatası",
+    "unexpectedError": "Beklenmeyen hata",
+    "unknownError": "Bilinmeyen hata",
+    "termsText": "Kaydolarak, okuduğunuzu ve kabul ettiğinizi belirtmiş olursunuz",
+    "termsOfUse": "Kullanım Koşulları",
+    "privacyPolicy": "Gizlilik Politikası",
+    "cookiesPolicy": "Çerez Politikası",
+    "signIn": "Giriş Yap",
+    "welcomeTitle": "LeafNest'e Hoş Geldiniz",
+    "welcomeSubtitle": "Doğanın güzelliğini keşfedin",
+    "signInWithEmailButton": "E-posta ile Giriş Yap",
+    "dividerOr": "veya",
+    "continueAsGuest": "Misafir Olarak Devam Et",
+    "continueAgreement": "Devam ederek, kabul etmiş olursunuz"
+  },
+  "home": {
+    "welcomeGuest": "Hoş Geldiniz, Misafir",
+    "welcomeUser": "Hoş Geldiniz, {{name}}",
+    "guestModeSubtitle": "Misafir modundasınız. Tüm özellikleri kullanmak için giriş yapın.",
+    "welcomeBackSubtitle": "Seni tekrar görmek ne güzel!",
+    "scanPlantsTitle": "Bitkileri Anında Tara",
+    "scanPlantsSubtitle": "İşaret et, çek ve bitkileri saniyeler içinde tanımla.",
+    "scanAnimalsTitle": "Hayvanları Anında Tara",
+    "scanAnimalsSubtitle": "Hayvanları saniyeler içinde tanımlayın.",
+    "learnNatureTitle": "Doğa Hakkında Bilgi Edinin",
+    "learnNatureSubtitle": "Metinden sese ve kısa bilgilerle daha fazlasını keşfedin.",
+    "scanningStats": "Tarama İstatistikleri",
+    "plantsScanned": "Taranan Bitkiler",
+    "animalsIdentified": "Tanımlanan Hayvanlar",
+    "dailyDiscovery": "Günlük Keşif",
+    "dailyDiscoverySubtitle": "Her gün yeni bir şey öğrenin",
+    "plantOfTheDay": "Günün Bitkisi",
+    "animalOfTheDay": "Günün Hayvanı",
+    "scientificName": "Bilimsel Ad",
+    "habitat": "Yaşam Alanı",
+    "diet": "Beslenme",
+    "lifespan": "Yaşam Süresi",
+    "weight": "Ağırlık",
+    "cycle": "Yaşam Döngüsü",
+    "watering": "Sulama",
+    "sunlight": "Güneş Işığı",
+    "loadingDaily": "Günlük içerik yükleniyor...",
+    "errorLoadingDaily": "Günlük içerik yüklenemedi",
+    "pullToRefresh": "Yenilemek için çekin",
+    "offlineMode": "Çevrimdışı içerik",
+    "funFact": "İlginç Bilgi",
+    "newFact": "Yeni Bilgi",
+    "trendingPlants": "Trend Bitkiler",
+    "trendingAnimals": "Trend Hayvanlar",
+    "alerts": {
+      "authRequiredTitle": "Kimlik Doğrulama Gerekli",
+      "authRequiredBody": "PDF'yi indirmek için lütfen giriş yapın.",
+      "pdfSuccessTitle": "Başarılı",
+      "pdfSuccessBody": "PDF oluşturuldu ve e-postanıza gönderildi.",
+      "pdfErrorTitle": "Hata",
+      "pdfErrorBody": "PDF oluşturulamadı. Lütfen tekrar deneyin.",
+      "signInRequiredTitle": "Giriş gerekli",
+      "signInLikeBody": "Gönderileri beğenmek için lütfen giriş yapın.",
+      "signInCommentBody": "Yorum yapmak için lütfen giriş yapın.",
+      "downloadsUnavailableTitle": "İndirmeler Kullanılamıyor",
+      "downloadsUnavailableBody": "Tür bilgilerini indirmek için lütfen ücretsiz bir hesap oluşturun.",
+      "downloadLimitCheckErrorBody": "İndirme sınırı kontrol edilemedi. Lütfen tekrar deneyin."
+    },
+    "pdf": {
+      "defaultCommon": "Bilinmiyor",
+      "defaultScientific": "Bilinmiyor",
+      "defaultRank": "Bilinmeyen sıralama",
+      "defaultTaxon": "Bilinmiyor",
+      "noDescription": "Açıklama mevcut değil.",
+      "infoUnavailable": "Bilgi mevcut değil.",
+      "notEvaluated": "Değerlendirilmedi"
+    },
+    "trending": {
+      "title": "Trend Türler"
+    },
+    "emptyState": {
+      "title": "Topluluğa Hoş Geldiniz",
+      "subtitle": "Doğa keşiflerinizi keşfetmeye ve paylaşmaya başlayın.",
+      "cta": "İlk Türünüzü Tarayın"
+    },
+    "feed": {
+      "likesCount": "{{count}} beğeni",
+      "likesCount_plural": "{{count}} beğeni",
+      "beFirst": "Bunu beğenen ilk kişi ol",
+      "showMore": "Daha fazla göster",
+      "showLess": "Daha az göster",
+      "viewComments": "Tüm {{count}} yorumu görüntüle",
+      "viewComments_plural": "Tüm {{count}} yorumu görüntüle",
+      "unknownUser": "Anonim",
+      "unknownSpecies": "Bilinmeyen tür",
+      "likeError": "Gönderi beğenilemedi."
+    },
+    "relativeTime": {
+      "justNow": "Şimdi",
+      "minutes": "{{count}} dk önce",
+      "hours": "{{count}} sa önce",
+      "days": "{{count}} g önce"
+    }
+  },
+  "settings": {
+    "title": "Ayarlar",
+    "account": "Hesap",
+    "guestMode": "Misafir modu",
+    "signedIn": "Giriş yapıldı",
+    "username": "Kullanıcı Adı",
+    "editUsername": "Kullanıcı Adını Düzenle",
+    "currentUsername": "Mevcut Kullanıcı Adı",
+    "newUsername": "Yeni Kullanıcı Adı",
+    "usernameUpdated": "Kullanıcı adı başarıyla güncellendi!",
+    "usernameUpdateError": "Kullanıcı adı güncellenemedi",
+    "usernameUpdateFailed": "Kullanıcı adı güncelleme başarısız",
+    "usernameRequired": "Kullanıcı adı gerekli",
+    "usernameTooShort": "Kullanıcı adı en az 3 karakter olmalıdır",
+    "usernameTooLong": "Kullanıcı adı 20 karakter veya daha az olmalıdır",
+    "usernameInvalidChars": "Kullanıcı adı yalnızca harf, rakam, alt çizgi ve tire içerebilir",
+    "language": "Dil",
+    "selectLanguage": "Dil Seçin",
+    "logout": "Çıkış Yap",
+    "logoutError": "Çıkış yapılamadı.",
+    "about": "Hakkında",
+    "appName": "LeafNest",
+    "yourPlan": "Planınız",
+    "leafNestFree": "LeafNest Ücretsiz",
+    "help": "Yardım",
+    "sendFeedback": "Geri Bildirim Gönder",
+    "faq": "SSS",
+    "termsOfUse": "Kullanım Koşulları",
+    "generalSection": "Genel",
+    "supportSection": "Destek",
+    "legalSection": "Yasal"
+  },
+  "profile": {
+    "title": "Profil",
+    "editUsername": "Kullanıcı Adını Düzenle",
+    "signOut": "Çıkış Yap",
+    "leaveAccount": "Hesabından ayrıl",
+    "signIn": "Giriş Yap",
+    "accessFullFeatures": "Tüm özelliklere erişin",
+    "createAccount": "Hesap Oluştur",
+    "joinLeafNest": "LeafNest'e Katıl",
+    "guestUser": "Misafir Kullanıcı",
+    "statsTitle": "Tarama İstatistikleri",
+    "viewAll": "Tümünü Görüntüle",
+    "guestPromptTitle": "İlerlemenizi Takip Edin",
+    "guestPromptText": "Taramaları takip etmek, türleri keşfetmek ve başarımları açmak için giriş yapın.",
+    "badgeNew": "Yeni",
+    "editPlaceholder": "Kullanıcı adı girin",
+    "stats": {
+      "total": "Toplam Tarama",
+      "week": "Bu Hafta",
+      "species": "Türler"
+    },
+    "sections": {
+      "account": "Hesap Ayarları"
+    },
+    "menu": {
+      "planTitle": "Planınız",
+      "planSubtitle": "LeafNest Ücretsiz",
+      "notificationsTitle": "Bildirimler",
+      "notificationsSubtitle": "Bildirimlerinizi yönetin",
+      "passwordTitle": "Şifremi Unuttum",
+      "passwordSubtitle": "Şifrenizi sıfırlayın",
+      "signOutTitle": "Çıkış Yap",
+      "signOutSubtitle": "Hesabınızdan çıkış yapın",
+      "signInTitle": "Giriş Yap",
+      "signInSubtitle": "Tüm özelliklere erişin",
+      "createAccountTitle": "Hesap Oluştur",
+      "createAccountSubtitle": "Bugün LeafNest'e Katılın"
+    },
+    "alerts": {
+      "syncSuccess": "{{count}} bekleyen tarama senkronize edildi",
+      "syncSuccess_plural": "{{count}} bekleyen tarama senkronize edildi",
+      "usernameUpdated": "Kullanıcı adı başarıyla güncellendi!",
+      "usernameUpdateError": "Kullanıcı adı güncellenemedi.",
+      "signOutTitle": "Çıkış Yap",
+      "signOutMessage": "Çıkış yapmak istediğinizden emin misiniz?",
+      "signOutConfirm": "Çıkış Yap",
+      "signOutError": "Çıkış yapılamadı. Lütfen tekrar deneyin."
+    }
+  },
+  "languages": {
+    "ar": "Arapça",
+    "zh-CN": "Çince (Basitleştirilmiş)",
+    "zh-TW": "Çince (Geleneksel)",
+    "hr": "Hırvatça",
+    "cs": "Çekçe",
+    "da": "Danca",
+    "nl": "Felemenkçe",
+    "en": "İngilizce",
+    "fi": "Fince",
+    "fr": "Fransızca",
+    "de": "Almanca",
+    "el": "Yunanca",
+    "hi": "Hintçe",
+    "hu": "Macarca",
+    "id": "Endonezce",
+    "it": "İtalyanca",
+    "ja": "Japonca",
+    "ko": "Korece",
+    "ms": "Malayca",
+    "no": "Norveççe",
+    "fa": "Farsça",
+    "pl": "Lehçe",
+    "pt": "Portekizce",
+    "ro": "Rumence",
+    "ru": "Rusça",
+    "sk": "Slovakça",
+    "es": "İspanyolca",
+    "sv": "İsveççe",
+    "tl": "Tagalogca",
+    "th": "Tayca",
+    "tr": "Türkçe",
+    "uk": "Ukraynaca",
+    "vi": "Vietnamca"
+  },
+  "tabs": {
+    "home": "Ana Sayfa",
+    "scan": "Tara",
+    "history": "Geçmiş",
+    "settings": "Ayarlar"
+  },
+  "animals": {
+    "title": "Günün Hayvanları",
+    "lion": {
+      "name": "Aslan",
+      "scientificName": "Panthera leo",
+      "description": "Aslan, Afrika ve Hindistan'a özgü Panthera cinsinin büyük bir kedisidir. Kaslı, geniş göğüslü bir vücuda, kısa yuvarlak başa, yuvarlak kulaklara ve kuyruğunun ucunda tüylü bir püsküle sahiptir.",
+      "habitat": "Savanalar, otlaklar ve açık ormanlık alanlar",
+      "diet": "Etobur - öncelikle zebralar, antiloplar ve bufalolar gibi büyük memeliler",
+      "lifespan": "Vahşi doğada 10-14 yıl, esaret altında 20 yıla kadar",
+      "conservationStatus": "Hassas"
+    },
+    "elephant": {
+      "name": "Fil",
+      "scientificName": "Elephantidae",
+      "description": "Filller, uzun hortumları, sütun şeklindeki bacakları ve temporal bezlere sahip büyük başları ve geniş, düz kulakları ile karakterize edilen mevcut en büyük kara hayvanlarıdır.",
+      "habitat": "Savanalar, ormanlar, çöller ve bataklıklar",
+      "diet": "Otobur - otlar, yapraklar, ağaç kabuğu, meyve ve toprak",
+      "lifespan": "60-70 yıl",
+      "conservationStatus": "Nesli Tükenmekte Olan"
+    },
+    "panda": {
+      "name": "Dev Panda",
+      "scientificName": "Ailuropoda melanoleuca",
+      "description": "Dev panda, Güney Orta Çin'e özgü bir ayıdır. Cesur siyah-beyaz kürkü ve yuvarlak gövdesi ile karakterizedir.",
+      "habitat": "Orta Çin'deki yoğun bambu ormanlarına sahip dağ sıraları",
+      "diet": "Öncelikle bambu (diyetin %99'u), bazen küçük hayvanlar",
+      "lifespan": "Vahşi doğada 20 yıl, esaret altında 30 yıla kadar",
+      "conservationStatus": "Hassas"
+    },
+    "loading": "Hayvanlar yükleniyor...",
+    "errorLoading": "Hayvanlar yüklenemedi",
+    "addToFavorites": "Favorilere Ekle",
+    "removeFromFavorites": "Favorilerden Çıkar",
+    "learnMore": "Daha Fazla Bilgi",
+    "share": "Hayvanı Paylaş"
+  },
+  "signup": {
+    "title": "Hesap Oluştur",
+    "username": "Kullanıcı Adı",
+    "email": "E-posta",
+    "password": "Şifre",
+    "confirmPassword": "Şifreyi Onayla",
+    "register": "Kaydol",
+    "alreadyHaveAccount": "Zaten hesabınız var mı? Giriş Yap",
+    "passwordsDontMatch": "Şifreler eşleşmiyor!",
+    "fillAllFields": "Lütfen tüm alanları doldurun.",
+    "verificationEmailSent": "E-posta adresinize bir doğrulama e-postası gönderildi.",
+    "emailAlreadyInUse": "E-posta adresi zaten kullanılıyor.",
+    "invalidEmail": "E-posta adresi geçerli değil.",
+    "subtitle": "Doğayı keşfetmek için bize katılın",
+    "processing": "İşleniyor...",
+    "dividerOr": "veya",
+    "alreadyMember": "Zaten üye misiniz?",
+    "signInLink": "Giriş Yap"
+  },
+  "signin": {
+    "title": "Giriş Yap",
+    "email": "E-posta",
+    "password": "Şifre",
+    "signIn": "Giriş Yap",
+    "signInWithGoogle": "Google ile Giriş Yap",
+    "dontHaveAccount": "Hesabınız yok mu? Kaydol",
+    "fillAllFields": "Lütfen tüm alanları doldurun.",
+    "signInSuccessful": "Giriş Başarılı",
+    "welcomeBack": "Tekrar hoş geldiniz",
+    "userNotFound": "Bu e-postaya sahip kullanıcı bulunamadı.",
+    "wrongPassword": "Yanlış şifre.",
+    "invalidEmail": "Geçersiz e-posta adresi.",
+    "subtitle": "Yolculuğunuza devam etmek için giriş yapın",
+    "forgotPasswordLink": "Şifremi Unuttum?",
+    "dividerOr": "veya",
+    "noAccountPrompt": "Hesabınız yok mu?",
+    "signUpLink": "Kaydol"
+  },
+  "scan": {
+    "loadingCamera": "Kamera yükleniyor...",
+    "needPermission": "Kamerayı göstermek için izninize ihtiyacımız var",
+    "grantPermission": "İzin Ver",
+    "preparingCamera": "Kamera hazırlanıyor..."
+  },
+  "favorites": {
+    "title": "Favoriler",
+    "all": "Tümü",
+    "plants": "Bitkiler",
+    "animals": "Hayvanlar",
+    "removeFavorite": "Favorilerden Çıkar",
+    "remove": "Çıkar",
+    "cancel": "İptal",
+    "removed": "Çıkarıldı",
+    "removedMessage": "favorilerinizden çıkarıldı.",
+    "error": "Hata",
+    "failedToRemove": "Favorilerden çıkarılamadı.",
+    "clearFavorites": "Favorileri Temizle",
+    "removeAllFavorites": "Tüm favoriler kaldırılsın mı?",
+    "removeAll": "Tümünü kaldır",
+    "failedToClear": "Favoriler temizlenemedi.",
+    "plant": "Bitki",
+    "animal": "Hayvan",
+    "noFavoritesYet": "Henüz favori yok",
+    "addFromDaily": "Günün Bitkileri veya Hayvanları'ndan bazılarını ekleyin."
+  },
+  "about": {
+    "title": "Hakkında",
+    "developedBy": "LeafNest Ekibi Tarafından Geliştirildi ve Tasarlanmıştır",
+    "teamTitle": "LeafNest Ekibi",
+    "specialThanks": "Özel Teşekkürler",
+    "mentor": "Bay Joshua R. Lasac",
+    "credits": "Başlangıçta LeafNest ekibi tarafından Pinamalayan Maritime Foundation And Technological College INC. (PMFTCI) ve Bilgisayar Çalışmaları Okulu desteğiyle oluşturulmuştur.",
+    "privacyPolicy": "Gizlilik Politikası",
+    "version": "Sürüm 0.0.1 (1)",
+    "help": "Yardım için: leafnest.capstone@gmail.com",
+    "tagline": "Bitki ve Hayvan Tanımlama",
+    "institutionalSupport": "Kurumsal Destek",
+    "mentorRole": "Proje Danışmanı ve Rehberi"
+  },
+  "plan": {
+    "title": "Planlar",
+    "upgradeTitle": "Premium'a Yükselt",
+    "upgradeSubtitle": "Tüm özelliklerin kilidini açın ve uygulamamızdan en iyi şekilde yararlanın.",
+    "free": "Ücretsiz",
+    "freePrice": "₱0 / ay",
+    "freeFeature1": "Sınırlı bitki ve hayvan tarama",
+    "freeFeature2": "Temel günlük keşifler",
+    "freeFeature3": "Geçmişe çevrimdışı erişim yok",
+    "freeFeature4": "Reklamlar dahildir",
+    "premium": "Premium",
+    "premiumPrice": "₱129.00 / ay",
+    "premiumFeature1": "Sınırsız tarama",
+    "premiumFeature2": "Özel günlük keşifler",
+    "premiumFeature3": "Geçmişe çevrimdışı erişim",
+    "premiumFeature4": "Reklamsız deneyim",
+    "subscribeNow": "Şimdi Abone Ol",
+    "selectedPlan": "{{plan}} planını seçtiniz!"
+  },
+  "legal": {
+    "cookies": {
+      "title": "Çerez Politikası",
+      "subtitle": "Deneyiminizi geliştirmek için çerezleri nasıl kullanıyoruz",
+      "effectiveDate": "Yürürlük Tarihi: 1 Temmuz 2025",
+      "intro": "Bu Çerez Politikası, uygulamamızı ziyaret ettiğinizde ve özelliklerini kullandığınızda deneyiminizi geliştirmek için çerezleri nasıl kullandığımızı açıklar. Bu uygulamayı kullanarak, bu politikada açıklandığı şekilde çerez kullanımını kabul etmiş olursunuz.",
+      "sections": [
+        {
+          "title": "Çerezler Nedir?",
+          "content": "Çerezler, web sitelerini ziyaret ettiğinizde veya uygulamaları kullandığınızda cihazınıza depolanan küçük metin dosyalarıdır. Hizmetimizle nasıl etkileşim kurduğunuzu anlamamıza yardımcı olur ve size daha iyi, daha kişiselleştirilmiş bir deneyim sunmamızı sağlarlar."
+        },
+        {
+          "title": "Çerezleri Nasıl Kullanıyoruz",
+          "content": "Çerezleri birkaç temel amaç için kullanırız:",
+          "list": [
+            "İçeriği ve reklamları kişiselleştirmek",
+            "Trafik modellerini analiz etmek ve kullanıcı deneyimini iyileştirmek",
+            "Uygulamamızın belirli özelliklerini ve işlevlerini etkinleştirmek",
+            "Tercihlerinizi ve ayarlarınızı hatırlamak",
+            "Hesabınıza güvenli erişim sağlamak"
+          ]
+        },
+        {
+          "title": "Kullandığımız Çerez Türleri",
+          "content": "Deneyiminizi geliştirmek için farklı türde çerezler kullanırız:",
+          "list": [
+            "Temel Çerezler: Temel uygulama işlevselliği için gereklidir",
+            "Performans Çerezleri: Uygulamayı nasıl kullandığınızı anlamamıza yardımcı olur",
+            "İşlevsel Çerezler: Tercihlerinizi ve seçimlerinizi hatırlar",
+            "Analitik Çerezler: Uygulama kullanım modelleri hakkında bilgi sağlar"
+          ]
+        },
+        {
+          "title": "Çerezleri Yönetme",
+          "content": "Çerezleri cihaz ayarlarınız aracılığıyla kontrol edebilir ve yönetebilirsiniz. Ancak, belirli çerezleri devre dışı bırakmanın deneyiminizi etkileyebileceğini ve uygulamanın işlevselliğini sınırlayabileceğini lütfen unutmayın."
+        },
+        {
+          "title": "Çerez Süresi",
+          "content": "Bazı çerezler geçicidir (oturum çerezleri) ve uygulamayı kapattığınızda silinir. Diğerleri, tercihlerinizi oturumlar arasında hatırlamak için cihazınızda belirli bir süre kalır."
+        },
+        {
+          "title": "Bu Politikadaki Değişiklikler",
+          "content": "Bu Çerez Politikasını zaman zaman teknolojideki veya yasal gereksinimlerdeki değişiklikleri yansıtacak şekilde güncelleyebiliriz. Herhangi bir değişiklik, güncellenmiş bir revizyon tarihi ile bu sayfada yayınlanacaktır."
+        },
+        {
+          "title": "Bize Ulaşın",
+          "content": "Bu Çerez Politikası hakkında herhangi bir sorunuz, endişeniz veya geri bildiriminiz varsa, lütfen bizimle leafnest.capstone@gmail.com adresinden iletişime geçin."
+        }
+      ],
+      "footerTitle": "Gizliliğiniz Önemlidir",
+      "footerText": "Çerezleri nasıl kullandığımız konusunda şeffaflık taahhüdümüz vardır. Uygulamamızı kullanmaya devam etmeniz bu politikayı kabul ettiğiniz anlamına gelir.",
+      "copyright": "© 2025 LeafNest. Tüm hakları saklıdır.",
+      "lastUpdated": "Son güncelleme: 1 Temmuz 2025"
+    },
+    "privacy": {
+      "title": "Gizlilik Politikası",
+      "subtitle": "Gizliliğiniz bizim için önemlidir",
+      "effectiveDate": "Yürürlük Tarihi: 1 Temmuz 2025",
+      "intro": "LeafNest'te, gizliliğinizi korumaya ve kişisel bilgilerinizin güvenliğini sağlamaya kendimizi adadık.",
+      "sections": [
+        {
+          "title": "Topladığımız Bilgiler",
+          "content": "Hesap oluşturduğunuzda, fotoğraf yüklediğinizde veya destek için bizimle iletişime geçtiğinizde bize doğrudan sağladığınız bilgileri toplarız. Bu, adınızı, e-posta adresinizi ve sağlamayı seçtiğiniz diğer bilgileri içerebilir."
+        },
+        {
+          "title": "Bilgilerinizi Nasıl Kullanıyoruz",
+          "content": "Topladığımız bilgileri hizmetlerimizi sağlamak, sürdürmek ve iyileştirmek, sizinle iletişim kurmak ve yeni özellikler geliştirmek için kullanırız. Kişisel bilgilerinizi üçüncü taraflara satmayız."
+        },
+        {
+          "title": "Veri Güvenliği",
+          "content": "Kişisel bilgilerinizi yetkisiz erişime, değiştirilmeye, ifşa edilmeye veya imhaya karşı korumak için uygun teknik ve organizasyonel önlemleri uyguluyoruz."
+        },
+        {
+          "title": "Haklarınız",
+          "content": "Kişisel bilgilerinize erişme, bunları güncelleme veya silme hakkına sahipsiniz. Bunu hesap ayarlarınızdan yapabilir veya doğrudan bizimle iletişime geçebilirsiniz."
+        },
+        {
+          "title": "Üçüncü Taraf Hizmetleri",
+          "content": "Uygulamamız üçüncü taraf web sitelerine ve hizmetlerine bağlantılar içerebilir. Onların gizlilik uygulamalarından sorumlu değiliz. Gizlilik politikalarını incelemenizi öneririz."
+        },
+        {
+          "title": "Gizlilik Politikası Değişiklikleri",
+          "content": "Bu Gizlilik Politikasını istediğimiz zaman güncelleme hakkımız saklıdır. Değişiklikler, güncellenmiş bir yürürlük tarihi ile bu sayfada yayınlanacaktır. Kullanmaya devam etmeniz değişikliklerin kabulü anlamına gelir."
+        },
+        {
+          "title": "Bize Ulaşın",
+          "content": "Bu Gizlilik Politikası veya gizlilik uygulamalarımız hakkında herhangi bir sorunuz varsa, lütfen bizimle privacy@leafnest.com adresinden iletişime geçin."
+        }
+      ],
+      "footerTitle": "Sizi Önemsiyoruz",
+      "footerText": "Güveniniz bizim için önemlidir. Şeffaf veri uygulamalarına ve gizlilik hakkınıza bağlıyız.",
+      "copyright": "© 2025 LeafNest. Tüm hakları saklıdır.",
+      "lastUpdated": "Son güncelleme: 1 Temmuz 2025"
+    },
+    "terms": {
+      "title": "Kullanım Koşulları",
+      "subtitle": "Lütfen kullanmadan önce dikkatlice okuyun",
+      "effectiveDate": "Yürürlük Tarihi: 1 Temmuz 2025",
+      "intro": "Bu Kullanım Koşulları, LeafNest uygulamasının ve hizmetlerinin kullanımını düzenler. Uygulamamızı kullanarak, bu hüküm ve koşulları kabul etmiş olursunuz.",
+      "sections": [
+        {
+          "title": "Koşulların Kabulü",
+          "content": "LeafNest uygulamasına erişerek veya kullanarak, bu Kullanım Koşullarına bağlı olmayı kabul edersiniz. Bu koşulları kabul etmiyorsanız, uygulamayı kullanmamalısınız."
+        },
+        {
+          "title": "Kullanıcı Sorumlulukları",
+          "content": "Uygulamayı yalnızca yasal amaçlarla ve başkalarının haklarını ihlal etmeyecek şekilde kullanmayı kabul edersiniz. Hesap bilgilerinizin gizliliğini korumak sizin sorumluluğunuzdadır."
+        },
+        {
+          "title": "Fikri Mülkiyet",
+          "content": "Uygulama içindeki tüm içerik, ticari markalar, logolar ve fikri mülkiyet LeafNest'e aittir veya bize lisanslanmıştır. Fikri mülkiyetimizin izinsiz kullanımı kesinlikle yasaktır."
+        },
+        {
+          "title": "Gizlilik ve Veri Toplama",
+          "content": "Kişisel bilgileri Gizlilik Politikamızda açıklandığı şekilde toplar ve işleriz. Uygulamamızı kullanarak, veri toplama, depolama ve işleme uygulamalarımızı kabul etmiş olursunuz."
+        },
+        {
+          "title": "Sorumluluk Sınırlaması",
+          "content": "LeafNest, uygulamanın veya hizmetlerinin kullanımından kaynaklanan herhangi bir hasar, kayıp veya yaralanmadan sorumlu değildir. Uygulamayı kendi riskiniz ve takdirinizle kullanırsınız."
+        },
+        {
+          "title": "Koşullardaki Değişiklikler",
+          "content": "Bu Kullanım Koşullarını istediğimiz zaman güncelleme hakkımız saklıdır. Herhangi bir değişiklik, güncellenmiş bir yürürlük tarihi ile bu sayfada yayınlanacaktır. Kullanmaya devam etmeniz değişikliklerin kabulü anlamına gelir."
+        },
+        {
+          "title": "Bize Ulaşın",
+          "content": "Bu Kullanım Koşulları hakkında herhangi bir sorunuz, endişeniz veya geri bildiriminiz varsa, lütfen bizimle leafnest.capstone@gmail.com adresinden iletişime geçin."
+        }
+      ],
+      "footerTitle": "Teşekkürler",
+      "footerText": "Kullanım Koşullarımızı incelemeye zaman ayırdığınız için teşekkür ederiz. Güveniniz ve uyumunuz, herkes için daha iyi bir deneyim yaratmamıza yardımcı olur.",
+      "copyright": "© 2025 LeafNest. Tüm hakları saklıdır.",
+      "lastUpdated": "Son güncelleme: 1 Temmuz 2025"
+    }
+  },
+  "faq": {
+    "title": "Yardım ve SSS",
+    "subtitle": "Sık sorulan soruların cevaplarını bulun",
+    "categories": [
+      {
+        "title": "Başlarken",
+        "items": [
+          {
+            "question": "LeafNest nedir?",
+            "answer": "LeafNest, doğa hakkında bilgi sağlamak için bitkileri ve hayvanları tanımlamanıza yardımcı olmak üzere yapay zeka teknolojisini kullanan bir bitki tanımlama ve bilgi uygulamasıdır."
+          },
+          {
+            "question": "Nasıl başlayabilirim?",
+            "answer": "Uygulamayı açın, tarama simgesine dokunun ve herhangi bir bitkiye veya hayvana doğrultun. Yapay zeka onu tanımlayacak ve bu tür hakkında detaylı bilgi sağlayacaktır."
+          }
+        ]
+      },
+      {
+        "title": "Tarayıcıyı Kullanma",
+        "items": [
+          {
+            "question": "Bir türü nasıl tararım?",
+            "answer": "Ana ekrandaki tarama simgesine dokunun, kameranızı türe doğrultun ve net bir fotoğraf çekin. Uygulama otomatik olarak tanımlayacaktır."
+          },
+          {
+            "question": "İyi bir tarama nasıl yapılır?",
+            "answer": "İyi aydınlatma sağlayın, ayırt edici özelliklere odaklanın ve en iyi sonuçlar için kamerayı sabit tutun."
+          },
+          {
+            "question": "Fotoğraf galerimden tarama yapabilir miyim?",
+            "answer": "Evet. Tarayıcı ekranında galeri seçeneğini seçerek galerinizdeki mevcut fotoğrafları yükleyebilirsiniz."
+          }
+        ]
+      },
+      {
+        "title": "Doğruluk ve Özellikler",
+        "items": [
+          {
+            "question": "Tanımlama ne kadar doğru?",
+            "answer": "LeafNest, gelişmiş makine öğrenimi modelleri kullanır. Doğruluk aydınlatma ve görüntü kalitesine göre değişir ancak tipik olarak %90'ı aşar."
+          },
+          {
+            "title": "Favori bitkilerimi kaydedebilir miyim?",
+            "answer": "Evet. Tanımlanan herhangi bir türdeki kalp simgesine dokunarak daha sonra hızlı erişim için favorilerinize ekleyin."
+          }
+        ]
+      },
+      {
+        "title": "Destek ve Yardım",
+        "items": [
+          {
+            "question": "Destek ekibiyle nasıl iletişime geçerim?",
+            "answer": "Ayarlar menüsünü açın ve Yardım ve Destek seçeneğini belirleyin veya bize leafnest.capstone@gmail.com adresinden e-posta gönderin."
+          }
+        ]
+      }
+    ]
+  },
+  "help": {
+    "title": "Yardım ve Destek",
+    "subtitle": "Yapay zeka ile bitki ve hayvanları taramak için ipuçları ve daha fazla yardım alabileceğiniz yerler.",
+    "quickStart": {
+      "title": "Hızlı Başlangıç",
+      "bullets": [
+        "Ana ekrandan Tara düğmesine dokunun.",
+        "Bitkiyi veya hayvanı çerçevenin ortasına getirin.",
+        "Sabit tutun, ardından net bir fotoğraf çekin."
+      ],
+      "cta": "Tarayıcıyı Aç"
+    },
+    "bestResults": {
+      "title": "Daha iyi sonuçlar nasıl alınır",
+      "bullets": [
+        "İyi aydınlatma kullanın ve sert arka ışıktan kaçının.",
+        "Özneyi çerçeveye doldurun, ayırt edici detaylara odaklanın.",
+        "Yapraklar, çiçekler, ağaç kabuğu veya profil çekimleri gibi farklı açılar deneyin."
+      ]
+    },
+    "troubleshooting": {
+      "title": "Sorun Giderme",
+      "bullets": [
+        "Günlük öne çıkanlar aynı mı görünüyor? Gece yarısından (Türkiye saati) sonra yenilemek için çekin veya uygulamayı yeniden açın.",
+        "İnternet yok mu? Görüntü tanıma bir ağ bağlantısı gerektirdiğinden bağlantınızı kontrol edin.",
+        "Düşük doğruluk mu? Daha iyi aydınlatma ile daha net, daha yakın bir fotoğraf çekin."
+      ]
+    },
+    "links": {
+      "faq": "SSS",
+      "feedback": "Geri Bildirim Gönder",
+      "about": "LeafNest Hakkında",
+      "privacy": "Gizlilik Politikası",
+      "terms": "Kullanım Koşulları",
+      "contact": "Destekle İletişime Geç"
+    },
+    "alerts": {
+      "noEmailTitle": "E-posta uygulaması açılamıyor",
+      "noEmailBody": "Lütfen bize {{email}} adresinden e-posta gönderin."
+    }
+  },
+  "feedback": {
+    "title": "Geri Bildirim Gönder",
+    "subtitle": "Neyin harika çalıştığını veya neyin iyileştirilebileceğini bize anlatın. Her mesajı okuruz.",
+    "topicLabel": "Konu",
+    "topics": {
+      "bug": "Hata Bildir",
+      "idea": "Özellik İsteği",
+      "ux": "Tasarım / Kullanıcı Deneyimi",
+      "content": "Tür / İçerik",
+      "account": "Hesap / Giriş",
+      "other": "Diğer"
+    },
+    "subjectLabel": "Konu",
+    "subjectPlaceholder": "Kısa özet (Örn: Tarayıcı yaprağı akçaağaç olarak yanlış etiketliyor)",
+    "messageLabel": "Mesaj",
+    "messagePlaceholder": "Ne olduğunu, tekrarlama adımlarını ve beklentileri açıklayın.",
+    "emailLabel": "E-posta Adresiniz (isteğe bağlı)",
+    "emailPlaceholder": "Gerekirse buradan cevap vereceğiz",
+    "includeDiagnostics": "Tanılamaları dahil et",
+    "diagnosticsHint": "Sorunları ayıklamamıza yardımcı olur (sadece platform ve işletim sistemi).",
+    "submit": "Geri Bildirim Gönder",
+    "submitting": "Gönderiliyor...",
+    "footerText": "Veya doğrudan bize {{email}} adresinden e-posta gönderin",
+    "alerts": {
+      "missingInfoTitle": "Eksik bilgi",
+      "missingInfoMessage": "Lütfen bir konu ve mesaj ekleyin.",
+      "invalidEmailTitle": "Geçersiz e-posta",
+      "invalidEmailMessage": "Lütfen geçerli bir e-posta adresi girin veya boş bırakın.",
+      "noEmailAppTitle": "Geri bildirim gönderilemiyor",
+      "noEmailAppMessage": "Lütfen daha sonra tekrar deneyin veya bize {{email}} adresinden e-posta gönderin.",
+      "successTitle": "Geri bildirim gönderildi",
+      "successMessage": "Geri bildiriminiz için teşekkürler! Yakında inceleyeceğiz.",
+      "genericErrorTitle": "Bir şeyler yanlış gitti",
+      "genericErrorMessage": "Lütfen daha sonra tekrar deneyin veya bize {{email}} adresinden e-posta gönderin."
+    }
+  },
+  "comments": {
+    "title": "Yorumlar",
+    "noComments": "Henüz yorum yok",
+    "beFirstToComment": "İlk yorum yapan sen ol!",
+    "addComment": "Yorum ekle...",
+    "deleteComment": "Yorumu Sil",
+    "deleteConfirm": "Bu yorumu silmek istediğinize emin misiniz?",
+    "delete": "Sil",
+    "failedToDelete": "Yorum silinemedi",
+    "failedToLike": "Yorum beğenilemedi",
+    "loginRequired": "Giriş Gerekli",
+    "loginToComment": "Yorum yapmak için giriş yapmalısınız",
+    "loginToLike": "Yorumları beğenmek için giriş yapmalısınız",
+    "justNow": "Şimdi"
+  },
+  "notification": {
+    "title": "Bildirimler",
+    "noNotifications": "Henüz bildirim yok",
+    "markAsRead": "Okundu olarak işaretle",
+    "markAllAsRead": "Tümünü okundu işaretle",
+    "delete": "Sil",
+    "deleteAll": "Tümünü sil"
+  },
+  "commentsModal": {
+    "title": "Yorumlar",
+    "inputPlaceholder": "Yorum ekle...",
+    "empty": {
+      "title": "Henüz yorum yok",
+      "subtitle": "İlk yorum yapan sen ol!"
+    },
+    "actions": {
+      "cancel": "İptal",
+      "delete": "Sil"
+    },
+    "alerts": {
+      "loadErrorTitle": "Hata",
+      "loadErrorBody": "Yorumlar yüklenemedi.",
+      "loginRequiredTitle": "Giriş gerekli",
+      "loginRequiredCommentBody": "Yorum yapmak için giriş yapmalısınız.",
+      "loginRequiredLikeBody": "Yorumları beğenmek için giriş yapmalısınız.",
+      "addErrorTitle": "Hata",
+      "addErrorBody": "Yorum eklenemedi.",
+      "likeErrorTitle": "Hata",
+      "likeErrorBody": "Yorum beğenilemedi.",
+      "deleteTitle": "Yorumu sil",
+      "deleteConfirmBody": "Bu yorumu silmek istediğinize emin misiniz?",
+      "deleteErrorTitle": "Hata",
+      "deleteErrorBody": "Yorum silinemedi."
+    }
+  },
+  "premiumGate": {
+    "offline": {
+      "title": "Çevrimdışı erişim gerekli",
+      "historySubtitle": "Geçmişe çevrimdışı erişim için abone olun",
+      "historyDescription": "Tarama geçmişinize çevrimdışı erişim, bir premium özelliktir. Geçmişinizi her zaman, her yerde görüntülemek için yükseltin.",
+      "favoritesSubtitle": "Favorilere çevrimdışı erişim için abone olun",
+      "favoritesDescription": "Favorilerinize çevrimdışı erişim, bir premium özelliktir. Favorilerinizi her zaman, her yerde görüntülemek için yükseltin."
+    },
+    "limits": {
+      "scanTitle": "Tarama sınırına ulaşıldı",
+      "scanSubtitle": "{{limit}} tarama hakkınızı kullandınız",
+      "scanDescription": "Sınırsız tarama ve daha fazla özellik için Premium'a yükseltin!",
+      "downloadTitle": "İndirme sınırına ulaşıldı",
+      "downloadSubtitle": "{{limit}} indirme hakkınızı kullandınız",
+      "downloadDescription": "Sınırsız indirme için Premium'a yükseltin!"
+    },
+    "timer": {
+      "resetsInHours": "{{count}} saat içinde sıfırlanır",
+      "resetsInHours_plural": "{{count}} saat içinde sıfırlanır"
+    },
+    "usage": {
+      "scans": "Taramalar:",
+      "downloads": "İndirmeler:"
+    },
+    "features": {
+      "title": "Premium avantajları:",
+      "offlineHistory": "Çevrimdışı geçmiş erişimi",
+      "offlineFavorites": "Çevrimdışı favori erişimi",
+      "unlimitedScans": "Sınırsız tarama",
+      "unlimitedDownloads": "Sınırsız indirme"
+    },
+    "pricing": {
+      "amount": "{{amount}}",
+      "period": "{{days}} gün için"
+    },
+    "actions": {
+      "upgrade": "Premium'a Yükselt",
+      "later": "Belki sonra"
+    }
+  },
+  "manageNotifications": {
+    "title": "Bildirimleri Yönet",
+    "pushNotifications": "Anlık Bildirimler",
+    "emailNotifications": "E-posta Bildirimleri",
+    "likeNotifications": "Beğeni Bildirimleri",
+    "commentNotifications": "Yorum Bildirimleri",
+    "followNotifications": "Takip Bildirimleri",
+    "enabled": "Etkin",
+    "disabled": "Devre Dışı",
+    "save": "Ayarları Kaydet"
+  },
+  "history": {
+    "title": "Geçmiş",
+    "loading": "Geçmiş yükleniyor...",
+    "loadingMore": "Daha fazla yükleniyor...",
+    "signInRequiredTitle": "Giriş gerekli",
+    "signInRequiredBody": "Tarama geçmişinizi görüntülemek için bir hesap oluşturun veya giriş yapın.",
+    "selection": {
+      "selectedCount": "{{count}} seçildi",
+      "deleteButton": "{{count}} kaydı sil",
+      "deleteButton_plural": "{{count}} kaydı sil"
+    },
+    "offlineBanner": {
+      "premium": "Çevrimdışı mod (Premium)",
+      "locked": "Çevrimdışı mod Premium gerektirir"
+    },
+    "search": {
+      "placeholder": "Ada göre ara..."
+    },
+    "filters": {
+      "all": "Tümü",
+      "plants": "Bitkiler",
+      "animals": "Hayvanlar"
+    },
+    "empty": {
+      "noHistoryTitle": "Henüz geçmiş yok",
+      "noHistoryBody": "Bitki ve hayvanları tanımlamaya başladığınızda tür tarama geçmişiniz burada görünecek.",
+      "noResultsTitle": "Sonuç bulunamadı",
+      "noResultsBody": "Aramanız veya filtre kriterlerinizle eşleşen kayıt yok. Filtrelerinizi ayarlamayı deneyin."
+    },
+    "actions": {
+      "signIn": "Giriş yap",
+      "delete": "Sil",
+      "clearAll": "Tümünü temizle",
+      "clearFilters": "Filtreleri temizle"
+    },
+    "alerts": {
+      "visibilityNow": "Tarama şimdi {{status}}",
+      "visibilityUpdateFailed": "Görünürlük güncellenemedi.",
+      "visibilityNeedsSync": "Bu taramanın önce senkronize edilmesi gerekiyor. Lütfen birazdan tekrar deneyin.",
+      "visibilityOffline": "Çevrimdışıyken görünürlük değiştirilemez. Lütfen bağlantınızı kontrol edin.",
+      "visibilityNotSynced": "Bu tarama henüz buluta senkronize edilmedi. Lütfen senkronizasyonun tamamlanmasını bekleyin ve tekrar deneyin.",
+      "visibilityPermissionDenied": "Bu taramayı değiştirme izniniz yok.",
+      "visibilityNetworkError": "Ağ hatası. Lütfen bağlantınızı kontrol edin ve tekrar deneyin.",
+      "errorWithMessage": "Hata: {{message}}",
+      "deleteRecordTitle": "Kaydı sil",
+      "deleteRecordMessage": "\"{{name}}\" geçmişten silinsin mi?",
+      "deleteRecordSuccess": "Kayıt silindi.",
+      "deleteRecordError": "Kayıt silinemedi.",
+      "deleteSelectedTitle": "Seçilenleri sil",
+      "deleteSelectedMessage": "{{count}} kayıt geçmişten silinsin mi?",
+      "deleteSelectedMessage_plural": "{{count}} kayıt geçmişten silinsin mi?",
+      "deleteSelectedSuccess": "{{count}} kayıt silindi.",
+      "deleteSelectedSuccess_plural": "{{count}} kayıt silindi.",
+      "deleteSelectedError": "Seçilen kayıtlar silinemedi.",
+      "clearAllTitle": "Tüm geçmişi temizle",
+      "clearAllMessage": "Tüm geçmiş kayıtlarını silmek istediğinize emin misiniz? Bu işlem geri alınamaz.",
+      "clearAllSuccess": "Tüm geçmiş temizlendi.",
+      "clearAllError": "Geçmiş temizlenemedi."
+    },
+    "visibility": {
+      "public": "herkese açık",
+      "private": "gizli"
+    },
+    "unknownSpecies": "Bilinmeyen tür",
+    "details": {
+      "commonName": "Yaygın ad",
+      "scientificName": "Bilimsel ad",
+      "taxonomicRank": "Taksonomik sıralama",
+      "type": "Tür",
+      "conservationStatus": "Koruma durumu",
+      "timesScanned": "Taranma sayısı",
+      "timeCount": "{{count}} kez",
+      "timeCount_plural": "{{count}} kez",
+      "globalAppScans": "Genel uygulama taramaları",
+      "scanCount": "{{count}} tarama",
+      "scanCount_plural": "{{count}} tarama",
+      "scannedOn": "Tarama tarihi"
+    },
+    "premiumGate": {
+      "title": "Çevrimdışı moda erişmek için abone olun",
+      "message": "Geçmişinize çevrimdışı erişim bir premium özelliktir. Çevrimdışıyken tarama geçmişinizi görüntülemek için abone olun."
+    },
+    "noHistory": "Henüz geçmiş yok",
+    "startScanning": "Geçmişinizi oluşturmak için taramaya başlayın",
+    "delete": "Sil",
+    "deleteAll": "Tümünü sil",
+    "deleteConfirm": "Bu öğeyi silmek istediğinize emin misiniz?",
+    "deleteAllConfirm": "Tüm geçmişi silmek istediğinize emin misiniz?",
+    "scannedOn": "{{date}} tarihinde tarandı"
+  },
+  "postDetail": {
+    "title": "Gönderi",
+    "aboutLabel": "Hakkında",
+    "emptyTitle": "Gönderi bulunamadı",
+    "alerts": {
+      "postNotFoundTitle": "Hata",
+      "postNotFoundBody": "Gönderi bulunamadı.",
+      "loadErrorTitle": "Hata",
+      "loadErrorBody": "Gönderi yüklenemedi.",
+      "likeErrorBody": "Gönderi beğenilemedi."
+    }
+  },
+  "speciesGallery": {
+    "title": "Galeri",
+    "noResults": "Sonuç bulunamadı",
+    "loadMore": "Daha fazla yükle",
+    "error": "Galeri yüklenemedi"
+  },
+  "speciesLanding": {
+    "title": "Tür Detayları",
+    "scientificName": "Bilimsel Ad",
+    "commonName": "Yaygın Ad",
+    "description": "Açıklama",
+    "habitat": "Yaşam Alanı",
+    "diet": "Beslenme",
+    "lifespan": "Yaşam Süresi",
+    "conservationStatus": "Koruma Durumu",
+    "addToFavorites": "Favorilere Ekle",
+    "removeFromFavorites": "Favorilerden Çıkar",
+    "share": "Paylaş",
+    "viewMore": "Daha Fazla Göster",
+    "error": "Tür detayları yüklenemedi"
+  },
+  "manualPayment": {
+    "title": "Manuel Ödeme",
+    "uploadProof": "Ödeme Kanıtı Yükle",
+    "selectImage": "Görsel Seç",
+    "takePhoto": "Fotoğraf Çek",
+    "chooseFromGallery": "Galeriden Seç",
+    "uploadImage": "Görsel Yükle",
+    "uploading": "Yükleniyor...",
+    "submit": "Ödemeyi Gönder",
+    "submitting": "Gönderiliyor...",
+    "successTitle": "Başarılı",
+    "successMessage": "Ödeme başarıyla gönderildi. Kısa süre içinde doğrulayacağız.",
+    "errorTitle": "Hata",
+    "errorMessage": "Ödeme gönderilemedi. Lütfen tekrar deneyin.",
+    "selectImageFirst": "Lütfen önce bir görsel seçin"
+  },
+  "scanStats": {
+    "title": "Tarama İstatistikleri",
+    "totalScans": "Toplam Tarama",
+    "thisWeek": "Bu Hafta",
+    "thisMonth": "Bu Ay",
+    "plants": "Bitkiler",
+    "animals": "Hayvanlar",
+    "noData": "Henüz tarama verisi yok"
+  }
+}

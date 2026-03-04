@@ -1,0 +1,895 @@
+{
+  "common": {
+    "welcome": "Selamat datang",
+    "guest": "tetamu",
+    "loading": "Memuatkan...",
+    "error": "ralat",
+    "success": "Kejayaan",
+    "cancel": "Batal",
+    "ok": "OK",
+    "save": "Jimat",
+    "back": "belakang",
+    "edit": "Sunting",
+    "username": "Nama pengguna",
+    "and": "dan"
+  },
+  "login": {
+    "title": "LeafNest",
+    "signInWithGoogle": "Log masuk dengan Google",
+    "signInAsGuest": "Log masuk sebagai Tetamu",
+    "signInFailed": "Log masuk gagal",
+    "googleAuthError": "Ralat Pengesahan Google",
+    "unexpectedError": "Ralat yang tidak dijangka",
+    "unknownError": "Ralat tidak diketahui",
+    "termsText": "Dengan mendaftar, anda menunjukkan bahawa anda telah membaca dan mengakui",
+    "termsOfUse": "Syarat Penggunaan",
+    "privacyPolicy": "Dasar Privasi",
+    "cookiesPolicy": "Dasar Kuki",
+    "signIn": "Log Masuk",
+    "welcomeTitle": "Selamat datang ke LeafNest",
+    "welcomeSubtitle": "Temui keindahan alam semula jadi",
+    "signInWithEmailButton": "Log masuk dengan E-mel",
+    "dividerOr": "atau",
+    "continueAsGuest": "Teruskan sebagai Tetamu",
+    "continueAgreement": "Dengan meneruskan, anda bersetuju dengan kami"
+  },
+  "home": {
+    "welcomeGuest": "Selamat datang, Tetamu",
+    "welcomeUser": "Selamat datang, {{name}}",
+    "guestModeSubtitle": "Anda berada dalam mod tetamu. Log masuk untuk membuka kunci semua ciri.",
+    "welcomeBackSubtitle": "Gembira berjumpa anda kembali!",
+    "scanPlantsTitle": "Imbas Tumbuhan Serta-merta",
+    "scanPlantsSubtitle": "Tunjuk, tangkap dan kenal pasti flora dalam beberapa saat.",
+    "scanAnimalsTitle": "Imbas Haiwan Serta-merta",
+    "scanAnimalsSubtitle": "Kenal pasti haiwan dalam beberapa saat.",
+    "learnNatureTitle": "Belajar Tentang Alam",
+    "learnNatureSubtitle": "Temui lebih banyak dengan teks-ke-ucapan dan fakta pantas.",
+    "scanningStats": "Mengimbas Statistik",
+    "plantsScanned": "Tumbuhan Diimbas",
+    "animalsIdentified": "Haiwan Dikenalpasti",
+    "dailyDiscovery": "Penemuan Harian",
+    "dailyDiscoverySubtitle": "Belajar sesuatu yang baru setiap hari",
+    "plantOfTheDay": "Tumbuhan Hari Ini",
+    "animalOfTheDay": "Haiwan Hari Ini",
+    "scientificName": "Nama Saintifik",
+    "habitat": "Habitat",
+    "diet": "Diet",
+    "lifespan": "Jangka hayat",
+    "weight": "Berat badan",
+    "cycle": "Kitaran Hidup",
+    "watering": "Menyiram",
+    "sunlight": "Cahaya matahari",
+    "loadingDaily": "Memuatkan kandungan harian...",
+    "errorLoadingDaily": "Tidak dapat memuatkan kandungan harian",
+    "pullToRefresh": "Tarik untuk menyegarkan",
+    "offlineMode": "Kandungan luar talian",
+    "funFact": "Fakta Seronok",
+    "newFact": "Fakta Baru",
+    "trendingPlants": "Tumbuhan Trend",
+    "trendingAnimals": "Haiwan Trending",
+    "alerts": {
+      "authRequiredTitle": "Pengesahan Diperlukan",
+      "authRequiredBody": "Sila log masuk untuk memuat turun PDF.",
+      "pdfSuccessTitle": "Kejayaan",
+      "pdfSuccessBody": "PDF telah dijana dan dihantar ke e-mel anda.",
+      "pdfErrorTitle": "ralat",
+      "pdfErrorBody": "Gagal menjana PDF. Sila cuba lagi.",
+      "signInRequiredTitle": "Log masuk diperlukan",
+      "signInLikeBody": "Sila log masuk untuk menyukai siaran.",
+      "signInCommentBody": "Sila log masuk untuk mengulas.",
+      "downloadsUnavailableTitle": "Muat Turun Tidak Tersedia",
+      "downloadsUnavailableBody": "Sila daftar untuk mendapatkan akaun percuma untuk memuat turun maklumat spesies.",
+      "downloadLimitCheckErrorBody": "Gagal menyemak had muat turun. Sila cuba lagi."
+    },
+    "pdf": {
+      "defaultCommon": "Tidak diketahui",
+      "defaultScientific": "Tidak diketahui",
+      "defaultRank": "pangkat tidak diketahui",
+      "defaultTaxon": "Tidak diketahui",
+      "noDescription": "Tiada penerangan tersedia.",
+      "infoUnavailable": "Maklumat tidak tersedia.",
+      "notEvaluated": "Tidak dinilai"
+    },
+    "trending": {
+      "title": "Spesies Trend"
+    },
+    "emptyState": {
+      "title": "Selamat datang ke Komuniti",
+      "subtitle": "Mula meneroka dan berkongsi penemuan alam semula jadi anda.",
+      "cta": "Imbas Spesies Pertama Anda"
+    },
+    "feed": {
+      "likesCount": "{{count}} suka",
+      "likesCount_plural": "{{count}} suka",
+      "beFirst": "Jadilah yang pertama menyukai ini",
+      "showMore": "Tunjukkan lagi",
+      "showLess": "Tunjukkan lebih sedikit",
+      "viewComments": "Lihat semua {{count}} ulasan",
+      "viewComments_plural": "Lihat semua {{count}} ulasan",
+      "unknownUser": "Tanpa Nama",
+      "unknownSpecies": "Spesies yang tidak diketahui",
+      "likeError": "Gagal menyukai siaran."
+    },
+    "relativeTime": {
+      "justNow": "tadi",
+      "minutes": "{{count}}m yang lalu",
+      "hours": "{{count}}j yang lalu",
+      "days": "{{count}}h yang lalu"
+    }
+  },
+  "settings": {
+    "title": "tetapan",
+    "account": "Akaun",
+    "guestMode": "Mod tetamu",
+    "signedIn": "Log masuk",
+    "username": "Nama pengguna",
+    "editUsername": "Edit Nama Pengguna",
+    "currentUsername": "Nama Pengguna Semasa",
+    "newUsername": "Nama Pengguna Baharu",
+    "usernameUpdated": "Nama pengguna berjaya dikemas kini!",
+    "usernameUpdateError": "Gagal mengemas kini nama pengguna",
+    "usernameUpdateFailed": "Kemas kini nama pengguna gagal",
+    "usernameRequired": "Nama pengguna diperlukan",
+    "usernameTooShort": "Nama pengguna mestilah sekurang-kurangnya 3 aksara",
+    "usernameTooLong": "Nama pengguna mestilah 20 aksara atau kurang",
+    "usernameInvalidChars": "Nama pengguna hanya boleh mengandungi huruf, nombor, garis bawah dan sempang",
+    "language": "Bahasa",
+    "selectLanguage": "Pilih Bahasa",
+    "logout": "Log Keluar",
+    "logoutError": "Gagal log keluar.",
+    "about": "Tentang",
+    "appName": "LeafNest",
+    "yourPlan": "Rancangan Anda",
+    "leafNestFree": "LeafNest Percuma",
+    "help": "Tolong",
+    "sendFeedback": "Hantar Maklum Balas",
+    "faq": "Soalan Lazim",
+    "termsOfUse": "Syarat Penggunaan",
+    "generalSection": "Umum",
+    "supportSection": "Sokongan",
+    "legalSection": "sah"
+  },
+  "profile": {
+    "title": "Profil",
+    "editUsername": "Edit Nama Pengguna",
+    "signOut": "Log Keluar",
+    "leaveAccount": "Tinggalkan akaun anda",
+    "signIn": "Log Masuk",
+    "accessFullFeatures": "Akses semua ciri",
+    "createAccount": "Buat Akaun",
+    "joinLeafNest": "Sertai LeafNest",
+    "guestUser": "Pengguna Tetamu",
+    "statsTitle": "Imbas Statistik",
+    "viewAll": "Lihat Semua",
+    "guestPromptTitle": "Jejaki Kemajuan Anda",
+    "guestPromptText": "Log masuk untuk menjejak imbasan, menemui spesies dan membuka kunci pencapaian.",
+    "badgeNew": "baru",
+    "editPlaceholder": "Masukkan nama pengguna",
+    "stats": {
+      "total": "Jumlah Imbasan",
+      "week": "Minggu ini",
+      "species": "Spesies"
+    },
+    "sections": {
+      "account": "Tetapan Akaun"
+    },
+    "menu": {
+      "planTitle": "Rancangan Anda",
+      "planSubtitle": "LeafNest Percuma",
+      "notificationsTitle": "Pemberitahuan",
+      "notificationsSubtitle": "Urus pemberitahuan anda",
+      "passwordTitle": "Terlupa Kata Laluan",
+      "passwordSubtitle": "Tetapkan semula kata laluan anda",
+      "signOutTitle": "Log Keluar",
+      "signOutSubtitle": "Log keluar daripada akaun anda",
+      "signInTitle": "Log Masuk",
+      "signInSubtitle": "Akses semua ciri",
+      "createAccountTitle": "Buat Akaun",
+      "createAccountSubtitle": "Sertai LeafNest hari ini"
+    },
+    "alerts": {
+      "syncSuccess": "{{count}} imbasan belum selesai disegerakkan",
+      "syncSuccess_plural": "{{count}} imbasan belum selesai disegerakkan",
+      "usernameUpdated": "Nama pengguna berjaya dikemas kini!",
+      "usernameUpdateError": "Gagal mengemas kini nama pengguna.",
+      "signOutTitle": "Log Keluar",
+      "signOutMessage": "Adakah anda pasti mahu log keluar?",
+      "signOutConfirm": "Log Keluar",
+      "signOutError": "Gagal log keluar. Sila cuba lagi."
+    }
+  },
+  "languages": {
+    "ar": "bahasa arab",
+    "zh-CN": "Cina (Mudah)",
+    "zh-TW": "Cina (Tradisional)",
+    "hr": "bahasa Croatia",
+    "cs": "bahasa Czech",
+    "da": "Danish",
+    "nl": "Belanda",
+    "en": "Inggeris",
+    "fi": "bahasa Finland",
+    "fr": "Perancis",
+    "de": "Jerman",
+    "el": "bahasa Yunani",
+    "hi": "Hindi",
+    "hu": "bahasa Hungary",
+    "id": "Indonesia",
+    "it": "Itali",
+    "ja": "Jepun",
+    "ko": "Korea",
+    "ms": "Melayu",
+    "no": "bahasa Norway",
+    "fa": "Parsi",
+    "pl": "Poland",
+    "pt": "Portugis",
+    "ro": "bahasa Romania",
+    "ru": "bahasa Rusia",
+    "sk": "Bahasa Slovak",
+    "es": "bahasa Sepanyol",
+    "sv": "bahasa Sweden",
+    "tl": "bahasa Tagalog",
+    "th": "Thai",
+    "tr": "bahasa Turki",
+    "uk": "Ukraine",
+    "vi": "bahasa Vietnam"
+  },
+  "tabs": {
+    "home": "Rumah",
+    "scan": "Imbas",
+    "history": "Sejarah",
+    "settings": "tetapan"
+  },
+  "animals": {
+    "title": "Haiwan Hari Ini",
+    "lion": {
+      "name": "Singa",
+      "scientificName": "Panthera leo",
+      "description": "Singa adalah kucing besar dari genus Panthera yang berasal dari Afrika dan India. Ia mempunyai badan berotot, berdada lebar, kepala bulat pendek, telinga bulat, dan jumbai berbulu di hujung ekornya.",
+      "habitat": "Savana, padang rumput, dan hutan terbuka",
+      "diet": "Karnivor - terutamanya mamalia besar seperti zebra, seladang dan kerbau",
+      "lifespan": "10-14 tahun di alam liar, sehingga 20 tahun dalam kurungan",
+      "conservationStatus": "Terdedah"
+    },
+    "elephant": {
+      "name": "Gajah",
+      "scientificName": "Elephantidae",
+      "description": "Gajah ialah haiwan darat terbesar yang sedia ada, dicirikan oleh belalai panjang (belalai), kaki kolumnar, dan kepala besar dengan kelenjar temporal dan telinga lebar dan rata.",
+      "habitat": "Sabana, hutan, padang pasir, dan paya",
+      "diet": "Herbivor - rumput, daun, kulit kayu, buah, dan tanah",
+      "lifespan": "60-70 tahun",
+      "conservationStatus": "Terancam"
+    },
+    "panda": {
+      "name": "Panda Gergasi",
+      "scientificName": "Ailuropoda melanoleuca",
+      "description": "Panda gergasi ialah seekor beruang yang berasal dari China Tengah Selatan. Ia dicirikan oleh kot hitam-putih yang berani dan badannya yang gemuk.",
+      "habitat": "Banjaran gunung di tengah China dengan hutan buluh tebal",
+      "diet": "Terutamanya buluh (99% daripada diet), kadangkala haiwan kecil",
+      "lifespan": "20 tahun di alam liar, sehingga 30 tahun dalam kurungan",
+      "conservationStatus": "Terdedah"
+    },
+    "loading": "Memuatkan haiwan...",
+    "errorLoading": "Gagal memuatkan haiwan",
+    "addToFavorites": "Tambahkan pada Kegemaran",
+    "removeFromFavorites": "Alih keluar daripada Kegemaran",
+    "learnMore": "Ketahui Lebih Lanjut",
+    "share": "Kongsi Haiwan"
+  },
+  "signup": {
+    "title": "Buat Akaun",
+    "username": "Nama pengguna",
+    "email": "E-mel",
+    "password": "Kata laluan",
+    "confirmPassword": "Sahkan Kata Laluan",
+    "register": "Daftar",
+    "alreadyHaveAccount": "Sudah mempunyai Akaun? Log Masuk",
+    "passwordsDontMatch": "Kata laluan tidak sepadan!",
+    "fillAllFields": "Sila isi semua ruangan.",
+    "verificationEmailSent": "E-mel pengesahan telah dihantar ke e-mel anda.",
+    "emailAlreadyInUse": "Alamat e-mel sudah digunakan.",
+    "invalidEmail": "Alamat e-mel tidak sah.",
+    "subtitle": "Sertai kami untuk meneroka alam semula jadi",
+    "processing": "Memproses...",
+    "dividerOr": "atau",
+    "alreadyMember": "Sudah menjadi ahli?",
+    "signInLink": "Log Masuk"
+  },
+  "signin": {
+    "title": "Log Masuk",
+    "email": "E-mel",
+    "password": "Kata laluan",
+    "signIn": "Log Masuk",
+    "signInWithGoogle": "Log masuk dengan Google",
+    "dontHaveAccount": "Tiada Akaun? Daftar",
+    "fillAllFields": "Sila isi semua ruangan.",
+    "signInSuccessful": "Log Masuk Berjaya",
+    "welcomeBack": "Selamat kembali",
+    "userNotFound": "Tiada pengguna ditemui dengan e-mel ini.",
+    "wrongPassword": "Kata laluan salah.",
+    "invalidEmail": "Alamat e-mel tidak sah.",
+    "subtitle": "Log masuk untuk meneruskan perjalanan anda",
+    "forgotPasswordLink": "Lupa Kata Laluan?",
+    "dividerOr": "atau",
+    "noAccountPrompt": "Tiada akaun?",
+    "signUpLink": "Daftar"
+  },
+  "scan": {
+    "loadingCamera": "Memuatkan kamera...",
+    "needPermission": "Kami memerlukan kebenaran anda untuk menunjukkan kamera",
+    "grantPermission": "Berikan Kebenaran",
+    "preparingCamera": "Menyediakan kamera..."
+  },
+  "favorites": {
+    "title": "Kegemaran",
+    "all": "Semua",
+    "plants": "Tumbuhan",
+    "animals": "Haiwan",
+    "removeFavorite": "Alih keluar Kegemaran",
+    "remove": "Alih keluar",
+    "cancel": "Batal",
+    "removed": "Dialih keluar",
+    "removedMessage": "telah dialih keluar daripada kegemaran anda.",
+    "error": "ralat",
+    "failedToRemove": "Gagal mengalih keluar daripada kegemaran.",
+    "clearFavorites": "Kosongkan Kegemaran",
+    "removeAllFavorites": "Alih keluar semua kegemaran?",
+    "removeAll": "Keluarkan semua",
+    "failedToClear": "Gagal mengosongkan kegemaran.",
+    "plant": "Tumbuhan",
+    "animal": "Haiwan",
+    "noFavoritesYet": "Tiada kegemaran lagi",
+    "addFromDaily": "Tambah beberapa daripada Tumbuhan atau Haiwan Hari Ini."
+  },
+  "about": {
+    "title": "Tentang",
+    "developedBy": "Dibangunkan & Direka oleh Pasukan LeafNest",
+    "teamTitle": "Pasukan LeafNest",
+    "specialThanks": "Terima Kasih Khas",
+    "mentor": "Encik Joshua R. Lasac",
+    "credits": "Asalnya dicipta oleh pasukan LeafNest dengan sokongan daripada Pinamalayan Maritime Foundation And Technological College INC. (PMFTCI) dan Sekolah Pengajian Komputer.",
+    "privacyPolicy": "Dasar Privasi",
+    "version": "Versi 0.0.1 (1)",
+    "help": "Untuk mendapatkan bantuan: leafnest.capstone@gmail.com",
+    "tagline": "Pengenalan Tumbuhan & Haiwan",
+    "institutionalSupport": "Sokongan Institusi",
+    "mentorRole": "Mentor & Penasihat Projek"
+  },
+  "plan": {
+    "title": "Rancangan",
+    "upgradeTitle": "Naik taraf kepada Premium",
+    "upgradeSubtitle": "Buka kunci semua ciri dan manfaatkan apl kami sepenuhnya.",
+    "free": "Percuma",
+    "freePrice": "₱0 / bulan",
+    "freeFeature1": "Imbas tumbuhan & haiwan terhad",
+    "freeFeature2": "Penemuan harian asas",
+    "freeFeature3": "Tiada akses luar talian kepada Sejarah",
+    "freeFeature4": "Iklan disertakan",
+    "premium": "Premium",
+    "premiumPrice": "₱129.00 / bulan",
+    "premiumFeature1": "Imbasan tanpa had",
+    "premiumFeature2": "Penemuan harian eksklusif",
+    "premiumFeature3": "Akses luar talian kepada Sejarah",
+    "premiumFeature4": "Pengalaman bebas iklan",
+    "subscribeNow": "Langgan Sekarang",
+    "selectedPlan": "Anda memilih pelan {{plan}}!"
+  },
+  "legal": {
+    "cookies": {
+      "title": "Dasar Kuki",
+      "subtitle": "Cara kami menggunakan kuki untuk meningkatkan pengalaman anda",
+      "effectiveDate": "Tarikh Berkuatkuasa: 1 Julai 2025",
+      "intro": "Dasar Kuki ini menerangkan cara kami menggunakan kuki untuk meningkatkan pengalaman anda apabila anda melawati apl kami dan menggunakan cirinya. Dengan menggunakan apl ini, anda membenarkan penggunaan kuki seperti yang diterangkan dalam dasar ini.",
+      "sections": [
+        {
+          "title": "Apakah Kuki?",
+          "content": "Kuki ialah fail teks kecil yang disimpan pada peranti anda apabila anda melawati tapak web atau menggunakan apl. Mereka membantu kami memahami cara anda berinteraksi dengan perkhidmatan kami dan membolehkan kami memberikan anda pengalaman yang lebih baik dan diperibadikan."
+        },
+        {
+          "title": "Cara Kami Menggunakan Kuki",
+          "content": "Kami menggunakan kuki untuk beberapa tujuan penting:",
+          "list": [
+            "Untuk memperibadikan kandungan dan iklan",
+            "Untuk menganalisis corak trafik dan meningkatkan pengalaman pengguna",
+            "Untuk mendayakan ciri dan fungsi tertentu apl kami",
+            "Untuk mengingati pilihan dan tetapan anda",
+            "Untuk menyediakan akses selamat kepada akaun anda"
+          ]
+        },
+        {
+          "title": "Jenis Kuki Yang Kami Gunakan",
+          "content": "Kami menggunakan pelbagai jenis kuki untuk meningkatkan pengalaman anda:",
+          "list": [
+            "Kuki Penting: Diperlukan untuk kefungsian apl asas",
+            "Kuki Prestasi: Bantu kami memahami cara anda menggunakan apl",
+            "Kuki Fungsian: Ingat pilihan dan pilihan anda",
+            "Kuki Analitis: Berikan cerapan tentang corak penggunaan apl"
+          ]
+        },
+        {
+          "title": "Mengurus Kuki",
+          "content": "Anda boleh mengawal dan mengurus kuki melalui tetapan peranti anda. Walau bagaimanapun, sila ambil perhatian bahawa melumpuhkan kuki tertentu boleh menjejaskan pengalaman anda dan mengehadkan kefungsian apl."
+        },
+        {
+          "title": "Tempoh Kuki",
+          "content": "Sesetengah kuki bersifat sementara (kuki sesi) dan dipadamkan apabila anda menutup apl. Yang lain kekal pada peranti anda untuk tempoh yang ditetapkan untuk mengingati pilihan anda merentas sesi."
+        },
+        {
+          "title": "Perubahan kepada Dasar Ini",
+          "content": "Kami mungkin mengemas kini Dasar Kuki ini dari semasa ke semasa untuk mencerminkan perubahan dalam teknologi atau keperluan undang-undang. Sebarang perubahan akan disiarkan pada halaman ini dengan tarikh semakan yang dikemas kini."
+        },
+        {
+          "title": "Hubungi Kami",
+          "content": "Jika anda mempunyai sebarang soalan, kebimbangan atau maklum balas mengenai Dasar Kuki ini, sila hubungi kami di leafnest.capstone@gmail.com."
+        }
+      ],
+      "footerTitle": "Privasi Anda Penting",
+      "footerText": "Kami komited terhadap ketelusan tentang cara kami menggunakan kuki. Penggunaan berterusan apl kami menunjukkan penerimaan anda terhadap dasar ini.",
+      "copyright": "© 2025 LeafNest. Semua hak terpelihara.",
+      "lastUpdated": "Kemas kini terakhir: 1 Julai 2025"
+    },
+    "privacy": {
+      "title": "Dasar Privasi",
+      "subtitle": "Privasi anda penting kepada kami",
+      "effectiveDate": "Tarikh Berkuatkuasa: 1 Julai 2025",
+      "intro": "Di LeafNest, kami komited untuk melindungi privasi anda dan memastikan keselamatan maklumat peribadi anda.",
+      "sections": [
+        {
+          "title": "Maklumat yang Kami Kumpul",
+          "content": "Kami mengumpul maklumat yang anda berikan terus kepada kami, seperti semasa anda membuat akaun, memuat naik foto atau menghubungi kami untuk mendapatkan sokongan. Ini mungkin termasuk nama, alamat e-mel anda dan sebarang maklumat lain yang anda pilih untuk berikan."
+        },
+        {
+          "title": "Bagaimana Kami Menggunakan Maklumat Anda",
+          "content": "Kami menggunakan maklumat yang kami kumpulkan untuk menyediakan, mengekalkan dan menambah baik perkhidmatan kami, untuk berkomunikasi dengan anda dan untuk membangunkan ciri baharu. Kami tidak menjual maklumat peribadi anda kepada pihak ketiga."
+        },
+        {
+          "title": "Keselamatan Data",
+          "content": "Kami melaksanakan langkah teknikal dan organisasi yang sesuai untuk melindungi maklumat peribadi anda daripada akses, pengubahan, pendedahan atau pemusnahan yang tidak dibenarkan."
+        },
+        {
+          "title": "Hak Anda",
+          "content": "Anda mempunyai hak untuk mengakses, mengemas kini atau memadam maklumat peribadi anda. Anda boleh melakukan ini melalui tetapan akaun anda atau dengan menghubungi kami secara terus."
+        },
+        {
+          "title": "Perkhidmatan Pihak Ketiga",
+          "content": "Apl kami mungkin mengandungi pautan ke tapak web dan perkhidmatan pihak ketiga. Kami tidak bertanggungjawab ke atas amalan privasi mereka. Kami menggalakkan anda menyemak dasar privasi mereka."
+        },
+        {
+          "title": "Perubahan kepada Dasar Privasi",
+          "content": "Kami berhak untuk mengemas kini Dasar Privasi ini pada bila-bila masa. Perubahan akan disiarkan pada halaman ini dengan tarikh berkuatkuasa yang dikemas kini. Penggunaan berterusan anda membentuk penerimaan perubahan."
+        },
+        {
+          "title": "Hubungi Kami",
+          "content": "Jika anda mempunyai sebarang soalan tentang Dasar Privasi ini atau amalan privasi kami, sila hubungi kami di privacy@leafnest.com."
+        }
+      ],
+      "footerTitle": "Kami Prihatin Tentang Anda",
+      "footerText": "Kepercayaan anda adalah penting bagi kami. Kami komited terhadap amalan data yang telus dan hak privasi anda.",
+      "copyright": "© 2025 LeafNest. Semua hak terpelihara.",
+      "lastUpdated": "Kemas kini terakhir: 1 Julai 2025"
+    },
+    "terms": {
+      "title": "Syarat Penggunaan",
+      "subtitle": "Sila baca dengan teliti sebelum menggunakan",
+      "effectiveDate": "Tarikh Berkuatkuasa: 1 Julai 2025",
+      "intro": "Syarat Penggunaan ini mengawal penggunaan apl dan perkhidmatan LeafNest. Dengan menggunakan apl kami, anda bersetuju menerima terma dan syarat ini.",
+      "sections": [
+        {
+          "title": "Penerimaan Terma",
+          "content": "Dengan mengakses atau menggunakan aplikasi LeafNest, anda bersetuju untuk mematuhi Syarat Penggunaan ini. Jika anda tidak bersetuju dengan syarat ini, anda tidak seharusnya menggunakan apl tersebut."
+        },
+        {
+          "title": "Tanggungjawab Pengguna",
+          "content": "Anda bersetuju untuk menggunakan aplikasi hanya untuk tujuan yang sah dan dengan cara yang tidak melanggar hak orang lain. Anda bertanggungjawab untuk mengekalkan kerahsiaan maklumat akaun anda."
+        },
+        {
+          "title": "Harta Intelek",
+          "content": "Semua kandungan, tanda dagangan, logo dan harta intelek dalam apl dimiliki oleh LeafNest atau dilesenkan kepada kami. Penggunaan tanpa kebenaran harta intelek kami adalah dilarang sama sekali."
+        },
+        {
+          "title": "Privasi dan Pengumpulan Data",
+          "content": "Kami mengumpul dan memproses maklumat peribadi seperti yang diterangkan dalam Dasar Privasi kami. Dengan menggunakan apl kami, anda bersetuju dengan pengumpulan data, penyimpanan dan amalan pemprosesan kami."
+        },
+        {
+          "title": "Had Liabiliti",
+          "content": "LeafNest tidak bertanggungjawab untuk sebarang kerosakan, kerugian atau kecederaan yang timbul daripada penggunaan apl atau perkhidmatannya. Anda menggunakan aplikasi atas risiko dan budi bicara anda sendiri."
+        },
+        {
+          "title": "Perubahan kepada Syarat",
+          "content": "Kami berhak untuk mengemas kini Terma Penggunaan ini pada bila-bila masa. Sebarang perubahan akan disiarkan di halaman ini dengan tarikh berkuat kuasa yang dikemas kini. Penggunaan berterusan membentuk penerimaan perubahan."
+        },
+        {
+          "title": "Hubungi Kami",
+          "content": "Jika anda mempunyai sebarang soalan, kebimbangan atau maklum balas tentang Syarat Penggunaan ini, sila hubungi kami di leafnest.capstone@gmail.com."
+        }
+      ],
+      "footerTitle": "Terima kasih",
+      "footerText": "Terima kasih kerana meluangkan masa untuk menyemak Syarat Penggunaan kami. Kepercayaan dan pematuhan anda membantu kami mencipta pengalaman yang lebih baik untuk semua orang.",
+      "copyright": "© 2025 LeafNest. Semua hak terpelihara.",
+      "lastUpdated": "Kemas kini terakhir: 1 Julai 2025"
+    }
+  },
+  "faq": {
+    "title": "Bantuan & Soalan Lazim",
+    "subtitle": "Cari jawapan kepada soalan biasa",
+    "categories": [
+      {
+        "title": "Bermula",
+        "items": [
+          {
+            "question": "Apakah LeafNest?",
+            "answer": "LeafNest ialah aplikasi pengenalan tumbuhan dan maklumat yang menggunakan teknologi AI untuk membantu anda mengenal pasti tumbuhan dan haiwan untuk memberikan pengetahuan tentang alam semula jadi."
+          },
+          {
+            "question": "Bagaimana saya boleh bermula?",
+            "answer": "Buka apl, ketik ikon imbasan dan halakan pada mana-mana tumbuhan atau haiwan. AI akan mengenal pastinya dan memberikan maklumat terperinci tentang spesies tersebut."
+          }
+        ]
+      },
+      {
+        "title": "Menggunakan Pengimbas",
+        "items": [
+          {
+            "question": "Bagaimanakah saya mengimbas spesies?",
+            "answer": "Ketik ikon imbasan pada skrin utama, halakan kamera anda ke arah spesies dan tangkap foto yang jelas. Apl akan mengenal pasti secara automatik."
+          },
+          {
+            "question": "Apa yang membuat imbasan yang baik?",
+            "answer": "Pastikan pencahayaan yang baik, fokus pada ciri tersendiri dan pastikan kamera stabil untuk hasil terbaik."
+          },
+          {
+            "question": "Bolehkah saya mengimbas dari galeri foto saya?",
+            "answer": "ya. Anda boleh memuat naik foto sedia ada dari galeri anda dengan memilih pilihan galeri dalam skrin pengimbas."
+          }
+        ]
+      },
+      {
+        "title": "Ketepatan & Ciri",
+        "items": [
+          {
+            "question": "Seberapa tepat pengenalan itu?",
+            "answer": "LeafNest menggunakan model pembelajaran mesin lanjutan. Ketepatan berbeza mengikut pencahayaan dan kualiti imej, tetapi biasanya melebihi 90%."
+          },
+          {
+            "question": "Bolehkah saya menyelamatkan tumbuhan kegemaran saya?",
+            "answer": "ya. Ketik ikon hati pada mana-mana spesies yang dikenal pasti untuk menambahkannya pada kegemaran anda untuk akses pantas kemudian."
+          }
+        ]
+      },
+      {
+        "title": "Sokongan & Bantuan",
+        "items": [
+          {
+            "question": "Bagaimanakah saya boleh menghubungi sokongan?",
+            "answer": "Buka menu Tetapan dan pilih Bantuan & Sokongan, atau e-mel kami di leafnest.capstone@gmail.com."
+          }
+        ]
+      }
+    ]
+  },
+  "help": {
+    "title": "Bantuan & Sokongan",
+    "subtitle": "Petua untuk mengimbas tumbuhan & haiwan dengan AI — dan tempat untuk mendapatkan bantuan lanjut.",
+    "quickStart": {
+      "title": "Mula Pantas",
+      "bullets": [
+        "Ketik butang Imbas dari skrin utama.",
+        "Pusatkan tumbuhan atau haiwan dalam bingkai.",
+        "Pegang dengan mantap, kemudian tangkap foto yang jelas."
+      ],
+      "cta": "Buka Pengimbas"
+    },
+    "bestResults": {
+      "title": "Bagaimana untuk mendapatkan hasil yang lebih baik",
+      "bullets": [
+        "Gunakan pencahayaan yang baik dan elakkan cahaya latar yang keras.",
+        "Isi bingkai dengan subjek, memfokuskan pada butiran tersendiri.",
+        "Cuba berbilang sudut seperti daun, bunga, kulit kayu atau tangkapan profil."
+      ]
+    },
+    "troubleshooting": {
+      "title": "Menyelesaikan masalah",
+      "bullets": [
+        "Sorotan harian kelihatan sama? Tarik untuk memuat semula atau membuka semula apl selepas tengah malam (waktu Filipina).",
+        "Tiada internet? Semak sambungan anda kerana pengecaman imej memerlukan sambungan rangkaian.",
+        "Ketepatan rendah? Ambil foto yang lebih jelas dan lebih dekat dengan pencahayaan yang lebih baik."
+      ]
+    },
+    "links": {
+      "faq": "Soalan Lazim",
+      "feedback": "Hantar Maklum Balas",
+      "about": "Mengenai LeafNest",
+      "privacy": "Dasar Privasi",
+      "terms": "Syarat Penggunaan",
+      "contact": "Hubungi Sokongan"
+    },
+    "alerts": {
+      "noEmailTitle": "Tidak boleh membuka apl e-mel",
+      "noEmailBody": "Sila e-mel kami di {{email}}."
+    }
+  },
+  "feedback": {
+    "title": "Hantar Maklum Balas",
+    "subtitle": "Beritahu kami perkara yang berkesan atau perkara yang boleh diperbaiki. Kami membaca setiap mesej.",
+    "topicLabel": "Topik",
+    "topics": {
+      "bug": "Laporkan Pepijat",
+      "idea": "Permintaan Ciri",
+      "ux": "Reka bentuk / UX",
+      "content": "Spesies / Kandungan",
+      "account": "Akaun / Log Masuk",
+      "other": "Lain-lain"
+    },
+    "subjectLabel": "Subjek",
+    "subjectPlaceholder": "Ringkasan ringkas (cth., Pengimbas salah label daun sebagai maple)",
+    "messageLabel": "Mesej",
+    "messagePlaceholder": "Terangkan apa yang berlaku, langkah untuk menghasilkan semula, dan jangkaan.",
+    "emailLabel": "E-mel Anda (pilihan)",
+    "emailPlaceholder": "Kami akan membalas di sini jika perlu",
+    "includeDiagnostics": "Sertakan diagnostik",
+    "diagnosticsHint": "Membantu kami menyahpepijat isu (platform & OS sahaja).",
+    "submit": "Hantar Maklum Balas",
+    "submitting": "Menghantar...",
+    "footerText": "Atau e-mel terus kepada kami di {{email}}",
+    "alerts": {
+      "missingInfoTitle": "Tiada maklumat",
+      "missingInfoMessage": "Sila tambah subjek dan mesej.",
+      "invalidEmailTitle": "E-mel tidak sah",
+      "invalidEmailMessage": "Sila masukkan alamat e-mel yang sah atau biarkan ia kosong.",
+      "noEmailAppTitle": "Tidak boleh menghantar maklum balas",
+      "noEmailAppMessage": "Sila cuba lagi kemudian atau e-mel kami di {{email}}.",
+      "successTitle": "Maklum balas dihantar",
+      "successMessage": "Terima kasih atas maklum balas anda! Kami akan menyemaknya tidak lama lagi.",
+      "genericErrorTitle": "Sesuatu telah berlaku",
+      "genericErrorMessage": "Sila cuba lagi kemudian atau e-mel kami di {{email}}."
+    }
+  },
+  "comments": {
+    "title": "Komen",
+    "noComments": "Tiada ulasan lagi",
+    "beFirstToComment": "Jadilah yang pertama untuk mengulas!",
+    "addComment": "Tambah ulasan...",
+    "deleteComment": "Padam Komen",
+    "deleteConfirm": "Adakah anda pasti mahu memadamkan ulasan ini?",
+    "delete": "Padam",
+    "failedToDelete": "Gagal memadamkan ulasan",
+    "failedToLike": "Gagal menyukai komen",
+    "loginRequired": "Log masuk Diperlukan",
+    "loginToComment": "Anda mesti log masuk untuk mengulas",
+    "loginToLike": "Anda mesti log masuk untuk menyukai komen",
+    "justNow": "tadi"
+  },
+  "notification": {
+    "title": "Pemberitahuan",
+    "noNotifications": "Tiada pemberitahuan lagi",
+    "markAsRead": "Tandakan sebagai dibaca",
+    "markAllAsRead": "Tandai semua sebagai dibaca",
+    "delete": "Padam",
+    "deleteAll": "Padam semua"
+  },
+  "commentsModal": {
+    "title": "Komen",
+    "inputPlaceholder": "Tambah ulasan...",
+    "empty": {
+      "title": "Tiada ulasan lagi",
+      "subtitle": "Jadilah yang pertama untuk mengulas!"
+    },
+    "actions": {
+      "cancel": "Batal",
+      "delete": "Padam"
+    },
+    "alerts": {
+      "loadErrorTitle": "ralat",
+      "loadErrorBody": "Gagal memuatkan ulasan.",
+      "loginRequiredTitle": "Log masuk diperlukan",
+      "loginRequiredCommentBody": "Anda mesti log masuk untuk mengulas.",
+      "loginRequiredLikeBody": "Anda mesti log masuk untuk menyukai komen.",
+      "addErrorTitle": "ralat",
+      "addErrorBody": "Gagal menambah ulasan.",
+      "likeErrorTitle": "ralat",
+      "likeErrorBody": "Gagal menyukai komen.",
+      "deleteTitle": "Padamkan ulasan",
+      "deleteConfirmBody": "Adakah anda pasti mahu memadamkan ulasan ini?",
+      "deleteErrorTitle": "ralat",
+      "deleteErrorBody": "Gagal memadamkan ulasan."
+    }
+  },
+  "premiumGate": {
+    "offline": {
+      "title": "Akses luar talian diperlukan",
+      "historySubtitle": "Langgan untuk mengakses sejarah luar talian",
+      "historyDescription": "Akses luar talian kepada sejarah imbasan anda ialah ciri premium. Tingkatkan untuk melihat sejarah anda pada bila-bila masa, di mana sahaja.",
+      "favoritesSubtitle": "Langgan untuk mengakses kegemaran di luar talian",
+      "favoritesDescription": "Akses luar talian ke kegemaran anda ialah ciri premium. Naik taraf untuk melihat kegemaran anda pada bila-bila masa, di mana sahaja."
+    },
+    "limits": {
+      "scanTitle": "Had imbasan dicapai",
+      "scanSubtitle": "Anda telah menggunakan semua {{limit}} imbasan",
+      "scanDescription": "Naik taraf kepada Premium untuk imbasan tanpa had dan lebih banyak ciri!",
+      "downloadTitle": "Had muat turun dicapai",
+      "downloadSubtitle": "Anda telah menggunakan semua {{limit}} muat turun",
+      "downloadDescription": "Tingkatkan kepada Premium untuk muat turun tanpa had!"
+    },
+    "timer": {
+      "resetsInHours": "Ditetapkan semula dalam {{count}} jam",
+      "resetsInHours_plural": "Ditetapkan semula dalam {{count}} jam"
+    },
+    "usage": {
+      "scans": "Imbasan:",
+      "downloads": "Muat turun:"
+    },
+    "features": {
+      "title": "Faedah premium:",
+      "offlineHistory": "Akses sejarah luar talian",
+      "offlineFavorites": "Akses kegemaran luar talian",
+      "unlimitedScans": "Imbasan tanpa had",
+      "unlimitedDownloads": "Muat turun tanpa had"
+    },
+    "pricing": {
+      "amount": "{{amount}}",
+      "period": "selama {{days}} hari"
+    },
+    "actions": {
+      "upgrade": "Naik taraf kepada Premium",
+      "later": "Mungkin nanti"
+    }
+  },
+  "manageNotifications": {
+    "title": "Urus Pemberitahuan",
+    "pushNotifications": "Pemberitahuan Tolak",
+    "emailNotifications": "Pemberitahuan E-mel",
+    "likeNotifications": "Seperti Pemberitahuan",
+    "commentNotifications": "Pemberitahuan Komen",
+    "followNotifications": "Ikuti Pemberitahuan",
+    "enabled": "Didayakan",
+    "disabled": "Dilumpuhkan",
+    "save": "Simpan Tetapan"
+  },
+  "history": {
+    "title": "Sejarah",
+    "loading": "Memuatkan sejarah...",
+    "loadingMore": "Memuatkan lagi...",
+    "signInRequiredTitle": "Log masuk diperlukan",
+    "signInRequiredBody": "Buat akaun atau log masuk untuk melihat sejarah imbasan anda.",
+    "selection": {
+      "selectedCount": "{{count}} dipilih",
+      "deleteButton": "Padamkan rekod {{count}}",
+      "deleteButton_plural": "Padamkan {{count}} rekod"
+    },
+    "offlineBanner": {
+      "premium": "Mod luar talian (Premium)",
+      "locked": "Mod luar talian memerlukan Premium"
+    },
+    "search": {
+      "placeholder": "Cari mengikut nama..."
+    },
+    "filters": {
+      "all": "Semua",
+      "plants": "Tumbuhan",
+      "animals": "Haiwan"
+    },
+    "empty": {
+      "noHistoryTitle": "Tiada sejarah lagi",
+      "noHistoryBody": "Sejarah imbasan spesies anda akan dipaparkan di sini sebaik sahaja anda mula mengenal pasti tumbuhan dan haiwan.",
+      "noResultsTitle": "Tiada hasil ditemui",
+      "noResultsBody": "Tiada rekod yang sepadan dengan kriteria carian atau penapis anda. Cuba laraskan penapis anda."
+    },
+    "actions": {
+      "signIn": "Log masuk",
+      "delete": "Padam",
+      "clearAll": "Kosongkan semua",
+      "clearFilters": "Kosongkan penapis"
+    },
+    "alerts": {
+      "visibilityNow": "Imbasan kini {{status}}",
+      "visibilityUpdateFailed": "Gagal mengemas kini keterlihatan.",
+      "visibilityNeedsSync": "Imbasan ini perlu disegerakkan terlebih dahulu. Sila cuba sebentar lagi.",
+      "visibilityOffline": "Tidak boleh menukar keterlihatan semasa di luar talian. Sila semak sambungan anda.",
+      "visibilityNotSynced": "Imbasan ini belum disegerakkan ke awan lagi. Sila tunggu penyegerakan selesai dan cuba lagi.",
+      "visibilityPermissionDenied": "Anda tidak mempunyai kebenaran untuk mengubah suai imbasan ini.",
+      "visibilityNetworkError": "Ralat rangkaian. Sila semak sambungan anda dan cuba lagi.",
+      "errorWithMessage": "Ralat: {{message}}",
+      "deleteRecordTitle": "Padam rekod",
+      "deleteRecordMessage": "Padamkan \"{{name}}\" daripada sejarah?",
+      "deleteRecordSuccess": "Rekod dipadamkan.",
+      "deleteRecordError": "Gagal memadam rekod.",
+      "deleteSelectedTitle": "Padam dipilih",
+      "deleteSelectedMessage": "Padamkan {{count}} rekod daripada sejarah?",
+      "deleteSelectedMessage_plural": "Padamkan {{count}} rekod daripada sejarah?",
+      "deleteSelectedSuccess": "{{count}} rekod dipadamkan.",
+      "deleteSelectedSuccess_plural": "{{count}} rekod dipadamkan.",
+      "deleteSelectedError": "Gagal memadamkan rekod yang dipilih.",
+      "clearAllTitle": "Kosongkan semua sejarah",
+      "clearAllMessage": "Adakah anda pasti mahu memadamkan semua rekod sejarah? Tindakan ini tidak boleh dibuat asal.",
+      "clearAllSuccess": "Semua sejarah dibersihkan.",
+      "clearAllError": "Gagal mengosongkan sejarah."
+    },
+    "visibility": {
+      "public": "awam",
+      "private": "persendirian"
+    },
+    "unknownSpecies": "Spesies yang tidak diketahui",
+    "details": {
+      "commonName": "Nama biasa",
+      "scientificName": "Nama saintifik",
+      "taxonomicRank": "Pangkat taksonomi",
+      "type": "taip",
+      "conservationStatus": "Status pemuliharaan",
+      "timesScanned": "Masa diimbas",
+      "timeCount": "{{count}} masa",
+      "timeCount_plural": "{{count}} kali",
+      "globalAppScans": "Imbasan apl global",
+      "scanCount": "{{count}} imbasan",
+      "scanCount_plural": "{{count}} imbasan",
+      "scannedOn": "Diimbas dihidupkan"
+    },
+    "premiumGate": {
+      "title": "Langgan untuk mengakses mod luar talian",
+      "message": "Akses luar talian kepada sejarah anda ialah ciri premium. Langgan untuk melihat sejarah imbasan anda apabila anda berada di luar talian."
+    },
+    "noHistory": "Tiada sejarah lagi",
+    "startScanning": "Mula mengimbas untuk membina sejarah anda",
+    "delete": "Padam",
+    "deleteAll": "Padam semua",
+    "deleteConfirm": "Adakah anda pasti mahu memadamkan item ini?",
+    "deleteAllConfirm": "Adakah anda pasti mahu memadamkan semua sejarah?",
+    "scannedOn": "Diimbas pada {{date}}"
+  },
+  "postDetail": {
+    "title": "Pos",
+    "aboutLabel": "Tentang",
+    "emptyTitle": "Catatan tidak ditemui",
+    "alerts": {
+      "postNotFoundTitle": "ralat",
+      "postNotFoundBody": "Catatan tidak ditemui.",
+      "loadErrorTitle": "ralat",
+      "loadErrorBody": "Gagal memuatkan siaran.",
+      "likeErrorBody": "Gagal menyukai siaran."
+    }
+  },
+  "speciesGallery": {
+    "title": "Galeri",
+    "noResults": "Tiada hasil ditemui",
+    "loadMore": "Muatkan lagi",
+    "error": "Gagal memuatkan galeri"
+  },
+  "speciesLanding": {
+    "title": "Butiran Spesies",
+    "scientificName": "Nama Saintifik",
+    "commonName": "Nama Biasa",
+    "description": "Penerangan",
+    "habitat": "Habitat",
+    "diet": "Diet",
+    "lifespan": "Jangka hayat",
+    "conservationStatus": "Status Pemuliharaan",
+    "addToFavorites": "Tambahkan pada Kegemaran",
+    "removeFromFavorites": "Alih keluar daripada Kegemaran",
+    "share": "Kongsi",
+    "viewMore": "Lihat Lagi",
+    "error": "Gagal memuatkan butiran spesies"
+  },
+  "manualPayment": {
+    "title": "Pembayaran Manual",
+    "uploadProof": "Muat Naik Bukti Pembayaran",
+    "selectImage": "Pilih Imej",
+    "takePhoto": "Ambil Foto",
+    "chooseFromGallery": "Pilih daripada Galeri",
+    "uploadImage": "Muat Naik Imej",
+    "uploading": "Memuat naik...",
+    "submit": "Hantar Bayaran",
+    "submitting": "Menyerahkan...",
+    "successTitle": "Kejayaan",
+    "successMessage": "Pembayaran berjaya dihantar. Kami akan mengesahkannya sebentar lagi.",
+    "errorTitle": "ralat",
+    "errorMessage": "Gagal menyerahkan pembayaran. Sila cuba lagi.",
+    "selectImageFirst": "Sila pilih imej dahulu"
+  },
+  "scanStats": {
+    "title": "Imbas Statistik",
+    "totalScans": "Jumlah Imbasan",
+    "thisWeek": "Minggu ini",
+    "thisMonth": "Bulan ini",
+    "plants": "Tumbuhan",
+    "animals": "Haiwan",
+    "noData": "Tiada data imbasan tersedia lagi"
+  }
+}
